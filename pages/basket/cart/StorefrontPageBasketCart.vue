@@ -938,19 +938,28 @@
         </v-row>
       </v-container>
 
-      <div
-        v-else
-        class="text-center"
-        style="min-height: 60vh; padding-top: 15vh"
-      >
+      <!-- Kalio: an empty basket is a starting point, so it offers the way back
+           to the aisles instead of only announcing itself. The heading keeps
+           the translated platform string. -->
+      <div v-else class="k-basket-empty">
         <img
-          class="m-5 img-grayscale"
-          height="120"
+          alt=""
+          class="k-basket-empty__art"
+          height="96"
           src="@selldone/components-vue/assets/icons/baskets.svg"
         />
-        <h1 class="text-uppercase text-muted">
+        <h1 class="k-basket-empty__title">
           {{ $t("basket_page.basket_empty") }}
         </h1>
+        <p class="k-basket-empty__lede">
+          The aisles are stocked. Pick up where you left off.
+        </p>
+        <router-link
+          :to="{ name: window.$storefront.routes.SHOP_PAGE }"
+          class="k-btn k-btn--solid"
+        >
+          Start shopping
+        </router-link>
       </div>
 
       <div v-if="busy_shop" class="busy-overlay">

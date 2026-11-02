@@ -12,47 +12,28 @@
   - Tread carefully, for you're treading on dreams.
   -->
 <template>
-  <v-empty-state
-    headline="Page Not Found, 404"
-    text="The page you were looking for does not exist."
-  >
-    <template v-slot:media>
-      <div>
-        <v-avatar
-          rounded="xl"
-          class="avatar-gradient -shop mx-auto my-5"
-          :size="120"
-          style="--border-radious: 20px"
-        >
-          <v-img
-            :src="getShopImagePath(shop.icon)"
-            height="100%"
-            width="100%"
-          ></v-img>
-        </v-avatar>
-      </div>
-    </template>
-    <template v-slot:actions>
-      <s-widget-buttons style="width: 100vw">
-        <v-btn
-          size="x-large"
-          color="#000"
-          :to="{ path: '/' }"
-          prepend-icon="home"
-        >
-          {{ shop ? shop.title : $t("global.commons.home") }}
-        </v-btn>
-      </s-widget-buttons>
-    </template>
-  </v-empty-state>
+  <!-- Kalio: a wrong turn in the market hall. Same platform data (the shop
+       title, the home route); Selldone's gradient tile and black bar
+       become an aisle sign with the way back. -->
+  <section class="k-404">
+    <p class="k-eyebrow">Page not found · 404</p>
+    <h1 class="k-404__title">This aisle doesn't exist.</h1>
+    <p class="k-404__lede">
+      The link may be out of date, or the address may have a typo.
+    </p>
+    <div class="k-404__acts">
+      <router-link :to="{ path: '/' }" class="k-btn k-btn--solid">
+        Back to {{ shop ? shop.title : $t("global.commons.home") }}
+      </router-link>
+    </div>
+  </section>
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import SWidgetButtons from "@selldone/components-vue/ui/widget/buttons/SWidgetButtons.vue";
 
 export default defineComponent({
   name: "StorefrontPageError404",
-  components: { SWidgetButtons },
+
 
   computed: {
     shop() {

@@ -51,8 +51,38 @@
         <slot name="header" :center="true"></slot>
       </div>
 
-      <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Show Vendor Info ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-      <s-shop-vendor-header :vendor-id="vendor_id"></s-shop-vendor-header>
+      <!--
+        One page, three Kalio states. Selldone routes the catalogue root, every
+        aisle and every seller to this same component, so the market front,
+        the aisle sign and the seller storefront are chosen here by route and
+        then hand over to the same live listing below.
+      -->
+
+      <div
+        :class="{
+          'add-marginal-side-menu-open':
+            show_filter_menu && $vuetify.display.smAndUp,
+        }"
+        style="transition: all 400ms ease"
+      >
+      <!-- ▆▆▆▆▆▆▆▆ Seller: hero + shelf ▆▆▆▆▆▆▆▆ -->
+      <!-- Replaces Selldone's one-line s-shop-vendor-header, which carries only
+           the seller's name and avatar — no commerce state — so nothing is lost. -->
+      <kalio-seller-hero v-if="vendor_id" :vendor-id="vendor_id" />
+      <kalio-seller-shelf v-if="vendor_id" :vendor-id="vendor_id" />
+
+      <!-- ▆▆▆▆▆▆▆▆ Aisle: the sign over a category page ▆▆▆▆▆▆▆▆ -->
+      <kalio-aisle-header
+        v-if="category_name && !vendor_id"
+        :category-name="category_name"
+      />
+
+      <!-- ▆▆▆▆▆▆▆▆ Root: the market front ▆▆▆▆▆▆▆▆ -->
+      <!-- Shown on the bare catalogue root only. Every narrowing action the
+           listing performs travels as a query parameter, so the front gets
+           out of the way the moment a shopper starts filtering. -->
+      <kalio-market-front v-if="show_market_front" />
+      </div>
 
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Products Listing ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
       <s-products-listing
@@ -72,15 +102,21 @@
 
 <script lang="ts">
 import SProductsListing from "@selldone/components-vue/storefront/products/listing/SProductsListing.vue";
-import SShopVendorHeader from "@selldone/components-vue/storefront/vendor/SShopVendorHeader.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
+import KalioMarketFront from "../../components/kalio/KalioMarketFront.vue";
+import KalioAisleHeader from "../../components/kalio/KalioAisleHeader.vue";
+import KalioSellerShelf from "../../components/kalio/KalioSellerShelf.vue";
+import KalioSellerHero from "../../components/kalio/KalioSellerHero.vue";
 import {StorefrontSeo} from "../../helpers/StorefrontSeo";
 
 export default {
   name: "StorefrontPageProducts",
   components: {
-    SShopVendorHeader,
     SProductsListing,
+    KalioMarketFront,
+    KalioAisleHeader,
+    KalioSellerShelf,
+    KalioSellerHero,
   },
   mixins: [TemplateMixin],
 
@@ -99,8 +135,23 @@ export default {
    * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
    */
   computed: {
+    shop_theme() {
+      return this.getShop()?.theme;
+    },
     show_filter_menu() {
       return this.$store.getters.getShowFilterMenu;
+    },
+
+    category_name() {
+      return this.$route.params?.category_name || null;
+    },
+
+    show_market_front() {
+      return (
+        String(this.$route.name || "").startsWith(window.$storefront.routes.SHOP_PAGE) &&
+        !this.vendor_id &&
+        !Object.keys(this.$route.query || {}).length
+      );
     },
   },
 
@@ -110,6 +161,18 @@ export default {
    * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
    */
   watch: {
+    /* Layout default: on a grocery shelf "add to basket" belongs on the card.
+       The listing shows Quick Buy only when the shop theme sets hover_actions.
+       A merchant who has set it either way is respected; one who never
+       touched it gets the grocery default. A watcher, not a one-shot write in
+       created(): the storefront swaps in a fresh shop object when it refreshes
+       the shop, and that swap silently discarded the earlier write. */
+    shop_theme: {
+      handler(theme) {
+        if (theme && theme.hover_actions === undefined) theme.hover_actions = true;
+      },
+      immediate: true,
+    },
     "$route.path"() {
       this.seoNavigation = StorefrontSeo.captureNavigation();
     },
@@ -128,6 +191,7 @@ export default {
       ? this.$route.params?.vendor_id
       : this.$route.query?.vendor_id;
 
+
     this.setPageTitle(); // Set Page Title!
   },
   methods: {
@@ -137,13 +201,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-/*
-━━━━━━━━━━━━━━━━━━━━ 🎺 Variables ━━━━━━━━━━━━━━━━━━━━
- */
-
-/*
-━━━━━━━━━━━━━━━━━━━━ 🪅 Classes ━━━━━━━━━━━━━━━━━━━━
- */
-</style>
