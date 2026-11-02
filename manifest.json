@@ -3,7 +3,7 @@
   "deploy_path": "",
   "package": "kalio-market-hall",
   "name": "Kalio Market Hall",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "storefront": true,
   "backoffice": false,
   "description": "Grocery marketplace storefront: aisle-first discovery, seller attribution and a market-hall visual system."

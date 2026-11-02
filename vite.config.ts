@@ -23,10 +23,17 @@ const manifest = require("./manifest.json");
 
 //import vuetify from 'vite-plugin-vuetify'
 /**
- * Storefront layout version. This unique identifier is used for naming each app version published on Selldone.
+ * Directory of the runtime entries inside dist/.
+ *
+ * The Selldone Layout extractor requires the ZIP members app/ and app/shop.js,
+ * and the storefront runtime loads <package>/<version>/app/shop.js and
+ * app/shop.css. The upstream value, manifest.version, produced 0.1.0/shop.js,
+ * which the current artifact contract (selldone/cli, package-selldone-
+ * storefront-layout/references/artifact-contract.md) names as invalid. The
+ * version still lives in the URL, through the base below.
  * @type {string}
  */
-const VERSION_DIR = manifest.version;
+const VERSION_DIR = "app";
 
 let IS_PRODUCTION: boolean;
 let DEV_HOST: string;
@@ -57,10 +64,16 @@ export default ({mode}: any) => {
       !!env.VITE_APP_DEV_SERVER_HTTPS && env.VITE_APP_DEV_SERVER_HTTPS === "TRUE";
 
   // Calculate base URL
+  /* Production references are relative: every lazy chunk and asset resolves
+     against the URL shop.js and shop.css are actually served from. The
+     upstream absolute base (deploy_server/package/version) assumed the CDN
+     layout <package>/<version>/app/, but the Layout service now stores each
+     upload as layouts/<id>/releases/<ULID>/app and serves it from wherever
+     the storefront host decides — an absolute base would send all 223 lazy
+     chunks to an address that never existed. The artifact contract prefers
+     relative references for exactly this reason. */
   const baseURL = IS_PRODUCTION
-      ? fixPath(
-          `${manifest.deploy_server}/${manifest.deploy_path}/${manifest.package}/${manifest.version}`,
-      )
+      ? "./"
       : `${IS_HTTPS ? "https" : "http"}://${DEV_HOST}:${DEV_PORT}/`;
 
   console.log("Build base URL:", baseURL);
@@ -76,6 +89,7 @@ export default ({mode}: any) => {
 
       //@ts-ignore
       vitePluginRequire.default(),
+      flagIconsFromCdn(),
       ...(IS_HTTPS
           ? [
             basicSsl({name: "selldone-test-cert"}), // Enable if you want to use https
@@ -119,22 +133,37 @@ export default ({mode}: any) => {
 
     build: {
       outDir: "dist/",
+      /* Fewer, larger files. The Layout endpoint processes the archive while
+         the upload request is open, behind Cloudflare's ~100 s read limit;
+         at 714 files the connection was cut mid-extraction, which registered
+         the version but never put its files on the CDN. Small SVGs ride
+         inside the CSS/JS that use them (scripts/kalio-svg-flatten.mjs makes
+         those passive too), and chunks under 50 KB merge into a neighbour. */
+      assetsInlineLimit: (file: string, content: Buffer) =>
+          file.toLowerCase().endsWith(".svg") ? content.length <= 8192 : undefined,
+      /* One stylesheet. The 95 per-chunk CSS files total 689 KB; as files
+         they were a sixth of the archive, as part of shop.css they are a
+         ~100 KB gzip addition to the first load. */
+      cssCodeSplit: false,
       rollupOptions: {
         input: {
           shop: "index.html",
         },
         output: {
+          experimentalMinChunkSize: 50_000,
           // Entry and chunk naming patterns
           entryFileNames: `${VERSION_DIR}/[name].js`,
-          chunkFileNames: `${VERSION_DIR}/js/[name].[hash].js`,
+          chunkFileNames: (chunk) => `${VERSION_DIR}/js/${safeName(chunk.name)}.[hash].js`,
           // For assets
           assetFileNames: (assetInfo) => {
             if (assetInfo!.name!.endsWith(".css")) {
-              return ["shop.css"].includes(assetInfo.name!)
-                  ? `${VERSION_DIR}/[name].[ext]`
-                  : `${VERSION_DIR}/css/[name].[hash].[ext]`;
+              /* With cssCodeSplit off, Vite names the one stylesheet
+                 "style.css"; the Layout runtime loads app/shop.css. */
+              return ["shop.css", "style.css"].includes(assetInfo.name!)
+                  ? `${VERSION_DIR}/shop.css`
+                  : `${VERSION_DIR}/css/${safeName(baseName(assetInfo.name!))}.[hash].[ext]`;
             }
-            return `${VERSION_DIR}/assets/[name].[hash].[ext]`;
+            return `${VERSION_DIR}/assets/${safeName(baseName(assetInfo.name!))}.[hash].[ext]`;
           },
         },
       },
@@ -143,9 +172,51 @@ export default ({mode}: any) => {
   });
 };
 
-function fixPath(str: string) {
-  return str.replace(/\/{2,}/g, "/");
+/**
+ * Country flags from jsDelivr instead of from the Layout archive.
+ *
+ * vue-flag-icon imports flag-icons.min.css, whose ~540 url(../flags/…) rules
+ * made country flags the largest group of files in the build. The Layout
+ * endpoint processes the archive inside one request behind Cloudflare's
+ * ~100 s read limit, and at that file count the connection was cut before
+ * extraction finished. The same stylesheet is kept — same classes, same
+ * flags — with each URL pointed at the identical flag-icons version on
+ * jsDelivr, which Vite leaves untouched because it is absolute. A flag that
+ * fails to load costs a flag image in a country or phone picker, nothing more.
+ */
+function flagIconsFromCdn() {
+  const version = JSON.parse(
+      fs.readFileSync(path.resolve(__dirname, "node_modules/flag-icons/package.json"), "utf8"),
+  ).version;
+  const cdn = `https://cdn.jsdelivr.net/npm/flag-icons@${version}/flags/`;
+  return {
+    name: "kalio-flag-icons-from-cdn",
+    enforce: "pre" as const,
+    transform(code: string, id: string) {
+      if (!/[\\/]flag-icons[\\/]css[\\/]flag-icons(\.min)?\.css$/.test(id.split("?")[0])) return null;
+      return { code: code.replace(/url\((["']?)\.\.\/flags\//g, `url($1${cdn}`), map: null };
+    },
+  };
 }
+
+/**
+ * Emitted file names limited to [A-Za-z0-9._-].
+ *
+ * The Layout upload rejects the whole archive ("Archive paths must be safe
+ * relative app/ paths.") if any member name holds a space or a bracket, and
+ * the platform's own assets include "011-pine tree.svg" and
+ * "IRANSansWeb(FaNum).woff". Renaming here, at emit time, lets Vite rewrite
+ * every reference to the new name; renaming inside the ZIP would not.
+ */
+function safeName(name: string) {
+  return String(name || "asset").replace(/[^A-Za-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "") || "asset";
+}
+
+/** The asset's file name without directory or extension, for [hash].[ext] to follow. */
+function baseName(name: string) {
+  return path.basename(name).replace(/\.[^.]+$/, "");
+}
+
 
 function printDevServerConfig() {
   console.log("");

@@ -69,7 +69,7 @@
       <!-- Replaces Selldone's one-line s-shop-vendor-header, which carries only
            the seller's name and avatar — no commerce state — so nothing is lost. -->
       <kalio-seller-hero v-if="vendor_id" :vendor-id="vendor_id" />
-      <kalio-seller-shelf v-if="vendor_id" :vendor-id="vendor_id" />
+      <kalio-seller-shelf v-if="vendor_id" :key="vendor_id" :vendor-id="vendor_id" />
 
       <!-- ▆▆▆▆▆▆▆▆ Aisle: the sign over a category page ▆▆▆▆▆▆▆▆ -->
       <kalio-aisle-header
@@ -176,6 +176,19 @@ export default {
     "$route.path"() {
       this.seoNavigation = StorefrontSeo.captureNavigation();
     },
+    /* The router reuses this one component for the catalogue root, every
+       aisle and every seller, so created() runs only for the first of them:
+       a shopper who clicked a seller on the market front kept vendor_id null
+       and landed on the whole catalogue under a seller URL. The id is read
+       again whenever the route record changes. Within one record it stays as
+       upstream intends — sticky while the listing rewrites the query. */
+    "$route.name"() {
+      this.vendor_id = this.vendorIdFromRoute();
+    },
+    /* One seller to another is the same record with a new param. */
+    "$route.params.vendor_id"() {
+      this.vendor_id = this.vendorIdFromRoute();
+    },
   },
 
   /**
@@ -187,14 +200,16 @@ export default {
     // ━━━━━━━ Initialize by query ━━━━━━━
 
     /*First load keep vendor ID to show products for this vendor.*/
-    this.vendor_id = this.$route.params?.vendor_id
-      ? this.$route.params?.vendor_id
-      : this.$route.query?.vendor_id;
-
+    this.vendor_id = this.vendorIdFromRoute();
 
     this.setPageTitle(); // Set Page Title!
   },
   methods: {
+    vendorIdFromRoute() {
+      return this.$route.params?.vendor_id
+        ? this.$route.params?.vendor_id
+        : this.$route.query?.vendor_id || null;
+    },
     updateProductsSeo(data) {
       StorefrontSeo.updateProducts(data, this.getShop(), this.seoNavigation);
     },
