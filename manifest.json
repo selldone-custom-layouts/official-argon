@@ -2,7 +2,7 @@
   "deploy_server": "https://layouts.selldone.com",
   "deploy_path": "",
   "package": "kalio-market-hall",
-  "name": "Kalio Market Hall",
+  "name": "Molino Market Hall",
   "version": "0.2.3",
   "storefront": true,
   "backoffice": false,

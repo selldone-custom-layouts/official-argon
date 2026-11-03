@@ -123,7 +123,7 @@ with `extracting: false`, `error: null`, and `file_manifest` hashes equal to
 ## Live
 
 Uploading creates a **beta** version; it does not change any shop. Attaching
-is a dashboard action (shop → Layout setting → *Kalio Market Hall*, then the
+is a dashboard action (shop → Layout setting → *Molino Market Hall* (named Kalio Market Hall until 3 November 2026), then the
 version). Since Selldone's new layout loader (3 November 2026) the shop
 loads the version **selected** there; a new upload is not picked up until it
 is selected. The designed home is the shop page, so set the shop's **Home**
