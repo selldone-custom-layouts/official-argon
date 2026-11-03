@@ -502,6 +502,12 @@
     .v-spacer {
       display: none;
     }
+
+    /* Without a saving the struck-price line is empty, and as a flex item
+       it dropped the price 5px below its neighbours'. */
+    > .dis-val:not(:has(.discount-percent)) {
+      display: none !important;
+    }
   }
 
   /* On a discounted product the live price is the sale price, in coral. */
@@ -568,6 +574,7 @@
     margin: 0 !important;
     padding: 0 !important;
     display: block !important;
+    border: 0 !important; /* Selldone's 1px #ddd drew a ring round the picture */
     background: transparent !important;
     opacity: 1 !important;
     visibility: visible !important;
@@ -914,6 +921,33 @@
       bottom: 6px;
       width: 36px !important;
       height: 36px !important;
+    }
+  }
+}
+
+/* Design A on the shop pages (aisles, the catalogue, a seller's rows):
+   every packshot on the same stone well, and the saving as coral type on a
+   white tab instead of a coral badge, so nothing but the products is
+   coloured. The home page keeps its aisle tints. */
+.s--storefront-products-listing .s--product-card,
+.k-seller-shelf .s--product-card {
+  .card__img--hover {
+    background: var(--k-well);
+  }
+
+  .discount-percent {
+    padding: 3px 8px !important;
+    border-radius: 7px !important;
+    background: #fff !important;
+    color: var(--k-coral) !important;
+    font-size: 12px !important;
+  }
+
+  /* Compare shows on hover only; a touch screen has no hover, and on every
+     card it was one more mark competing with the packshot. */
+  @media (hover: none) {
+    .quick-buy .v-btn + .v-btn {
+      display: none !important;
     }
   }
 }

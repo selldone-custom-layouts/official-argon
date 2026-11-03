@@ -1,78 +1,39 @@
 <!--
   Kalio — Seller hero.
 
-  The top of a seller's storefront. Selldone's vendor header is one row: a
-  small avatar beside the name. On a marketplace the seller is the reason a
-  shopper came to this page, so Kalio gives them a storefront sign: their
-  mark, their name in the display face, their own description, the aisles
-  they sell in (each jumps to that aisle's row further down), and a stall
-  of their own products.
+  The top of a seller's storefront, in the shelf head (KalioShelfHead) like
+  every other shop page: their mark, their name in the display face, their
+  own description, how many products they sell and how many are on offer,
+  then the aisles they sell in as a row of words (each jumps to that aisle's
+  row further down). Selldone's vendor header is one row: a small avatar
+  beside the name.
 
   Everything comes from live records: the vendor, and the seller's own
   product list. A seller without a description gets a neutral line, never
-  invented copy about them; no counts are shown.
+  invented copy about them.
 -->
 <template>
-  <div class="k-wrap">
-    <section :class="{ '-loading': busy }" aria-labelledby="k-seller-name" class="k-seller-hero">
-      <div class="k-seller-hero__main">
-        <div class="k-seller-hero__mark">
-          <img v-if="vendor && vendor.icon" :alt="vendor.name" :src="mark" height="132" width="132" />
-          <v-icon v-else-if="!busy" size="40">storefront</v-icon>
-        </div>
-
-        <div class="k-seller-hero__copy">
-          <p class="k-eyebrow">Seller on {{ shopTitle }}</p>
-          <h1 id="k-seller-name" class="k-seller-hero__name">{{ vendor ? vendor.name : " " }}</h1>
-          <p class="k-seller-hero__lede">
-            {{ vendor && vendor.description ? vendor.description : `An independent seller on ${shopTitle}.` }}
-          </p>
-
-          <nav v-if="sellsIn.length" aria-label="Aisles this seller sells in" class="k-seller-hero__aisles">
-            <a
-              v-for="aisle in shownAisles"
-              :key="aisle.id"
-              :href="`#k-seller-aisle-${aisle.id}`"
-              :style="{ '--k-tint': tint(aisle) }"
-              class="k-seller-hero__aisle"
-              @click.prevent="jump(aisle)"
-            >
-              <img v-if="aisle.icon" :src="aisleImage(aisle, 64)" alt="" height="24" width="24" />
-              {{ aisle.title || aisle.name }}
-            </a>
-            <button
-              v-if="sellsIn.length > shownAisles.length"
-              class="k-seller-hero__aisle -more"
-              type="button"
-              @click="all_aisles = true"
-            >
-              +{{ sellsIn.length - shownAisles.length }} more
-            </button>
-          </nav>
-
-          <div class="k-seller-hero__acts">
-            <router-link :to="homeRoute" class="k-btn k-btn--line">
-              <v-icon class="k-flip" size="20">chevron_left</v-icon>
-              All aisles
-            </router-link>
-          </div>
-        </div>
-      </div>
-
-      <div v-if="stall.length" aria-hidden="true" class="k-seller-hero__stall">
-        <span v-for="(product, i) in stall" :key="product.id" :class="`-at${i}`" class="k-seller-hero__disc">
-          <img :src="picture(product)" alt="" />
-        </span>
-      </div>
-    </section>
-  </div>
+  <kalio-shelf-head
+    :crumbs="crumbs"
+    :eyebrow="`Seller on ${shopTitle}`"
+    :image="mark"
+    :lede="vendor && vendor.description ? vendor.description : `An independent seller on ${shopTitle}.`"
+    :loading="busy"
+    :meta="meta"
+    :tabs="tabs"
+    :title="vendor ? vendor.name : null"
+    cover
+    tabs-label="Aisles this seller sells in"
+  />
 </template>
 
 <script>
-import { aisleImage, aisleIndex, featured, offers, productImage, tintFor, vendorImage } from "./kalio-catalog";
+import KalioShelfHead from "./KalioShelfHead.vue";
+import { aisleIndex, countProducts, featured, offers, vendorImage } from "./kalio-catalog";
 
 export default {
   name: "KalioSellerHero",
+  components: { KalioShelfHead },
 
   props: {
     vendorId: { type: [Number, String], required: true },
@@ -83,19 +44,31 @@ export default {
       vendor: null,
       busy: true,
       sellsIn: [],
-      stall: [],
-      all_aisles: false,
+      total: null,
+      on_offer: null,
     };
   },
 
   computed: {
-    /* A seller in every aisle would fill the sign with chips; six, then a
-       button for the rest. */
-    shownAisles() {
-      return this.all_aisles ? this.sellsIn : this.sellsIn.slice(0, 6);
-    },
     mark() {
       return vendorImage(this.vendor);
+    },
+    crumbs() {
+      return [{ label: this.shopTitle, to: this.homeRoute }, { label: this.vendor ? this.vendor.name : "Seller" }];
+    },
+    meta() {
+      const parts = [];
+      if (this.total !== null) parts.push(`${this.total.toLocaleString()} ${this.total === 1 ? "product" : "products"}`);
+      if (this.on_offer) parts.push(`${this.on_offer.toLocaleString()} on offer`);
+      return parts.join(" · ") || null;
+    },
+    tabs() {
+      return this.sellsIn.map((aisle) => ({
+        key: aisle.id,
+        label: aisle.title || aisle.name,
+        href: `#k-seller-aisle-${aisle.id}`,
+        click: () => this.jump(aisle),
+      }));
     },
     shopTitle() {
       return this.$store.getters.getShop?.title || "Kalio";
@@ -116,18 +89,20 @@ export default {
   },
 
   methods: {
-    aisleImage,
-    tint: tintFor,
-    picture(product) {
-      return productImage(product);
-    },
-
     fetch() {
       this.vendor = null;
       this.busy = true;
       this.sellsIn = [];
-      this.stall = [];
+      this.total = null;
+      this.on_offer = null;
       const id = this.vendorId;
+
+      countProducts(null, { vendor_id: id }).then((count) => {
+        if (String(id) === String(this.vendorId)) this.total = count;
+      });
+      countProducts(null, { vendor_id: id, filter: JSON.stringify({ only_has_discount: true }) }).then((count) => {
+        if (String(id) === String(this.vendorId)) this.on_offer = count;
+      });
 
       window.$storefront.vendor
         .getVendor(id)
@@ -141,16 +116,12 @@ export default {
           this.busy = false;
         });
 
-      /* The aisles this seller sells in, in Kalio's featured order, and a
-         stall of products only they sell (then any of theirs). */
-      Promise.all([offers(), aisleIndex()]).then(([{ sellersOf, shelfOf }, index]) => {
+      /* The aisles this seller sells in, in Kalio's featured order. */
+      Promise.all([offers(), aisleIndex()]).then(([{ shelfOf }, index]) => {
         if (String(id) !== String(this.vendorId)) return;
         const shelf = shelfOf.get(Number(id)) || [];
         const aisleIds = new Set(shelf.map((product) => product.category_id));
         this.sellsIn = featured([...index.values()].filter((aisle) => aisleIds.has(aisle.id)));
-        const own = shelf.filter((product) => product.icon && (sellersOf.get(product.id) || []).length === 1);
-        const rest = shelf.filter((product) => product.icon && !own.includes(product));
-        this.stall = [...own, ...rest].slice(0, 3);
       });
     },
 

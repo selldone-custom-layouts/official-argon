@@ -934,18 +934,38 @@ $k-header-strip: 46px;
   }
 }
 
-/* The toolbar answers to the column it sits in, not to the window: beside
-   the open filter panel a 1440px window leaves it about 830px, and the six
-   sort pills ran under Filter ("Most Expensive" was cut off). Under 980px
-   of row, "All" and the view mode keep only their icons (their words are
-   still read aloud); under 820px the sort pills fold into the "Sort by"
-   menu, as Selldone does below a 900px window. */
+/* Design A's toolbar: Filter on the start side; on the end side the sort
+   as one menu ("Newest ▾") instead of a row of six pills (which also ran
+   under Filter beside the open panel), then availability and the view mode
+   as two icon buttons, their words still read aloud. */
 .s--storefront-products-listing .s--sort-view {
-  container: k-toolbar / inline-size;
-}
+  > div:has(> .v-btn-group),
+  .hide-on-small-900 {
+    display: none !important;
+  }
 
-@container k-toolbar (max-width: 980px) {
-  .s--sort-view .v-btn--stacked {
+  .v-btn.border-start {
+    order: 0;
+    margin-inline-start: 0 !important;
+  }
+
+  > .v-btn.show-on-small-900,
+  > div > .v-btn.show-on-small-900,
+  .show-on-small-900 {
+    display: inline-flex !important;
+    order: 2;
+    margin-inline-start: auto !important;
+    height: 40px !important;
+    padding: 0 16px !important;
+    border: 1px solid var(--k-line) !important;
+    border-radius: var(--k-pill) !important;
+    background: var(--k-card) !important;
+    color: var(--k-ink) !important;
+    font-weight: 600 !important;
+  }
+
+  .v-btn--stacked {
+    order: 3;
     width: 40px;
     padding: 0 !important;
 
@@ -960,29 +980,19 @@ $k-header-strip: 46px;
   }
 }
 
-@container k-toolbar (max-width: 820px) {
-  .s--sort-view .hide-on-small-900 {
-    display: none !important;
-  }
-
-  .s--sort-view .show-on-small-900 {
-    display: inline-flex !important;
-  }
-}
-
 /* ▆▆▆▆▆▆▆▆ Filter panel ▆▆▆▆▆▆▆▆
 
    Selldone draws the panel in its dark theme as a full-height drawer pinned
-   to the window's edge. Kalio's is a cream sidebar inside the catalogue
-   column, as tall as its filters: the aisle on its tint at the top, then
-   each filter group on its own white card — on/off switches for "only
-   originals" and "only discounted", a green price range, and brands and
-   sizes as pills that fill green when chosen. Vuetify's dark-theme
-   variables are re-pointed to light ones, so every nested control reads ink
-   on white. On a phone it is a sheet over the page. */
+   to the window's edge. Kalio's is design A's quiet sidebar inside the
+   catalogue column, as tall as its filters: no ground of its own, groups
+   divided by hairlines under small-caps headings, "only originals" and
+   "only discounted" as checkboxes, an ink price range, and brands and sizes
+   as pills that fill ink when chosen. Vuetify's dark-theme variables are
+   re-pointed to light ones, so every nested control reads ink on white. On
+   a phone it is a white sheet over the page. */
 
-$k-filter-w: 280px;
-$k-filter-gap: 28px;
+$k-filter-w: 244px;
+$k-filter-gap: 36px;
 
 .s--storefront-products-filter-menu,
 .s--storefront-products-listing .v-navigation-drawer {
@@ -992,16 +1002,16 @@ $k-filter-gap: 28px;
   --v-theme-on-background: 16, 35, 27;
   --v-border-color: 232, 228, 218;
 
-  background: var(--k-wash) !important;
+  background: var(--k-paper) !important;
   color: var(--k-ink) !important;
   border: 0 !important;
-  border-radius: var(--k-radius-lg) !important;
+  border-radius: 0 !important;
   box-shadow: none !important;
   font-family: var(--k-body);
   text-align: start;
 
   .v-navigation-drawer__content {
-    padding: 10px;
+    padding: 0;
     scrollbar-width: thin;
   }
 
@@ -1009,71 +1019,48 @@ $k-filter-gap: 28px;
   .text-start {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0;
   }
 
-  /* Selldone separates groups with rules; Kalio's groups are cards. */
+  /* Selldone separates groups with its own rules; Kalio's are hairlines on
+     the groups themselves. */
   .v-divider,
   .-divider {
     display: none !important;
   }
 
-  /* ── The aisle (or shop) at the top, on its tint ── */
+  /* ── The panel's own head: "Filters" and its close button. The aisle's
+     name and picture are already in the shelf head above. ── */
   .text-start > .v-list-item:first-child {
     min-height: 0 !important;
-    padding: 14px 6px 14px 14px !important;
-    border-radius: 20px !important;
-    background: var(--k-tint, var(--k-green-soft)) !important;
+    padding: 4px 0 10px !important;
+    border-bottom: 1px solid var(--k-line-soft);
+    background: transparent !important;
 
-    .v-list-item__overlay {
-      display: none;
-    }
-
-    .v-avatar {
-      width: 44px !important;
-      height: 44px !important;
-      background: #fff !important;
-      box-shadow: 0 6px 14px -10px rgba(16, 35, 27, 0.5);
-
-      .v-img__img {
-        object-fit: contain;
-        padding: 5px;
-      }
-    }
-
-    .v-list-item__content::before {
-      content: "Refine";
-      display: block;
-      margin-bottom: 2px;
-      font-family: var(--k-body);
-      font-size: 11.5px;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--k-green);
-    }
-
-    .v-list-item-title {
-      font-family: var(--k-display) !important;
-      font-size: 19.5px !important;
-      font-weight: 600 !important;
-      line-height: 1.15 !important;
-      letter-spacing: -0.01em;
-      white-space: normal !important;
-      color: var(--k-ink) !important;
-    }
-
-    /* The aisle sign beside the panel already carries the description. */
+    .v-list-item__overlay,
+    .v-list-item__prepend,
+    .v-list-item-title,
     .v-list-item-subtitle {
       display: none !important;
     }
 
+    .v-list-item__content::before {
+      content: "Filters";
+      display: block;
+      font-family: var(--k-body);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--k-ink);
+    }
+
     .v-btn {
-      width: 36px !important;
-      height: 36px !important;
+      width: 32px !important;
+      height: 32px !important;
       border-radius: 50% !important;
-      background: rgba(255, 255, 255, 0.7) !important;
-      color: var(--k-ink-2) !important;
+      background: transparent !important;
+      color: var(--k-muted) !important;
       opacity: 1 !important;
 
       .v-icon {
@@ -1084,14 +1071,15 @@ $k-filter-gap: 28px;
 
   /* ── Category tree (the catalogue and seller pages list aisles here) ── */
   .v-treeview {
-    padding: 6px !important;
-    border-radius: 20px;
-    background: var(--k-paper) !important;
+    padding: 8px 0 !important;
+    border-radius: 0;
+    border-bottom: 1px solid var(--k-line-soft);
+    background: transparent !important;
 
     .v-list-item {
-      min-height: 38px !important;
-      padding: 2px 8px !important;
-      border-radius: 12px !important;
+      min-height: 36px !important;
+      padding: 2px 6px !important;
+      border-radius: 10px !important;
 
       .v-list-item__overlay {
         display: none;
@@ -1121,7 +1109,7 @@ $k-filter-gap: 28px;
 
     .font-weight-bold {
       font-weight: 700 !important;
-      color: var(--k-green) !important;
+      color: var(--k-ink) !important;
     }
 
     .v-avatar {
@@ -1131,17 +1119,16 @@ $k-filter-gap: 28px;
     }
   }
 
-  /* ── Only originals / only discounted: a card with a switch ── */
+  /* ── Only originals / only discounted: a checkbox row ── */
   .s--smart-toggle {
     > div {
-      padding: 10px 12px !important;
-      border-radius: 18px !important;
-      background: var(--k-paper);
-      transition: background-color 160ms ease, box-shadow 160ms ease;
+      padding: 7px 0 !important;
+      border-radius: 0 !important;
+      background: transparent;
+    }
 
-      &:hover {
-        box-shadow: inset 0 0 0 1px var(--k-line-strong);
-      }
+    &:first-of-type > div {
+      padding-top: 14px !important;
     }
 
     .mnh {
@@ -1150,100 +1137,66 @@ $k-filter-gap: 28px;
 
     b {
       font-size: 14.5px;
-      font-weight: 600;
-      color: var(--k-ink);
+      font-weight: 500;
+      color: var(--k-ink-2);
     }
 
-    /* The filter's own icon leads, in a small green disc. */
     .mnh > .v-icon {
-      order: -1;
-      flex: 0 0 34px;
-      width: 34px;
-      height: 34px;
-      margin-inline-end: 10px;
-      border-radius: 50%;
-      display: inline-flex !important;
-      align-items: center;
-      justify-content: center;
-      line-height: 34px !important;
-      background: var(--k-green-soft);
-      color: var(--k-green) !important;
-      font-size: 18px !important;
-      opacity: 1;
+      display: none !important;
     }
 
-    /* Selldone's radio dot becomes a switch at the end of the row. */
+    /* Selldone's radio dot becomes a checkbox at the start of the row. */
     .mnh > .flex-grow-0 {
-      order: 3;
+      order: -1;
       min-width: 0 !important;
       min-height: 0 !important;
-      margin: 0 0 0 10px !important;
+      margin: 0 10px 0 0 !important;
 
       > div {
-        width: 40px;
-        height: 24px;
+        width: 18px;
+        height: 18px;
         padding: 0 !important;
-        border-radius: var(--k-pill);
-        background: var(--k-line-strong) !important;
-        transition: background-color 160ms ease;
-
-        &::after {
-          content: "";
-          position: absolute;
-          top: 3px;
-          inset-inline-start: 3px;
-          width: 18px;
-          height: 18px;
-          border-radius: 50%;
-          background: #fff;
-          box-shadow: 0 2px 5px -1px rgba(16, 35, 27, 0.4);
-          transition: inset-inline-start 160ms ease;
-        }
+        border-radius: 5px;
+        border: 1.5px solid #c9c4b8;
+        background: #fff !important;
+        transition: background-color 140ms ease, border-color 140ms ease;
       }
+    }
+
+    &:hover .mnh > .flex-grow-0 > div {
+      border-color: var(--k-ink-2);
     }
 
     .s--smart-toggle__indicator {
       display: none !important;
     }
 
-    &.s--smart-toggle--checked {
-      > div {
-        background: var(--k-green-soft);
-      }
-
-      .mnh > .v-icon {
-        background: var(--k-green);
-        color: #fff !important;
-      }
-
-      .mnh > .flex-grow-0 > div {
-        background: var(--k-green) !important;
-
-        &::after {
-          inset-inline-start: 19px;
-        }
-      }
+    &.s--smart-toggle--checked .mnh > .flex-grow-0 > div {
+      border-color: var(--k-ink);
+      background: var(--k-ink) !important;
+      box-shadow: inset 0 0 0 3px #fff;
     }
   }
 
   /* ── Groups: price range, brands, sizes, specs ── */
   div:has(> .s-filter-header) {
-    padding: 2px 4px 12px;
-    border-radius: 20px;
-    background: var(--k-paper);
+    padding: 8px 0 16px;
+    border-top: 1px solid var(--k-line-soft);
+    border-radius: 0;
+    background: transparent;
   }
 
   .s-filter-header {
     display: flex;
     align-items: center;
-    min-height: 44px;
-    padding: 10px 10px 4px !important;
+    min-height: 40px;
+    padding: 8px 0 2px !important;
     font-family: var(--k-body) !important;
     font-size: 12px !important;
     font-weight: 700 !important;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--k-ink-2) !important;
+    color: var(--k-muted) !important;
 
     /* Selldone's decorative icon before the title; the reset button stays. */
     > .v-icon {
@@ -1264,7 +1217,7 @@ $k-filter-gap: 28px;
 
   /* Price range. */
   .v-slider {
-    margin: 12px 16px 0 !important;
+    margin: 12px 8px 0 !important;
   }
 
   .v-slider-track__background {
@@ -1273,16 +1226,16 @@ $k-filter-gap: 28px;
   }
 
   .v-slider-track__fill {
-    background: var(--k-green) !important;
+    background: var(--k-ink) !important;
   }
 
   .v-slider-thumb {
-    color: var(--k-green) !important;
+    color: var(--k-ink) !important;
   }
 
   .v-slider-thumb__surface {
     background: #fff !important;
-    border: 2.5px solid var(--k-green);
+    border: 2px solid var(--k-ink);
     box-shadow: 0 4px 10px -4px rgba(16, 35, 27, 0.45) !important;
 
     &::before,
@@ -1303,7 +1256,7 @@ $k-filter-gap: 28px;
 
   .v-row:has(> .v-col > .u--price) {
     position: relative;
-    margin: 10px 8px 0 !important;
+    margin: 10px 0 0 !important;
     gap: 22px;
     flex-wrap: nowrap;
 
@@ -1341,7 +1294,7 @@ $k-filter-gap: 28px;
 
   /* Brands, sizes and other option filters: pills. */
   .v-chip-group {
-    padding: 2px 6px 0 !important;
+    padding: 2px 0 0 !important;
   }
 
   .v-chip {
@@ -1361,13 +1314,13 @@ $k-filter-gap: 28px;
     }
 
     &:hover {
-      border-color: var(--k-green) !important;
+      border-color: var(--k-ink-2) !important;
     }
   }
 
   .v-chip--selected {
-    border-color: var(--k-green) !important;
-    background: var(--k-green) !important;
+    border-color: var(--k-ink) !important;
+    background: var(--k-ink) !important;
     color: #fff !important;
 
     .v-chip__filter {
@@ -1455,9 +1408,11 @@ $k-filter-gap: 28px;
       opacity: 1 !important;
     }
 
-    /* The sheet covers the header and the bottom bar. */
-    .v-navigation-drawer__content {
-      padding-bottom: 24px;
+    /* The sheet covers the header and the bottom bar; its content keeps a
+       margin from the sheet's edges (the panel's own rule, three classes
+       deep, sets none on desktop). */
+    .s--storefront-products-filter-menu .v-navigation-drawer__content {
+      padding: 18px 20px 24px;
     }
 
     /* Sixteen aisles pushed price and brand to the bottom of the sheet; the

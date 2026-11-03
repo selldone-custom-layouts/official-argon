@@ -26,8 +26,9 @@ pale tint of their own. The approved mockup is in
 | Product overview (packshot panel, buy column) — Selldone's SProductOverview logic via `extends`, Kalio markup | `components/kalio/product/KalioProductOverview.vue` |
 | Seller offer cards — SSmartSelectVendor logic via `extends` | `components/kalio/product/KalioSellerOffers.vue` |
 | Product page styles | `style/kalio-product.scss` |
-| Aisle sign and aisle chips on category pages | `components/kalio/KalioAisleHeader.vue` |
-| Seller storefront: sign with mark, aisles and a stall of their products; offers and one row per aisle | `components/kalio/KalioSellerHero.vue`, `KalioSellerShelf.vue` |
+| Shelf head (design A) for every shop page that lists products: crumbs, title, count, a row of aisle words | `components/kalio/KalioShelfHead.vue` |
+| Aisle page head | `components/kalio/KalioAisleHeader.vue` |
+| Seller storefront: shelf head with their mark and aisles; offers and one row per aisle | `components/kalio/KalioSellerHero.vue`, `KalioSellerShelf.vue` |
 | Header: wordmark, Aisles menu, search, account, basket pill, aisle strip; basket and phone-menu drawers | `components/kalio/shell/KalioHeader.vue` |
 | Footer: aisle band, aisles, sellers, shop links (the merchant's footer menu), account | `components/kalio/shell/KalioFooter.vue` |
 | Sign-in sheet (Selldone's SShopLogin inside) | `components/kalio/shell/KalioSignIn.vue` |
@@ -40,6 +41,12 @@ pale tint of their own. The approved mockup is in
 | Tokens and shared pieces | `style/kalio-tokens.scss` |
 | Skin for Selldone's own components | `style/kalio-platform.scss` |
 | Kalio's own sections | `style/kalio-sections.scss` |
+
+The shop pages (aisles, the catalogue, search, deals, sellers) follow
+design A of three drawn on 3 November 2026 in `../kalio-design/aisle-options/`:
+named in type rather than painted, every packshot on one stone well
+(`--k-well`), the saving as coral type, a quiet filter sidebar, and the sort
+as one menu. The aisle tints stay on the home page.
 
 The home's top and middle (0.2.4) come from three options drawn in
 `../kalio-design/hero-options/` on 3 November 2026: the deals counter was

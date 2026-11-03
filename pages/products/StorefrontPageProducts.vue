@@ -73,6 +73,7 @@
       <kalio-aisle-header
         v-if="category_name && !vendor_id"
         :category-name="category_name"
+        :total="catalogue_total"
       />
 
       <!-- ▆▆▆▆▆▆▆▆ Catalogue: every product, a search, the deals ▆▆▆▆▆▆▆▆ -->
@@ -90,7 +91,6 @@
         v-if="!show_home"
         :key="$route.path"
         :class="{ '-catalogue': catalogue }"
-        :style="{ '--k-tint': aisle_tint }"
         :vendor-id="vendor_id"
         :has-breadcrumb="!category_name && !vendor_id"
         has-filter
@@ -113,7 +113,6 @@ import KalioCatalogueHeader from "../../components/kalio/KalioCatalogueHeader.vu
 import KalioSellerShelf from "../../components/kalio/KalioSellerShelf.vue";
 import KalioSellerHero from "../../components/kalio/KalioSellerHero.vue";
 import {StorefrontSeo} from "../../helpers/StorefrontSeo";
-import { aisles, tintFor } from "../../components/kalio/kalio-catalog";
 import "../../components/kalio/kalio-offer-price"; // the listing's quick-buy sheet: the struck price follows the chosen seller
 
 export default {
@@ -136,8 +135,7 @@ export default {
   data: () => ({
     vendor_id: null /*Show only for this vendor! */,
     seoNavigation: StorefrontSeo.captureNavigation(),
-    aisle_tint: null /* The aisle's tint, under every card of its listing. */,
-    catalogue_total: null /* The listing's total, for the catalogue header. */,
+    catalogue_total: null /* The listing's total, for the aisle and catalogue headers. */,
   }),
   /**
    * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -203,17 +201,8 @@ export default {
     },
     "$route.path"() {
       this.seoNavigation = StorefrontSeo.captureNavigation();
-    },
-    category_name: {
-      handler(name) {
-        this.aisle_tint = null;
-        if (!name) return;
-        aisles().then((list) => {
-          if (name !== this.category_name) return;
-          this.aisle_tint = tintFor(list.find((aisle) => aisle.name === name));
-        });
-      },
-      immediate: true,
+      /* A new aisle or seller starts without a count until its listing reads. */
+      this.catalogue_total = null;
     },
     /* The router reuses this one component for the catalogue root, every
        aisle and every seller, so created() runs only for the first of them:

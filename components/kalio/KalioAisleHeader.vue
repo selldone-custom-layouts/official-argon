@@ -1,59 +1,42 @@
 <!--
   Kalio — Aisle header.
 
-  The top of a category page: the aisle's title, its description and its
-  picture on the aisle's own tint, all from the live category record, with a
-  row of every aisle beneath it so a shopper can step to the next aisle
-  without going back to the front. Selldone's default category page opens
-  straight onto a breadcrumb and a grid.
+  The top of a category page, in the shelf head (KalioShelfHead): a
+  breadcrumb, the aisle's picture, its title and description from the live
+  category record, how many products it holds and how many are on offer,
+  then every aisle as a row of words so a shopper can step to the next one.
+  Selldone's default category page opens straight onto a breadcrumb and a
+  grid.
 
   The record is fetched with with_parent on a one-product page of that
   aisle, which returns the category itself as "parent". A stale link with no
-  record renders nothing, and the listing below shows its own empty state.
+  record shows only the crumbs and the aisle row; the listing below shows
+  its own empty state.
 -->
 <template>
-  <div class="k-aisle-page k-wrap">
-    <header v-if="aisle" :style="{ '--k-tint': tint }" class="k-aisle-head">
-      <div class="k-aisle-head__copy">
-        <router-link :to="homeRoute" class="k-aisle-head__back">
-          <v-icon class="k-flip" size="18">chevron_left</v-icon>
-          All aisles
-        </router-link>
-        <p class="k-eyebrow">Aisle</p>
-        <h1 class="k-aisle-head__title">{{ aisle.title || aisle.name }}</h1>
-        <p v-if="aisle.description" class="k-aisle-head__lede">{{ aisle.description }}</p>
-      </div>
-      <div v-if="aisle.icon" aria-hidden="true" class="k-aisle-head__art">
-        <img :src="image" alt="" height="200" width="200" />
-      </div>
-    </header>
-    <div v-else-if="busy" aria-hidden="true" class="k-aisle-head -loading"></div>
-
-    <nav v-if="list.length > 1" aria-label="Aisles" class="k-aisle-chips">
-      <router-link
-        v-for="item in list"
-        :key="item.id"
-        :aria-current="item.name === categoryName ? 'page' : undefined"
-        :class="{ '-on': item.name === categoryName }"
-        :style="{ '--k-tint': tintOf(item) }"
-        :to="route(item)"
-        class="k-aisle-chip"
-      >
-        <img v-if="item.icon" :src="chipImage(item)" alt="" height="28" width="28" loading="lazy" />
-        {{ item.title || item.name }}
-      </router-link>
-    </nav>
-  </div>
+  <kalio-shelf-head
+    :crumbs="crumbs"
+    :image="image"
+    :lede="aisle && aisle.description"
+    :loading="busy"
+    :meta="meta"
+    :tabs="tabs"
+    :title="aisle ? aisle.title || aisle.name : null"
+  />
 </template>
 
 <script>
-import { aisleImage, aisleRoute, aisles, tintFor } from "./kalio-catalog";
+import KalioShelfHead from "./KalioShelfHead.vue";
+import { aisleImage, aisleRoute, aisles, countProducts } from "./kalio-catalog";
 
 export default {
   name: "KalioAisleHeader",
+  components: { KalioShelfHead },
 
   props: {
     categoryName: { type: String, required: true },
+    /** The listing's own total, as it is filtered; null until it is read. */
+    total: { type: Number, default: null },
   },
 
   data() {
@@ -61,18 +44,33 @@ export default {
       aisle: null,
       busy: true,
       list: [],
+      on_offer: null,
     };
   },
 
   computed: {
     image() {
-      return aisleImage(this.aisle, 256);
+      return this.aisle && this.aisle.icon ? aisleImage(this.aisle, 128) : null;
     },
-    tint() {
-      return tintFor(this.aisle);
+    crumbs() {
+      return [
+        { label: this.$store.getters.getShop?.title || "Kalio", to: { name: window.$storefront.routes.SHOP_PAGE } },
+        { label: this.aisle ? this.aisle.title || this.aisle.name : this.categoryName },
+      ];
     },
-    homeRoute() {
-      return { name: window.$storefront.routes.SHOP_PAGE };
+    meta() {
+      const parts = [];
+      if (this.total !== null) parts.push(`${this.total.toLocaleString()} ${this.total === 1 ? "product" : "products"}`);
+      if (this.on_offer) parts.push(`${this.on_offer.toLocaleString()} on offer`);
+      return parts.join(" · ") || null;
+    },
+    tabs() {
+      return this.list.map((item) => ({
+        key: item.id,
+        label: item.title || item.name,
+        to: aisleRoute(item),
+        on: item.name === this.categoryName,
+      }));
     },
   },
 
@@ -88,19 +86,15 @@ export default {
   },
 
   methods: {
-    route: aisleRoute,
-    tintOf: tintFor,
-    chipImage(item) {
-      return aisleImage(item, 64);
-    },
-
     fetch() {
+      const name = this.categoryName;
       this.aisle = null;
+      this.on_offer = null;
       this.busy = true;
       window.$storefront.products
-        .list(this.categoryName, 0, 1, { with_parent: true, products_only: true })
+        .list(name, 0, 1, { with_parent: true, products_only: true })
         .then(({ parent }) => {
-          this.aisle = parent && parent.id ? parent : null;
+          if (name === this.categoryName) this.aisle = parent && parent.id ? parent : null;
         })
         .catch(() => {
           this.aisle = null;
@@ -108,6 +102,9 @@ export default {
         .finally(() => {
           this.busy = false;
         });
+      countProducts(name, { filter: JSON.stringify({ only_has_discount: true }) }).then((count) => {
+        if (name === this.categoryName) this.on_offer = count;
+      });
     },
   },
 };

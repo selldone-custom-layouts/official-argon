@@ -1,43 +1,25 @@
 <!--
   Kalio — Catalogue header.
 
-  The top of the whole catalogue ("Every product", a search, the deals): what
-  the shopper is looking at and how many products it holds, then the row of
-  aisles. Selldone's catalogue opened on a column of tall aisle cards with
-  no title and no count; the aisle row says the same in one line.
+  The top of the whole catalogue ("Every product", a search, the deals), in
+  the shelf head (KalioShelfHead): what the shopper is looking at and how
+  many products it holds, then the row of aisles with "All products" first.
+  Selldone's catalogue opened on a column of tall aisle cards with no title
+  and no count.
 
   The count is the listing's own total, passed in by the page.
 -->
 <template>
-  <div class="k-aisle-page k-wrap">
-    <header class="k-cat-head">
-      <p class="k-eyebrow">{{ eyebrow }}</p>
-      <h1 class="k-cat-head__title">{{ title }}</h1>
-      <p v-if="total !== null" class="k-cat-head__count">
-        {{ total.toLocaleString() }} {{ total === 1 ? "product" : "products" }}
-      </p>
-    </header>
-
-    <nav v-if="list.length > 1" aria-label="Aisles" class="k-aisle-chips">
-      <router-link
-        v-for="item in list"
-        :key="item.id"
-        :style="{ '--k-tint': tintOf(item) }"
-        :to="aisleRoute(item)"
-        class="k-aisle-chip"
-      >
-        <img v-if="item.icon" :src="aisleImage(item, 64)" alt="" height="28" width="28" loading="lazy" />
-        {{ item.title || item.name }}
-      </router-link>
-    </nav>
-  </div>
+  <kalio-shelf-head :crumbs="crumbs" :eyebrow="eyebrow" :meta="meta" :tabs="tabs" :title="title" />
 </template>
 
 <script>
-import { aisleImage, aisleRoute, aisles, tintFor } from "./kalio-catalog";
+import KalioShelfHead from "./KalioShelfHead.vue";
+import { aisleRoute, aisles, catalogueRoute } from "./kalio-catalog";
 
 export default {
   name: "KalioCatalogueHeader",
+  components: { KalioShelfHead },
   inject: ["$shop"],
 
   props: {
@@ -65,23 +47,34 @@ export default {
     eyebrow() {
       if (this.search) return "Search results";
       if (this.deals) return "On offer";
-      return `Everything at ${this.$shop?.title || "Kalio"}`;
+      return null;
     },
     title() {
       if (this.search) return `“${this.search}”`;
       if (this.deals) return "Today’s deals";
       return "All products";
     },
+    crumbs() {
+      return [
+        { label: this.$shop?.title || "Kalio", to: { name: window.$storefront.routes.SHOP_PAGE } },
+        { label: this.search ? "Search" : this.title },
+      ];
+    },
+    meta() {
+      if (this.total === null) return null;
+      return `${this.total.toLocaleString()} ${this.total === 1 ? "product" : "products"}`;
+    },
+    tabs() {
+      if (!this.list.length) return [];
+      return [
+        { key: "all", label: "All products", to: catalogueRoute(), on: !this.search && !this.deals },
+        ...this.list.map((item) => ({ key: item.id, label: item.title || item.name, to: aisleRoute(item) })),
+      ];
+    },
   },
 
   mounted() {
     aisles().then((list) => (this.list = list));
-  },
-
-  methods: {
-    aisleImage,
-    aisleRoute,
-    tintOf: tintFor,
   },
 };
 </script>

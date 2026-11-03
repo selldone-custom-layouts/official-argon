@@ -38,6 +38,11 @@
      tint of anything that has no aisle of its own. */
   --k-tint: #f4f2ec;
 
+  /* The shop pages' one ground for every packshot (design A, 3 November
+     2026): the aisle is named in type, not painted on its products. */
+  --k-well: #f5f4f0;
+  --k-line-soft: #efece5;
+
   /* Type */
   --k-display: "Fraunces", Georgia, "Times New Roman", serif;
   --k-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;

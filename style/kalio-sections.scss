@@ -8,8 +8,7 @@
 /* Selldone's page card centres its text; Kalio's sections read from the
    start edge. */
 .k-home,
-.k-aisle-page,
-.k-seller-hero,
+.k-shelf-head,
 .k-seller-shelf {
   text-align: start;
 }
@@ -1436,136 +1435,264 @@ $k-shelf-pic-phone: 150px;
   margin-top: 52px;
 }
 
-/* ▆▆▆▆▆▆▆▆ Aisle page ▆▆▆▆▆▆▆▆ */
+/* ▆▆▆▆▆▆▆▆ Shelf head: aisles, the catalogue, sellers ▆▆▆▆▆▆▆▆
 
-.k-aisle-page {
-  margin-top: 20px;
-  margin-bottom: 8px;
-  text-align: start;
-}
+   Design A (3 November 2026): the page is named in type, not painted. A
+   breadcrumb; a small round picture on the stone ground; the title, a line
+   of description and the count; then a row of words to step sideways, the
+   current one underlined. KalioShelfHead. */
 
-/* The catalogue's own header: what is listed and how much of it. */
-.k-cat-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 16px;
-  padding: 10px 0 4px;
+.k-shelf-head {
+  padding-top: 22px;
 
-  .k-eyebrow {
-    flex: 0 0 100%;
-    margin: 0;
-  }
-
-  &__title {
-    margin: 0;
-    font-family: var(--k-display);
-    font-size: clamp(32px, 4vw, 46px);
-    font-weight: 600;
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    color: var(--k-ink);
-    overflow-wrap: anywhere;
-  }
-
-  &__count {
-    margin: 0;
-    font-size: 15px;
-    font-weight: 500;
+  &__crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 6px;
+    font-size: 13.5px;
     color: var(--k-muted);
-    font-variant-numeric: tabular-nums;
+
+    a {
+      color: var(--k-green) !important;
+      font-weight: 500;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+    }
+
+    .v-icon {
+      color: var(--k-line-strong);
+    }
   }
-}
 
-/* Under it, the aisle row stands for Selldone's column of tall aisle
-   cards, which opened the catalogue before any product. */
-.-catalogue > .s--storefront-products-listing .s--products-listing-row:has(> .s--category-card) {
-  display: none !important;
-}
+  &__main {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px 28px;
+    padding: 22px 0 18px;
+  }
 
-.k-aisle-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  min-height: 200px;
-  padding: 32px 40px;
-  border-radius: var(--k-radius-lg);
-  background: color-mix(in oklab, var(--k-tint) 90%, #3d5a48);
+  &__titlebox {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-width: 0;
+  }
 
-  &.-loading {
+  &__mark {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: var(--k-well);
+    overflow: hidden;
+
+    img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+
+    /* A seller's mark is a picture of its own, not a cut-out. */
+    &.-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      mix-blend-mode: normal;
+    }
+  }
+
+  &__main.-loading &__mark {
     @extend %k-skeleton;
   }
 
-  &__back {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    min-height: 32px;
-    margin-bottom: 8px;
-    margin-inline-start: -4px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--k-green) !important;
-    text-decoration: none;
+  &__copy {
+    min-width: 0;
 
-    &:hover {
-      text-decoration: underline;
-      text-underline-offset: 3px;
+    .k-eyebrow {
+      margin: 0 0 6px;
     }
   }
 
   &__title {
     margin: 0;
     font-family: var(--k-display);
-    font-size: clamp(34px, 4vw, 54px);
+    font-size: clamp(34px, 3.6vw, 48px);
     font-weight: 600;
     line-height: 1.02;
     letter-spacing: -0.025em;
     color: var(--k-ink);
+    overflow-wrap: anywhere;
   }
 
   &__lede {
-    margin: 12px 0 0;
-    max-width: 540px;
-    font-size: 16px;
+    margin: 6px 0 0;
+    max-width: 620px;
+    font-size: 15.5px;
     line-height: 1.5;
-    color: var(--k-ink-2);
+    color: var(--k-muted);
   }
 
-  &__art {
+  &__meta {
     flex: 0 0 auto;
+    margin: 0;
+    padding-bottom: 3px;
+    font-size: 15px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--k-muted);
+    white-space: nowrap;
+  }
+
+  /* ―― The row of words ―― */
+  &__tabs-wrap {
+    position: relative;
+    border-bottom: 1px solid var(--k-line);
+  }
+
+  &__tabs {
+    display: flex;
+    gap: 28px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    white-space: nowrap;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__tabs-wrap:not(.-at-end) &__tabs {
+    mask-image: linear-gradient(90deg, #000 calc(100% - 72px), transparent);
+  }
+
+  &__tabs-wrap:not(.-at-start):not(.-at-end) &__tabs {
+    mask-image: linear-gradient(90deg, transparent, #000 72px, #000 calc(100% - 72px), transparent);
+  }
+
+  &__tabs-wrap:not(.-at-start).-at-end &__tabs {
+    mask-image: linear-gradient(90deg, transparent, #000 72px);
+  }
+
+  &__tab {
+    position: relative;
+    flex: 0 0 auto;
+    padding: 12px 0 13px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--k-muted) !important;
+    text-decoration: none;
+    transition: color 140ms ease;
+
+    &:hover {
+      color: var(--k-ink) !important;
+    }
+
+    &.-on {
+      font-weight: 700;
+      color: var(--k-ink) !important;
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+        height: 2px;
+        border-radius: 2px;
+        background: var(--k-ink);
+      }
+    }
+  }
+
+  /* On a pointer, small arrows at the row's ends; touch just swipes. */
+  &__nudge {
+    position: absolute;
+    top: 50%;
+    width: 34px;
+    height: 34px;
+    margin-top: -17px;
     display: grid;
     place-items: center;
-    width: 176px;
-    height: 176px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--k-line);
+    background: #fff;
+    color: var(--k-ink) !important;
+    box-shadow: 0 4px 12px -6px rgba(16, 35, 27, 0.3);
+    cursor: pointer;
 
-    img {
-      width: 82%;
-      height: 82%;
-      object-fit: contain;
-      mix-blend-mode: multiply;
+    &.-back {
+      inset-inline-start: -6px;
+    }
+
+    &.-on {
+      inset-inline-end: -6px;
+    }
+
+    @media (hover: none) {
+      display: none;
     }
   }
 
   @media (max-width: 760px) {
-    min-height: 0;
-    padding: 22px 20px;
-    border-radius: 24px;
+    padding-top: 6px;
 
-    &__art {
-      width: 96px;
-      height: 96px;
+    &__crumbs {
+      display: none;
+    }
+
+    &__main {
+      align-items: center;
+      padding: 14px 0 12px;
+    }
+
+    &__meta {
+      display: none;
+    }
+
+    &__mark {
+      width: 52px;
+      height: 52px;
+
+      img {
+        width: 40px;
+        height: 40px;
+      }
+    }
+
+    &__title {
+      font-size: 32px;
     }
 
     &__lede {
-      font-size: 15px;
+      font-size: 14px;
+    }
+
+    &__tabs {
+      gap: 22px;
+    }
+
+    &__tab {
+      font-size: 14.5px;
     }
   }
 }
 
+/* Under the catalogue's head, the aisle row stands for Selldone's column of
+   tall aisle cards, which opened the catalogue before any product. */
+.-catalogue > .s--storefront-products-listing .s--products-listing-row:has(> .s--category-card) {
+  display: none !important;
+}
+
+/* Aisle chips on their tints: the empty basket's way back to the shelves. */
 .k-aisle-chips {
   display: flex;
   gap: 8px;
@@ -1619,193 +1746,6 @@ $k-shelf-pic-phone: 150px;
 }
 
 /* ▆▆▆▆▆▆▆▆ Seller page ▆▆▆▆▆▆▆▆ */
-
-.k-seller-hero {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  align-items: center;
-  gap: 32px;
-  margin-top: 20px;
-  padding: 40px 44px;
-  border-radius: var(--k-radius-lg);
-  background: #fbe6d8;
-  text-align: start;
-  overflow: hidden;
-
-  .k-eyebrow {
-    color: #8a4b2a;
-  }
-
-  &__main {
-    display: flex;
-    align-items: flex-start;
-    gap: 28px;
-    min-width: 0;
-  }
-
-  &__mark {
-    flex: 0 0 auto;
-    display: grid;
-    place-items: center;
-    width: 128px;
-    height: 128px;
-    border-radius: 50%;
-    border: 4px solid #fff;
-    background: #fff;
-    box-shadow: 0 14px 30px -18px rgba(90, 44, 23, 0.6);
-    overflow: hidden;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  &.-loading &__mark {
-    @extend %k-skeleton;
-  }
-
-  &__copy {
-    min-width: 0;
-  }
-
-  &__name {
-    margin: 0;
-    font-family: var(--k-display);
-    font-size: clamp(38px, 4.6vw, 60px);
-    font-weight: 600;
-    line-height: 1.02;
-    letter-spacing: -0.025em;
-    color: #3d1d0e;
-  }
-
-  &__lede {
-    margin: 10px 0 0;
-    max-width: 540px;
-    font-size: 16.5px;
-    line-height: 1.5;
-    color: #5a2c17;
-  }
-
-  &__aisles {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 18px;
-  }
-
-  &__aisle {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: 36px;
-    padding: 0 14px 0 6px;
-    border-radius: var(--k-pill);
-    background: rgba(255, 255, 255, 0.75);
-    color: #3d1d0e !important;
-    font-size: 13.5px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background-color 140ms ease;
-
-    img {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: var(--k-tint);
-      object-fit: contain;
-    }
-
-    &:hover {
-      background: #fff;
-    }
-
-    &.-more {
-      padding: 0 14px;
-      border: 1px dashed rgba(61, 29, 14, 0.3);
-      background: transparent;
-      cursor: pointer;
-    }
-  }
-
-  &__acts {
-    margin-top: 20px;
-
-    .k-btn--line {
-      background: rgba(255, 255, 255, 0.7);
-      border-color: transparent;
-    }
-  }
-
-  /* A stall of the seller's own products. */
-  &__stall {
-    position: relative;
-    height: 280px;
-  }
-
-  &__disc {
-    position: absolute;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.7);
-    box-shadow: 0 18px 40px -22px rgba(90, 44, 23, 0.55);
-    overflow: hidden;
-
-    img {
-      width: 78%;
-      height: 78%;
-      object-fit: contain;
-      mix-blend-mode: multiply;
-    }
-
-    &.-at0 {
-      inset-inline-start: 90px;
-      top: 0;
-      width: 190px;
-      height: 190px;
-    }
-
-    &.-at1 {
-      inset-inline-start: 0;
-      top: 130px;
-      width: 140px;
-      height: 140px;
-    }
-
-    &.-at2 {
-      inset-inline-start: 200px;
-      top: 150px;
-      width: 130px;
-      height: 130px;
-    }
-  }
-
-  @media (max-width: 1100px) {
-    grid-template-columns: minmax(0, 1fr);
-
-    &__stall {
-      display: none;
-    }
-  }
-
-  @media (max-width: 760px) {
-    padding: 24px 20px;
-    border-radius: 24px;
-
-    &__main {
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    &__mark {
-      width: 88px;
-      height: 88px;
-    }
-  }
-}
 
 .k-seller-shelf {
   &__aisle {

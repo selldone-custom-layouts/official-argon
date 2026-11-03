@@ -240,3 +240,12 @@ export function vendorImage(vendor: any, thumb = false): string | null {
 export function productImage(product: any, thumb = false): string | null {
   return product?.icon ? window.CDN.GET_SHOP_IMAGE_PATH(product.icon, thumb ? 128 : null) : null;
 }
+
+/* How many products a listing holds: an aisle (its category name), a
+   seller (vendor_id), or the whole shop, optionally narrowed by a filter. */
+export function countProducts(dir: string | null, options: Record<string, any> = {}): Promise<number | null> {
+  return window.$storefront.products
+    .list(dir, 0, 1, { products_only: true, available: true, with_total: true, ...options })
+    .then(({ total }: any) => (typeof total === "number" ? total : null))
+    .catch(() => null);
+}
