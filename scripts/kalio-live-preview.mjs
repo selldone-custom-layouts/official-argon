@@ -19,7 +19,7 @@
  */
 import http from "node:http";
 
-const SHOP = "https://kalio-qz8Yoltw.myselldone.com";
+const SHOP = "https://molino.myselldone.com";
 const RELEASE = /^[0-9A-Z]{26}$/i.test(process.argv[2] || "") ? process.argv[2] : null;
 const PORT = Number(process.argv[RELEASE ? 3 : 2] || process.env.PORT || 9125);
 

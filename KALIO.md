@@ -1,7 +1,8 @@
 # Kalio — Selldone Layout
 
 The official `selldone/storefront` app, customized for **Kalio** (shop 15645,
-`kalio-qz8Yoltw`), a grocery marketplace, and published as the Layout package
+renamed **molino** on 3 November 2026; formerly `kalio-qz8Yoltw`), a grocery
+marketplace, and published as the Layout package
 **`kalio-market-hall`** (layout id 23). The package name is permanent; the
 design it carries changed in 0.2.0.
 
