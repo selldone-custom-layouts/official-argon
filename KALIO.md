@@ -1,24 +1,55 @@
-# Kalio Market Hall — Selldone Layout
+# Kalio — Selldone Layout
 
 The official `selldone/storefront` app, customized for **Kalio** (shop 15645,
 `kalio-qz8Yoltw`), a grocery marketplace, and published as the Layout package
-**`kalio-market-hall`** (layout id 23).
+**`kalio-market-hall`** (layout id 23). The package name is permanent; the
+design it carries changed in 0.2.0.
 
-## What is Kalio's
+## The design (0.2.0 onwards)
+
+Built like a big grocery front — banner, aisles, rows of products — in
+Kalio's own dress: white floor, deep green for every commerce action, coral
+for a saving, Fraunces headings over DM Sans, and each aisle's products on a
+pale tint of their own. The approved mockup is in
+`../kalio-design/home-mockup/`.
 
 | Area | Where |
 | --- | --- |
-| Market front (banner, aisles, promises, rails, sellers) | `components/kalio/KalioMarketFront.vue` |
-| Aisle sign on category pages | `components/kalio/KalioAisleHeader.vue` |
-| Seller hero + seller rails on vendor pages | `components/kalio/KalioSellerHero.vue`, `KalioSellerShelf.vue` |
-| Product rails with the platform quick-buy sheet | `components/kalio/KalioRail.vue` |
-| Catalogue page hosting all three states | `pages/products/StorefrontPageProducts.vue` |
+| Home page: hero, aisles, rows, promos, sellers | `components/kalio/KalioHome.vue` and the components it composes |
+| Banner slider and its two tiles | `components/kalio/KalioHero.vue` |
+| Aisle row (round pictures) | `components/kalio/KalioAisleRibbon.vue` |
+| Product rows with the platform quick-buy sheet | `components/kalio/KalioRail.vue`, `KalioSellerLine.vue` |
+| Aisle promos, seller cards | `components/kalio/KalioPromoPair.vue`, `KalioSellerCards.vue` |
+| Aisle sign and aisle chips on category pages | `components/kalio/KalioAisleHeader.vue` |
+| Seller hero and rows on vendor pages | `components/kalio/KalioSellerHero.vue`, `KalioSellerShelf.vue` |
+| Shared reads: aisles, sellers, who sells what, tints | `components/kalio/kalio-catalog.ts` |
+| Typefaces (loaded by the app) | `components/kalio/kalio-fonts.ts` |
+| Shop page choosing home / aisle / seller / catalogue | `pages/products/StorefrontPageProducts.vue` |
 | Empty basket, 404 | `pages/basket/cart/StorefrontPageBasketCart.vue`, `pages/errors/404/` |
-| Tokens + Kalio sections | `style/storefront.scss` |
+| Tokens and shared pieces | `style/kalio-tokens.scss` |
 | Skin for Selldone's own components | `style/kalio-platform.scss` |
+| Kalio's own sections | `style/kalio-sections.scss` |
 
 Commerce markup and state are untouched: cards, quick-buy, basket, checkout,
-variants and vendor offers are Selldone's components, re-skinned.
+variants and vendor offers are Selldone's components, re-skinned. Kalio adds
+the aisle tint, the unit and the seller line around the platform card.
+
+The shop page shows the home sections only when it has no query. Search,
+filters, sorts, "See all deals" and "Browse every product" all add a query,
+and then Selldone's listing shows instead.
+
+Facts that shape the code:
+
+- **Fonts load from the app, not `index.html`.** In production the Layout
+  runs inside Selldone's own HTML; `index.html` never reaches a visitor.
+- **Image sizes.** Category icons resize to any size. Seller and product
+  images exist only as the original and a 128px thumbnail; any other size is
+  a 404 (`kalio-catalog.ts`).
+- **Nothing is named.** Aisles, sellers, deals, slides and tiles all come
+  from live data; an aisle Kalio does not know still gets a tint, a row and,
+  if featured, a tile.
+
+Market Hall, the first design, is tagged `market-hall-0.1.5`.
 
 ## Release
 
@@ -69,22 +100,40 @@ with `extracting: false`, `error: null`, and `file_manifest` hashes equal to
 
 ## Live
 
-**Known Selldone bug (3 November 2026).** With the Layout attached, the shop
-page loads `https://layouts.selldone.com/<deploy.path>/app/shop.js`. For
-uploads made through the current endpoint `deploy.path` is
-`layouts/23/releases/<ULID>/app` and the files are served from
-`https://cdn.selldone.com/public/<deploy.path>/shop.js`, so the page asks for
-`…/app/app/shop.js` on the wrong host, gets a 404 and stays blank. Older
-uploads (path `<package>/<version>`, e.g. Kario's) are unaffected. Until
-Selldone fixes the address, attaching this Layout blanks the shop. The 404s
-are cached by Cloudflare for a year (`max-age=31536000`), so copying files to
-that address would also need a cache purge.
+Uploading creates a **beta** version; it does not change any shop. Attaching
+is a dashboard action (shop → Layout setting → *Kalio Market Hall*, then the
+version). Since Selldone's new layout loader (3 November 2026) the shop
+loads the version **selected** there; a new upload is not picked up until it
+is selected. The designed home is the shop page, so set the shop's **Home**
+to **Shop**; a Page Builder landing page there replaces it on `/` (the
+Kalio home is still at `/shop`).
 
-To check a release as visitors will get it, serve the live page's HTML with
-that one base replaced by the `cdn.selldone.com/public/…` one: 0.1.5 was
-checked this way on home, aisle, product, seller, basket, 404 and 375 px.
+**How Selldone loads a Layout now.** The shop page carries an inline loader,
+`window.sdShopLayout`, whose config names the selected release as
+`https://selldone.com/cdn-storage-public/layouts/23/releases/<ULID>/app/shop.js`.
+That address answers **302** to `https://cdn.selldone.com/public/…/shop.js`.
+A browser keys a module by the address it asked for but resolves its
+imports against the address it landed on, so any chunk importing
+`../shop.js` loads a second copy of the app: the page-builder home flashes,
+then the page goes blank. That is what broke 0.2.0. From 0.2.1 the build
+keeps everything in a `core` chunk (`coreChunk` in `vite.config.ts`) and no
+chunk imports `shop.js`. Kario's Layouts are built the same way as 0.2.0 but
+work because they were uploaded before the change: their files are served
+straight from `layouts.selldone.com`, no redirect.
 
-Uploading creates a **beta** version; it does not change any shop. To put it on
-Kalio: shop dashboard → Domains → **Layout** tab → choose *Kalio Market Hall*.
-The designed home is the catalogue root, so set the shop's **Home** to the
-**Shop** page; it currently points at a Page Builder template landing page.
+**Previewing a release before it is selected:**
+
+```bash
+node --use-system-ca scripts/kalio-live-preview.mjs <release-ULID> 9125
+```
+
+serves the shop's real HTML with the loader pointed at that release, through
+Selldone's own redirect (launch entry `kalio-live-preview`). The ULID is in
+the deploy path from `GET /developer/layouts/23/deploys`.
+`--use-system-ca` is needed when Node is started outside a shell here; the
+bundled CA store rejects Selldone's chain.
+
+Release checks that matter, beyond the hashes: every `dist/app/js/*.js` reads
+as JavaScript to `file --mime-type`, `grep -l 'from"../shop.js"'
+dist/app/js/*.js` finds nothing, and `find dist/app -type f | wc -l` stays
+under ~360 (fonts ship as WOFF2 only, SVGs up to 16 KB are inlined).

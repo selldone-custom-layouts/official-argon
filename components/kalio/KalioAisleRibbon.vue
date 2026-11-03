@@ -1,109 +1,88 @@
 <!--
-  Kalio — Aisle ribbon.
+  Kalio — Aisle row.
 
-  The sixteen grocery aisles, read live from the shop's own root categories.
-  Nothing about the list is hardcoded: a new aisle in the Selldone dashboard
-  appears here, a removed one disappears, and a shop with no categories renders
-  nothing at all rather than an empty heading.
+  Every aisle as a round picture on its own tint, read live from the shop's
+  root categories in the merchant's order. A new aisle in the dashboard
+  appears here, a removed one disappears, and a shop with no categories
+  renders nothing rather than an empty heading.
 
-  Counts are deliberately not shown. `category.products` is available and is a
-  cached number; putting it on a tile invites "0 products" on an aisle that is
-  simply being restocked.
+  Counts are deliberately not shown: the category count is a cached number,
+  and "0 products" on an aisle that is being restocked is worse than none.
 -->
 <template>
-  <section v-if="aisles.length || busy" class="k-aisles">
-    <div class="k-aisles__head">
-      <p class="k-eyebrow">Shop the hall</p>
-      <h2 class="k-aisles__title">Every aisle, one basket</h2>
-    </div>
+  <section v-if="busy || list.length" aria-labelledby="k-aisles-title" class="k-aisles k-wrap">
+    <header class="k-section-head">
+      <h2 id="k-aisles-title" class="k-section-head__title">Shop by aisle</h2>
+      <router-link :to="allRoute" class="k-more">
+        All products
+        <v-icon class="k-flip" size="20">chevron_right</v-icon>
+      </router-link>
+    </header>
 
-    <!-- Loading: the same tile geometry, so the row does not jump when data lands. -->
-    <div v-if="busy" class="k-aisles__row" aria-hidden="true">
-      <div v-for="n in 8" :key="'s' + n" class="k-aisle k-aisle--skeleton">
-        <div class="k-aisle__art"></div>
-        <div class="k-aisle__bar"></div>
+    <div v-if="busy" aria-hidden="true" class="k-aisles__row">
+      <div v-for="n in 10" :key="'s' + n" class="k-aisle -skeleton">
+        <span class="k-aisle__ring"></span>
+        <span class="k-aisle__bar"></span>
       </div>
     </div>
 
-    <div v-else class="k-aisles__row">
+    <nav v-else aria-label="Aisles" class="k-aisles__row">
       <router-link
-        v-for="aisle in aisles"
+        v-for="aisle in list"
         :key="aisle.id"
-        :to="aisleLink(aisle)"
+        :to="route(aisle)"
         class="k-aisle"
       >
-        <span class="k-aisle__art">
+        <span :style="{ '--k-tint': tint(aisle) }" class="k-aisle__ring">
           <img
             v-if="aisle.icon"
-            :alt="aisle.title || aisle.name"
-            :src="icon(aisle)"
-            height="96"
+            :src="image(aisle)"
+            alt=""
+            height="72"
             loading="lazy"
-            width="96"
+            width="72"
           />
           <span v-else class="k-aisle__initial">{{ initial(aisle) }}</span>
         </span>
         <span class="k-aisle__label">{{ aisle.title || aisle.name }}</span>
       </router-link>
-    </div>
+    </nav>
   </section>
 </template>
 
 <script>
+import { aisleImage, aisleRoute, aisles, catalogueRoute, tintFor } from "./kalio-catalog";
+
 export default {
   name: "KalioAisleRibbon",
 
-  props: {
-    limit: { type: Number, default: 24 },
-  },
-
   data() {
     return {
-      aisles: [],
+      list: [],
       busy: true,
     };
   },
 
+  computed: {
+    allRoute() {
+      return catalogueRoute();
+    },
+  },
+
   mounted() {
-    this.fetch();
+    aisles()
+      .then((list) => (this.list = list))
+      .finally(() => (this.busy = false));
   },
 
   methods: {
-    /* categories_only keeps the payload to the folder list: this row never
-       needs products, and the catalog page fetches those anyway. */
-    fetch() {
-      this.busy = true;
-      window.$storefront.products
-        .list(null, 0, 1, { categories_only: true, categories_count: this.limit })
-        .then(({ folders }) => {
-          this.aisles = (folders || [])
-            .filter((folder) => folder && folder.id)
-            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-        })
-        .catch(() => {
-          /* A failed aisle row must not take the page down with it: the row
-             simply does not render, and the catalog remains reachable from the
-             header. */
-          this.aisles = [];
-        })
-        .finally(() => {
-          this.busy = false;
-        });
+    route: aisleRoute,
+    tint: tintFor,
+    image(aisle) {
+      return aisleImage(aisle, 128);
     },
-
-    icon(aisle) {
-      return window.CDN.GET_CATEGORY_ICON(aisle.id, 128);
-    },
-
     initial(aisle) {
       return (aisle.title || aisle.name || "?").trim().charAt(0).toUpperCase();
-    },
-
-    aisleLink(aisle) {
-      return {
-        name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
-        params: { category_name: aisle.name },
-      };
     },
   },
 };

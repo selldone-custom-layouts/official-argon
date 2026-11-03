@@ -1,60 +1,71 @@
 <!--
-  Kalio — Merchandising rail.
+  Kalio — Product rail.
 
-  A horizontal shelf of products pulled live with one products.list call. The
-  caller passes the sort or the tags; nothing in here names a product, a price
-  or a brand, so the rail cannot go stale when the catalogue changes.
+  A row of products pulled live with one products.list call: an aisle's
+  range, the shop's current deals, one seller's newest. The caller passes the
+  aisle, sort, filter or seller; nothing in here names a product, a price or
+  a brand, so the row cannot go stale when the catalogue changes.
 
-  The card is the platform's SShopProductCard with quick-buy on, because the
-  card carries basket, variant, discount, badge and currency behaviour that a
-  hand-built card would only imitate. The card's Quick Buy button does not buy
-  anything by itself: it emits "quick-buy" and expects its parent to open the
-  product overview. SProductsListing does that with a bottom sheet, and this
-  rail does the same thing the same way — fetch the full product, provide it
-  as $product, render SProductOverview in quick-buy mode — so a press on a
-  rail card and a press on a grid card land in the identical buying flow.
+  The card is the platform's SShopProductCard with quick-buy on: it carries
+  basket, variant, discount, badge and currency behaviour that a hand-built
+  card would only imitate. Kalio adds two lines under it — the selling unit
+  and who sells it — and sets the card's tint from the product's aisle.
 
-  A rail with no products renders nothing at all, not a heading over an empty
-  row. Kalio's sellers have no products assigned yet, and vendor rails rely on
-  exactly that.
+  The card's add button emits "quick-buy" and expects its parent to open the
+  product overview; this rail does that exactly as SProductsListing does —
+  fetch the full product, provide it as $product, render SProductOverview in
+  quick-buy mode — so adding from a rail and adding from the catalogue grid
+  are one and the same flow.
+
+  A rail with no products renders nothing, not a heading over an empty row.
+  `lazy` rails wait until they are about to scroll into view before asking
+  for products, so a home page of many aisles costs only what is seen.
 -->
 <template>
-  <section v-if="busy || products.length" class="k-rail">
+  <section
+    v-if="busy || products.length"
+    ref="root"
+    :aria-labelledby="headingId"
+    class="k-rail k-wrap"
+  >
     <header class="k-rail__head">
-      <div>
-        <p v-if="eyebrow" class="k-eyebrow">{{ eyebrow }}</p>
-        <h2 class="k-rail__title">{{ title }}</h2>
+      <div class="k-rail__titles">
+        <h2 :id="headingId" class="k-rail__title">{{ title }}</h2>
+        <p v-if="meta" class="k-rail__meta">{{ meta }}</p>
       </div>
 
       <div class="k-rail__tools">
-        <router-link v-if="moreTo" :to="moreTo" class="k-rail__more">
+        <router-link v-if="moreTo" :to="moreTo" class="k-more">
           {{ moreLabel }}
+          <v-icon class="k-flip" size="20">chevron_right</v-icon>
         </router-link>
-        <div class="k-rail__arrows">
-          <button
-            type="button"
-            class="k-rail__arrow"
-            aria-label="Scroll left"
-            @click="scrollBy(-1)"
-          >
-            <v-icon size="20">arrow_back</v-icon>
-          </button>
-          <button
-            type="button"
-            class="k-rail__arrow"
-            aria-label="Scroll right"
-            @click="scrollBy(1)"
-          >
-            <v-icon size="20">arrow_forward</v-icon>
-          </button>
-        </div>
+        <button
+          :disabled="at_start"
+          aria-label="Scroll back"
+          class="k-round k-rail__arrow"
+          type="button"
+          @click="scrollBy(-1)"
+        >
+          <v-icon class="k-flip" size="20">chevron_left</v-icon>
+        </button>
+        <button
+          :disabled="at_end"
+          aria-label="Scroll forward"
+          class="k-round k-rail__arrow"
+          type="button"
+          @click="scrollBy(1)"
+        >
+          <v-icon class="k-flip" size="20">chevron_right</v-icon>
+        </button>
       </div>
     </header>
 
-    <div ref="track" class="k-rail__track">
+    <div ref="track" class="k-rail__track" @scroll.passive="measure">
       <template v-if="busy">
-        <div v-for="n in 6" :key="'s' + n" class="k-rail__cell">
+        <div v-for="n in 6" :key="'s' + n" aria-hidden="true" class="k-rail__cell">
           <div class="k-rail__skeleton"></div>
+          <div class="k-rail__skeleton-line"></div>
+          <div class="k-rail__skeleton-line -short"></div>
         </div>
       </template>
 
@@ -62,6 +73,7 @@
         v-for="product in products"
         v-else
         :key="product.id"
+        :style="{ '--k-tint': tintOf(product) }"
         class="k-rail__cell"
       >
         <s-shop-product-card
@@ -73,6 +85,8 @@
           quick-buy
           @quick-buy="quickBuy(product)"
         />
+        <p v-if="product.unit" class="k-rail__unit">per {{ product.unit }}</p>
+        <kalio-seller-line :sellers="sellersOf.get(product.id) || []" />
       </div>
     </div>
 
@@ -86,21 +100,14 @@
     >
       <v-card class="position-relative" rounded="t-xl">
         <v-card-text class="pt-5 thin-scroll">
-          <s-product-overview-loading
-            v-if="busy_product && !selected_product"
-          />
-          <s-product-overview
-            v-if="selected_product"
-            can-buy
-            quick-buy-mode
-            show-cover
-          />
+          <s-product-overview-loading v-if="busy_product && !selected_product" />
+          <s-product-overview v-if="selected_product" can-buy quick-buy-mode show-cover />
           <v-btn
+            aria-label="Close"
             class="absolute-top-end z1"
             icon
             size="large"
             variant="text"
-            aria-label="Close"
             @click="quick_buy = false"
           >
             <v-icon>close</v-icon>
@@ -117,28 +124,39 @@ import SShopProductCard from "@selldone/components-vue/storefront/product/card/S
 import SProductOverview from "@selldone/components-vue/storefront/product/overview/SProductOverview.vue";
 import SProductOverviewLoading from "@selldone/components-vue/storefront/product/overview/loading/SProductOverviewLoading.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import KalioSellerLine from "./KalioSellerLine.vue";
+import { aisleIndex, offers, tintFor } from "./kalio-catalog";
+
+let railCount = 0;
 
 export default {
   name: "KalioRail",
-  components: { SShopProductCard, SProductOverview, SProductOverviewLoading },
+  components: { SShopProductCard, SProductOverview, SProductOverviewLoading, KalioSellerLine },
 
   props: {
     title: { type: String, required: true },
-    eyebrow: { type: String, default: null },
+    meta: { type: String, default: null },
 
-    /** Any sort the storefront API accepts: newest, bestselling, cheapest, most_popular, random. */
+    /** Any sort the storefront API accepts: newest, bestselling, cheapest, most_popular, most_visited. */
     sort: { type: String, default: "newest" },
-    /** Real product tags from the shop, e.g. ['clearance']. Never a display-only label. */
+    /** A storefront filter object, e.g. { only_has_discount: true }. */
+    filter: { type: Object, default: null },
+    /** Real product tags from the shop. Never a display-only label. */
     tags: { type: Array, default: null },
     /** Restrict the rail to one marketplace seller. */
     vendorId: { type: [Number, String], default: null },
-    /** Restrict the rail to one aisle by category directory. */
+    /** Restrict the rail to one aisle, by its category name. */
     dir: { type: String, default: null },
 
     limit: { type: Number, default: 12 },
     moreTo: { type: Object, default: null },
     moreLabel: { type: String, default: "See all" },
+
+    /** Fetch only when the rail is about to scroll into view. */
+    lazy: Boolean,
   },
+
+  emits: ["loaded"],
 
   /* SProductOverview injects $product; the listing provides it the same way. */
   provide() {
@@ -149,9 +167,16 @@ export default {
 
   data() {
     return {
+      window: window,
+      headingId: `k-rail-${++railCount}`,
+
       products: [],
       busy: true,
-      window: window,
+      aisle_of: new Map(),
+      sellersOf: new Map(),
+
+      at_start: true,
+      at_end: false,
 
       quick_buy: false,
       selected_product: null,
@@ -160,7 +185,27 @@ export default {
   },
 
   mounted() {
-    this.fetch();
+    aisleIndex().then((index) => (this.aisle_of = index));
+    offers().then(({ sellersOf }) => (this.sellersOf = sellersOf));
+
+    if (this.lazy && "IntersectionObserver" in window) {
+      this.observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) {
+            this.observer.disconnect();
+            this.fetch();
+          }
+        },
+        { rootMargin: "600px 0px" },
+      );
+      this.observer.observe(this.$refs.root);
+    } else {
+      this.fetch();
+    }
+  },
+
+  beforeUnmount() {
+    this.observer?.disconnect();
   },
 
   methods: {
@@ -172,6 +217,7 @@ export default {
         sort: this.sort,
         available: true,
       };
+      if (this.filter) options.filter = JSON.stringify(this.filter);
       if (this.tags && this.tags.length) options.tags = this.tags;
       if (this.vendorId) options.vendor_id = this.vendorId;
 
@@ -185,7 +231,13 @@ export default {
         })
         .finally(() => {
           this.busy = false;
+          this.$emit("loaded", this.products);
+          this.$nextTick(this.measure);
         });
+    },
+
+    tintOf(product) {
+      return tintFor(this.aisle_of.get(product.category_id)) || null;
     },
 
     quickBuy(product) {
@@ -211,15 +263,25 @@ export default {
         });
     },
 
-    /* One page of the shelf per press, so the arrows move the same distance
-       whatever the viewport. */
-    scrollBy(direction) {
+    /* One screen of the row per press, so the arrows move the same distance
+       whatever the viewport. scrollLeft is negative in RTL, so direction is
+       taken from the document, not assumed. */
+    scrollBy(step) {
       const track = this.$refs.track;
       if (!track) return;
+      const rtl = getComputedStyle(track).direction === "rtl";
       track.scrollBy({
-        left: direction * Math.round(track.clientWidth * 0.85),
+        left: (rtl ? -step : step) * Math.round(track.clientWidth * 0.9),
         behavior: "smooth",
       });
+    },
+
+    measure() {
+      const track = this.$refs.track;
+      if (!track) return;
+      const travelled = Math.abs(track.scrollLeft);
+      this.at_start = travelled < 4;
+      this.at_end = travelled + track.clientWidth >= track.scrollWidth - 4;
     },
   },
 };

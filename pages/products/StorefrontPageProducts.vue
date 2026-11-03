@@ -52,10 +52,12 @@
       </div>
 
       <!--
-        One page, three Kalio states. Selldone routes the catalogue root, every
-        aisle and every seller to this same component, so the market front,
-        the aisle sign and the seller storefront are chosen here by route and
-        then hand over to the same live listing below.
+        One page, four Kalio states. Selldone routes the shop page, every
+        aisle and every seller to this same component, so the home page, the
+        aisle sign and the seller storefront are chosen here by route. The
+        home page stands on its own; the other three hand over to the live
+        listing below, and so does the shop page once a query (search,
+        filter, sort, "All products") asks for the catalogue itself.
       -->
 
       <div
@@ -77,16 +79,18 @@
         :category-name="category_name"
       />
 
-      <!-- ▆▆▆▆▆▆▆▆ Root: the market front ▆▆▆▆▆▆▆▆ -->
-      <!-- Shown on the bare catalogue root only. Every narrowing action the
-           listing performs travels as a query parameter, so the front gets
-           out of the way the moment a shopper starts filtering. -->
-      <kalio-market-front v-if="show_market_front" />
+      <!-- ▆▆▆▆▆▆▆▆ Shop page: the home ▆▆▆▆▆▆▆▆ -->
+      <!-- Shown on the bare shop page only. Every narrowing action the
+           listing performs travels as a query parameter, so the home page
+           gets out of the way the moment a shopper searches or filters. -->
+      <kalio-home v-if="show_home" />
       </div>
 
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Products Listing ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
       <s-products-listing
+        v-if="!show_home"
         :key="$route.path"
+        :style="{ '--k-tint': aisle_tint }"
         :vendor-id="vendor_id"
         has-breadcrumb
         has-filter
@@ -103,17 +107,18 @@
 <script lang="ts">
 import SProductsListing from "@selldone/components-vue/storefront/products/listing/SProductsListing.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
-import KalioMarketFront from "../../components/kalio/KalioMarketFront.vue";
+import KalioHome from "../../components/kalio/KalioHome.vue";
 import KalioAisleHeader from "../../components/kalio/KalioAisleHeader.vue";
 import KalioSellerShelf from "../../components/kalio/KalioSellerShelf.vue";
 import KalioSellerHero from "../../components/kalio/KalioSellerHero.vue";
 import {StorefrontSeo} from "../../helpers/StorefrontSeo";
+import { aisles, tintFor } from "../../components/kalio/kalio-catalog";
 
 export default {
   name: "StorefrontPageProducts",
   components: {
     SProductsListing,
-    KalioMarketFront,
+    KalioHome,
     KalioAisleHeader,
     KalioSellerShelf,
     KalioSellerHero,
@@ -128,6 +133,7 @@ export default {
   data: () => ({
     vendor_id: null /*Show only for this vendor! */,
     seoNavigation: StorefrontSeo.captureNavigation(),
+    aisle_tint: null /* The aisle's tint, under every card of its listing. */,
   }),
   /**
    * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -146,7 +152,7 @@ export default {
       return this.$route.params?.category_name || null;
     },
 
-    show_market_front() {
+    show_home() {
       return (
         String(this.$route.name || "").startsWith(window.$storefront.routes.SHOP_PAGE) &&
         !this.vendor_id &&
@@ -175,6 +181,17 @@ export default {
     },
     "$route.path"() {
       this.seoNavigation = StorefrontSeo.captureNavigation();
+    },
+    category_name: {
+      handler(name) {
+        this.aisle_tint = null;
+        if (!name) return;
+        aisles().then((list) => {
+          if (name !== this.category_name) return;
+          this.aisle_tint = tintFor(list.find((aisle) => aisle.name === name));
+        });
+      },
+      immediate: true,
     },
     /* The router reuses this one component for the catalogue root, every
        aisle and every seller, so created() runs only for the first of them:

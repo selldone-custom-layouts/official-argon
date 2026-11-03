@@ -1,0 +1,217 @@
+/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Kalio — tokens, type and shared pieces ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+
+   Kalio is a grocery marketplace: sixteen aisles, independent sellers, one
+   basket. The page is built like a big grocery front — banner, aisles, rows
+   of products — and dressed in Kalio's own identity: white floor, deep
+   green for every commerce action, coral for a saving, a soft serif for
+   headings, and each aisle's products on their own pale tint.
+
+   The identity is defined here rather than taken from the shop's injected
+   theme colours, which belong to the merchant's dashboard and would re-skin
+   this Layout the moment someone changed them. Vuetify still receives them;
+   this layer sits on top. Nothing here touches commerce state. */
+
+:root {
+  /* Ink and surface */
+  --k-ink: #10231b;
+  --k-ink-2: #2b3d35;
+  --k-muted: #66706b;
+  --k-paper: #ffffff;
+  --k-wash: #f6f4ee;
+  --k-card: #ffffff;
+  --k-line: #e8e4da;
+  --k-line-strong: #d6d0c2;
+
+  /* Deep green carries every commerce action */
+  --k-green: #155b42;
+  --k-green-deep: #0e3f2e;
+  --k-green-lift: #1f7a57;
+  --k-leaf: #2f8a5e;
+  --k-green-soft: #e9f3ed;
+
+  /* Coral marks a saving. #c9431e keeps white badge text and sale prices
+     above 4.5:1 on white; the brighter mockup coral did not. */
+  --k-coral: #c9431e;
+  --k-coral-soft: #fde9e2;
+
+  /* A product tile's ground. Each aisle sets its own --k-tint; this is the
+     tint of anything that has no aisle of its own. */
+  --k-tint: #f4f2ec;
+
+  /* Type */
+  --k-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --k-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Geometry */
+  --k-radius: 20px;
+  --k-radius-sm: 14px;
+  --k-radius-lg: 28px;
+  --k-pill: 999px;
+  --k-maxw: 1280px;
+  --k-gutter: clamp(16px, 2.4vw, 24px);
+  --k-tap: 44px;
+  --k-shadow: 0 10px 28px -14px rgba(16, 35, 27, 0.32);
+}
+
+/* The app surface. */
+.v-application {
+  font-family: var(--k-body);
+  background-color: var(--k-paper) !important;
+  color: var(--k-ink);
+}
+
+.v-application h1,
+.v-application h2,
+.v-application h3 {
+  /* Colour is not set: headings sit on white in most places and on coloured
+     banners in others. */
+  font-family: var(--k-display);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+/* Prices are figures: tabular digits keep a column of them aligned. */
+.v-application .u--price,
+.v-application .price,
+.v-application .s--product-price {
+  font-family: var(--k-body);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ▆▆▆▆▆▆▆▆ Shared pieces ▆▆▆▆▆▆▆▆ */
+
+/* The page column every Kalio section shares with the listing below it. */
+.k-wrap {
+  max-width: var(--k-maxw);
+  margin-inline: auto;
+  padding-inline: var(--k-gutter);
+}
+
+.k-eyebrow {
+  font-family: var(--k-body);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--k-green);
+  margin: 0 0 8px;
+}
+
+.k-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: var(--k-pill);
+  font-family: var(--k-body);
+  font-size: 15.5px;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease;
+
+  .v-icon {
+    margin-inline-end: -4px;
+  }
+}
+
+.k-btn--solid {
+  background: var(--k-green-deep);
+  color: #fff !important;
+
+  &:hover {
+    background: var(--k-green);
+  }
+}
+
+.k-btn--soft {
+  background: rgba(255, 255, 255, 0.78);
+  color: inherit !important;
+
+  &:hover {
+    background: #fff;
+  }
+}
+
+.k-btn--line {
+  border: 1px solid var(--k-line-strong);
+  background: var(--k-card);
+  color: var(--k-ink) !important;
+
+  &:hover {
+    border-color: var(--k-green);
+    color: var(--k-green) !important;
+  }
+}
+
+/* A text link with a trailing chevron: "See all ›". */
+.k-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: var(--k-tap);
+  font-family: var(--k-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--k-green) !important;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+/* Round arrow buttons for rails. */
+.k-round {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--k-line);
+  background: var(--k-card);
+  color: var(--k-ink);
+  cursor: pointer;
+  transition: border-color 140ms ease, color 140ms ease;
+
+  &:hover {
+    border-color: var(--k-green);
+    color: var(--k-green);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+/* Focus that reads on white, on tints and on the green banner. */
+.v-application :focus-visible {
+  outline: 2px solid var(--k-green-lift);
+  outline-offset: 2px;
+}
+
+/* Visually hidden, still announced. */
+.k-sr {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v-application *,
+  .v-application *::before,
+  .v-application *::after {
+    scroll-behavior: auto !important;
+  }
+}

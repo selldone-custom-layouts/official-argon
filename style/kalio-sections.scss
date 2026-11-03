@@ -1,0 +1,1218 @@
+/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Kalio — the sections Kalio owns ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+
+   Styles for components/kalio: the home page (hero, aisles, rails, promos,
+   sellers), the aisle and seller headers, the empty basket and the 404.
+   Every section sits in the shared .k-wrap column, so it lines up with
+   Selldone's listing below it. */
+
+/* Selldone's page card centres its text; Kalio's sections read from the
+   start edge. */
+.k-home,
+.k-aisle-page,
+.k-seller-hero,
+.k-seller-shelf {
+  text-align: start;
+}
+
+/* Right-pointing chevrons point the other way in a right-to-left language. */
+.v-locale--is-rtl .k-flip {
+  transform: scaleX(-1);
+}
+
+@keyframes k-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+%k-skeleton {
+  background: linear-gradient(90deg, var(--k-wash) 25%, #efece4 50%, var(--k-wash) 75%);
+  background-size: 200% 100%;
+  animation: k-shimmer 1.4s linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+/* A section's heading row: title (and a line under it), a link at the end. */
+.k-section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+
+  &__title {
+    margin: 0;
+    font-family: var(--k-display);
+    font-size: clamp(24px, 2.4vw, 30px);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--k-ink);
+  }
+
+  &__meta {
+    margin: 6px 0 0;
+    font-size: 14.5px;
+    color: var(--k-muted);
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ Hero ▆▆▆▆▆▆▆▆ */
+
+.k-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 18px;
+  margin-top: 22px;
+  text-align: start;
+
+  &__tiles {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 18px;
+  }
+}
+
+.k-banner {
+  position: relative;
+  display: grid;
+  min-height: 380px;
+  border-radius: var(--k-radius-lg);
+  overflow: hidden;
+  isolation: isolate;
+
+  &.-loading .k-banner__slide {
+    @extend %k-skeleton;
+  }
+
+  &__slide {
+    grid-area: 1 / 1;
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: center;
+    gap: 24px;
+    padding: 46px 40px 62px 48px;
+    background: var(--k-banner, #dcedc5);
+    /* The outgoing slide clears quickly and the next fades in after it, so
+       two headlines never sit on top of each other mid-turn. */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 200ms ease, visibility 0s linear 200ms;
+
+    &.-current {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 420ms ease 180ms, visibility 0s;
+    }
+  }
+
+  &__copy {
+    min-width: 0;
+  }
+
+  &__title {
+    margin: 12px 0 14px;
+    max-width: 420px;
+    font-family: var(--k-display);
+    font-size: clamp(40px, 4.2vw, 56px);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: var(--k-green-deep);
+  }
+
+  &__lede {
+    margin: 0 0 26px;
+    max-width: 380px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: #2c4a3c;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__art {
+    position: relative;
+    width: 340px;
+    height: 330px;
+  }
+
+  /* Four product discs, stacked like produce on a stall. */
+  &__disc {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.62);
+    box-shadow: 0 18px 40px -22px rgba(16, 35, 27, 0.4);
+    overflow: hidden;
+
+    img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+
+    &.-at0 {
+      inset-inline-start: 118px;
+      top: 6px;
+      width: 196px;
+      height: 196px;
+    }
+
+    &.-at1 {
+      inset-inline-start: 0;
+      top: 120px;
+      width: 150px;
+      height: 150px;
+    }
+
+    &.-at2 {
+      inset-inline-start: 196px;
+      top: 190px;
+      width: 140px;
+      height: 140px;
+    }
+
+    &.-at3 {
+      inset-inline-start: 92px;
+      top: 236px;
+      width: 104px;
+      height: 104px;
+    }
+  }
+
+  &__sticker {
+    position: absolute;
+    inset-inline-end: 22px;
+    top: 18px;
+    z-index: 2;
+    display: grid;
+    place-content: center;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    background: var(--k-coral);
+    color: #fff;
+    text-align: center;
+    line-height: 1.05;
+    transform: rotate(-10deg);
+    box-shadow: 0 12px 24px -12px rgba(201, 67, 30, 0.75);
+
+    small {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      font-family: var(--k-display);
+      font-size: 33px;
+      font-weight: 700;
+    }
+  }
+
+  &__dots {
+    position: absolute;
+    inset-inline-start: 40px;
+    bottom: 16px;
+    z-index: 3;
+    display: flex;
+
+    /* 24px of hit area around an 8px dot. */
+    button {
+      position: relative;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset-inline-start: 8px;
+        top: 8px;
+        width: 8px;
+        height: 8px;
+        border-radius: 8px;
+        background: rgba(14, 63, 46, 0.28);
+        transition: width 200ms ease, background-color 200ms ease;
+      }
+
+      &.-on {
+        width: 42px;
+
+        &::before {
+          width: 26px;
+          background: var(--k-green-deep);
+        }
+      }
+    }
+  }
+}
+
+.k-tile {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  padding: 24px 26px;
+  border-radius: 24px;
+  background: var(--k-banner, var(--k-wash));
+  color: var(--k-ink) !important;
+  text-decoration: none;
+  overflow: hidden;
+
+  &.-loading {
+    @extend %k-skeleton;
+    min-height: 181px;
+  }
+
+  &__copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 58%;
+  }
+
+  &__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+  }
+
+  &__mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    background: #fff;
+  }
+
+  &__title {
+    margin: 6px 0 10px;
+    font-family: var(--k-display);
+    font-size: 27px;
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+  }
+
+  &__go {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 14.5px;
+    font-weight: 600;
+  }
+
+  &:hover &__go {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  &__pics {
+    position: absolute;
+    inset-inline-end: 14px;
+    bottom: 10px;
+    display: flex;
+
+    img {
+      width: 110px;
+      height: 110px;
+      margin-inline-start: -26px;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+  }
+
+  &.-seller .k-eyebrow {
+    color: #8a4b2a;
+  }
+}
+
+@media (max-width: 1100px) {
+  .k-hero {
+    grid-template-columns: minmax(0, 1fr);
+
+    &__tiles {
+      grid-template-rows: none;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .k-tile {
+    min-height: 170px;
+  }
+}
+
+@media (max-width: 760px) {
+  .k-hero {
+    margin-top: 14px;
+    gap: 12px;
+
+    &__tiles {
+      gap: 12px;
+    }
+  }
+
+  .k-banner {
+    min-height: 0;
+    border-radius: 24px;
+
+    &__slide {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 18px;
+      padding: 26px 22px 46px;
+    }
+
+    /* Clear of the sticker in the top corner. */
+    &__title {
+      max-width: calc(100% - 84px);
+      font-size: 34px;
+    }
+
+    &__lede {
+      font-size: 15.5px;
+      margin-bottom: 18px;
+    }
+
+    &__art {
+      width: auto;
+      height: auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    &__disc {
+      position: static;
+      width: 86px !important;
+      height: 86px !important;
+      margin-inline-start: -10px;
+
+      &:first-child {
+        margin-inline-start: 0;
+      }
+    }
+
+    &__sticker {
+      inset-inline-end: 12px;
+      top: 14px;
+      width: 74px;
+      height: 74px;
+
+      small {
+        font-size: 10px;
+      }
+
+      strong {
+        font-size: 23px;
+      }
+    }
+
+    &__dots {
+      inset-inline-start: 50%;
+      transform: translateX(-50%);
+      bottom: 10px;
+    }
+  }
+
+  .k-tile {
+    flex-direction: column;
+    min-height: 0;
+    padding: 16px;
+
+    &__copy {
+      max-width: none;
+    }
+
+    &__title {
+      font-size: 20px;
+    }
+
+    &__eyebrow {
+      font-size: 11px;
+    }
+
+    &__pics {
+      position: static;
+      justify-content: flex-end;
+      margin-top: 8px;
+
+      img {
+        width: 70px;
+        height: 70px;
+        margin-inline-start: -18px;
+      }
+    }
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ Aisles ▆▆▆▆▆▆▆▆ */
+
+.k-aisles {
+  margin-top: 44px;
+
+  &__row {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(76px, 1fr);
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+.k-aisle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  padding: 4px 2px;
+  border-radius: var(--k-radius-sm);
+  text-align: center;
+  text-decoration: none;
+  color: var(--k-ink) !important;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.25;
+
+  &__ring {
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--k-tint);
+    overflow: hidden;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+
+    img {
+      width: 86%;
+      height: 86%;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+  }
+
+  &__initial {
+    font-family: var(--k-display);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--k-green);
+  }
+
+  &__label {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &:hover &__ring {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -12px rgba(16, 35, 27, 0.45);
+  }
+
+  &.-skeleton {
+    .k-aisle__ring {
+      @extend %k-skeleton;
+    }
+  }
+
+  &__bar {
+    @extend %k-skeleton;
+    width: 56px;
+    height: 10px;
+    border-radius: 6px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__ring {
+      transition: none;
+    }
+
+    &:hover &__ring {
+      transform: none;
+    }
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ Rails ▆▆▆▆▆▆▆▆ */
+
+.k-rail {
+  margin-top: 44px;
+  text-align: start;
+
+  &__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--k-display);
+    font-size: clamp(24px, 2.4vw, 30px);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--k-ink);
+  }
+
+  &__meta {
+    margin: 6px 0 0;
+    font-size: 14.5px;
+    color: var(--k-muted);
+  }
+
+  &__tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+  }
+
+  &__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 5 * 16px) / 6);
+    gap: 16px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__cell {
+    min-width: 0;
+    scroll-snap-align: start;
+
+    /* In a grid the card fills its cell to keep a row even; here the unit
+       and seller lines follow it, so it takes its own height. */
+    > .s--product-card,
+    > .s--product-card .card,
+    > .s--product-card .card-wrap {
+      height: auto !important;
+    }
+  }
+
+  &__unit {
+    margin: 3px 2px 0;
+    font-size: 13px;
+    color: var(--k-muted);
+  }
+
+  &__skeleton {
+    @extend %k-skeleton;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--k-radius);
+  }
+
+  &__skeleton-line {
+    @extend %k-skeleton;
+    height: 12px;
+    margin-top: 12px;
+    border-radius: 6px;
+
+    &.-short {
+      width: 60%;
+      margin-top: 8px;
+    }
+  }
+
+  @media (max-width: 1100px) {
+    &__track {
+      grid-auto-columns: calc((100% - 3 * 14px) / 4);
+      gap: 14px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    margin-top: 32px;
+
+    &__track {
+      grid-auto-columns: 42%;
+      gap: 12px;
+    }
+
+    &__arrow {
+      display: none !important;
+    }
+  }
+}
+
+/* Who sells it, under a card. */
+.k-by {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 8px 2px 0;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--k-ink-2) !important;
+  text-decoration: none;
+
+  &__marks {
+    display: inline-flex;
+
+    img {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid #fff;
+      background: #fff;
+      margin-inline-start: -6px;
+
+      &:first-child {
+        margin-inline-start: 0;
+      }
+    }
+  }
+
+  &__count {
+    padding: 2px 8px;
+    border-radius: var(--k-pill);
+    background: var(--k-green-soft);
+    color: var(--k-green);
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+}
+
+a.k-by:hover {
+  color: var(--k-green) !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ▆▆▆▆▆▆▆▆ Aisle promos ▆▆▆▆▆▆▆▆ */
+
+.k-promos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 44px;
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 32px;
+  }
+}
+
+.k-promo {
+  position: relative;
+  display: flex;
+  min-height: 210px;
+  padding: 30px 32px;
+  border-radius: 24px;
+  text-decoration: none;
+  overflow: hidden;
+
+  &.-sun {
+    background: #fcebc5;
+    color: #5b3b05 !important;
+  }
+
+  &.-mint {
+    background: #ddf1ea;
+    color: #0f4a3a !important;
+  }
+
+  .k-eyebrow {
+    color: inherit;
+    opacity: 0.85;
+  }
+
+  &__copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  &__title {
+    margin: 4px 0 16px;
+    max-width: 250px;
+    font-family: var(--k-display);
+    font-size: 34px;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  &__go {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    min-height: 40px;
+    padding: 0 16px 0 18px;
+    border-radius: var(--k-pill);
+    background: rgba(255, 255, 255, 0.78);
+    font-size: 14.5px;
+    font-weight: 600;
+    transition: background-color 140ms ease;
+  }
+
+  &:hover &__go {
+    background: #fff;
+  }
+
+  &__pics {
+    position: absolute;
+    inset-inline-end: 18px;
+    bottom: 14px;
+    display: flex;
+    align-items: flex-end;
+
+    img {
+      width: 140px;
+      height: 140px;
+      margin-inline-start: -34px;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+  }
+
+  @media (max-width: 760px) {
+    min-height: 0;
+    padding: 24px 22px 128px;
+
+    &__title {
+      font-size: 28px;
+    }
+
+    &__pics img {
+      width: 100px;
+      height: 100px;
+      margin-inline-start: -22px;
+    }
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ Sellers ▆▆▆▆▆▆▆▆ */
+
+.k-sellers {
+  margin-top: 46px;
+
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr));
+    gap: 18px;
+  }
+}
+
+.k-seller {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  align-items: center;
+  gap: 20px;
+  padding: 22px;
+  border: 1px solid var(--k-line);
+  border-radius: 26px;
+  background: var(--k-card);
+  text-align: start;
+
+  &__id {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  &__mark {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1px solid var(--k-line);
+    background: var(--k-wash);
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__name {
+    margin: 4px 0 0;
+    font-family: var(--k-display);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--k-ink);
+  }
+
+  &__lede {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--k-muted);
+  }
+
+  &__shelf {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      aspect-ratio: 1 / 1;
+      border-radius: 16px;
+      background: var(--k-tint);
+      overflow: hidden;
+    }
+
+    a {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+      transition: transform 200ms ease;
+    }
+
+    a:hover img {
+      transform: scale(1.06);
+    }
+  }
+
+  @media (max-width: 760px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.k-home__end {
+  display: flex;
+  justify-content: center;
+  margin-top: 52px;
+}
+
+/* ▆▆▆▆▆▆▆▆ Aisle page ▆▆▆▆▆▆▆▆ */
+
+.k-aisle-page {
+  margin-top: 20px;
+  margin-bottom: 8px;
+  text-align: start;
+}
+
+.k-aisle-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 200px;
+  padding: 32px 40px;
+  border-radius: var(--k-radius-lg);
+  background: color-mix(in oklab, var(--k-tint) 90%, #3d5a48);
+
+  &.-loading {
+    @extend %k-skeleton;
+  }
+
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    min-height: 32px;
+    margin-bottom: 8px;
+    margin-inline-start: -4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--k-green) !important;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--k-display);
+    font-size: clamp(34px, 4vw, 54px);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: var(--k-ink);
+  }
+
+  &__lede {
+    margin: 12px 0 0;
+    max-width: 540px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--k-ink-2);
+  }
+
+  &__art {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 176px;
+    height: 176px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.55);
+
+    img {
+      width: 82%;
+      height: 82%;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+  }
+
+  @media (max-width: 760px) {
+    min-height: 0;
+    padding: 22px 20px;
+    border-radius: 24px;
+
+    &__art {
+      width: 96px;
+      height: 96px;
+    }
+
+    &__lede {
+      font-size: 15px;
+    }
+  }
+}
+
+.k-aisle-chips {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  padding-bottom: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.k-aisle-chip {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding-inline: 6px 16px;
+  border-radius: var(--k-pill);
+  background: var(--k-tint);
+  color: var(--k-ink) !important;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 140ms ease, color 140ms ease;
+
+  img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: contain;
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  &:hover {
+    background: color-mix(in oklab, var(--k-tint) 85%, #3d5a48);
+  }
+
+  &.-on {
+    background: var(--k-green-deep);
+    color: #fff !important;
+    font-weight: 600;
+
+    img {
+      background: #fff;
+    }
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ Seller page ▆▆▆▆▆▆▆▆ */
+
+.k-seller-hero {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-top: 20px;
+  padding: 36px 40px;
+  border-radius: var(--k-radius-lg);
+  background: #fbe6d8;
+  text-align: start;
+
+  .k-eyebrow {
+    color: #8a4b2a;
+  }
+
+  &__mark {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 132px;
+    height: 132px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    background: #fff;
+    box-shadow: 0 14px 30px -18px rgba(90, 44, 23, 0.6);
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &.-loading &__mark {
+    @extend %k-skeleton;
+  }
+
+  &__name {
+    margin: 0;
+    font-family: var(--k-display);
+    font-size: clamp(36px, 4.4vw, 56px);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: #3d1d0e;
+  }
+
+  &__lede {
+    margin: 10px 0 20px;
+    max-width: 560px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #5a2c17;
+  }
+
+  @media (max-width: 760px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 24px 22px;
+    border-radius: 24px;
+
+    &__mark {
+      width: 92px;
+      height: 92px;
+    }
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ Empty basket ▆▆▆▆▆▆▆▆ */
+
+.k-basket-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 520px;
+  margin: 40px auto 24px;
+  padding: 40px 24px;
+  border-radius: var(--k-radius-lg);
+  background: var(--k-wash);
+  text-align: center;
+
+  &__art {
+    width: 96px;
+    height: 96px;
+    opacity: 0.9;
+  }
+
+  &__title {
+    margin: 18px 0 8px;
+    font-family: var(--k-display);
+    font-size: 34px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--k-ink);
+  }
+
+  &__lede {
+    margin: 0 0 22px;
+    font-size: 16px;
+    color: var(--k-muted);
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ 404 ▆▆▆▆▆▆▆▆ */
+
+.k-404 {
+  max-width: 640px;
+  margin: 56px auto 24px;
+  padding: 0 var(--k-gutter);
+  text-align: center;
+
+  .k-eyebrow {
+    color: var(--k-coral);
+  }
+
+  &__title {
+    margin: 8px 0 12px;
+    font-family: var(--k-display);
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    color: var(--k-ink);
+  }
+
+  &__lede {
+    margin: 0 0 26px;
+    font-size: 17px;
+    color: var(--k-muted);
+  }
+
+  &__acts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+}

@@ -90,6 +90,7 @@ export default ({mode}: any) => {
       //@ts-ignore
       vitePluginRequire.default(),
       flagIconsFromCdn(),
+      woff2Only(),
       sniffAsJavaScript(),
       ...(IS_HTTPS
           ? [
@@ -137,11 +138,16 @@ export default ({mode}: any) => {
       /* Fewer, larger files. The Layout endpoint processes the archive while
          the upload request is open, behind Cloudflare's ~100 s read limit;
          at 714 files the connection was cut mid-extraction, which registered
-         the version but never put its files on the CDN. Small SVGs ride
-         inside the CSS/JS that use them (scripts/kalio-svg-flatten.mjs makes
-         those passive too), and chunks under 50 KB merge into a neighbour. */
+         the version but never put its files on the CDN. SVGs up to 16 KB
+         ride inside the CSS/JS that use them (scripts/kalio-svg-flatten.mjs
+         makes those passive too), and fonts ship as WOFF2 only.
+
+         Small chunks are no longer merged into a neighbour
+         (experimentalMinChunkSize): Rollup merged them into the entry, so
+         chunks imported code from shop.js, which Selldone's redirected
+         address loads twice — see coreChunk below. */
       assetsInlineLimit: (file: string, content: Buffer) =>
-          file.toLowerCase().endsWith(".svg") ? content.length <= 8192 : undefined,
+          file.toLowerCase().endsWith(".svg") ? content.length <= 16384 : undefined,
       /* One stylesheet. The 95 per-chunk CSS files total 689 KB; as files
          they were a sixth of the archive, as part of shop.css they are a
          ~100 KB gzip addition to the first load. */
@@ -151,7 +157,7 @@ export default ({mode}: any) => {
           shop: "index.html",
         },
         output: {
-          experimentalMinChunkSize: 50_000,
+          manualChunks: coreChunk,
           // Entry and chunk naming patterns
           entryFileNames: `${VERSION_DIR}/[name].js`,
           chunkFileNames: (chunk) => `${VERSION_DIR}/js/${safeName(chunk.name)}.[hash].js`,
@@ -201,6 +207,46 @@ function flagIconsFromCdn() {
 }
 
 /**
+ * Everything the entry imports goes into one "core" chunk; shop.js keeps
+ * only the entry itself.
+ *
+ * Selldone loads the Layout through a redirect: the shop page asks for
+ * selldone.com/cdn-storage-public/…/app/shop.js, which answers 302 to
+ * cdn.selldone.com/public/…/app/shop.js. A browser keys a module by the
+ * address it asked for but resolves the module's imports against the address
+ * it landed on — so every lazy chunk's `import … from "../shop.js"` named a
+ * second, different module and loaded shop.js again: two apps on one page,
+ * and a blank storefront (3 November 2026, Layout 0.2.0).
+ *
+ * With the shared code in core, a chunk imports "./core.[hash].js" and the
+ * entry imports "./js/core.[hash].js"; both resolve against the landing
+ * address, so there is exactly one core. Nothing imports shop.js, so it does
+ * not matter which address it was keyed by. Code that only lazy routes use
+ * keeps its own chunks.
+ */
+let entryStaticGraph: Set<string> | null = null;
+
+function coreChunk(id: string, { getModuleInfo, getModuleIds }: any) {
+  if (!entryStaticGraph) {
+    /* Everything statically reachable from the entry, walked once. */
+    entryStaticGraph = new Set();
+    const queue: string[] = [...getModuleIds()].filter((moduleId: string) => getModuleInfo(moduleId)?.isEntry);
+    while (queue.length) {
+      const next = queue.pop()!;
+      for (const imported of getModuleInfo(next)?.importedIds || []) {
+        if (!entryStaticGraph.has(imported)) {
+          entryStaticGraph.add(imported);
+          queue.push(imported);
+        }
+      }
+    }
+  }
+  const info = getModuleInfo(id);
+  if (info?.isEntry) return undefined;
+  return entryStaticGraph.has(id) ? "core" : undefined;
+}
+
+/**
  * Every emitted JS file opens with a "use strict" directive.
  *
  * The Layout service stores each release file with the MIME type libmagic
@@ -226,6 +272,37 @@ function sniffAsJavaScript() {
           file.code = `"use strict";\n${file.code}`;
         }
       }
+    },
+  };
+}
+
+/**
+ * Web fonts as WOFF2 only.
+ *
+ * Selldone's Persian face and Material Icons declare each weight in four
+ * formats (EOT, WOFF2, WOFF, TTF), which put 21 font files in the archive
+ * that no current browser downloads — every one picks WOFF2. Each
+ * @font-face that has a WOFF2 source keeps that source alone; one without
+ * WOFF2 is left as it was.
+ */
+function woff2Only() {
+  const FONT_FACE = /@font-face\s*\{[^}]*\}/g;
+  /* Quoted URLs may contain parentheses ("IRANSansWeb(FaNum)_Black.woff2"). */
+  const WOFF2_URL = /url\(\s*(?:'([^']+\.woff2[^']*)'|"([^"]+\.woff2[^"]*)"|([^'"()\s]+\.woff2[^'"()\s]*))\s*\)/;
+  const SRC = /\bsrc\s*:[^;}]*;?/g;
+  return {
+    name: "kalio-woff2-only",
+    enforce: "pre" as const,
+    transform(code: string, id: string) {
+      if (!/\.(s?css)$/.test(id.split("?")[0]) || !code.includes("@font-face") || !code.includes(".woff2")) return null;
+      const next = code.replace(FONT_FACE, (block) => {
+        const woff2 = block.match(WOFF2_URL);
+        if (!woff2) return block;
+        const url = woff2[1] || woff2[2] || woff2[3];
+        const body = block.replace(SRC, "").replace(/\}\s*$/, "");
+        return `${body}src: url("${url}") format("woff2");}`;
+      });
+      return next === code ? null : { code: next, map: null };
     },
   };
 }
