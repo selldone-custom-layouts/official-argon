@@ -87,7 +87,7 @@
   /* The packshot stays in view while the buy column scrolls past it. */
   &__media {
     position: sticky;
-    top: 92px;
+    top: 136px; /* clear of the sticky header and its aisle strip */
     min-width: 0;
   }
 

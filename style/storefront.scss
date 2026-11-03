@@ -21,6 +21,7 @@
 @use "kalio-platform"; // Kalio: skin for Selldone's own components
 @use "kalio-sections"; // Kalio: the sections Kalio owns outright
 @use "kalio-product"; // Kalio: the product page
+@use "kalio-shell"; // Kalio: header, footer, drawers, filter panel
 
 // --------------------------------------------------------
 .add-marginal-side-menu-open {

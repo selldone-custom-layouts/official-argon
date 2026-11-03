@@ -1,0 +1,199 @@
+<!--
+  Kalio — Footer.
+
+  Two parts. A light green band that sends a shopper back into the aisles
+  (every aisle as a round picture). Then the footer proper on deep green:
+  the shop's name and its own description, social links and language; the
+  aisles; the sellers with their marks; the shop's own footer menu exactly
+  as the merchant set it in Selldone (falling back to the standard pages
+  when there is none); and the shopper's account links. The bottom row
+  keeps the copyright, Selldone's cookie settings and the powered-by mark,
+  which follows the shop's own copyright-mark setting.
+
+  Everything is read live. A shop with custom footer code keeps Selldone's
+  footer (the layout decides).
+-->
+<template>
+  <footer class="k-footer">
+    <!-- ▆▆▆▆▆▆▆▆ Back to the aisles ▆▆▆▆▆▆▆▆ -->
+    <section v-if="aisleList.length" aria-labelledby="k-footer-aisles" class="k-footer__band">
+      <div class="k-wrap k-footer__band-row">
+        <div class="k-footer__band-copy">
+          <p class="k-eyebrow">{{ shopTitle }}</p>
+          <h2 id="k-footer-aisles" class="k-footer__band-title">Everything for the weekly shop</h2>
+          <router-link :to="catalogueRoute" class="k-btn k-btn--solid">
+            Browse every aisle
+            <v-icon class="k-flip" size="20">chevron_right</v-icon>
+          </router-link>
+        </div>
+        <nav aria-label="Aisles" class="k-footer__band-aisles">
+          <router-link
+            v-for="aisle in aisleList.slice(0, 10)"
+            :key="aisle.id"
+            :style="{ '--k-tint': tint(aisle) }"
+            :title="aisle.title || aisle.name"
+            :to="aisleRoute(aisle)"
+            class="k-footer__band-aisle"
+          >
+            <img v-if="aisle.icon" :src="aisleImage(aisle, 128)" alt="" height="56" width="56" loading="lazy" />
+            <span class="k-sr">{{ aisle.title || aisle.name }}</span>
+          </router-link>
+        </nav>
+      </div>
+    </section>
+
+    <!-- ▆▆▆▆▆▆▆▆ Footer ▆▆▆▆▆▆▆▆ -->
+    <div class="k-footer__main">
+      <div class="k-wrap k-footer__grid">
+        <div class="k-footer__brand">
+          <router-link :to="{ path: '/' }" class="k-footer__mark">{{ shopTitle }}<i aria-hidden="true"></i></router-link>
+          <p v-if="$shop.description" class="k-footer__lede">{{ $shop.description }}</p>
+          <s-storefront-social-buttons class="k-footer__social"></s-storefront-social-buttons>
+          <div class="k-footer__pickers">
+            <s-language-selector hide-details variant="outlined"></s-language-selector>
+            <u-currency-selector
+              v-if="$shop.currencies && $shop.currencies.length > 1"
+              :shop="$shop"
+              hide-details
+              @change="onChangeUserSelectedCurrency"
+            />
+          </div>
+        </div>
+
+        <nav aria-labelledby="k-footer-shop" class="k-footer__col">
+          <h3 id="k-footer-shop" class="k-footer__head">Aisles</h3>
+          <router-link :to="dealsRoute">Deals</router-link>
+          <router-link v-for="aisle in aisleList.slice(0, 8)" :key="aisle.id" :to="aisleRoute(aisle)">
+            {{ aisle.title || aisle.name }}
+          </router-link>
+          <router-link v-if="aisleList.length > 8" :to="catalogueRoute" class="-more">All aisles</router-link>
+        </nav>
+
+        <nav v-if="sellerList.length" aria-labelledby="k-footer-sellers" class="k-footer__col">
+          <h3 id="k-footer-sellers" class="k-footer__head">Sellers</h3>
+          <router-link v-for="seller in sellerList" :key="seller.id" :to="sellerRoute(seller)" class="k-footer__seller">
+            <img v-if="seller.icon" :src="vendorImage(seller, true)" alt="" height="28" width="28" loading="lazy" />
+            {{ seller.name }}
+          </router-link>
+        </nav>
+
+        <nav aria-labelledby="k-footer-help" class="k-footer__col">
+          <h3 id="k-footer-help" class="k-footer__head">{{ shopTitle }}</h3>
+          <router-link v-for="(item, i) in shopLinks" :key="'l' + i" :to="item.to">{{ item.name }}</router-link>
+        </nav>
+
+        <nav aria-labelledby="k-footer-account" class="k-footer__col">
+          <h3 id="k-footer-account" class="k-footer__head">Your account</h3>
+          <template v-if="user">
+            <router-link :to="{ name: window.$storefront.routes.USER_PROFILE_PAGE }">My account</router-link>
+            <router-link :to="{ name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL }">Orders</router-link>
+            <router-link :to="{ name: window.$storefront.routes.USER_FAVORITES_PAGE }">Saved</router-link>
+          </template>
+          <button v-else class="k-footer__textbtn" type="button" @click="signIn">Sign in</button>
+          <router-link :to="{ name: window.$storefront.routes.BASKET_PAGE, params: { type: 'physical' } }">Basket</router-link>
+        </nav>
+      </div>
+
+      <div class="k-wrap k-footer__base">
+        <span>© {{ year }} {{ shopTitle }}</span>
+        <span class="k-footer__base-links">
+          <router-link :to="{ name: window.$storefront.routes.SHOP_PROFILE_PAGE_PRIVACY }">Privacy</router-link>
+          <router-link :to="{ name: window.$storefront.routes.SHOP_PROFILE_PAGE_TERMS }">Terms</router-link>
+          <s-footer-section-gdpr></s-footer-section-gdpr>
+          <s-footer-section-selldone></s-footer-section-selldone>
+        </span>
+      </div>
+    </div>
+  </footer>
+</template>
+
+<script>
+import SStorefrontSocialButtons from "@selldone/components-vue/storefront/social/SStorefrontSocialButtons.vue";
+import SLanguageSelector from "@selldone/components-vue/storefront/language/selector/SLanguageSelector.vue";
+import UCurrencySelector from "@selldone/components-vue/ui/currency/selector/UCurrencySelector.vue";
+import SFooterSectionGdpr from "@selldone/components-vue/storefront/footer/section/gdpr/SFooterSectionGdpr.vue";
+import SFooterSectionSelldone from "@selldone/components-vue/storefront/footer/section/selldone/SFooterSectionSelldone.vue";
+import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
+import {
+  aisleImage,
+  aisleRoute,
+  aisles,
+  catalogueRoute,
+  dealsRoute,
+  sellerRoute,
+  tintFor,
+  vendorImage,
+  vendors,
+} from "../kalio-catalog";
+
+export default {
+  name: "KalioFooter",
+  components: {
+    SStorefrontSocialButtons,
+    SLanguageSelector,
+    UCurrencySelector,
+    SFooterSectionGdpr,
+    SFooterSectionSelldone,
+  },
+  inject: ["$shop"],
+
+  data() {
+    return {
+      window: window,
+      aisleList: [],
+      sellerList: [],
+      year: new Date().getFullYear(),
+    };
+  },
+
+  computed: {
+    shopTitle() {
+      return this.$shop?.title || "Kalio";
+    },
+    user() {
+      return this.$store.getters.getUser;
+    },
+    catalogueRoute() {
+      return catalogueRoute();
+    },
+    dealsRoute() {
+      return dealsRoute();
+    },
+    /* The merchant's footer menu (Selldone menus, type FOOTER), flattened,
+       or the standard pages when the shop has none. */
+    shopLinks() {
+      const menu = this.$shop?.menus?.find((it) => it.type === "FOOTER" && it.enable !== false);
+      /* A link to a route this storefront does not have (a blog the shop
+         never enabled) would throw while rendering, so it is left out. */
+      const items = (menu?.menu || [])
+        .flat()
+        .filter((item) => item && item.name && item.to)
+        .filter((item) => !item.to.name || this.$router.hasRoute(item.to.name));
+      if (items.length) return items;
+      const r = window.$storefront.routes;
+      return [
+        { name: "About us", to: { name: r.SHOP_PROFILE_PAGE_ABOUT_US } },
+        { name: "Contact us", to: { name: r.SHOP_CONTACT_US } },
+        { name: "Terms of use", to: { name: r.SHOP_PROFILE_PAGE_TERMS } },
+        { name: "Privacy", to: { name: r.SHOP_PROFILE_PAGE_PRIVACY } },
+      ];
+    },
+  },
+
+  mounted() {
+    aisles().then((list) => (this.aisleList = list));
+    vendors().then((list) => (this.sellerList = list));
+  },
+
+  methods: {
+    aisleRoute,
+    aisleImage,
+    sellerRoute,
+    vendorImage,
+    tint: tintFor,
+    signIn() {
+      EventBus.$emit("need-login", true);
+    },
+  },
+};
+</script>

@@ -25,7 +25,10 @@ pale tint of their own. The approved mockup is in
 | Seller offer cards — SSmartSelectVendor logic via `extends` | `components/kalio/product/KalioSellerOffers.vue` |
 | Product page styles | `style/kalio-product.scss` |
 | Aisle sign and aisle chips on category pages | `components/kalio/KalioAisleHeader.vue` |
-| Seller hero and rows on vendor pages | `components/kalio/KalioSellerHero.vue`, `KalioSellerShelf.vue` |
+| Seller storefront: sign with mark, aisles and a stall of their products; offers and one row per aisle | `components/kalio/KalioSellerHero.vue`, `KalioSellerShelf.vue` |
+| Header: wordmark, Aisles menu, search, account, basket pill, aisle strip; basket and phone-menu drawers | `components/kalio/shell/KalioHeader.vue` |
+| Footer: aisle band, aisles, sellers, shop links (the merchant's footer menu), account | `components/kalio/shell/KalioFooter.vue` |
+| Header, footer, drawers, catalogue toolbar, filter panel | `style/kalio-shell.scss` |
 | Shared reads: aisles, sellers, who sells what, tints | `components/kalio/kalio-catalog.ts` |
 | Typefaces (loaded by the app) | `components/kalio/kalio-fonts.ts` |
 | Shop page choosing home / aisle / seller / catalogue | `pages/products/StorefrontPageProducts.vue` |
@@ -37,6 +40,15 @@ pale tint of their own. The approved mockup is in
 Commerce markup and state are untouched: cards, quick-buy, basket, checkout,
 variants and vendor offers are Selldone's components, re-skinned. Kalio adds
 the aisle tint, the unit and the seller line around the platform card.
+
+A merchant's custom header or footer code still wins over Kalio's
+(`layouts/StorefrontLayout.vue`).
+
+The filter panel is Selldone's (`SCategoryFilter`), restyled: on desktop it
+sits inside the catalogue column beside the grid and is only as tall as its
+filters; the aisle sign and the seller storefront above it stay full width.
+On a phone it is a sheet over the page, and the header and bottom bar step
+aside while it is open.
 
 The shop page shows the home sections only when it has no query. Search,
 filters, sorts, "See all deals" and "Browse every product" all add a query,
@@ -67,9 +79,14 @@ npm run build-production
 rm dist/index.html                        # every ZIP member must be under app/
 node scripts/kalio-svg-flatten.mjs dist/app
 file -b --mime-type dist/app/js/*.js | sort | uniq -c   # no text/x-java allowed
-python <selldone-cli>/.agents/skills/package-selldone-storefront-layout/scripts/package_layout.py dist dist.zip --manifest manifest.json
+python <cli-source>/.agents/skills/package-selldone-storefront-layout/scripts/package_layout.py dist dist.zip --manifest manifest.json
 node scripts/kalio-deploy.mjs "$(npm root -g)/selldone-cli"
 ```
+
+`<cli-source>` is a clone of github.com/selldone/cli; the npm package does
+not ship `.agents/`. Locally, `file` calls a few large lazy chunks
+`application/octet-stream`; the server has served those as JavaScript
+(checked on 0.2.2), so only `text/x-java` blocks a release.
 
 `kalio-deploy.mjs` reuses the official CLI's saved login, 2FA check and version
 check, and sends the manifest as JSON text of the six contract keys.

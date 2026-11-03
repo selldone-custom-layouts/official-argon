@@ -60,13 +60,9 @@
         filter, sort, "All products") asks for the catalogue itself.
       -->
 
-      <div
-        :class="{
-          'add-marginal-side-menu-open':
-            show_filter_menu && $vuetify.display.smAndUp,
-        }"
-        style="transition: all 400ms ease"
-      >
+      <!-- Full width: Kalio's filter panel sits beside the grid below, not
+           beside these, so they are not pushed aside when it opens. -->
+      <div>
       <!-- ▆▆▆▆▆▆▆▆ Seller: hero + shelf ▆▆▆▆▆▆▆▆ -->
       <!-- Replaces Selldone's one-line s-shop-vendor-header, which carries only
            the seller's name and avatar — no commerce state — so nothing is lost. -->
@@ -92,7 +88,7 @@
         :key="$route.path"
         :style="{ '--k-tint': aisle_tint }"
         :vendor-id="vendor_id"
-        has-breadcrumb
+        :has-breadcrumb="!category_name && !vendor_id"
         has-filter
         has-sort
         load-more

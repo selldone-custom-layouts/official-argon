@@ -678,36 +678,6 @@
     }
   }
 
-  /* Sort and view: a quiet row of pills, the chosen one deep green. */
-  .s--sort-view {
-    gap: 6px;
-    padding: 4px 0;
-
-    .v-btn {
-      min-height: 40px;
-      border-radius: var(--k-pill) !important;
-      text-transform: none !important;
-      letter-spacing: 0 !important;
-      font-family: var(--k-body) !important;
-      font-weight: 600 !important;
-      color: var(--k-ink) !important;
-      background: transparent !important;
-      box-shadow: none !important;
-    }
-
-    .v-btn--active,
-    .v-btn.bg-primary {
-      background: var(--k-green-deep) !important;
-      color: #fff !important;
-    }
-
-    .v-btn-group {
-      background: var(--k-card) !important;
-      border: 1px solid var(--k-line) !important;
-      border-radius: var(--k-pill) !important;
-    }
-  }
-
   /* "N More.." — the load-more control, as an outlined pill. */
   .v-btn.text-blue {
     display: flex;
@@ -840,53 +810,7 @@
   }
 }
 
-/* The listing's side drawer (category tree and filters): white, hairline
-   edge, green for what is chosen. */
-.s--storefront-products-listing .v-navigation-drawer,
-.s--storefront-products-filter-menu {
-  background: var(--k-paper) !important;
-  color: var(--k-ink) !important;
-  border-inline-end: 1px solid var(--k-line) !important;
-  /* No resting shadow: a closed drawer sits just off-canvas, and its shadow
-     bled a grey band down the left edge of every phone screen. */
-  box-shadow: none !important;
-  font-family: var(--k-body);
-
-  &.v-navigation-drawer--active {
-    box-shadow: 18px 0 40px -20px rgba(16, 35, 27, 0.3) !important;
-  }
-
-  .v-list-item-title {
-    font-weight: 600;
-  }
-
-  .v-list-item--active,
-  .v-list-item:hover {
-    background: var(--k-green-soft) !important;
-    color: var(--k-green) !important;
-  }
-
-  .v-expansion-panel,
-  .v-card {
-    background: transparent !important;
-    box-shadow: none !important;
-    border-bottom: 1px solid var(--k-line);
-    border-radius: 0 !important;
-  }
-
-  .v-expansion-panel-title {
-    font-family: var(--k-display) !important;
-    font-size: 18px !important;
-    font-weight: 600 !important;
-    min-height: 52px !important;
-  }
-
-  .v-slider-thumb__surface,
-  .v-slider-track__fill {
-    background: var(--k-green) !important;
-    color: var(--k-green) !important;
-  }
-}
+/* The listing's filter panel and toolbar: kalio-shell.scss. */
 
 /* ▆▆▆▆▆▆▆▆ Product page and product overview ▆▆▆▆▆▆▆▆
 

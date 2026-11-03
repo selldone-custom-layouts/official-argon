@@ -52,41 +52,26 @@
     <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Primary Header ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
     <!-- This is the primary header at the top of the website, where you can display your site's name, logo, user avatar, and navigation menu. -->
 
-    <s-header-section
+    <!-- Kalio: the Kalio header (wordmark, aisles, search, account, basket,
+         aisle strip). A shop that set custom header code keeps Selldone's
+         header, which renders that code. -->
+    <template
       v-if="
         !globalStyle.header_mode ||
         globalStyle.header_mode ===
           'normal' /*Show primary header in top of page!*/
       "
-    ></s-header-section>
+    >
+      <s-header-section v-if="custom_header_code"></s-header-section>
+      <kalio-header
+        v-else
+        :show-search="!!show_search_box"
+        @clear="onClear"
+        @search="onSearch"
+      ></kalio-header>
+    </template>
 
-    <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Search Box ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-    <!-- This is the main search bar for the shop. -->
-    <v-slide-y-reverse-transition leave-absolute>
-      <div      v-if="show_search_box && !isMobile && !custom_header_code" class="s--storefront-layout-search-style me-2">
-        <s-storefront-search-box
-
-          ref="search_box"
-          v-model:expand-input="globalStyle.search_mode"
-
-          :dark="false"
-          :negative-qr-margin="false"
-          :title="$t('layout_shop.search_title', { shop_name: $shop.title })"
-
-          flat
-          variant="outlined"
-          rounded="lg"
-          persistent-placeholder
-          @onClear="onClear"
-          @onSearch="onSearch"
-          no-qr
-          class="flex-grow-1 mt-2"
-          color="#000"
-
-        />
-      </div>
-
-    </v-slide-y-reverse-transition>
+    <!-- Kalio: the search box lives in the Kalio header. -->
 
     <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Main ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
     <!-- It's the main view of the storefront. -->
@@ -156,11 +141,16 @@
     <template v-if="delay_loaded">
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Primary Footer ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
       <!-- Primary footer of the storefront. -->
-      <s-footer-section
-        v-if="!isMobile && !isStandalone && $shop && has_footer"
-        :dark="!is_light_footer"
-        class="m-0"
-      />
+      <!-- Kalio: the Kalio footer, on phones too. A shop that set custom
+           footer code keeps Selldone's footer, which renders that code. -->
+      <template v-if="!isStandalone && $shop && has_footer">
+        <s-footer-section
+          v-if="theme?.custom_footer_code"
+          :dark="!is_light_footer"
+          class="m-0"
+        />
+        <kalio-footer v-else />
+      </template>
 
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Basket Indicator ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
       <!-- Display a green stripe at the bottom of product pages to indicate that the product has been added to the basket. -->
@@ -191,7 +181,8 @@
 </template>
 
 <script lang="ts">
-import SStorefrontSearchBox from "@selldone/components-vue/storefront/search/SStorefrontSearchBox.vue";
+import KalioHeader from "../components/kalio/shell/KalioHeader.vue";
+import KalioFooter from "../components/kalio/shell/KalioFooter.vue";
 import SStorefrontTopMenu from "@selldone/components-vue/storefront/menu/header/SStorefrontTopMenu.vue";
 import SHeaderSection from "@selldone/components-vue/storefront/header/section/SHeaderSection.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
@@ -230,7 +221,8 @@ export default {
     SHeaderSection,
     SStorefrontTopMenu,
 
-    SStorefrontSearchBox,
+    KalioHeader,
+    KalioFooter,
 
     SStorefrontListingCompareBar: defineAsyncComponent(
       () =>
