@@ -31,6 +31,7 @@ may be registered even when the client reports an error.
 npm run build-production
 rm dist/index.html                        # every ZIP member must be under app/
 node scripts/kalio-svg-flatten.mjs dist/app
+file -b --mime-type dist/app/js/*.js | sort | uniq -c   # no text/x-java allowed
 python <selldone-cli>/.agents/skills/package-selldone-storefront-layout/scripts/package_layout.py dist dist.zip --manifest manifest.json
 node scripts/kalio-deploy.mjs "$(npm root -g)/selldone-cli"
 ```
@@ -56,12 +57,32 @@ with `extracting: false`, `error: null`, and `file_manifest` hashes equal to
   `display`, character references in values and more are refused. The script
   turns CSS into plain attributes and drops what has no equivalent; every
   rewrite was pixel-compared against the original.
+- **Every chunk reads as JavaScript** (`sniffAsJavaScript` in
+  `vite.config.ts`). The service stores each file with the MIME type libmagic
+  reads from its content; a chunk opening with `import{…}` reads as Java, and
+  browsers refuse a module served as `text/x-java`. 40 of 0.1.4's chunks were
+  served that way; from 0.1.5 every JS file opens with `"use strict";`.
 - **Fewer files** (`assetsInlineLimit`, `cssCodeSplit: false`,
   `experimentalMinChunkSize`, flags from jsDelivr). The endpoint processes the
   archive inside the request, behind Cloudflare's ~100 s read limit; at 714
   files it was cut mid-extraction. At 363 it completes.
 
 ## Live
+
+**Known Selldone bug (3 November 2026).** With the Layout attached, the shop
+page loads `https://layouts.selldone.com/<deploy.path>/app/shop.js`. For
+uploads made through the current endpoint `deploy.path` is
+`layouts/23/releases/<ULID>/app` and the files are served from
+`https://cdn.selldone.com/public/<deploy.path>/shop.js`, so the page asks for
+`…/app/app/shop.js` on the wrong host, gets a 404 and stays blank. Older
+uploads (path `<package>/<version>`, e.g. Kario's) are unaffected. Until
+Selldone fixes the address, attaching this Layout blanks the shop. The 404s
+are cached by Cloudflare for a year (`max-age=31536000`), so copying files to
+that address would also need a cache purge.
+
+To check a release as visitors will get it, serve the live page's HTML with
+that one base replaced by the `cdn.selldone.com/public/…` one: 0.1.5 was
+checked this way on home, aisle, product, seller, basket, 404 and 375 px.
 
 Uploading creates a **beta** version; it does not change any shop. To put it on
 Kalio: shop dashboard → Domains → **Layout** tab → choose *Kalio Market Hall*.

@@ -90,6 +90,7 @@ export default ({mode}: any) => {
       //@ts-ignore
       vitePluginRequire.default(),
       flagIconsFromCdn(),
+      sniffAsJavaScript(),
       ...(IS_HTTPS
           ? [
             basicSsl({name: "selldone-test-cert"}), // Enable if you want to use https
@@ -195,6 +196,36 @@ function flagIconsFromCdn() {
     transform(code: string, id: string) {
       if (!/[\\/]flag-icons[\\/]css[\\/]flag-icons(\.min)?\.css$/.test(id.split("?")[0])) return null;
       return { code: code.replace(/url\((["']?)\.\.\/flags\//g, `url($1${cdn}`), map: null };
+    },
+  };
+}
+
+/**
+ * Every emitted JS file opens with a "use strict" directive.
+ *
+ * The Layout service stores each release file with the MIME type libmagic
+ * reads from its content, and only falls back to the extension when that read
+ * is inconclusive. A chunk that opens with `import{…}from"../shop.js";const`
+ * reads as Java source: 40 of 0.1.4's 223 chunks — the variant selector, the
+ * header's account menu, the compare button among them — were served as
+ * text/x-java, and browsers refuse to run a module script of that type. The
+ * directive makes libmagic read the file as JavaScript and changes nothing
+ * at run time, since module code is strict already. Applied in
+ * generateBundle, after minification, so nothing strips it. Vite later puts
+ * its preload map in front of it in the few files that preload others
+ * (shop.js among them); there it is an inert string, and those files read
+ * as JavaScript without it. Check with `file --mime-type dist/app/js/*.js`.
+ */
+function sniffAsJavaScript() {
+  return {
+    name: "kalio-sniff-as-javascript",
+    apply: "build" as const,
+    generateBundle(_options: any, bundle: Record<string, any>) {
+      for (const file of Object.values(bundle)) {
+        if (file.type === "chunk" && !file.code.startsWith('"use strict";')) {
+          file.code = `"use strict";\n${file.code}`;
+        }
+      }
     },
   };
 }
