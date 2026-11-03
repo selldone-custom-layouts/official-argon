@@ -1350,6 +1350,35 @@
   color: var(--k-ink) !important;
 }
 
+/* ▆▆▆▆▆▆▆▆ Sign-in ▆▆▆▆▆▆▆▆
+
+   The shop's sign-in form (the need-login dialog, and anywhere Selldone
+   embeds it), in Kalio's type with pill buttons. The sign-in methods it
+   offers are the shop's login settings; nothing here hides one. */
+.log-form {
+  font-family: var(--k-body);
+
+  h1,
+  h2,
+  h3,
+  .text-h1,
+  .text-h2,
+  .text-h3,
+  .text-h4 {
+    font-family: var(--k-display) !important;
+    color: var(--k-ink) !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  .v-btn {
+    border-radius: var(--k-pill) !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-family: var(--k-body) !important;
+    font-weight: 600 !important;
+  }
+}
+
 /* ▆▆▆▆▆▆▆▆ Footer ▆▆▆▆▆▆▆▆
 
    Light and short: the warm wash under a hairline, ink text, green on

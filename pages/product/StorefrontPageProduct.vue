@@ -13,180 +13,152 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div class="s--product">
-    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Product info ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+  <!--
+    Kalio — product page.
 
+    Selldone's product sections and commerce components, arranged and dressed
+    as Kalio's own page: a plain breadcrumb, the Kalio overview (packshot on
+    its aisle tint beside one buy column), then the product's story —
+    highlights, description, spec, reviews — and more from the same aisle.
+    Merchant section ordering (theme.order) still decides the order below
+    the overview.
+  -->
+  <div class="s--product k-product">
+    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Product info ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
     <div style="order: 0">
       <div class="s--product-section-info">
         <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Top Shop Menu ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
         <slot name="header" :center="true"></slot>
-        <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-        <v-toolbar color="transparent" flat>
-          <v-btn
-            v-if="product"
-            :to="
-              product.category
-                ? {
-                    name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
-                    params: { category_name: product.category.name },
-                  }
-                : { name: 'ShopPage' }
-            "
-            class="hide-on-small-600"
-            exact
-            icon
-            aria-label="Go Back"
-          >
-            <v-icon>{{ $t("icons.arrow_back") }}</v-icon>
-          </v-btn>
+        <!-- ⬬⬬⬬⬬ Breadcrumb, admin shortcut, QR ⬬⬬⬬⬬ -->
+        <nav aria-label="Breadcrumb" class="k-crumbs">
+          <router-link :to="{ name: window.$storefront.routes.SHOP_PAGE }">{{ $shop.title }}</router-link>
+          <template v-if="product && product.category">
+            <v-icon aria-hidden="true" class="k-flip" size="16">chevron_right</v-icon>
+            <router-link
+              :to="{
+                name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
+                params: { category_name: product.category.name },
+              }"
+              >{{ product.category.title || product.category.name }}</router-link
+            >
+          </template>
+          <template v-if="product">
+            <v-icon aria-hidden="true" class="k-flip" size="16">chevron_right</v-icon>
+            <span aria-current="page" class="k-crumbs__here">{{ product.title }}</span>
+          </template>
+          <span class="k-crumbs__tools">
+            <s-product-admin-button v-if="$vuetify.display.mdAndUp"></s-product-admin-button>
+            <s-product-qr></s-product-qr>
+          </span>
+        </nav>
 
-          <!-- ⬬⬬⬬⬬ Breadcrumbs ⬬⬬⬬⬬ -->
-          <s-product-breadcrumb class="flex-grow-1"></s-product-breadcrumb>
-
-          <!-- ████████████████████ Go to admin panel button ████████████████████ -->
-          <s-product-admin-button
-            v-if="$vuetify.display.mdAndUp"
-          ></s-product-admin-button>
-
-          <!-- ⬬⬬⬬⬬ QR CODE ⬬⬬⬬⬬ -->
-
-          <s-product-qr></s-product-qr>
-        </v-toolbar>
-
-        <s-product-overview v-if="product" can-buy show-cover />
+        <kalio-product-overview v-if="product" can-buy show-cover />
         <s-product-overview-loading v-else />
-
         <u-loading-progress v-if="busy"></u-loading-progress>
       </div>
     </div>
 
     <template v-if="product">
       <!-- ▁▁▁▁▁▁ 🞇 Cross selling 🞇 ▁▁▁▁▁▁ -->
-
       <div :style="{ order: getOrder('cross') }">
-        <s-product-cross-sells
-          class="s--product-section my-16"
-        ></s-product-cross-sells>
+        <s-product-cross-sells class="s--product-section k-pdp-block"></s-product-cross-sells>
       </div>
-
       <!-- ▁▁▁▁▁▁ 🞇 Offer 🞇 ▁▁▁▁▁▁ -->
       <div :style="{ order: getOrder('offer') }">
-        <s-product-offers class="s--product-section my-16"></s-product-offers>
+        <s-product-offers class="s--product-section k-pdp-block"></s-product-offers>
       </div>
-
       <!-- ▁▁▁▁▁▁ 🞇 Spec 🞇 ▁▁▁▁▁▁ -->
-
       <div :style="{ order: getOrder('spec') }">
-        <s-product-spec class="s--product-section my-16"></s-product-spec>
+        <s-product-spec class="k-pdp-block k-pdp-spec"></s-product-spec>
       </div>
-
       <!-- ▁▁▁▁▁▁ 🞇 Includes in the product 🞇 ▁▁▁▁▁▁ -->
-
       <div :style="{ order: getOrder('includes') }">
-        <s-product-includes class="my-16"></s-product-includes>
+        <s-product-includes class="k-pdp-block"></s-product-includes>
       </div>
-
-      <!-- ▁▁▁▁▁▁ 🞇 Pros & Cons 🞇 ▁▁▁▁▁▁ -->
+      <!-- ▁▁▁▁▁▁ 🞇 Highlights (the product's pros and cons) 🞇 ▁▁▁▁▁▁ -->
       <div v-if="has_pros_cons" :style="{ order: getOrder('pros') }">
-        <v-container class="s--product-section-header my-16" fluid>
-          <v-row align="center">
-            <v-col class="text-start" cols="12" md="6">
-              <v-list-subheader
-                >●
-                {{
-                  $t("product_info.product_description_header", {
-                    product: product.title,
-                  })
-                }}
-              </v-list-subheader>
-              <h2
-                v-if="article"
-                class="text-h3 line-height-normal font-weight-black"
-              >
-                {{ article.title }}
-              </h2>
-            </v-col>
-
-            <v-col cols="12" md="6">
-              <s-product-pros-cons></s-product-pros-cons>
-            </v-col>
-          </v-row>
-        </v-container>
+        <section aria-labelledby="k-highlights" class="k-pdp-block k-highlights">
+          <h2 id="k-highlights" class="k-pdp-block__title">Highlights</h2>
+          <div class="k-highlights__cols">
+            <ul v-if="pros_list.length" class="k-highlights__list -pros">
+              <li v-for="item in pros_list" :key="'p' + item.key">
+                <v-icon aria-hidden="true" size="20">check_circle</v-icon>
+                <span><b>{{ item.key }}</b> {{ item.value }}</span>
+              </li>
+            </ul>
+            <ul v-if="cons_list.length" class="k-highlights__list -cons">
+              <li v-for="item in cons_list" :key="'c' + item.key">
+                <v-icon aria-hidden="true" size="20">remove_circle_outline</v-icon>
+                <span><b>{{ item.key }}</b> {{ item.value }}</span>
+              </li>
+            </ul>
+          </div>
+        </section>
       </div>
-      <!-- ▁▁▁▁▁▁ 🞇 Article 🞇 ▁▁▁▁▁▁ -->
-
+      <!-- ▁▁▁▁▁▁ 🞇 About this product (article) 🞇 ▁▁▁▁▁▁ -->
       <div :style="{ order: getOrder('review') }">
-        <s-product-article :hide-title="has_pros_cons"></s-product-article>
+        <section aria-labelledby="k-about" class="k-pdp-block k-about">
+          <h2 v-if="article" id="k-about" class="k-pdp-block__title">About this product</h2>
+          <s-product-article hide-title></s-product-article>
+        </section>
       </div>
-
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ TAB > Files List ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <div :style="{ order: getOrder('files') }">
-        <s-product-files-list
-          class="s--product-section-header"
-        ></s-product-files-list>
+        <s-product-files-list class="k-pdp-block"></s-product-files-list>
       </div>
-
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ TAB > 🦄 Membership Contents ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <div :style="{ order: getOrder('contents') }">
-        <s-product-subscription-membership
-          class="s--product-section-header"
-        ></s-product-subscription-membership>
+        <s-product-subscription-membership class="k-pdp-block"></s-product-subscription-membership>
       </div>
-
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ TAB > Shipping ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <div :style="{ order: getOrder('shipping') }">
-        <s-product-shipping
-          class="s--product-section-header"
-        ></s-product-shipping>
+        <s-product-shipping class="k-pdp-block"></s-product-shipping>
       </div>
-
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ TAB > Warranty ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
       <div :style="{ order: getOrder('warranty') }">
-        <s-product-warranty
-          class="s--product-section-header"
-        ></s-product-warranty>
+        <s-product-warranty class="k-pdp-block"></s-product-warranty>
       </div>
-
       <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ TAB > Guide ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <div :style="{ order: getOrder('guide') }">
-        <s-product-guide class="s--product-section-header"></s-product-guide>
+        <s-product-guide class="k-pdp-block"></s-product-guide>
       </div>
-
       <!-- █████████████████████ Internal Page █████████████████████ -->
-
       <div :style="{ order: getOrder('page') }">
         <s-product-landing></s-product-landing>
       </div>
-
-      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ TAB > Comment ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
-
+      <!-- ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Reviews ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ -->
       <div :style="{ order: getOrder('comments') }">
-        <s-product-comments
-          class="s--product-section-header"
-        ></s-product-comments>
+        <section aria-labelledby="k-reviews" class="k-pdp-block k-reviews">
+          <h2 id="k-reviews" class="k-pdp-block__title">Reviews</h2>
+          <!-- A guest gets Kalio's own prompt; the sign-in it opens is the
+               app's standard one (the need-login event). Selldone's inline
+               sign-in card inside the comments is hidden in kalio-product.scss. -->
+          <div v-if="!$store.getters.getUser" class="k-reviews__guest">
+            <p>Bought this? Sign in to rate it and share what you think.</p>
+            <button class="k-btn k-btn--solid" type="button" @click="askToSignIn">Sign in to review</button>
+          </div>
+          <s-product-comments></s-product-comments>
+        </section>
       </div>
-
-      <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Related products ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+      <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ More from this aisle (related products) ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
       <div :style="{ order: getOrder('related-products') }">
-        <s-product-related-products></s-product-related-products>
+        <kalio-rail
+          v-if="product.category"
+          :key="'aisle-' + product.category.id"
+          :dir="product.category.name"
+          :more-to="{
+            name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
+            params: { category_name: product.category.name },
+          }"
+          :title="'More from ' + (product.category.title || product.category.name)"
+          sort="bestselling"
+        />
       </div>
-
-      <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Related categories ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+      <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Every aisle (related categories) ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
       <div :style="{ order: getOrder('related-categories') }">
-        <s-product-related-categories></s-product-related-categories>
+        <kalio-aisle-ribbon class="k-pdp-aisles" />
       </div>
-
-      <!-- ▁▁▁▁▁▁ 🞇 Badges 🞇 ▁▁▁▁▁▁ -->
-      <!--  <div :style="{ order: getOrder('badges') }">
-          <u-fade-scroll>
-            <s-product-section-badges
-              :large="$vuetify.display.mdAndUp"
-              class="py-16"
-            ></s-product-section-badges>
-          </u-fade-scroll>
-        </div>-->
     </template>
   </div>
 </template>
@@ -194,15 +166,15 @@
 <script lang="ts">
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
-import SProductOverview from "@selldone/components-vue/storefront/product/overview/SProductOverview.vue";
+import KalioProductOverview from "../../components/kalio/product/KalioProductOverview.vue";
+import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
+import KalioRail from "../../components/kalio/KalioRail.vue";
+import KalioAisleRibbon from "../../components/kalio/KalioAisleRibbon.vue";
 import SProductOverviewLoading from "@selldone/components-vue/storefront/product/overview/loading/SProductOverviewLoading.vue";
 
 import { GtagEcommerce } from "@selldone/components-vue/plugins/gtag/GtagEcommerce";
 
-import SProductProsCons from "@selldone/components-vue/storefront/product/pros-cons/SProductProsCons.vue";
 import SProductIncludes from "@selldone/components-vue/storefront/product/includes/SProductIncludes.vue";
-import SProductRelatedProducts from "@selldone/components-vue/storefront/product/related-products/SProductRelatedProducts.vue";
-import SProductRelatedCategories from "@selldone/components-vue/storefront/product/related-categories/SProductRelatedCategories.vue";
 import SProductShipping from "@selldone/components-vue/storefront/product/shipping/SProductShipping.vue";
 import SProductWarranty from "@selldone/components-vue/storefront/product/warranty/SProductWarranty.vue";
 import SProductGuide from "@selldone/components-vue/storefront/product/guide/SProductGuide.vue";
@@ -214,7 +186,6 @@ import SProductCrossSells from "@selldone/components-vue/storefront/product/cros
 import ProductSection from "@selldone/core-js/enums/product/ProductSection";
 import { Article } from "@selldone/core-js";
 import { computed } from "vue";
-import SProductBreadcrumb from "@selldone/components-vue/storefront/product/breadcrumb/SProductBreadcrumb.vue";
 import SProductAdminButton from "@selldone/components-vue/storefront/product/admin/button/SProductAdminButton.vue";
 import SProductQr from "@selldone/components-vue/storefront/product/qr/SProductQr.vue";
 import SProductSpec from "@selldone/components-vue/storefront/product/spec/SProductSpec.vue";
@@ -236,7 +207,6 @@ export default {
     SProductSpec,
     SProductQr,
     SProductAdminButton,
-    SProductBreadcrumb,
     SProductCrossSells,
     SProductOffers,
     SProductSubscriptionMembership,
@@ -245,14 +215,13 @@ export default {
     SProductGuide,
     SProductWarranty,
     SProductShipping,
-    SProductRelatedCategories,
-    SProductRelatedProducts,
     SProductIncludes,
-    SProductProsCons,
 
     SProductOverviewLoading,
+    KalioProductOverview,
+    KalioRail,
+    KalioAisleRibbon,
 
-    SProductOverview,
   },
 
   /**
@@ -309,6 +278,13 @@ export default {
 
     // ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Admin URLs: ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
+    /* The product's pros and cons, as label → note pairs, for Highlights. */
+    pros_list() {
+      return this.toPairs(this.product?.pros);
+    },
+    cons_list() {
+      return this.toPairs(this.product?.cons);
+    },
     has_pros_cons() {
       return (
         (this.product?.pros && Object.keys(this.product.pros).length > 0) ||
@@ -328,6 +304,15 @@ export default {
   },
 
   methods: {
+    askToSignIn() {
+      EventBus.$emit("need-login", true);
+    },
+    toPairs(value) {
+      if (!value || typeof value !== "object") return [];
+      return Object.entries(value)
+        .filter(([key, note]) => key && note != null)
+        .map(([key, note]) => ({ key, value: String(note) }));
+    },
     getOrder(code) {
       if (!this.theme?.order || !Array.isArray(this.theme?.order)) {
         this.theme.order = Object.values(ProductSection).map((x) => x.code);

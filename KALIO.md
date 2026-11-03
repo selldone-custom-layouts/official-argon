@@ -20,6 +20,10 @@ pale tint of their own. The approved mockup is in
 | Aisle row (round pictures) | `components/kalio/KalioAisleRibbon.vue` |
 | Product rows with the platform quick-buy sheet | `components/kalio/KalioRail.vue`, `KalioSellerLine.vue` |
 | Aisle promos, seller cards | `components/kalio/KalioPromoPair.vue`, `KalioSellerCards.vue` |
+| Product page: breadcrumb, highlights, sections, aisle row | `pages/product/StorefrontPageProduct.vue` |
+| Product overview (packshot panel, buy column) — Selldone's SProductOverview logic via `extends`, Kalio markup | `components/kalio/product/KalioProductOverview.vue` |
+| Seller offer cards — SSmartSelectVendor logic via `extends` | `components/kalio/product/KalioSellerOffers.vue` |
+| Product page styles | `style/kalio-product.scss` |
 | Aisle sign and aisle chips on category pages | `components/kalio/KalioAisleHeader.vue` |
 | Seller hero and rows on vendor pages | `components/kalio/KalioSellerHero.vue`, `KalioSellerShelf.vue` |
 | Shared reads: aisles, sellers, who sells what, tints | `components/kalio/kalio-catalog.ts` |
