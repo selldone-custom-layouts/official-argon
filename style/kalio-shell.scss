@@ -190,7 +190,9 @@ $k-header-strip: 46px;
     padding: 0 18px 0 16px;
     border-radius: var(--k-pill);
     background: var(--k-green);
-    color: #fff;
+    /* !important: Selldone's base reset [type=button] { color: inherit } has
+       the same weight and loads after this sheet. */
+    color: #fff !important;
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;

@@ -63,423 +63,290 @@
   }
 }
 
-/* ▆▆▆▆▆▆▆▆ Hero ▆▆▆▆▆▆▆▆ */
+/* ▆▆▆▆▆▆▆▆ Hero: the deals counter ▆▆▆▆▆▆▆▆
+   A deep-green board: the week's offer on the start side, the deals on the
+   end side running off the board's edge. The deals are a KalioRail, so each
+   card is the platform card; here every card sits on a white tile of its
+   own so it reads on the green. Under 1100px the offer stacks above the
+   deals. */
 
 .k-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  gap: 18px;
   margin-top: 22px;
   text-align: start;
-
-  &__tiles {
-    display: grid;
-    grid-template-rows: 1fr 1fr;
-    gap: 18px;
-  }
 }
 
-.k-banner {
+.k-counter {
   position: relative;
   display: grid;
-  min-height: 380px;
-  border-radius: var(--k-radius-lg);
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  gap: 40px;
+  padding-block: 48px 44px;
+  padding-inline: 52px 0;
+  border-radius: 30px;
   overflow: hidden;
-  isolation: isolate;
+  color: #fff;
+  background:
+    radial-gradient(520px 340px at 8% 108%, rgba(59, 170, 92, 0.28), transparent 70%),
+    radial-gradient(420px 300px at 96% -10%, rgba(255, 255, 255, 0.07), transparent 70%),
+    var(--k-green-deep);
 
-  &.-loading .k-banner__slide {
-    @extend %k-skeleton;
-  }
+  &__copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
 
-  &__slide {
-    grid-area: 1 / 1;
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 340px;
-    align-items: center;
-    gap: 24px;
-    padding: 46px 40px 62px 48px;
-    background: var(--k-banner, #dcedc5);
-    /* The outgoing slide clears quickly and the next fades in after it, so
-       two headlines never sit on top of each other mid-turn. */
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 200ms ease, visibility 0s linear 200ms;
-
-    &.-current {
-      opacity: 1;
-      visibility: visible;
-      transition: opacity 420ms ease 180ms, visibility 0s;
+    .k-eyebrow {
+      color: #9fdab5;
     }
   }
 
-  &__copy {
-    min-width: 0;
-  }
-
   &__title {
-    margin: 12px 0 14px;
-    max-width: 420px;
+    margin: 12px 0 16px;
     font-family: var(--k-display);
-    font-size: clamp(40px, 4.2vw, 56px);
+    font-size: clamp(40px, 4.2vw, 58px);
     font-weight: 600;
-    line-height: 1.02;
-    letter-spacing: -0.025em;
-    color: var(--k-green-deep);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: #fff;
+
+    em {
+      font-style: normal;
+      color: #ffab8c;
+    }
   }
 
   &__lede {
     margin: 0 0 26px;
-    max-width: 380px;
+    max-width: 320px;
     font-size: 17px;
     line-height: 1.5;
-    color: #2c4a3c;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    color: rgba(255, 255, 255, 0.78);
   }
 
-  &__art {
-    position: relative;
-    width: 340px;
-    height: 330px;
+  &__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
-  /* Four product discs, stacked like produce on a stall. */
-  &__disc {
-    position: absolute;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.62);
-    box-shadow: 0 18px 40px -22px rgba(16, 35, 27, 0.4);
-    overflow: hidden;
+  &__in {
+    margin-top: 30px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.66);
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 10px 0 4px;
+    border-radius: var(--k-pill);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff !important;
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 140ms ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
 
     img {
-      width: 80%;
-      height: 80%;
+      width: 25px;
+      height: 25px;
+      padding: 2px;
+      border-radius: 50%;
+      background: #fff;
       object-fit: contain;
-      mix-blend-mode: multiply;
-    }
-
-    &.-at0 {
-      inset-inline-start: 118px;
-      top: 6px;
-      width: 196px;
-      height: 196px;
-    }
-
-    &.-at1 {
-      inset-inline-start: 0;
-      top: 120px;
-      width: 150px;
-      height: 150px;
-    }
-
-    &.-at2 {
-      inset-inline-start: 196px;
-      top: 190px;
-      width: 140px;
-      height: 140px;
-    }
-
-    &.-at3 {
-      inset-inline-start: 92px;
-      top: 236px;
-      width: 104px;
-      height: 104px;
     }
   }
 
-  &__sticker {
-    position: absolute;
-    inset-inline-end: 22px;
-    top: 18px;
-    z-index: 2;
-    display: grid;
-    place-content: center;
-    width: 104px;
-    height: 104px;
-    border-radius: 50%;
-    background: var(--k-coral);
-    color: #fff;
-    text-align: center;
-    line-height: 1.05;
-    transform: rotate(-10deg);
-    box-shadow: 0 12px 24px -12px rgba(201, 67, 30, 0.75);
-
-    small {
-      font-size: 11.5px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    strong {
-      font-family: var(--k-display);
-      font-size: 33px;
-      font-weight: 700;
-    }
-  }
-
-  &__dots {
-    position: absolute;
-    inset-inline-start: 40px;
-    bottom: 16px;
-    z-index: 3;
-    display: flex;
-
-    /* 24px of hit area around an 8px dot. */
-    button {
-      position: relative;
-      width: 24px;
-      height: 24px;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      cursor: pointer;
-
-      &::before {
-        content: "";
-        position: absolute;
-        inset-inline-start: 8px;
-        top: 8px;
-        width: 8px;
-        height: 8px;
-        border-radius: 8px;
-        background: rgba(14, 63, 46, 0.28);
-        transition: width 200ms ease, background-color 200ms ease;
-      }
-
-      &.-on {
-        width: 42px;
-
-        &::before {
-          width: 26px;
-          background: var(--k-green-deep);
-        }
-      }
-    }
-  }
-}
-
-.k-tile {
-  position: relative;
-  display: flex;
-  min-height: 0;
-  padding: 24px 26px;
-  border-radius: 24px;
-  background: var(--k-banner, var(--k-wash));
-  color: var(--k-ink) !important;
-  text-decoration: none;
-  overflow: hidden;
-
-  &.-loading {
-    @extend %k-skeleton;
-    min-height: 181px;
-  }
-
-  &__copy {
-    position: relative;
-    z-index: 1;
+  /* The rail, reset from a page section to a column of the board. */
+  &__rail.k-rail {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    max-width: 58%;
-  }
-
-  &__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
+    min-width: 0;
+    max-width: none;
     margin: 0;
-  }
+    padding: 0;
 
-  &__mark {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #fff;
-    background: #fff;
-  }
+    .k-rail__head {
+      align-items: center;
+      margin-bottom: 16px;
+      padding-inline-end: 52px;
+    }
 
-  &__title {
-    margin: 6px 0 10px;
-    font-family: var(--k-display);
-    font-size: 27px;
-    font-weight: 600;
-    line-height: 1.08;
-    letter-spacing: -0.015em;
-  }
+    .k-rail__title {
+      font-family: var(--k-body);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0;
+      color: #fff;
+    }
 
-  &__go {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    font-size: 14.5px;
-    font-weight: 600;
-  }
+    .k-round {
+      border-color: transparent;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
 
-  &:hover &__go {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
+      &:hover {
+        border-color: transparent;
+        background: rgba(255, 255, 255, 0.22);
+        color: #fff;
+      }
+    }
 
-  &__pics {
-    position: absolute;
-    inset-inline-end: 14px;
-    bottom: 10px;
-    display: flex;
+    .k-rail__track {
+      grid-auto-columns: 200px;
+      gap: 14px;
+      padding-inline-end: 52px;
+    }
 
-    img {
-      width: 110px;
-      height: 110px;
-      margin-inline-start: -26px;
-      object-fit: contain;
-      mix-blend-mode: multiply;
+    /* More deals past the edge: the last card fades into the board. */
+    &:not(.-at-end) .k-rail__track {
+      mask-image: linear-gradient(90deg, #000 78%, transparent);
+    }
+
+    .k-rail__cell {
+      padding-bottom: 14px;
+      border-radius: 22px;
+      background: #fff;
+      color: var(--k-ink);
+      overflow: hidden;
+    }
+
+    .s--product-card .card__img--hover {
+      border-radius: 0;
+    }
+
+    .s--product-card .card__info {
+      padding: 12px 14px 0 !important;
+    }
+
+    .k-rail__unit,
+    .k-by,
+    .k-rail__skeleton-line {
+      margin-inline: 14px;
+    }
+
+    .k-rail__skeleton {
+      border-radius: 0;
     }
   }
 
-  &.-seller .k-eyebrow {
-    color: #8a4b2a;
-  }
-}
+  @media (max-width: 1100px) {
+    display: block;
+    padding: 40px 0 30px;
 
-@media (max-width: 1100px) {
-  .k-hero {
-    grid-template-columns: minmax(0, 1fr);
-
-    &__tiles {
-      grid-template-rows: none;
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  .k-tile {
-    min-height: 170px;
-  }
-}
-
-@media (max-width: 760px) {
-  .k-hero {
-    margin-top: 14px;
-    gap: 12px;
-
-    &__tiles {
-      gap: 12px;
-    }
-  }
-
-  .k-banner {
-    min-height: 0;
-    border-radius: 24px;
-
-    &__slide {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 18px;
-      padding: 26px 22px 46px;
-    }
-
-    /* Clear of the sticker in the top corner. */
-    &__title {
-      max-width: calc(100% - 84px);
-      font-size: 34px;
+    &__copy {
+      padding: 0 40px;
     }
 
     &__lede {
-      font-size: 15.5px;
-      margin-bottom: 18px;
+      max-width: 520px;
     }
 
-    &__art {
-      width: auto;
-      height: auto;
-      display: flex;
-      justify-content: center;
-    }
+    &__rail.k-rail {
+      margin-top: 30px;
 
-    &__disc {
-      position: static;
-      width: 86px !important;
-      height: 86px !important;
-      margin-inline-start: -10px;
-
-      &:first-child {
-        margin-inline-start: 0;
-      }
-    }
-
-    &__sticker {
-      inset-inline-end: 12px;
-      top: 14px;
-      width: 74px;
-      height: 74px;
-
-      small {
-        font-size: 10px;
+      .k-rail__head {
+        padding: 0 40px;
       }
 
-      strong {
-        font-size: 23px;
+      .k-rail__track {
+        padding-inline: 40px 0;
+        scroll-padding-inline-start: 40px;
       }
-    }
-
-    &__dots {
-      inset-inline-start: 50%;
-      transform: translateX(-50%);
-      bottom: 10px;
     }
   }
 
-  .k-tile {
-    flex-direction: column;
-    min-height: 0;
-    padding: 16px;
+  @media (max-width: 760px) {
+    padding: 30px 0 22px;
+    border-radius: 26px;
 
     &__copy {
-      max-width: none;
+      padding: 0 22px;
     }
 
-    &__title {
-      font-size: 20px;
+    &__lede {
+      margin-bottom: 20px;
+      font-size: 15.5px;
     }
 
-    &__eyebrow {
-      font-size: 11px;
+    &__ctas .k-btn {
+      min-height: 46px;
+      padding: 0 20px;
+      font-size: 15px;
     }
 
-    &__pics {
-      position: static;
-      justify-content: flex-end;
-      margin-top: 8px;
+    &__in {
+      display: none;
+    }
 
-      img {
-        width: 70px;
-        height: 70px;
-        margin-inline-start: -18px;
+    &__rail.k-rail {
+      margin-top: 26px;
+
+      .k-rail__head {
+        padding: 0 22px;
+        margin-bottom: 12px;
+      }
+
+      .k-rail__track {
+        grid-auto-columns: 44%;
+        gap: 10px;
+        padding-inline: 22px 0;
+        scroll-padding-inline-start: 22px;
+        mask-image: none !important;
       }
     }
   }
+}
+
+.v-locale--is-rtl .k-counter__rail.k-rail:not(.-at-end) .k-rail__track {
+  mask-image: linear-gradient(270deg, #000 78%, transparent);
 }
 
 /* ▆▆▆▆▆▆▆▆ Aisles ▆▆▆▆▆▆▆▆ */
 
+/* Two rows, the first half of the aisles above the second. On a desktop
+   every aisle shows; narrower, the two rows scroll sideways together and
+   the next column peeks in at the edge. --k-cols is half the aisle count. */
 .k-aisles {
   margin-top: 44px;
+  scroll-margin-top: 140px;
 
   &__row {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(76px, 1fr);
-    gap: 6px;
+    grid-template-columns: repeat(var(--k-cols, 8), minmax(0, 1fr));
+    gap: 18px 8px;
     overflow-x: auto;
     padding-bottom: 6px;
     scrollbar-width: none;
 
     &::-webkit-scrollbar {
       display: none;
+    }
+
+    @media (max-width: 1100px) {
+      grid-template-columns: repeat(var(--k-cols, 8), 112px);
+    }
+
+    /* Four and a bit per row, so the next column shows there is more. */
+    @media (max-width: 760px) {
+      grid-template-columns: repeat(var(--k-cols, 8), 78px);
+      gap: 14px 6px;
     }
   }
 }
@@ -501,8 +368,8 @@
   &__ring {
     display: grid;
     place-items: center;
-    width: 72px;
-    height: 72px;
+    width: 104px;
+    height: 104px;
     border-radius: 50%;
     background: var(--k-tint);
     overflow: hidden;
@@ -546,6 +413,26 @@
     width: 56px;
     height: 10px;
     border-radius: 6px;
+  }
+
+  @media (min-width: 1101px) {
+    font-size: 14.5px;
+  }
+
+  @media (max-width: 1100px) {
+    &__ring {
+      width: 92px;
+      height: 92px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    font-size: 13px;
+
+    &__ring {
+      width: 70px;
+      height: 70px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -715,109 +602,726 @@ a.k-by:hover {
   text-underline-offset: 2px;
 }
 
-/* ▆▆▆▆▆▆▆▆ Aisle promos ▆▆▆▆▆▆▆▆ */
+/* ▆▆▆▆▆▆▆▆ Aisle mosaic ▆▆▆▆▆▆▆▆
+   Five tiles at once: a lead aisle down the start column, three aisles and
+   a seller beside it. Each stands on its tint; packshots are square with
+   clear sides and a clear foot, so they are cropped to the pack and their
+   foot dropped below the tile's edge — each pack stands on the floor. */
 
-.k-promos {
+.k-mosaic {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  margin-top: 44px;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  grid-template-rows: 262px 262px;
+  gap: 16px;
+  margin-top: 48px;
+  text-align: start;
+
+  @media (max-width: 1100px) {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 300px;
+    grid-auto-rows: 220px;
+    gap: 12px;
+  }
 
   @media (max-width: 760px) {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-auto-rows: 192px;
+    gap: 10px;
     margin-top: 32px;
   }
 }
 
-.k-promo {
+.k-mtile {
   position: relative;
+  isolation: isolate;
   display: flex;
-  min-height: 210px;
-  padding: 30px 32px;
-  border-radius: 24px;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 26px 26px 24px;
+  border-radius: 26px;
+  background: var(--k-tint);
+  color: var(--k-ink) !important;
   text-decoration: none;
   overflow: hidden;
+  transition: transform 180ms ease;
 
-  &.-sun {
-    background: #fcebc5;
-    color: #5b3b05 !important;
+  &:hover {
+    transform: translateY(-3px);
   }
 
-  &.-mint {
-    background: #ddf1ea;
-    color: #0f4a3a !important;
+  &__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 11.5px;
+    font-weight: 700;
   }
 
-  .k-eyebrow {
-    color: inherit;
-    opacity: 0.85;
-  }
-
-  &__copy {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
+  &__mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
+    object-fit: cover;
   }
 
   &__title {
-    margin: 4px 0 16px;
-    max-width: 250px;
+    max-width: 62%;
+    margin: 8px 0 6px;
     font-family: var(--k-display);
-    font-size: 34px;
+    font-size: 28px;
     font-weight: 600;
     line-height: 1.05;
     letter-spacing: -0.02em;
+    color: var(--k-green-deep);
+  }
+
+  &__from {
+    font-size: 14px;
+    color: var(--k-ink-2);
+
+    .u--price {
+      font-weight: 700;
+      color: var(--k-ink);
+    }
   }
 
   &__go {
     display: inline-flex;
     align-items: center;
     gap: 2px;
-    min-height: 40px;
-    padding: 0 16px 0 18px;
-    border-radius: var(--k-pill);
-    background: rgba(255, 255, 255, 0.78);
+    margin-top: auto;
     font-size: 14.5px;
     font-weight: 600;
-    transition: background-color 140ms ease;
-  }
-
-  &:hover &__go {
-    background: #fff;
+    color: var(--k-green-deep);
   }
 
   &__pics {
     position: absolute;
-    inset-inline-end: 18px;
-    bottom: 14px;
+    inset-inline-end: 16px;
+    bottom: -8px;
+    z-index: -1;
     display: flex;
     align-items: flex-end;
+    gap: 6px;
 
     img {
-      width: 140px;
-      height: 140px;
-      margin-inline-start: -34px;
-      object-fit: contain;
+      width: 104px;
+      height: 168px;
+      margin-bottom: -26px;
+      object-fit: cover;
       mix-blend-mode: multiply;
+      filter: drop-shadow(0 12px 12px rgba(16, 35, 27, 0.16));
+      transition: transform 220ms ease;
+    }
+  }
+
+  &:hover &__pics img {
+    transform: translateY(-6px);
+  }
+
+  &__sticker {
+    position: absolute;
+    top: 40%;
+    inset-inline-end: 30px;
+    display: grid;
+    place-content: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--k-coral);
+    color: #fff;
+    line-height: 1;
+    text-align: center;
+    transform: rotate(-10deg);
+    box-shadow: 0 12px 24px -12px rgba(201, 67, 30, 0.8);
+
+    small {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      margin: 2px 0;
+      font-family: var(--k-display);
+      font-size: 32px;
+    }
+  }
+
+  &.-lead {
+    grid-row: 1 / 3;
+    padding: 40px 40px 36px;
+
+    .k-mtile__eyebrow {
+      font-size: 12.5px;
+    }
+
+    .k-mtile__title {
+      max-width: 380px;
+      margin: 12px 0 14px;
+      font-size: clamp(36px, 3.6vw, 52px);
+    }
+
+    .k-mtile__lede {
+      max-width: 300px;
+      margin: 0 0 24px;
+      font-size: 16.5px;
+      line-height: 1.5;
+      color: var(--k-ink-2);
+    }
+
+    .k-mtile__pics {
+      inset-inline-end: 30px;
+      bottom: -10px;
+      gap: 4px;
+
+      img {
+        width: 124px;
+        height: 250px;
+        margin-bottom: -39px;
+      }
+
+      img:nth-child(2) {
+        width: 150px;
+        height: 290px;
+        margin-bottom: -45px;
+      }
+    }
+  }
+
+  &.-seller .k-mtile__eyebrow {
+    color: #8a3c1d;
+  }
+
+  @media (max-width: 1100px) {
+    &.-lead {
+      grid-column: 1 / 3;
+      grid-row: auto;
+      padding: 30px 30px 26px;
+
+      .k-mtile__title {
+        max-width: 340px;
+        margin: 10px 0 10px;
+      }
+
+      .k-mtile__lede {
+        display: none;
+      }
+
+      .k-mtile__pics img {
+        width: 110px;
+        height: 200px;
+        margin-bottom: -31px;
+      }
+
+      .k-mtile__pics img:nth-child(2) {
+        width: 126px;
+        height: 230px;
+        margin-bottom: -36px;
+      }
+    }
+
+    &__sticker {
+      top: 22px;
+      inset-inline-end: 22px;
     }
   }
 
   @media (max-width: 760px) {
-    min-height: 0;
-    padding: 24px 22px 128px;
+    padding: 18px 16px;
+    border-radius: 22px;
 
     &__title {
-      font-size: 28px;
+      max-width: 100%;
+      font-size: 21px;
     }
 
-    &__pics img {
-      width: 100px;
-      height: 100px;
-      margin-inline-start: -22px;
+    &__from {
+      font-size: 13px;
+    }
+
+    &__go {
+      display: none;
+    }
+
+    &__pics {
+      inset-inline-end: 10px;
+      bottom: -6px;
+      gap: 2px;
+
+      img {
+        width: 66px;
+        height: 110px;
+        margin-bottom: -17px;
+      }
+    }
+
+    &__sticker {
+      top: 16px;
+      inset-inline-end: 16px;
+      width: 74px;
+      height: 74px;
+
+      small {
+        font-size: 9px;
+      }
+
+      strong {
+        font-size: 24px;
+      }
+    }
+
+    &.-lead {
+      padding: 26px 22px;
+
+      .k-mtile__title {
+        max-width: 220px;
+        font-size: 32px;
+      }
+
+      .k-btn {
+        min-height: 46px;
+        padding: 0 20px;
+        font-size: 15px;
+      }
+
+      .k-mtile__pics {
+        inset-inline-end: 14px;
+        bottom: -6px;
+
+        img {
+          width: 86px;
+          height: 140px;
+          margin-bottom: -22px;
+        }
+
+        img:nth-child(2) {
+          width: 100px;
+          height: 162px;
+          margin-bottom: -25px;
+        }
+      }
+    }
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ Market shelf ▆▆▆▆▆▆▆▆
+   Packs stand on a wooden board with a shelf-edge label hung under each:
+   white for the everyday price, yellow with a coral sticker when on offer.
+   On a desktop the shelf is one row; on a phone it scrolls sideways, and
+   the board then runs under the whole row rather than the screen. */
+
+$k-shelf-pic: 196px;
+$k-shelf-pic-phone: 150px;
+
+.k-shelf {
+  margin-top: 56px;
+  text-align: start;
+
+  &__board {
+    position: relative;
+    padding: 40px 48px 0;
+    border-radius: 30px;
+    background: #f4eee2;
+    overflow: hidden;
+  }
+
+  &__title {
+    margin: 10px 0 0;
+    font-family: var(--k-display);
+    font-size: clamp(30px, 3.4vw, 46px);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    color: var(--k-green-deep);
+  }
+
+  &__tabs {
+    display: flex;
+    gap: 6px;
+    margin-top: 24px;
+    padding-bottom: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__tab {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 44px;
+    padding: 0 14px 0 5px;
+    border-radius: var(--k-pill);
+    background: #fff;
+    color: var(--k-ink);
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+
+    &:hover {
+      box-shadow: inset 0 0 0 1.5px var(--k-line-strong);
+    }
+
+    img {
+      width: 32px;
+      height: 32px;
+      padding: 3px;
+      border-radius: 50%;
+      background: var(--k-tint);
+      object-fit: contain;
+    }
+
+    &.-on {
+      background: var(--k-green-deep);
+      color: #fff;
+      box-shadow: none;
+    }
+  }
+
+  &__wood {
+    position: relative;
+    margin: 26px -48px 0;
+    padding: 0 48px;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: $k-shelf-pic;
+      left: 0;
+      right: 0;
+      height: 18px;
+      background: linear-gradient(#e9d9bc, #d8c39d);
+      box-shadow: 0 14px 18px -12px rgba(92, 66, 28, 0.55);
+    }
+  }
+
+  &__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) 132px;
+    align-items: end;
+    gap: 18px;
+    transition: opacity 180ms ease, transform 180ms ease;
+
+    &.-swap {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+
+  &__item {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+
+    &:hover .k-shelf__pic img {
+      transform: translateY(-8px);
+    }
+
+    &.-skeleton {
+      .k-shelf__pic {
+        width: 70%;
+        height: 150px;
+        margin-top: $k-shelf-pic - 150px;
+        border-radius: 18px 18px 0 0;
+        @extend %k-skeleton;
+      }
+
+      .k-shelf__tag {
+        height: 92px;
+      }
+    }
+
+    &.-all {
+      align-self: stretch;
+      justify-content: flex-start;
+      padding-top: 70px;
+
+      a {
+        display: grid;
+        place-items: center;
+        gap: 8px;
+        color: var(--k-green-deep) !important;
+        font-size: 14.5px;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .k-round {
+        width: 56px;
+        height: 56px;
+      }
+    }
+  }
+
+  &__pic {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 100%;
+    height: $k-shelf-pic;
+
+    img {
+      width: 100%;
+      height: 232px;
+      margin-bottom: -36px;
+      object-fit: cover;
+      mix-blend-mode: multiply;
+      filter: drop-shadow(0 10px 8px rgba(70, 50, 20, 0.22));
+      transition: transform 200ms ease;
+    }
+  }
+
+  &__tag {
+    position: relative;
+    width: 100%;
+    margin-top: 18px;
+    padding: 10px 12px 12px;
+    border-radius: 4px 4px 10px 10px;
+    background: #fff;
+    box-shadow:
+      0 1px 0 rgba(0, 0, 0, 0.04),
+      0 8px 18px -12px rgba(70, 50, 20, 0.45);
+
+    /* The clip that hangs the label from the board. */
+    &::before {
+      content: "";
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      width: 2px;
+      height: 18px;
+      margin-left: -1px;
+      background: #cdb68d;
+    }
+
+    &.-offer {
+      background: #ffe37d;
+    }
+  }
+
+  &__save {
+    position: absolute;
+    top: -11px;
+    inset-inline-end: 8px;
+    padding: 3px 8px;
+    border-radius: var(--k-pill);
+    background: var(--k-coral);
+    color: #fff;
+    font-size: 11.5px;
+    font-weight: 700;
+  }
+
+  &__link {
+    display: block;
+    color: var(--k-ink) !important;
+    text-decoration: none;
+
+    &:hover .k-shelf__name {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  }
+
+  &__price {
+    display: flex;
+    align-items: baseline;
+    min-height: 32px;
+    padding-inline-end: 38px;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--k-ink);
+
+    .u--price {
+      font-family: var(--k-display);
+      font-size: 24px;
+      letter-spacing: -0.01em;
+    }
+  }
+
+  &__was {
+    display: block;
+    min-height: 17px;
+    font-size: 12.5px;
+    color: var(--k-muted);
+
+    s,
+    .u--price {
+      font-family: var(--k-body);
+      font-size: 12.5px;
+      font-weight: 500;
+      text-decoration-thickness: 1.5px;
+    }
+  }
+
+  &__name {
+    display: -webkit-box;
+    height: 34px;
+    margin-top: 4px;
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.3;
+    color: var(--k-ink-2);
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  &__add {
+    position: absolute;
+    top: 10px;
+    inset-inline-end: 9px;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--k-green-deep);
+    /* !important: Selldone's [type=button] { color: inherit } loads later. */
+    color: #fff !important;
+    cursor: pointer;
+    transition: background-color 140ms ease;
+
+    &:hover {
+      background: var(--k-green);
+    }
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 22px -48px 0;
+    padding: 6px 48px;
+    background: #ebe2d0;
+    font-size: 14px;
+    color: var(--k-ink-2);
+
+    .k-more {
+      color: var(--k-green-deep) !important;
+    }
+  }
+
+  &__key {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    i {
+      width: 16px;
+      height: 12px;
+      border-radius: 2px;
+      background: #ffe37d;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  /* Below a desktop the shelf scrolls sideways; the board runs under the
+     whole row. */
+  @media (max-width: 1100px) {
+    &__wood {
+      overflow-x: auto;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      &::after {
+        display: none;
+      }
+    }
+
+    &__row {
+      grid-template-columns: repeat(6, 150px) 120px;
+      width: max-content;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: $k-shelf-pic;
+        left: -48px;
+        right: -48px;
+        height: 18px;
+        background: linear-gradient(#e9d9bc, #d8c39d);
+        box-shadow: 0 14px 18px -12px rgba(92, 66, 28, 0.55);
+      }
+    }
+  }
+
+  @media (max-width: 760px) {
+    margin-top: 40px;
+
+    &__board {
+      padding: 28px 20px 0;
+      border-radius: 26px;
+    }
+
+    &__tabs {
+      margin: 18px -20px 0;
+      padding: 0 20px 2px;
+    }
+
+    &__wood {
+      margin: 22px -20px 0;
+      padding: 0 20px;
+    }
+
+    &__row {
+      grid-template-columns: repeat(6, 132px) 104px;
+      gap: 12px;
+
+      &::after {
+        top: $k-shelf-pic-phone;
+        left: -20px;
+        right: -20px;
+      }
+    }
+
+    &__pic {
+      height: $k-shelf-pic-phone;
+
+      img {
+        height: 178px;
+        margin-bottom: -28px;
+      }
+    }
+
+    &__item.-all {
+      padding-top: 48px;
+    }
+
+    &__item.-skeleton .k-shelf__pic {
+      height: 120px;
+      margin-top: $k-shelf-pic-phone - 120px;
+    }
+
+    &__price .u--price {
+      font-size: 20px;
+    }
+
+    &__name {
+      height: 31px;
+      font-size: 12px;
+    }
+
+    &__foot {
+      margin: 18px -20px 0;
+      padding: 4px 20px;
+      font-size: 13px;
     }
   }
 }

@@ -12,10 +12,9 @@
   and who sells it — and sets the card's tint from the product's aisle.
 
   The card's add button emits "quick-buy" and expects its parent to open the
-  product overview; this rail does that exactly as SProductsListing does —
-  fetch the full product, provide it as $product, render SProductOverview in
-  quick-buy mode — so adding from a rail and adding from the catalogue grid
-  are one and the same flow.
+  product overview; the rail opens KalioQuickBuy, which does that exactly as
+  SProductsListing does, so adding from a rail and adding from the catalogue
+  grid are one and the same flow.
 
   A rail with no products renders nothing, not a heading over an empty row.
   `lazy` rails wait until they are about to scroll into view before asking
@@ -26,6 +25,7 @@
     v-if="busy || products.length"
     ref="root"
     :aria-labelledby="headingId"
+    :class="{ '-at-end': at_end }"
     class="k-rail k-wrap"
   >
     <header class="k-rail__head">
@@ -91,47 +91,36 @@
     </div>
 
     <!-- The same quick-buy sheet the catalogue grid opens. -->
-    <v-bottom-sheet
-      v-model="quick_buy"
-      :max-width="1480"
-      content-class="rounded-t-xl k-quickbuy"
-      max-height="90vh"
-      width="98vw"
-    >
-      <v-card class="position-relative" rounded="t-xl">
-        <v-card-text class="pt-5 thin-scroll">
-          <s-product-overview-loading v-if="busy_product && !selected_product" />
-          <s-product-overview v-if="selected_product" can-buy quick-buy-mode show-cover />
-          <v-btn
-            aria-label="Close"
-            class="absolute-top-end z1"
-            icon
-            size="large"
-            variant="text"
-            @click="quick_buy = false"
-          >
-            <v-icon>close</v-icon>
-          </v-btn>
-        </v-card-text>
-      </v-card>
-    </v-bottom-sheet>
+    <kalio-quick-buy v-model="quick_buy" :product="picked" />
   </section>
 </template>
 
 <script>
-import { computed } from "vue";
 import SShopProductCard from "@selldone/components-vue/storefront/product/card/SShopProductCard.vue";
-import SProductOverview from "@selldone/components-vue/storefront/product/overview/SProductOverview.vue";
-import SProductOverviewLoading from "@selldone/components-vue/storefront/product/overview/loading/SProductOverviewLoading.vue";
-import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import KalioSellerLine from "./KalioSellerLine.vue";
+import KalioQuickBuy from "./KalioQuickBuy.vue";
 import { aisleIndex, offers, tintFor } from "./kalio-catalog";
 
 let railCount = 0;
 
+/* Round-robin over aisles, keeping each aisle's own order: the first of
+   every aisle, then the second of every aisle, and so on. */
+function spreadByAisle(products) {
+  const queues = new Map();
+  for (const product of products) {
+    if (!queues.has(product.category_id)) queues.set(product.category_id, []);
+    queues.get(product.category_id).push(product);
+  }
+  const out = [];
+  while (out.length < products.length) {
+    for (const queue of queues.values()) if (queue.length) out.push(queue.shift());
+  }
+  return out;
+}
+
 export default {
   name: "KalioRail",
-  components: { SShopProductCard, SProductOverview, SProductOverviewLoading, KalioSellerLine },
+  components: { SShopProductCard, KalioSellerLine, KalioQuickBuy },
 
   props: {
     title: { type: String, required: true },
@@ -154,16 +143,11 @@ export default {
 
     /** Fetch only when the rail is about to scroll into view. */
     lazy: Boolean,
+    /** Deal the products out aisle by aisle, so one aisle does not fill the row. */
+    spread: Boolean,
   },
 
   emits: ["loaded"],
-
-  /* SProductOverview injects $product; the listing provides it the same way. */
-  provide() {
-    return {
-      $product: computed(() => this.selected_product),
-    };
-  },
 
   data() {
     return {
@@ -179,8 +163,7 @@ export default {
       at_end: false,
 
       quick_buy: false,
-      selected_product: null,
-      busy_product: false,
+      picked: null,
     };
   },
 
@@ -224,7 +207,7 @@ export default {
       window.$storefront.products
         .list(this.dir, 0, this.limit, options)
         .then(({ products }) => {
-          this.products = products || [];
+          this.products = this.spread ? spreadByAisle(products || []) : products || [];
         })
         .catch(() => {
           this.products = [];
@@ -241,26 +224,8 @@ export default {
     },
 
     quickBuy(product) {
+      this.picked = product;
       this.quick_buy = true;
-      this.selected_product = null;
-      this.busy_product = true;
-
-      const done = ({ product: full }) => {
-        this.selected_product = full;
-      };
-
-      window.$storefront.products
-        .optimize(60)
-        .get(product.id, { no_article: true })
-        .cache(done)
-        .then(done)
-        .catch((error) => {
-          NotificationService.showLaravelError(error);
-          this.quick_buy = false;
-        })
-        .finally(() => {
-          this.busy_product = false;
-        });
     },
 
     /* One screen of the row per press, so the arrows move the same distance

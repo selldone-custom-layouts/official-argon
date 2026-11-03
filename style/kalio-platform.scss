@@ -505,6 +505,15 @@
     font-family: var(--k-body) !important;
     font-size: 13.5px !important;
     color: var(--k-muted) !important;
+
+    /* Selldone sets the struck price at 0.7em (9px); readable here. */
+    .u--price {
+      font-size: 13.5px !important;
+
+      .small {
+        font-size: 0.85em !important;
+      }
+    }
   }
 
   del,
@@ -532,6 +541,7 @@
     font-weight: 700 !important;
     line-height: 1.2;
     white-space: nowrap;
+    word-spacing: -0.3em; /* Selldone writes "20 %" */
 
     &::before {
       content: "−";

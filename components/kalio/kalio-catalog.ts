@@ -185,6 +185,19 @@ export function percentOff(shop: any, product: any): number {
   }
 }
 
+/** What a product costs now and, on offer, what it cost before — by
+ *  Selldone's own pricing (discount dates, currency rates), in the currency
+ *  the shopper has chosen. */
+export function priceOf(shop: any, product: any, currency: string): { now: number; was: number | null } {
+  try {
+    const now = PriceHelper.priceProductByCurrency(shop, product, null, currency as any);
+    const off = PriceHelper.getProductDiscountAmountByCurrency(shop, product, null, currency as any) || 0;
+    return { now, was: off > 0 ? now + off : null };
+  } catch {
+    return { now: 0, was: null };
+  }
+}
+
 /* ━━━━━━━━━━━━ Links and images ━━━━━━━━━━━━ */
 
 export function aisleRoute(aisle: any) {

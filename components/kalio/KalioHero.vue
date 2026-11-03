@@ -1,157 +1,94 @@
 <!--
-  Kalio — Hero.
+  Kalio — Hero: the deals counter.
 
-  The top of the home page: one wide banner that turns through a few slides,
-  and two tiles beside it — an aisle and a seller. Every slide is built from
-  live data at view time:
+  The top of the home page is a deep-green board: the week's offer on one
+  side, the deals themselves on the other — real products a shopper can add
+  to the basket without leaving the home page. Everything on it is live:
 
-  - Deals: the shop's discounted products, the best saving as the sticker,
-    pictures taken from the fresh aisles first.
-  - Aisles: two featured aisles with their own description and products.
-  - The seller tile names a real seller and shows products from their shelf.
+  - The deals are the shop's discounted best sellers, dealt out aisle by
+    aisle so one aisle does not fill the row, in a KalioRail — each card is
+    the platform card with its quick-buy sheet.
+  - The headline's saving is the best one among them, by Selldone's own
+    discount rule; the aisle chips are the aisles those deals come from.
+  - A shop with no discounts gets the same board with its best sellers and
+    a headline that promises no saving.
 
-  No slide is drawn for something the shop does not have: no discounts, no
-  deals slide; no sellers, an aisle tile in the seller's place. No delivery,
-  timing or count claim is made anywhere.
-
-  The banner advances on its own every few seconds unless the visitor is
-  pointing at it, has focus in it, or has asked for reduced motion; the dots
-  are buttons and say which slide they show.
+  No delivery, timing or count claim is made anywhere.
 -->
 <template>
-  <section class="k-hero k-wrap" aria-label="Featured">
-    <!-- ▆▆▆▆▆▆▆▆ Banner ▆▆▆▆▆▆▆▆ -->
-    <div
-      :class="{ '-loading': !slides.length }"
-      aria-roledescription="carousel"
-      class="k-banner"
-      @focusin="paused = true"
-      @focusout="paused = false"
-      @mouseenter="paused = true"
-      @mouseleave="paused = false"
-    >
-      <div v-if="!slides.length" aria-hidden="true" class="k-banner__slide -current"></div>
-
-      <article
-        v-for="(slide, i) in slides"
-        :key="slide.key"
-        :aria-hidden="i !== current"
-        :aria-label="`${i + 1} of ${slides.length}`"
-        :class="{ '-current': i === current }"
-        :inert="i !== current || undefined"
-        :style="{ '--k-banner': slide.ground }"
-        aria-roledescription="slide"
-        class="k-banner__slide"
-      >
-        <div class="k-banner__copy">
-          <p class="k-eyebrow">{{ slide.eyebrow }}</p>
-          <h2 class="k-banner__title">{{ slide.title }}</h2>
-          <p class="k-banner__lede">{{ slide.lede }}</p>
-          <router-link :to="slide.to" class="k-btn k-btn--solid">
-            {{ slide.cta }}
+  <section aria-labelledby="k-counter-title" class="k-hero k-wrap">
+    <div class="k-counter">
+      <div class="k-counter__copy">
+        <p class="k-eyebrow">This week at {{ shopTitle }}</p>
+        <h2 id="k-counter-title" class="k-counter__title">
+          Fresh picks,
+          <em v-if="best">up to {{ best }}% off</em>
+          <em v-else-if="has_deals === false">from every aisle</em>
+        </h2>
+        <p class="k-counter__lede">
+          <template v-if="has_deals === false">
+            {{ shopTitle }}’s best sellers — add them to your basket right here.
+          </template>
+          <template v-else>
+            Real savings from {{ shopTitle }}’s sellers — add them to your basket right here.
+          </template>
+        </p>
+        <div class="k-counter__ctas">
+          <router-link :to="has_deals === false ? catalogueRoute : dealsRoute" class="k-btn k-btn--light">
+            {{ has_deals === false ? "Browse every product" : "Shop all deals" }}
             <v-icon class="k-flip" size="20">chevron_right</v-icon>
           </router-link>
+          <button class="k-btn k-btn--ghost" type="button" @click="toAisles">Browse aisles</button>
         </div>
-
-        <div v-if="slide.sticker" aria-hidden="true" class="k-banner__sticker">
-          <small>Up to</small>
-          <strong>{{ slide.sticker }}%</strong>
-          <small>off</small>
+        <div v-if="chips.length" class="k-counter__in">
+          Deals waiting in
+          <nav aria-label="Aisles with deals" class="k-counter__chips">
+            <router-link v-for="aisle in chips" :key="aisle.id" :to="aisleRoute(aisle)" class="k-counter__chip">
+              <img v-if="aisle.icon" :src="aisleImage(aisle, 64)" alt="" height="26" width="26" />
+              {{ aisle.title || aisle.name }}
+            </router-link>
+          </nav>
         </div>
-
-        <div aria-hidden="true" class="k-banner__art">
-          <template v-if="seen.has(i)">
-            <span
-              v-for="(product, n) in slide.pics"
-              :key="product.id"
-              :class="`-at${n}`"
-              class="k-banner__disc"
-            >
-              <img :src="picture(product)" alt="" />
-            </span>
-          </template>
-        </div>
-      </article>
-
-      <div v-if="slides.length > 1" class="k-banner__dots">
-        <button
-          v-for="(slide, i) in slides"
-          :key="'d' + slide.key"
-          :aria-current="i === current ? 'true' : undefined"
-          :aria-label="`Show slide ${i + 1}: ${slide.title}`"
-          :class="{ '-on': i === current }"
-          type="button"
-          @click="go(i)"
-        ></button>
       </div>
-    </div>
 
-    <!-- ▆▆▆▆▆▆▆▆ Tiles ▆▆▆▆▆▆▆▆ -->
-    <div class="k-hero__tiles">
-      <router-link
-        v-for="tile in tiles"
-        :key="tile.key"
-        :class="`-${tile.kind}`"
-        :style="{ '--k-banner': tile.ground }"
-        :to="tile.to"
-        class="k-tile"
-      >
-        <span class="k-tile__copy">
-          <span class="k-eyebrow k-tile__eyebrow">
-            <img v-if="tile.mark" :src="tile.mark" alt="" class="k-tile__mark" height="30" width="30" />
-            {{ tile.eyebrow }}
-          </span>
-          <span class="k-tile__title">{{ tile.title }}</span>
-          <span class="k-tile__go">
-            {{ tile.cta }}
-            <v-icon class="k-flip" size="18">chevron_right</v-icon>
-          </span>
-        </span>
-        <span aria-hidden="true" class="k-tile__pics">
-          <img v-for="product in tile.pics" :key="product.id" :src="picture(product)" alt="" loading="lazy" />
-        </span>
-      </router-link>
-      <template v-if="!tiles.length">
-        <div v-for="n in 2" :key="'t' + n" aria-hidden="true" class="k-tile -loading"></div>
-      </template>
+      <kalio-rail
+        :key="has_deals === false ? 'popular' : 'deals'"
+        :filter="has_deals === false ? null : { only_has_discount: true }"
+        :limit="16"
+        :title="has_deals === false ? 'Popular this week' : 'Today’s best savings'"
+        class="k-counter__rail"
+        sort="bestselling"
+        spread
+        @loaded="onLoaded"
+      />
     </div>
   </section>
 </template>
 
 <script>
+import KalioRail from "./KalioRail.vue";
 import {
+  aisleImage,
+  aisleIndex,
   aisleRoute,
-  aisles,
+  catalogueRoute,
   dealsRoute,
   featured,
-  offers,
   percentOff,
-  productImage,
-  sellerRoute,
-  tintFor,
-  vendorImage,
-  vendors,
 } from "./kalio-catalog";
 
-const TURN_EVERY_MS = 7000;
-const DEALS_GROUND = "#dcedc5";
-const SELLER_GROUND = "#fbe6d8";
-
-/* A slide's ground is its aisle's tint taken a step deeper, so the banner
-   holds its own against the white page while still reading as that aisle. */
-const deepen = (tint) => `color-mix(in oklab, ${tint} 90%, #3d5a48)`;
+const CHIPS = 3;
 
 export default {
   name: "KalioHero",
+  components: { KalioRail },
 
   data() {
     return {
-      slides: [],
-      tiles: [],
-      current: 0,
-      seen: new Set([0, 1]),
-      paused: false,
-      reduced_motion: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
+      /* null until the deals have been read. */
+      has_deals: null,
+      best: 0,
+      chips: [],
     };
   },
 
@@ -162,157 +99,38 @@ export default {
     shopTitle() {
       return this.shop?.title || "Kalio";
     },
-  },
-
-  mounted() {
-    this.build();
-    if (!this.reduced_motion) {
-      this.timer = setInterval(() => {
-        if (!this.paused && !document.hidden && this.slides.length > 1) {
-          this.go((this.current + 1) % this.slides.length);
-        }
-      }, TURN_EVERY_MS);
-    }
-  },
-
-  beforeUnmount() {
-    clearInterval(this.timer);
+    dealsRoute() {
+      return dealsRoute();
+    },
+    catalogueRoute() {
+      return catalogueRoute();
+    },
   },
 
   methods: {
-    go(i) {
-      this.current = i;
-      /* Pictures of a slide load just before it is shown, not all up front. */
-      this.seen = new Set([...this.seen, i, (i + 1) % Math.max(this.slides.length, 1)]);
+    aisleRoute,
+    aisleImage,
+
+    async onLoaded(products) {
+      if (this.has_deals === false) return;
+      if (!products.length) {
+        this.has_deals = false;
+        return;
+      }
+      this.has_deals = true;
+      this.best = Math.max(0, ...products.map((product) => percentOff(this.shop, product)));
+
+      /* The aisles the deals come from, in the order the home page features
+         aisles, so the chips name fresh aisles before household ones. */
+      const index = await aisleIndex();
+      const withDeals = new Set(products.map((product) => product.category_id));
+      this.chips = featured([...index.values()])
+        .filter((aisle) => withDeals.has(aisle.id))
+        .slice(0, CHIPS);
     },
 
-    picture(product) {
-      return productImage(product);
-    },
-
-    list(dir, limit, extra = {}) {
-      return window.$storefront.products
-        .list(dir, 0, limit, { products_only: true, available: true, sort: "bestselling", ...extra })
-        .then(({ products }) => products || [])
-        .catch(() => []);
-    },
-
-    async build() {
-      const [aisleList, sellerList, deals] = await Promise.all([
-        aisles(),
-        vendors(),
-        this.list(null, 24, { filter: JSON.stringify({ only_has_discount: true }) }),
-      ]);
-      const ordered = featured(aisleList);
-      const rankOf = new Map(ordered.map((aisle, i) => [aisle.id, i]));
-
-      const tileAisle = ordered[1] || ordered[0] || null;
-      const slideAisles = ordered.filter((aisle) => aisle !== tileAisle).slice(0, 2);
-
-      const [tileProducts, ...slideProducts] = await Promise.all([
-        tileAisle ? this.list(tileAisle.name, 2) : [],
-        ...slideAisles.map((aisle) => this.list(aisle.name, 4)),
-      ]);
-
-      /* ―― Slides ―― */
-      const slides = [];
-
-      if (deals.length) {
-        const best = Math.max(...deals.map((product) => percentOff(this.shop, product)));
-        /* Fresh aisles first, one picture per aisle, so the banner shows a
-           spread of the shop rather than four packs from one shelf. */
-        const byRank = [...deals].sort(
-          (a, b) => (rankOf.get(a.category_id) ?? 99) - (rankOf.get(b.category_id) ?? 99),
-        );
-        const pics = [];
-        const aislesUsed = new Set();
-        for (const product of byRank) {
-          if (pics.length === 4) break;
-          if (aislesUsed.has(product.category_id) || !product.icon) continue;
-          aislesUsed.add(product.category_id);
-          pics.push(product);
-        }
-        for (const product of byRank) {
-          if (pics.length === 4) break;
-          if (!pics.includes(product) && product.icon) pics.push(product);
-        }
-
-        slides.push({
-          key: "deals",
-          ground: DEALS_GROUND,
-          eyebrow: `On offer at ${this.shopTitle}`,
-          title: best > 0 ? `Fresh picks, up to ${best}% off` : "Fresh picks, marked down",
-          lede: `Savings from ${this.shopTitle}’s sellers, across the aisles.`,
-          cta: "Shop the deals",
-          to: dealsRoute(),
-          pics,
-          sticker: best > 0 ? best : null,
-        });
-      }
-
-      slideAisles.forEach((aisle, i) => {
-        const pics = (slideProducts[i] || []).filter((product) => product.icon);
-        if (!pics.length) return;
-        slides.push({
-          key: "aisle-" + aisle.id,
-          ground: deepen(tintFor(aisle)),
-          eyebrow: "Aisle",
-          title: aisle.title || aisle.name,
-          lede: aisle.description || `${aisle.title} from ${this.shopTitle}’s sellers.`,
-          cta: `Shop ${aisle.title || aisle.name}`,
-          to: aisleRoute(aisle),
-          pics,
-          sticker: null,
-        });
-      });
-
-      this.slides = slides;
-
-      /* ―― Tiles ―― */
-      const tiles = [];
-      if (tileAisle) {
-        tiles.push({
-          key: "aisle",
-          kind: "aisle",
-          ground: deepen(tintFor(tileAisle)),
-          eyebrow: "Aisle",
-          title: tileAisle.title || tileAisle.name,
-          cta: "Shop the aisle",
-          to: aisleRoute(tileAisle),
-          pics: tileProducts.filter((product) => product.icon).slice(0, 2),
-        });
-      }
-
-      const { shelfOf } = await offers();
-      const seller = [...sellerList].sort(
-        (a, b) => (shelfOf.get(b.id)?.length || 0) - (shelfOf.get(a.id)?.length || 0),
-      )[0];
-      if (seller) {
-        const shelf = (shelfOf.get(seller.id) || []).filter((product) => product.icon);
-        tiles.push({
-          key: "seller",
-          kind: "seller",
-          ground: SELLER_GROUND,
-          eyebrow: "Seller",
-          mark: vendorImage(seller, true),
-          title: `${seller.name}’s shelf`,
-          cta: "Visit the shop",
-          to: sellerRoute(seller),
-          pics: shelf.slice(0, 2),
-        });
-      } else if (slideAisles[0]) {
-        tiles.push({
-          key: "aisle-2",
-          kind: "aisle",
-          ground: deepen(tintFor(slideAisles[0])),
-          eyebrow: "Aisle",
-          title: slideAisles[0].title,
-          cta: "Shop the aisle",
-          to: aisleRoute(slideAisles[0]),
-          pics: (slideProducts[0] || []).slice(0, 2),
-        });
-      }
-      this.tiles = tiles;
+    toAisles() {
+      document.getElementById("k-aisles-title")?.scrollIntoView({ behavior: "smooth", block: "start" });
     },
   },
 };

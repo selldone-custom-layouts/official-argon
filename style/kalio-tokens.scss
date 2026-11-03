@@ -147,6 +147,27 @@
   }
 }
 
+/* On the deep-green board: a white button and an outlined one. */
+.k-btn--light {
+  background: #fff;
+  color: var(--k-green-deep) !important;
+
+  &:hover {
+    background: #eaf5ee;
+  }
+}
+
+.k-btn--ghost {
+  background: transparent;
+  color: #fff !important;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: inset 0 0 0 1.5px #fff;
+  }
+}
+
 /* A text link with a trailing chevron: "See all ›". */
 .k-more {
   display: inline-flex;

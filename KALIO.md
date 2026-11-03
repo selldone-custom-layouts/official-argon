@@ -16,11 +16,12 @@ pale tint of their own. The approved mockup is in
 
 | Area | Where |
 | --- | --- |
-| Home page: hero, aisles, rows, promos, sellers | `components/kalio/KalioHome.vue` and the components it composes |
-| Banner slider and its two tiles | `components/kalio/KalioHero.vue` |
-| Aisle row (round pictures) | `components/kalio/KalioAisleRibbon.vue` |
+| Home page: deals counter, aisles, rows, mosaic, sellers, shelf | `components/kalio/KalioHome.vue` and the components it composes |
+| Deals counter (the hero): the week's offer beside a rail of deals | `components/kalio/KalioHero.vue` |
+| Aisle row (two rows of round pictures) | `components/kalio/KalioAisleRibbon.vue` |
 | Product rows with the platform quick-buy sheet | `components/kalio/KalioRail.vue`, `KalioSellerLine.vue` |
-| Aisle promos, seller cards | `components/kalio/KalioPromoPair.vue`, `KalioSellerCards.vue` |
+| Aisle mosaic, seller cards, market shelf | `components/kalio/KalioMosaic.vue`, `KalioSellerCards.vue`, `KalioShelf.vue` |
+| Quick-buy sheet for a "+" outside a product card | `components/kalio/KalioQuickBuy.vue` |
 | Product page: breadcrumb, highlights, sections, aisle row | `pages/product/StorefrontPageProduct.vue` |
 | Product overview (packshot panel, buy column) — Selldone's SProductOverview logic via `extends`, Kalio markup | `components/kalio/product/KalioProductOverview.vue` |
 | Seller offer cards — SSmartSelectVendor logic via `extends` | `components/kalio/product/KalioSellerOffers.vue` |
@@ -37,6 +38,10 @@ pale tint of their own. The approved mockup is in
 | Tokens and shared pieces | `style/kalio-tokens.scss` |
 | Skin for Selldone's own components | `style/kalio-platform.scss` |
 | Kalio's own sections | `style/kalio-sections.scss` |
+
+The home's top and middle (0.2.4) come from three options drawn in
+`../kalio-design/hero-options/` on 3 November 2026: the deals counter was
+chosen for the top, the aisle mosaic and the market shelf for the middle.
 
 Commerce markup and state are untouched: cards, quick-buy, basket, checkout,
 variants and vendor offers are Selldone's components, re-skinned. Kalio adds

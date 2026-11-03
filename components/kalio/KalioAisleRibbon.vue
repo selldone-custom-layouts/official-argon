@@ -19,14 +19,14 @@
       </router-link>
     </header>
 
-    <div v-if="busy" aria-hidden="true" class="k-aisles__row">
-      <div v-for="n in 10" :key="'s' + n" class="k-aisle -skeleton">
+    <div v-if="busy" aria-hidden="true" class="k-aisles__row" style="--k-cols: 8">
+      <div v-for="n in 16" :key="'s' + n" class="k-aisle -skeleton">
         <span class="k-aisle__ring"></span>
         <span class="k-aisle__bar"></span>
       </div>
     </div>
 
-    <nav v-else aria-label="Aisles" class="k-aisles__row">
+    <nav v-else :style="{ '--k-cols': Math.ceil(list.length / 2) }" aria-label="Aisles" class="k-aisles__row">
       <router-link
         v-for="aisle in list"
         :key="aisle.id"
@@ -38,9 +38,9 @@
             v-if="aisle.icon"
             :src="image(aisle)"
             alt=""
-            height="72"
+            height="104"
             loading="lazy"
-            width="72"
+            width="104"
           />
           <span v-else class="k-aisle__initial">{{ initial(aisle) }}</span>
         </span>
@@ -79,7 +79,7 @@ export default {
     route: aisleRoute,
     tint: tintFor,
     image(aisle) {
-      return aisleImage(aisle, 128);
+      return aisleImage(aisle, 192);
     },
     initial(aisle) {
       return (aisle.title || aisle.name || "?").trim().charAt(0).toUpperCase();
