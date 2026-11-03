@@ -75,6 +75,13 @@ Facts that shape the code:
 - **Image sizes.** Category icons resize to any size. Seller and product
   images exist only as the original and a 128px thumbnail; any other size is
   a 404 (`kalio-catalog.ts`).
+- **The struck price follows the chosen seller** (`kalio-offer-price.ts`).
+  Selldone's price section paid the seller's price but took the struck
+  price and the percent off from the product or size; it is amended where
+  the product page, the quick-buy sheets and the catalogue load. Deals are
+  real only when each seller's offer carries the discount: on 3 November
+  2026 every offer on the 80 discounted products was given 20% of its own
+  price (snapshots in the session scratchpad, `dealfix/`).
 - **Nothing is named.** Aisles, sellers, deals, slides and tiles all come
   from live data; an aisle Kalio does not know still gets a tint, a row and,
   if featured, a tile.

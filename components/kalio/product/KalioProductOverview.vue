@@ -189,6 +189,7 @@
 import SProductOverview from "@selldone/components-vue/storefront/product/overview/SProductOverview.vue";
 import KalioSellerOffers from "./KalioSellerOffers.vue";
 import { aisleIndex, aisleRoute, tintFor } from "../kalio-catalog";
+import "../kalio-offer-price"; // the struck price follows the chosen seller
 
 export default {
   name: "KalioProductOverview",

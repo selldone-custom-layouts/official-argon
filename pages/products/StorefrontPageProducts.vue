@@ -114,6 +114,7 @@ import KalioSellerShelf from "../../components/kalio/KalioSellerShelf.vue";
 import KalioSellerHero from "../../components/kalio/KalioSellerHero.vue";
 import {StorefrontSeo} from "../../helpers/StorefrontSeo";
 import { aisles, tintFor } from "../../components/kalio/kalio-catalog";
+import "../../components/kalio/kalio-offer-price"; // the listing's quick-buy sheet: the struck price follows the chosen seller
 
 export default {
   name: "StorefrontPageProducts",

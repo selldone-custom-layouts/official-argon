@@ -38,6 +38,7 @@
 <script>
 import { computed } from "vue";
 import SProductOverview from "@selldone/components-vue/storefront/product/overview/SProductOverview.vue";
+import "./kalio-offer-price"; // the struck price follows the chosen seller
 import SProductOverviewLoading from "@selldone/components-vue/storefront/product/overview/loading/SProductOverviewLoading.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
