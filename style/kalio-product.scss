@@ -1140,3 +1140,122 @@
     }
   }
 }
+
+/* ▆▆▆▆▆▆▆▆ In the basket (KalioBasketLine) ▆▆▆▆▆▆▆▆
+
+   Design C: how many are in the basket and from whom, then the quantity
+   in an outlined stepper beside a solid "Checkout · total". */
+
+.k-basket-line {
+  margin-top: 16px;
+  font-family: var(--k-body);
+
+  &__cap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+    font-size: 14px;
+    color: var(--k-ink-2);
+
+    i {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--k-green);
+    }
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 172px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  &__qty {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) 52px;
+    align-items: center;
+    height: 58px;
+    border: 1.5px solid var(--k-line-strong);
+    border-radius: var(--k-pill);
+    background: var(--k-card);
+    text-align: center;
+
+    button {
+      display: grid;
+      place-items: center;
+      height: 100%;
+      border-radius: var(--k-pill);
+      color: var(--k-green-deep) !important;
+      cursor: pointer;
+      transition: background-color 140ms ease;
+
+      &:hover:not(:disabled) {
+        background: var(--k-wash);
+      }
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+    }
+
+    output {
+      font-size: 18px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--k-ink);
+    }
+  }
+
+  &.-busy &__qty output {
+    opacity: 0.55;
+  }
+
+  &__go {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 58px;
+    padding: 0 20px;
+    border-radius: var(--k-pill);
+    background: var(--k-green-deep);
+    color: #fff !important;
+    font-size: 16.5px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 140ms ease;
+
+    &:hover {
+      background: var(--k-green);
+    }
+
+    span[aria-hidden] {
+      opacity: 0.55;
+      font-weight: 500;
+    }
+
+    .u--price {
+      color: #fff !important;
+    }
+  }
+
+  @media (max-width: 420px) {
+    &__row {
+      grid-template-columns: 140px minmax(0, 1fr);
+    }
+
+    &__qty {
+      grid-template-columns: 44px minmax(0, 1fr) 44px;
+    }
+
+    &__go {
+      gap: 6px;
+      padding: 0 14px;
+      font-size: 15px;
+    }
+  }
+}

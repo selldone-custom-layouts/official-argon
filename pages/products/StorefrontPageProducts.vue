@@ -118,6 +118,8 @@ import KalioSellerHero from "../../components/kalio/KalioSellerHero.vue";
 import {StorefrontSeo} from "../../helpers/StorefrontSeo";
 import KalioQuickBuy from "../../components/kalio/KalioQuickBuy.vue";
 import { hostQuickBuy } from "../../components/kalio/kalio-listing-quick-buy";
+import { quickAdd } from "../../components/kalio/kalio-basket";
+import "../../components/kalio/kalio-card-basket"; // a card in the basket shows − n +
 
 export default {
   name: "StorefrontPageProducts",
@@ -232,10 +234,12 @@ export default {
    * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
    */
   created() {
-    this.releaseQuickBuy = hostQuickBuy((product) => {
-      this.quick_pick = product;
-      this.quick_open = true;
-    });
+    this.releaseQuickBuy = hostQuickBuy((product) =>
+      quickAdd(this, product, (picked) => {
+        this.quick_pick = picked;
+        this.quick_open = true;
+      }),
+    );
 
     // ━━━━━━━ Initialize by query ━━━━━━━
 

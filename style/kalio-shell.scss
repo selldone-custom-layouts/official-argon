@@ -1013,6 +1013,15 @@ $k-header-strip: 46px;
     width: 40px;
     padding: 0 !important;
 
+    /* The glyph is drawn from its box's corner: an 18px glyph in Vuetify's
+       24px box sat 6px off the circle's centre. Box and glyph match. */
+    .v-icon {
+      width: 20px !important;
+      height: 20px !important;
+      font-size: 20px !important;
+      margin: 0 !important;
+    }
+
     .small {
       position: absolute;
       width: 1px;
@@ -1260,8 +1269,10 @@ $k-filter-gap: 36px;
   }
 
   /* Price range. */
+  /* The handles reach 10px past each end of the track, and the panel clips
+     what crosses its edge: the track keeps clear of it. */
   .v-slider {
-    margin: 12px 8px 0 !important;
+    margin: 12px 14px 0 !important;
   }
 
   .v-slider-track__background {
@@ -1954,4 +1965,113 @@ $k-filter-gap: 36px;
       opacity: 0.45;
     }
   }
+}
+
+/* ▆▆▆▆▆▆▆▆ "Added to basket" (KalioBasketToast) ▆▆▆▆▆▆▆▆ */
+
+.k-toast {
+  position: fixed;
+  top: 134px; /* under the header and its aisle strip */
+  right: max(16px, calc((100vw - var(--k-maxw)) / 2 + var(--k-gutter)));
+  z-index: 2200;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  width: min(400px, calc(100vw - 32px));
+  padding: 12px 10px 12px 14px;
+  border-radius: 20px;
+  background: var(--k-card);
+  box-shadow: 0 24px 60px -24px rgba(16, 35, 27, 0.45), 0 0 0 1px var(--k-line-soft);
+  font-family: var(--k-body);
+  text-align: start;
+
+  &__pic {
+    width: 52px;
+    height: 52px;
+    padding: 4px;
+    border-radius: 12px;
+    background: var(--k-well);
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+
+  &__copy {
+    min-width: 0;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--k-ink);
+  }
+
+  &__tick {
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--k-green);
+
+    .v-icon {
+      color: #fff !important;
+    }
+  }
+
+  &__line {
+    margin: 2px 0 0;
+    overflow: hidden;
+    font-size: 13px;
+    color: var(--k-muted);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__go {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--k-green) !important;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+
+  &__close {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: var(--k-muted) !important;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--k-wash);
+    }
+  }
+
+  @media (max-width: 959.98px) {
+    top: 74px;
+    right: 16px;
+  }
+}
+
+.k-toast-enter-active,
+.k-toast-leave-active {
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.k-toast-enter-from,
+.k-toast-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }

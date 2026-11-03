@@ -153,8 +153,9 @@
       </template>
 
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Basket Indicator ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-      <!-- Display a green stripe at the bottom of product pages to indicate that the product has been added to the basket. -->
-      <s-storefront-product-in-basket-indicator></s-storefront-product-in-basket-indicator>
+      <!-- Kalio: Selldone's green strip at the foot of a product page is not
+           shown; the product page's own basket line, the header's count and
+           a short "Added to basket" notice (KalioBasketToast) say it. -->
 
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Notifications ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
       <!-- Show notifications to user. -->
@@ -193,12 +194,6 @@ import { delay } from "lodash-es";
 export default {
   name: "StorefrontLayout",
   components: {
-    SStorefrontProductInBasketIndicator: defineAsyncComponent(
-      () =>
-        import(
-          "@selldone/components-vue/storefront/product/in-basket/SStorefrontProductInBasketIndicator.vue"
-        ),
-    ),
     SContactsPopup: defineAsyncComponent(
       () =>
         import(

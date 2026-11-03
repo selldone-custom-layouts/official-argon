@@ -109,7 +109,7 @@
           :preferences="preferences"
           :quantity="corresponding_basket_item?.count"
           :selected-vendor-product="selected_vendor_product"
-          @select="(val) => $refs.buy_section.triggerBuyButton(val.min)"
+          @select="(val) => $refs.buy_section?.triggerBuyButton(val.min)"
         ></s-product-section-extra-pricings>
 
         <s-storefront-coupons-list
@@ -117,8 +117,18 @@
           :variant-id="current_variant ? current_variant.id : undefined"
         ></s-storefront-coupons-list>
 
-        <!-- Basket -->
+        <!-- Basket: in it, the quantity and checkout (KalioBasketLine);
+             otherwise Selldone's buy button. -->
+        <kalio-basket-line
+          v-if="canBuy && corresponding_basket_item"
+          :line="corresponding_basket_item"
+          :product="$product"
+          :stock="selected_vendor_product ? selected_vendor_product.quantity : current_variant ? current_variant.quantity : $product.quantity"
+          :vendor-product="selected_vendor_product"
+          class="k-pdp__basket"
+        />
         <s-product-section-buy-button
+          v-else
           ref="buy_section"
           :can-buy="canBuy"
           :current-variant="current_variant"
@@ -188,13 +198,14 @@
 <script>
 import SProductOverview from "@selldone/components-vue/storefront/product/overview/SProductOverview.vue";
 import KalioSellerOffers from "./KalioSellerOffers.vue";
+import KalioBasketLine from "./KalioBasketLine.vue";
 import { aisleIndex, aisleRoute, tintFor } from "../kalio-catalog";
 import "../kalio-offer-price"; // the struck price follows the chosen seller
 
 export default {
   name: "KalioProductOverview",
   extends: SProductOverview,
-  components: { KalioSellerOffers },
+  components: { KalioSellerOffers, KalioBasketLine },
 
   data() {
     return {
@@ -222,6 +233,32 @@ export default {
   },
 
   methods: {
+    /* SProductOverview reaches the basket through its buy button, which is
+       not on the page while the product is in the basket (KalioBasketLine
+       stands in for it). */
+    buy(variant = null) {
+      if (variant) this.current_variant = variant;
+      this.$nextTick(() => this.$refs.buy_section?.triggerBuyButton(1));
+    },
+
+    /* Another seller chosen while the product is in the basket: the line
+       moves to that seller's offer, keeping its count. */
+    changeVendor() {
+      const found = this.corresponding_basket_item;
+      if (!found) return;
+      this.AddToBasket(
+        this.getShop().name,
+        this.$product,
+        this.current_variant,
+        found.count,
+        null,
+        null,
+        this.preferences,
+        this.selected_vendor_product,
+        this.selected_subscription_price,
+      );
+    },
+
     /* The product's own category record when the product carries it, else
        the aisle with that id from the shop's aisle list. */
     findAisle() {

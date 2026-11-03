@@ -65,7 +65,9 @@
                   </span>
                   <span class="k-shelf__name">{{ product.title }}</span>
                 </router-link>
+                <kalio-card-step v-if="inBasket(product)" :product="product" class="k-shelf__step" inline />
                 <button
+                  v-else
                   :aria-label="`Add ${product.title}`"
                   class="k-shelf__add"
                   type="button"
@@ -102,6 +104,8 @@
 <script>
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import KalioQuickBuy from "./KalioQuickBuy.vue";
+import KalioCardStep from "./KalioCardStep.vue";
+import { basketLine, hasSizes, quickAdd } from "./kalio-basket";
 import {
   aisleImage,
   aisleRoute,
@@ -116,7 +120,7 @@ const PER_SHELF = 6;
 
 export default {
   name: "KalioShelf",
-  components: { KalioQuickBuy },
+  components: { KalioQuickBuy, KalioCardStep },
   mixins: [CurrencyMixin],
 
   props: {
@@ -237,9 +241,17 @@ export default {
       this.swapping = false;
     },
 
+    /* "+" puts the product straight into the basket; one with sizes opens
+       the sheet. In the basket, the label shows − n + instead. */
     add(product) {
-      this.picked = product;
-      this.quick_buy = true;
+      quickAdd(this, product, (picked) => {
+        this.picked = picked;
+        this.quick_buy = true;
+      });
+    },
+
+    inBasket(product) {
+      return !hasSizes(product) && !!basketLine(this, product);
     },
   },
 };

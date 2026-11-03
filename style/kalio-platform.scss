@@ -668,6 +668,88 @@
   }
 }
 
+/* A card in the basket: KalioCardStep laid over the picture's foot, where
+   the "+" was (kalio-card-basket.ts). The picture box is the card's width
+   square (100cqw). */
+.s--product-card .k-card-step-host {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: calc(100cqw - 54px);
+  z-index: 4;
+}
+
+/* The card's own "+" steps aside while the stepper stands in for it. */
+.s--product-card .card-wrap:has(.k-card-step) .quick-buy .v-btn:first-child {
+  visibility: hidden;
+}
+
+.k-card-step {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
+  height: 44px;
+  border-radius: var(--k-pill);
+  background: var(--k-green-deep);
+  color: #fff;
+  box-shadow: 0 8px 18px -8px rgba(14, 63, 46, 0.6);
+  font-family: var(--k-body);
+  text-align: center;
+  cursor: default;
+
+  button {
+    display: grid;
+    place-items: center;
+    height: 44px;
+    border-radius: var(--k-pill);
+    color: #fff !important; /* Selldone's [type=button] reset loads after */
+    cursor: pointer;
+    transition: background-color 140ms ease;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+  }
+
+  &__count {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.05;
+    font-variant-numeric: tabular-nums;
+
+    small {
+      display: block;
+      font-size: 10.5px;
+      font-weight: 500;
+      opacity: 0.75;
+    }
+  }
+
+  &.-busy &__count {
+    opacity: 0.6;
+  }
+
+  /* In a shelf label: compact, beside the price. */
+  &.-inline {
+    grid-template-columns: 34px 28px 34px;
+    height: 36px;
+    box-shadow: none;
+
+    button {
+      height: 36px;
+    }
+
+    .k-card-step__count {
+      font-size: 15px;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .s--product-card .card__img--hover .v-img__img,
   .s--product-card .quick-buy .v-btn {

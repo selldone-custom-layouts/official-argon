@@ -1199,6 +1199,13 @@ $k-shelf-pic-phone: 150px;
     }
   }
 
+  /* In the basket the "+" becomes a small − n + in the label's corner. */
+  &__step {
+    position: absolute;
+    top: 8px;
+    inset-inline-end: 6px;
+  }
+
   &__foot {
     display: flex;
     align-items: center;

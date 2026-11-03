@@ -100,6 +100,8 @@ import SShopProductCard from "@selldone/components-vue/storefront/product/card/S
 import KalioSellerLine from "./KalioSellerLine.vue";
 import KalioQuickBuy from "./KalioQuickBuy.vue";
 import { aisleIndex, offers, tintFor } from "./kalio-catalog";
+import { quickAdd } from "./kalio-basket";
+import "./kalio-card-basket"; // a card in the basket shows − n +
 
 let railCount = 0;
 
@@ -228,9 +230,13 @@ export default {
       return tintFor(this.aisle_of.get(product.category_id)) || null;
     },
 
+    /* "+" puts the product straight into the basket; one with sizes opens
+       the sheet. */
     quickBuy(product) {
-      this.picked = product;
-      this.quick_buy = true;
+      quickAdd(this, product, (picked) => {
+        this.picked = picked;
+        this.quick_buy = true;
+      });
     },
 
     /* One screen of the row per press, so the arrows move the same distance

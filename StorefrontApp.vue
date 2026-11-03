@@ -95,6 +95,9 @@
            the same event and Selldone's SShopLogin inside. -->
       <kalio-sign-in />
 
+      <!-- "Added to basket", in place of Selldone's green in-basket strip. -->
+      <kalio-basket-toast />
+
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Notifications (Small bottom-Right) ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
       <u-notification-side />
 
@@ -172,6 +175,9 @@ export default {
     ),
     KalioSignIn: defineAsyncComponent(
       () => import("./components/kalio/shell/KalioSignIn.vue"),
+    ),
+    KalioBasketToast: defineAsyncComponent(
+      () => import("./components/kalio/shell/KalioBasketToast.vue"),
     ),
     SCookieConsent: defineAsyncComponent(
       () =>

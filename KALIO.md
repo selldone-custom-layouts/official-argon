@@ -25,6 +25,7 @@ pale tint of their own. The approved mockup is in
 | Product page: breadcrumb, highlights, sections, aisle index | `pages/product/StorefrontPageProduct.vue`, `components/kalio/KalioAisleIndex.vue` |
 | Product overview (packshot panel, buy column) — Selldone's SProductOverview logic via `extends`, Kalio markup | `components/kalio/product/KalioProductOverview.vue` |
 | Seller offer cards — SSmartSelectVendor logic via `extends` | `components/kalio/product/KalioSellerOffers.vue` |
+| In the basket: quantity and "Checkout · total" on the product page (design C); a card's "+" adds straight away and becomes − n +; "Added to basket" notice | `components/kalio/product/KalioBasketLine.vue`, `KalioCardStep.vue`, `kalio-card-basket.ts`, `kalio-basket.ts`, `shell/KalioBasketToast.vue` |
 | Product page styles | `style/kalio-product.scss` |
 | Shelf head (design A) for every shop page that lists products: crumbs, title, count, a row of aisle words | `components/kalio/KalioShelfHead.vue` |
 | Aisle page head | `components/kalio/KalioAisleHeader.vue` |
@@ -89,6 +90,12 @@ Facts that shape the code:
   real only when each seller's offer carries the discount: on 3 November
   2026 every offer on the 80 discounted products was given 20% of its own
   price (snapshots in the session scratchpad, `dealfix/`).
+- **Adding from a card** (`kalio-basket.ts`): a product with sizes opens
+  the quick-buy sheet; any other goes into the basket from its cheapest
+  offer with stock. Counts are set through the storefront's own
+  AddToBasket / RemoveFromBasket; AddToBasket announces a first add
+  (`kalio:basket-added`) for the notice. Selldone's green in-basket strip
+  is not mounted (`layouts/StorefrontLayout.vue`).
 - **Nothing is named.** Aisles, sellers, deals, slides and tiles all come
   from live data; an aisle Kalio does not know still gets a tint, a row and,
   if featured, a tile.
