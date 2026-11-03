@@ -346,6 +346,14 @@
       height: 44px;
       background: var(--k-card);
     }
+
+    /* Selldone caps the compare label at 20vw inline — 78px on a phone,
+       which cut "Add to Compare" to "Add to Com…". */
+    .btn-fav .single-line {
+      max-width: none !important;
+      font-size: 14.5px !important;
+      font-weight: 600;
+    }
   }
 
   &__share {
@@ -483,6 +491,19 @@
 
     &__media {
       position: static;
+    }
+
+    /* One column: the square packshot was as wide as the page (700px on a
+       portrait tablet) and pushed the name, price and basket button below
+       the fold. The tint keeps the page's width; the picture is capped. */
+    .s--product-images {
+      width: min(100%, 420px, 42vh);
+      margin-inline: auto;
+    }
+
+    .gallery-thumbs .gallery-thumbs-wrap > div {
+      width: 54px !important;
+      height: 54px !important;
     }
   }
 }
@@ -680,10 +701,24 @@
     }
   }
 
-  /* On a phone Selldone pins it to the bottom edge, full width. */
-  @media (max-width: 460px) {
-    width: 100% !important;
-    border-radius: var(--k-radius) var(--k-radius) 0 0 !important;
+  /* Below a laptop it is a bar across the page, docked on the bottom bar,
+     not a card floating over the right half of the price. */
+  @media (max-width: 960px) {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: calc(90px + env(safe-area-inset-bottom)) !important;
+    width: auto !important;
+    max-width: none !important;
+    border-radius: var(--k-radius) !important;
+
+    &.-hide {
+      bottom: 0 !important;
+    }
+
+    &.-in-cart {
+      left: auto !important;
+      width: min(460px, calc(100vw - 24px)) !important;
+    }
   }
 }
 
@@ -882,6 +917,19 @@
 @media (max-width: 760px) {
   .k-crumbs__here {
     max-width: 24ch;
+  }
+
+  /* The product's name is the heading just below; on a phone the trail
+     ends at its aisle and keeps to one line. */
+  .k-crumbs {
+    flex-wrap: nowrap;
+    padding: 12px 0 10px;
+
+    .k-crumbs__here,
+    .k-crumbs__here + .v-icon,
+    > .v-icon:has(+ .k-crumbs__here) {
+      display: none;
+    }
   }
 
   .k-pdp-block {

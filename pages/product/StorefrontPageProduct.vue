@@ -147,6 +147,7 @@
           v-if="product.category"
           :key="'aisle-' + product.category.id"
           :dir="product.category.name"
+          :exclude="product.id"
           :more-to="{
             name: window.$storefront.routes.SHOP_CATEGORY_PAGE,
             params: { category_name: product.category.name },

@@ -390,6 +390,15 @@
     }
   }
 
+  /* Selldone lifts the hovered card (scale 1.1) and shrinks its text
+     panel. In a rail the lift is cut off by the track's edge, and the
+     transformed panel becomes the badge's anchor, dropping the badge onto
+     the price. The card stays put; only the packshot moves. */
+  .card:hover,
+  .card:hover .card__info {
+    transform: none !important;
+  }
+
   &:hover .card__img--hover .v-img__img {
     transform: scale(1.04);
   }
@@ -788,13 +797,28 @@
   }
 }
 
-/* The grid: five cards across on a laptop, six on a wide screen, two on a
-   phone — a grocery shelf shows more at once than a fashion grid. */
+/* The grid: two cards across on a phone, three on a tablet, four on a
+   landscape tablet, five on a laptop, six on a wide screen — a grocery shelf
+   shows more at once than a fashion grid. */
 .s--products-listing-row {
   row-gap: 22px;
 
   > .s--product-card {
     padding: 8px !important;
+  }
+
+  @media (min-width: 600px) and (max-width: 899px) {
+    > .s--product-card {
+      flex: 0 0 33.3333% !important;
+      max-width: 33.3333% !important;
+    }
+  }
+
+  @media (min-width: 900px) and (max-width: 1099px) {
+    > .s--product-card {
+      flex: 0 0 25% !important;
+      max-width: 25% !important;
+    }
   }
 
   @media (min-width: 1100px) {
@@ -816,6 +840,80 @@
       flex: 0 0 50% !important;
       max-width: 50% !important;
       padding: 6px !important;
+    }
+  }
+
+  /* Insta. Selldone's photo wall pins every card to a square and shows the
+     name only on hover, so a grocery card's name and price fell under the
+     next row. Here it is the same card on a denser shelf: one column more
+     at every width, smaller type, the name and price always shown. */
+  &.insta-row {
+    justify-content: flex-start !important;
+    margin: 0 !important;
+    row-gap: 16px;
+  }
+
+  &.insta-row > .s--product-card.-insta-mode {
+    height: auto !important;
+    min-width: 0 !important;
+    flex: 0 0 33.3333% !important;
+    max-width: 33.3333% !important;
+    padding: 5px !important;
+
+    @media (min-width: 600px) {
+      flex-basis: 25% !important;
+      max-width: 25% !important;
+    }
+
+    @media (min-width: 900px) {
+      flex-basis: 20% !important;
+      max-width: 20% !important;
+    }
+
+    @media (min-width: 1100px) {
+      flex-basis: 16.6667% !important;
+      max-width: 16.6667% !important;
+    }
+
+    @media (min-width: 1600px) {
+      flex-basis: 14.2857% !important;
+      max-width: 14.2857% !important;
+    }
+
+    .card--1 {
+      height: 100% !important;
+      border: 0 !important;
+    }
+
+    .card--1 .card__img--hover {
+      height: auto !important;
+    }
+
+    .card__info {
+      padding-top: 8px !important;
+    }
+
+    .card__info .v-col-12 .font-weight-bold,
+    .card__info .single-line.font-weight-bold {
+      font-size: 12.5px !important;
+    }
+
+    .main-price-label > p:not(.dis-val) {
+      font-size: 15.5px !important;
+    }
+
+    .discount-percent {
+      top: 6px;
+      inset-inline-start: 6px;
+      padding: 3px 7px !important;
+      font-size: 11px !important;
+    }
+
+    .quick-buy .v-btn:first-child {
+      inset-inline-end: 6px;
+      bottom: 6px;
+      width: 36px !important;
+      height: 36px !important;
     }
   }
 }
@@ -1400,5 +1498,43 @@
   .v-badge__badge {
     background: var(--k-coral) !important;
     color: #fff !important;
+  }
+
+  /* Each tab says what it is, under its icon: the words are the buttons'
+     own labels. The bell opens the orders, so it says so. Vuetify keeps
+     ::after as an invisible absolute layer; here it is the label. */
+  .v-btn[aria-label]::after {
+    content: attr(aria-label);
+    position: static !important;
+    grid-area: append;
+    display: block;
+    width: auto !important;
+    height: auto !important;
+    margin-top: 4px;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    color: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  /* One height for every icon row, so the labels line up (the basket's
+     icon sits in a badge wrapper of its own height). */
+  .v-btn .v-btn__content {
+    height: 26px;
+    align-items: center;
+  }
+
+  .v-btn[aria-label="Notifications"]::after {
+    content: "Orders";
+  }
+
+  .v-btn[aria-label="Profile"]::after {
+    content: "Account";
   }
 }

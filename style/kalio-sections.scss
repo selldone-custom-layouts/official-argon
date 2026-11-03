@@ -1444,6 +1444,45 @@ $k-shelf-pic-phone: 150px;
   text-align: start;
 }
 
+/* The catalogue's own header: what is listed and how much of it. */
+.k-cat-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+  padding: 10px 0 4px;
+
+  .k-eyebrow {
+    flex: 0 0 100%;
+    margin: 0;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--k-display);
+    font-size: clamp(32px, 4vw, 46px);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--k-ink);
+    overflow-wrap: anywhere;
+  }
+
+  &__count {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--k-muted);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Under it, the aisle row stands for Selldone's column of tall aisle
+   cards, which opened the catalogue before any product. */
+.-catalogue > .s--storefront-products-listing .s--products-listing-row:has(> .s--category-card) {
+  display: none !important;
+}
+
 .k-aisle-head {
   display: flex;
   align-items: center;

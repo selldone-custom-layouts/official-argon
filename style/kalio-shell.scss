@@ -405,6 +405,59 @@ $k-header-strip: 46px;
     padding: 8px 6px;
   }
 
+  /* The empty basket: a mark, a line, the way back to the shelves. */
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 44px 24px 28px;
+    text-align: center;
+  }
+
+  &__empty-mark {
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: var(--k-green-soft);
+    color: var(--k-green);
+  }
+
+  &__empty-title {
+    margin: 18px 0 6px;
+    font-family: var(--k-display);
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--k-ink);
+  }
+
+  &__empty-text {
+    max-width: 300px;
+    margin: 0 0 22px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--k-muted);
+  }
+
+  &__empty-ctas {
+    display: grid;
+    gap: 10px;
+    width: min(100%, 320px);
+  }
+
+  &__empty-label {
+    margin: 34px 0 12px;
+  }
+
+  &__empty-aisles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
   &__account {
     display: grid;
     gap: 2px;
@@ -828,6 +881,55 @@ $k-header-strip: 46px;
       background: var(--k-card) !important;
       color: var(--k-ink) !important;
       font-weight: 600 !important;
+    }
+
+    /* The sort menu that stands in for the sort pills below 900px. */
+    .show-on-small-900 {
+      height: 40px !important;
+      padding: 0 12px !important;
+      border-radius: var(--k-pill) !important;
+      color: var(--k-ink) !important;
+      font-weight: 600 !important;
+    }
+  }
+
+  /* A phone has 320px for the row, and "All", the view mode, the sort menu
+     and Filter needed 400: Filter was pushed off the screen. "All" and the
+     view mode keep their icons and give up their words (still read aloud),
+     and the sort menu shrinks before Filter does. */
+  @media (max-width: 599px) {
+    .s--sort-view {
+      gap: 6px;
+
+      .v-btn--stacked {
+        width: 40px;
+        padding: 0 !important;
+
+        .small {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+        }
+      }
+
+      > .v-btn.show-on-small-900,
+      > div > .v-btn.show-on-small-900 {
+        flex: 0 1 auto;
+        min-width: 0 !important;
+
+        .v-btn__content {
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+
+      .v-btn.border-start {
+        padding: 0 14px !important;
+      }
     }
   }
 }
@@ -1322,6 +1424,15 @@ $k-filter-gap: 28px;
       padding-bottom: 24px;
     }
 
+    /* Sixteen aisles pushed price and brand to the bottom of the sheet; the
+       aisle list scrolls in its own box of about six rows instead. */
+    .v-treeview {
+      max-height: 264px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+
     /* The listing does not slide aside under the sheet. */
     .add-marginal-side-menu-open,
     .products-container.container-expanded-side-menu {
@@ -1340,5 +1451,472 @@ $k-filter-gap: 28px;
 
   body:has(.s--storefront-products-filter-menu.v-navigation-drawer--active) .v-bottom-navigation {
     display: none !important;
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ Sign in ▆▆▆▆▆▆▆▆
+
+   KalioSignIn: the shop's wordmark on deep green beside the ways in. The
+   ways in are Selldone's SShopLogin, re-dressed: its greeting and the shop's
+   round icon give way to Kalio's heading, and its four buttons in four
+   colours become one stack of white pills, each with its own mark. On a
+   phone the card rises from the bottom and the green half is a header. */
+
+.k-signin-overlay > .v-overlay__scrim {
+  background: #0d2219;
+  opacity: 0.58;
+}
+
+.k-signin {
+  border-radius: 30px !important;
+  overflow: hidden;
+  box-shadow: 0 40px 90px -30px rgba(8, 26, 18, 0.55) !important;
+}
+
+.k-signin__card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  min-height: 540px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  background: var(--k-card);
+  font-family: var(--k-body);
+  text-align: start;
+  color: var(--k-ink);
+}
+
+.k-signin__brand {
+  display: flex;
+  flex-direction: column;
+  padding: 40px 36px 34px;
+  color: #fff;
+  background:
+    radial-gradient(360px 260px at 0% 110%, rgba(59, 170, 92, 0.32), transparent 70%),
+    radial-gradient(300px 220px at 110% -10%, rgba(255, 255, 255, 0.08), transparent 70%),
+    var(--k-green-deep);
+}
+
+.k-signin__mark {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 5px;
+  margin: 0;
+  font-family: var(--k-display);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: lowercase;
+  color: #fffaf0;
+
+  i {
+    width: 11px;
+    height: 11px;
+    margin-top: 1px;
+    border-radius: 11px 0 11px 0;
+    background: #9fd36b;
+  }
+}
+
+.k-signin__pitch {
+  margin: 34px 0 24px;
+  font-family: var(--k-display);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.k-signin__perks {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.84);
+  }
+
+  .v-icon {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: #9fdab5;
+  }
+}
+
+/* A few aisles, overlapping, as a sign of what is on the shelves. */
+.k-signin__rings {
+  display: flex;
+  margin-top: auto;
+  padding-top: 30px;
+
+  span {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 3px solid var(--k-green-deep);
+    background: var(--k-tint, #fff);
+    overflow: hidden;
+
+    & + span {
+      margin-inline-start: -14px;
+    }
+  }
+
+  img {
+    width: 46px;
+    height: 46px;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+  }
+}
+
+.k-signin__main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 52px 34px;
+}
+
+.k-signin__close {
+  position: absolute;
+  top: 16px;
+  inset-inline-end: 16px;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: var(--k-ink) !important;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+
+  &:hover {
+    background: var(--k-wash);
+  }
+}
+
+.k-signin__title {
+  margin: 10px 0 8px;
+  font-family: var(--k-display);
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--k-ink);
+}
+
+.k-signin__lede {
+  margin: 0 0 26px;
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: var(--k-muted);
+}
+
+/* ―― SShopLogin, inside ―― */
+.k-signin__methods.v-card {
+  background: transparent !important;
+  color: inherit !important;
+  overflow: visible;
+
+  /* Its breadcrumb ("Login › Mobile") only shows past the first step. */
+  > .v-card-title {
+    padding: 0 0 8px !important;
+    margin: 0 !important;
+
+    .v-btn {
+      color: var(--k-green) !important;
+      text-transform: none !important;
+      letter-spacing: 0 !important;
+    }
+  }
+
+  .log-form {
+    display: block !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* The shop's round icon, "Hi," and "Please login": the heading above
+     says it. */
+  .-msg {
+    display: none !important;
+  }
+
+  .max-width-field {
+    max-width: none !important;
+  }
+
+  .s--button-flex.v-btn {
+    position: relative;
+    height: 54px !important;
+    margin: 0 0 10px !important;
+    padding: 0 56px !important;
+    border: 1px solid var(--k-line-strong) !important;
+    border-radius: var(--k-pill) !important;
+    background: var(--k-card) !important;
+    color: var(--k-ink) !important;
+    box-shadow: none !important;
+    font-family: var(--k-body) !important;
+    font-size: 15.5px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    transition: border-color 140ms ease, background-color 140ms ease;
+
+    &:hover {
+      border-color: var(--k-green) !important;
+      background: #fbfaf5 !important;
+    }
+
+    .v-btn__overlay {
+      display: none;
+    }
+
+    .v-btn__content {
+      justify-content: center;
+      width: 100%;
+    }
+
+    /* Each method's mark, at the start of its pill. */
+    .v-btn__prepend {
+      position: absolute;
+      inset-inline-start: 16px;
+      margin: 0 !important;
+
+      .v-avatar {
+        width: 28px !important;
+        height: 28px !important;
+        margin: 0 !important;
+        background: transparent !important;
+      }
+
+      img {
+        width: 24px;
+        height: 24px;
+        padding: 0 !important;
+        object-fit: contain;
+      }
+
+      .v-icon {
+        color: var(--k-green) !important;
+      }
+    }
+
+    small {
+      color: var(--k-muted);
+      font-weight: 500;
+    }
+  }
+
+  /* The other steps (phone, code, account picker), in Kalio's colours. */
+  .widget-buttons .v-btn {
+    border-radius: var(--k-pill) !important;
+    background: var(--k-green-deep) !important;
+    color: #fff !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+  }
+}
+
+.k-signin__legal {
+  margin: 14px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--k-muted);
+
+  a {
+    color: var(--k-green) !important;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
+.k-signin__busy {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(13, 34, 25, 0.35);
+  backdrop-filter: blur(4px);
+}
+
+@media (max-width: 759px) {
+  .k-signin__card {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .k-signin__brand {
+    padding: 24px 22px 22px;
+  }
+
+  .k-signin__mark {
+    font-size: 26px;
+  }
+
+  .k-signin__pitch {
+    margin: 12px 0 0;
+    font-size: 22px;
+  }
+
+  .k-signin__perks,
+  .k-signin__rings {
+    display: none;
+  }
+
+  /* The close button sits on the green header. */
+  .k-signin__main {
+    position: static;
+    padding: 24px 20px calc(18px + env(safe-area-inset-bottom));
+  }
+
+  .k-signin__close {
+    top: 14px;
+    color: #fff !important; /* Selldone's [type=button] reset loads after */
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+  }
+
+  .k-signin__title {
+    font-size: 26px;
+  }
+
+  .k-signin__lede {
+    margin-bottom: 18px;
+  }
+}
+
+/* A phone: the card rises from the bottom edge. */
+@media (max-width: 599px) {
+  .k-signin-overlay.v-overlay {
+    align-items: flex-end;
+  }
+
+  .k-signin-overlay > .v-overlay__content.k-signin {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    max-height: 94vh !important;
+    border-radius: 28px 28px 0 0 !important;
+  }
+
+  .k-signin__card {
+    max-height: 94vh;
+  }
+}
+
+/* Selldone's email step (ShopEmailLogin) opens a sheet of its own over the
+   sign-in card: Kalio's type, a rounded field and a deep green pill. It is
+   found by its body text, the one thing that sheet always has. */
+.v-bottom-sheet > .v-overlay__content.rounded-t-xl:has(.typo-body) {
+  border-radius: 28px 28px 0 0 !important;
+  overflow: hidden;
+
+  > .v-card {
+    padding: 24px 26px 18px;
+    background: var(--k-card) !important;
+    color: var(--k-ink) !important;
+    font-family: var(--k-body);
+  }
+
+  .v-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 0 8px !important;
+    font-family: var(--k-display);
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+
+    .v-icon {
+      color: var(--k-green);
+    }
+  }
+
+  .v-card-text {
+    padding: 0 !important;
+  }
+
+  .typo-body {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--k-muted);
+  }
+
+  .v-field {
+    border-radius: 16px !important;
+    font-size: 17px;
+  }
+
+  .v-field__outline {
+    color: var(--k-line-strong) !important;
+  }
+
+  .v-field--focused .v-field__outline {
+    color: var(--k-green) !important;
+  }
+
+  .text-h4 {
+    font-family: var(--k-body) !important;
+    font-size: 22px !important;
+    font-weight: 600 !important;
+    color: var(--k-ink);
+  }
+
+  .v-card-actions {
+    padding: 10px 0 0 !important;
+  }
+
+  .widget-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 100%;
+
+    .v-btn {
+      height: 52px !important;
+      border-radius: var(--k-pill) !important;
+      box-shadow: none !important;
+      font-family: var(--k-body) !important;
+      font-size: 15.5px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0 !important;
+      text-transform: none !important;
+    }
+
+    .v-btn--variant-elevated {
+      padding: 0 28px !important;
+      background: var(--k-green-deep) !important;
+      color: #fff !important;
+    }
+
+    .v-btn--variant-text {
+      color: var(--k-ink-2) !important;
+    }
+
+    .v-btn.disabled {
+      opacity: 0.45;
+    }
   }
 }

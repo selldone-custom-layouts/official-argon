@@ -91,7 +91,9 @@
       <s-comparison-button v-if="has_comparison" />
 
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Need Login ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-      <s-storefront-need-login-dialog />
+      <!-- Kalio's sign-in sheet in place of SStorefrontNeedLoginDialog:
+           the same event and Selldone's SShopLogin inside. -->
+      <kalio-sign-in />
 
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Notifications (Small bottom-Right) ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
       <u-notification-side />
@@ -168,11 +170,8 @@ export default {
           "@selldone/components-vue/ui/notification/side/UNotificationSide.vue"
         ),
     ),
-    SStorefrontNeedLoginDialog: defineAsyncComponent(
-      () =>
-        import(
-          "@selldone/components-vue/storefront/login/SStorefrontNeedLoginDialog.vue"
-        ),
+    KalioSignIn: defineAsyncComponent(
+      () => import("./components/kalio/shell/KalioSignIn.vue"),
     ),
     SCookieConsent: defineAsyncComponent(
       () =>

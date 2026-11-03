@@ -75,6 +75,9 @@
         :category-name="category_name"
       />
 
+      <!-- ▆▆▆▆▆▆▆▆ Catalogue: every product, a search, the deals ▆▆▆▆▆▆▆▆ -->
+      <kalio-catalogue-header v-if="catalogue" :total="catalogue_total" />
+
       <!-- ▆▆▆▆▆▆▆▆ Shop page: the home ▆▆▆▆▆▆▆▆ -->
       <!-- Shown on the bare shop page only. Every narrowing action the
            listing performs travels as a query parameter, so the home page
@@ -86,6 +89,7 @@
       <s-products-listing
         v-if="!show_home"
         :key="$route.path"
+        :class="{ '-catalogue': catalogue }"
         :style="{ '--k-tint': aisle_tint }"
         :vendor-id="vendor_id"
         :has-breadcrumb="!category_name && !vendor_id"
@@ -105,6 +109,7 @@ import SProductsListing from "@selldone/components-vue/storefront/products/listi
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import KalioHome from "../../components/kalio/KalioHome.vue";
 import KalioAisleHeader from "../../components/kalio/KalioAisleHeader.vue";
+import KalioCatalogueHeader from "../../components/kalio/KalioCatalogueHeader.vue";
 import KalioSellerShelf from "../../components/kalio/KalioSellerShelf.vue";
 import KalioSellerHero from "../../components/kalio/KalioSellerHero.vue";
 import {StorefrontSeo} from "../../helpers/StorefrontSeo";
@@ -116,6 +121,7 @@ export default {
     SProductsListing,
     KalioHome,
     KalioAisleHeader,
+    KalioCatalogueHeader,
     KalioSellerShelf,
     KalioSellerHero,
   },
@@ -130,6 +136,7 @@ export default {
     vendor_id: null /*Show only for this vendor! */,
     seoNavigation: StorefrontSeo.captureNavigation(),
     aisle_tint: null /* The aisle's tint, under every card of its listing. */,
+    catalogue_total: null /* The listing's total, for the catalogue header. */,
   }),
   /**
    * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -146,6 +153,15 @@ export default {
 
     category_name() {
       return this.$route.params?.category_name || null;
+    },
+
+    /* The shop page asked for the catalogue itself (no aisle, no seller). */
+    catalogue() {
+      return (
+        String(this.$route.name || "").startsWith(window.$storefront.routes.SHOP_PAGE) &&
+        !this.vendor_id &&
+        !this.show_home
+      );
     },
 
     show_home() {
@@ -171,7 +187,16 @@ export default {
        the shop, and that swap silently discarded the earlier write. */
     shop_theme: {
       handler(theme) {
-        if (theme && theme.hover_actions === undefined) theme.hover_actions = true;
+        if (!theme) return;
+        if (theme.hover_actions === undefined) theme.hover_actions = true;
+        /* Insta is a photo wall: the name and price only on hover, and no
+           "+" below a laptop. As a starting view it hid a grocery card's
+           name, so the shelf starts on the normal grid. A shopper who picks
+           Insta from the toolbar still gets it, and keeps it: the listing
+           reads their saved choice before the theme. */
+        for (const device of ["mobile", "tablet", "pc"]) {
+          if (theme[device] === "insta") theme[device] = "normal";
+        }
       },
       immediate: true,
     },
@@ -224,6 +249,7 @@ export default {
         : this.$route.query?.vendor_id || null;
     },
     updateProductsSeo(data) {
+      this.catalogue_total = typeof data?.total === "number" ? data.total : null;
       StorefrontSeo.updateProducts(data, this.getShop(), this.seoNavigation);
     },
   },

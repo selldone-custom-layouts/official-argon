@@ -138,6 +138,8 @@ export default {
     dir: { type: String, default: null },
 
     limit: { type: Number, default: 12 },
+    /** A product left out of the row, such as the one on the page above it. */
+    exclude: { type: [Number, String], default: null },
     moreTo: { type: Object, default: null },
     moreLabel: { type: String, default: "See all" },
 
@@ -205,9 +207,12 @@ export default {
       if (this.vendorId) options.vendor_id = this.vendorId;
 
       window.$storefront.products
-        .list(this.dir, 0, this.limit, options)
+        .list(this.dir, 0, this.limit + (this.exclude ? 1 : 0), options)
         .then(({ products }) => {
-          this.products = this.spread ? spreadByAisle(products || []) : products || [];
+          products = (products || [])
+            .filter((product) => String(product.id) !== String(this.exclude))
+            .slice(0, this.limit);
+          this.products = this.spread ? spreadByAisle(products) : products;
         })
         .catch(() => {
           this.products = [];

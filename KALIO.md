@@ -30,7 +30,9 @@ pale tint of their own. The approved mockup is in
 | Seller storefront: sign with mark, aisles and a stall of their products; offers and one row per aisle | `components/kalio/KalioSellerHero.vue`, `KalioSellerShelf.vue` |
 | Header: wordmark, Aisles menu, search, account, basket pill, aisle strip; basket and phone-menu drawers | `components/kalio/shell/KalioHeader.vue` |
 | Footer: aisle band, aisles, sellers, shop links (the merchant's footer menu), account | `components/kalio/shell/KalioFooter.vue` |
-| Header, footer, drawers, catalogue toolbar, filter panel | `style/kalio-shell.scss` |
+| Sign-in sheet (Selldone's SShopLogin inside) | `components/kalio/shell/KalioSignIn.vue` |
+| Catalogue header: "All products", a search or the deals, with the count | `components/kalio/KalioCatalogueHeader.vue` |
+| Header, footer, drawers, sign-in, catalogue toolbar, filter panel | `style/kalio-shell.scss` |
 | Shared reads: aisles, sellers, who sells what, tints | `components/kalio/kalio-catalog.ts` |
 | Typefaces (loaded by the app) | `components/kalio/kalio-fonts.ts` |
 | Shop page choosing home / aisle / seller / catalogue | `pages/products/StorefrontPageProducts.vue` |
@@ -55,6 +57,12 @@ sits inside the catalogue column beside the grid and is only as tall as its
 filters; the aisle sign and the seller storefront above it stay full width.
 On a phone it is a sheet over the page, and the header and bottom bar step
 aside while it is open.
+
+The catalogue starts on the normal grid even where the shop's theme names
+Insta as a device's default (`StorefrontPageProducts.vue`): Insta hides a
+card's name until hover and drops the "+" below a laptop. A shopper who
+picks Insta from the toolbar keeps it; Kalio draws it as a denser grid with
+the name and price shown.
 
 The shop page shows the home sections only when it has no query. Search,
 filters, sorts, "See all deals" and "Browse every product" all add a query,

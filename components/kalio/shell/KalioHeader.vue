@@ -199,7 +199,34 @@
             <v-icon>close</v-icon>
           </button>
         </div>
-        <basket-top-menu class="k-drawer__body" @close="basket = false" />
+        <!-- Empty: Selldone's line "Your cart is empty." left the shopper
+             nowhere to go; Kalio's offers the way back to the shelves. -->
+        <div v-if="!itemsCount" class="k-drawer__empty">
+          <span aria-hidden="true" class="k-drawer__empty-mark"><v-icon size="30">shopping_bag</v-icon></span>
+          <p class="k-drawer__empty-title">Your basket is empty</p>
+          <p class="k-drawer__empty-text">Pick something from the aisles and it will wait for you here.</p>
+          <div class="k-drawer__empty-ctas">
+            <router-link :to="dealsRoute" class="k-btn k-btn--solid" @click="basket = false">Shop today’s deals</router-link>
+            <router-link :to="catalogueRoute" class="k-btn k-btn--line" @click="basket = false">Browse every product</router-link>
+          </div>
+          <template v-if="aisleList.length">
+            <p class="k-eyebrow k-drawer__empty-label">Or start with an aisle</p>
+            <nav aria-label="Aisles" class="k-drawer__empty-aisles">
+              <router-link
+                v-for="aisle in aisleList.slice(0, 8)"
+                :key="aisle.id"
+                :style="{ '--k-tint': tint(aisle) }"
+                :to="aisleRoute(aisle)"
+                class="k-aisle-chip"
+                @click="basket = false"
+              >
+                <img v-if="aisle.icon" :src="aisleImage(aisle, 64)" alt="" height="32" width="32" loading="lazy" />
+                {{ aisle.title || aisle.name }}
+              </router-link>
+            </nav>
+          </template>
+        </div>
+        <basket-top-menu v-else class="k-drawer__body" @close="basket = false" />
       </v-navigation-drawer>
 
       <!-- ▆▆▆▆▆▆▆▆ Phone menu ▆▆▆▆▆▆▆▆ -->

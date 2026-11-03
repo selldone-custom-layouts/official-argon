@@ -47,7 +47,7 @@
       <div class="k-wrap k-footer__grid">
         <div class="k-footer__brand">
           <router-link :to="{ path: '/' }" class="k-footer__mark">{{ shopTitle }}<i aria-hidden="true"></i></router-link>
-          <p v-if="$shop.description" class="k-footer__lede">{{ $shop.description }}</p>
+          <p v-if="lede" class="k-footer__lede">{{ lede }}</p>
           <s-storefront-social-buttons class="k-footer__social"></s-storefront-social-buttons>
           <div class="k-footer__pickers">
             <s-language-selector hide-details variant="outlined"></s-language-selector>
@@ -159,16 +159,34 @@ export default {
     dealsRoute() {
       return dealsRoute();
     },
+    /* The shop's own description. A new Selldone shop is given "It's my
+       awesome <name> website." until the merchant writes one; that line is
+       not shown, and the footer describes the shop from what it stocks. */
+    lede() {
+      const description = (this.$shop?.description || "").trim();
+      if (description && !/^it['’]s my awesome .* website\.?$/i.test(description)) return description;
+      if (!this.aisleList.length) return null;
+      const sellers = this.sellerList.length;
+      return sellers > 1
+        ? `${this.aisleList.length} aisles of groceries from ${sellers} independent sellers, in one basket.`
+        : `${this.aisleList.length} aisles of groceries, in one basket.`;
+    },
     /* The merchant's footer menu (Selldone menus, type FOOTER), flattened,
        or the standard pages when the shop has none. */
     shopLinks() {
       const menu = this.$shop?.menus?.find((it) => it.type === "FOOTER" && it.enable !== false);
+      const shopPage = window.$storefront.routes.SHOP_PAGE;
       /* A link to a route this storefront does not have (a blog the shop
-         never enabled) would throw while rendering, so it is left out. */
+         never enabled) would throw while rendering, so it is left out. Here
+         the shop page is the home, so a menu's "Shop" link opened the same
+         page as "Home"; it opens the catalogue instead. */
       const items = (menu?.menu || [])
         .flat()
         .filter((item) => item && item.name && item.to)
-        .filter((item) => !item.to.name || this.$router.hasRoute(item.to.name));
+        .filter((item) => !item.to.name || this.$router.hasRoute(item.to.name))
+        .map((item) =>
+          item.to.name === shopPage && !item.to.query ? { ...item, to: this.catalogueRoute } : item,
+        );
       if (items.length) return items;
       const r = window.$storefront.routes;
       return [
