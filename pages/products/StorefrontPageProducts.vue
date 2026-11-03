@@ -101,6 +101,9 @@
         @fetch-products="updateProductsSeo"
       ></s-products-listing>
     </v-card>
+
+    <!-- The catalogue's "+" opens Kalio's quick-buy sheet (kalio-listing-quick-buy.ts). -->
+    <kalio-quick-buy v-model="quick_open" :product="quick_pick" />
   </div>
 </template>
 
@@ -113,7 +116,8 @@ import KalioCatalogueHeader from "../../components/kalio/KalioCatalogueHeader.vu
 import KalioSellerShelf from "../../components/kalio/KalioSellerShelf.vue";
 import KalioSellerHero from "../../components/kalio/KalioSellerHero.vue";
 import {StorefrontSeo} from "../../helpers/StorefrontSeo";
-import "../../components/kalio/kalio-offer-price"; // the listing's quick-buy sheet: the struck price follows the chosen seller
+import KalioQuickBuy from "../../components/kalio/KalioQuickBuy.vue";
+import { hostQuickBuy } from "../../components/kalio/kalio-listing-quick-buy";
 
 export default {
   name: "StorefrontPageProducts",
@@ -122,6 +126,7 @@ export default {
     KalioHome,
     KalioAisleHeader,
     KalioCatalogueHeader,
+    KalioQuickBuy,
     KalioSellerShelf,
     KalioSellerHero,
   },
@@ -136,6 +141,8 @@ export default {
     vendor_id: null /*Show only for this vendor! */,
     seoNavigation: StorefrontSeo.captureNavigation(),
     catalogue_total: null /* The listing's total, for the aisle and catalogue headers. */,
+    quick_open: false /* Kalio's quick-buy sheet, for the listing's "+". */,
+    quick_pick: null,
   }),
   /**
    * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -225,6 +232,11 @@ export default {
    * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
    */
   created() {
+    this.releaseQuickBuy = hostQuickBuy((product) => {
+      this.quick_pick = product;
+      this.quick_open = true;
+    });
+
     // ━━━━━━━ Initialize by query ━━━━━━━
 
     /*First load keep vendor ID to show products for this vendor.*/
@@ -232,6 +244,10 @@ export default {
 
     this.setPageTitle(); // Set Page Title!
   },
+  beforeUnmount() {
+    this.releaseQuickBuy?.();
+  },
+
   methods: {
     vendorIdFromRoute() {
       return this.$route.params?.vendor_id

@@ -534,62 +534,106 @@ $k-header-strip: 46px;
   font-family: var(--k-body);
   text-align: start;
 
+  /* The band before the footer: the shop in three counts and the way back
+     to the aisles, on the stone ground. */
   &__band {
-    padding: 40px 0;
-    background: #dcedc5;
+    padding: 44px 0;
+    border-top: 1px solid var(--k-line-soft);
+    background: var(--k-well);
   }
 
   &__band-row {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr) auto;
     align-items: center;
-    justify-content: space-between;
-    gap: 24px 40px;
+    gap: 24px 48px;
   }
 
-  &__band-copy {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
+  &__band-copy .k-eyebrow {
+    margin: 0 0 6px;
   }
 
   &__band-title {
-    margin: 0 0 12px;
-    max-width: 420px;
+    margin: 0;
+    max-width: 380px;
     font-family: var(--k-display);
-    font-size: clamp(28px, 3vw, 38px);
+    font-size: clamp(28px, 2.8vw, 36px);
     font-weight: 600;
     line-height: 1.05;
     letter-spacing: -0.02em;
-    color: var(--k-green-deep);
+    color: var(--k-ink);
   }
 
-  &__band-aisles {
+  &__facts {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
+    gap: 16px 40px;
+    margin: 0;
 
-  &__band-aisle {
-    display: grid;
-    place-items: center;
-    width: 66px;
-    height: 66px;
-    border-radius: 50%;
-    background: var(--k-tint);
-    box-shadow: 0 8px 18px -12px rgba(16, 35, 27, 0.5);
-    transition: transform 160ms ease;
-
-    img {
-      width: 78%;
-      height: 78%;
-      object-fit: contain;
-      mix-blend-mode: multiply;
+    > div {
+      min-width: 0;
+      padding-inline-start: 18px;
+      border-inline-start: 1px solid var(--k-line-strong);
     }
 
-    &:hover {
-      transform: translateY(-3px);
+    dt {
+      font-family: var(--k-display);
+      font-size: 36px;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--k-green-deep);
+      font-variant-numeric: lining-nums;
+    }
+
+    dd {
+      margin: 6px 0 0;
+      font-size: 14px;
+      line-height: 1.35;
+      color: var(--k-muted);
+    }
+  }
+
+  @media (max-width: 1100px) {
+    &__band-row {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    &__facts {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+
+  @media (max-width: 600px) {
+    &__band {
+      padding: 32px 0;
+    }
+
+    &__band-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    &__facts {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-row: auto;
+      gap: 12px;
+
+      > div {
+        padding-inline-start: 12px;
+      }
+
+      dt {
+        font-size: 28px;
+      }
+
+      dd {
+        font-size: 13px;
+      }
+    }
+
+    .k-btn {
+      justify-self: start;
     }
   }
 

@@ -419,12 +419,19 @@
       }
     }
 
+    /* Selldone sets each title 100px wide, which broke "Working hours
+       support" onto two lines; the title takes its own width and a whole
+       badge wraps to the next line when the column is narrow. */
     .-badge-title {
+      width: auto !important;
+      max-width: none !important;
       margin: 0 !important;
       padding: 0 !important;
       min-height: 0 !important;
       font-size: 13.5px !important;
       font-weight: 500;
+      line-height: 1.3 !important;
+      white-space: nowrap;
       color: var(--k-ink-2) !important;
       text-align: start !important;
     }
@@ -450,9 +457,48 @@
       mix-blend-mode: multiply;
     }
 
-    .v-window__controls .v-avatar {
-      background: rgba(255, 255, 255, 0.9) !important;
-      box-shadow: var(--k-shadow);
+    /* Selldone's arrows are 84px discs holding the next picture, laid over
+       the packshot. Here: a small white button with a chevron, and none on
+       a touch screen, where a swipe and the thumbnails do the job. */
+    .v-window__controls {
+      padding: 0 14px;
+
+      .v-avatar {
+        width: 40px !important;
+        height: 40px !important;
+        border: 1px solid var(--k-line);
+        background: #fff !important;
+        box-shadow: 0 4px 12px -6px rgba(16, 35, 27, 0.3);
+        backdrop-filter: none !important;
+        cursor: pointer;
+
+        img,
+        .v-icon {
+          display: none !important;
+        }
+
+        &::after {
+          content: "";
+          width: 9px;
+          height: 9px;
+          border: solid var(--k-ink);
+          border-width: 0 2px 2px 0;
+        }
+
+        &.v-window__right::after {
+          margin-inline-end: 3px;
+          transform: rotate(-45deg);
+        }
+
+        &.v-window__left::after {
+          margin-inline-start: 3px;
+          transform: rotate(135deg);
+        }
+      }
+
+      @media (hover: none) {
+        display: none !important;
+      }
     }
   }
 
@@ -470,10 +516,27 @@
         width: 64px !important;
         height: 64px !important;
         margin: 0 !important;
+        border: 1px solid var(--k-line);
         border-radius: 14px !important;
-        background: rgba(255, 255, 255, 0.65) !important;
+        background: #fff !important;
         overflow: hidden;
         cursor: pointer;
+        transition: border-color 140ms ease;
+
+        &:hover {
+          border-color: var(--k-ink-2);
+        }
+
+        /* One frame: Selldone's thumbnail drew its own 1px frame with a
+           10px side margin inside this box, so the two sat apart. */
+        > .-slide {
+          width: 100% !important;
+          height: 100% !important;
+          margin: 0 !important;
+          padding: 5px;
+          border: 0 !important;
+          border-radius: 0 !important;
+        }
 
         img,
         .v-img__img {
@@ -912,6 +975,137 @@
 
 .k-pdp-aisles {
   margin-top: 56px;
+}
+
+/* The aisle index that closes the product page (KalioAisleIndex): a
+   directory, four lines across. */
+.k-aisle-index {
+  text-align: start;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px 20px;
+  }
+
+  &__item {
+    display: grid;
+    grid-template-columns: 60px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 10px 10px 8px;
+    border-radius: 18px;
+    color: var(--k-ink) !important;
+    text-decoration: none;
+    transition: background-color 140ms ease;
+
+    &:hover {
+      background: var(--k-well);
+
+      .k-aisle-index__go {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    &.-skeleton .k-aisle-index__well,
+    &.-skeleton .k-aisle-index__bar {
+      background: var(--k-well);
+    }
+  }
+
+  &__well {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    background: var(--k-well);
+
+    img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+  }
+
+  &__item:hover &__well {
+    background: #fff;
+  }
+
+  &__bar {
+    height: 14px;
+    border-radius: 7px;
+  }
+
+  &__copy {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  &__lede {
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--k-muted);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__go {
+    color: var(--k-muted);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 140ms ease, transform 140ms ease;
+  }
+
+  @media (max-width: 1100px) {
+    &__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 760px) {
+    &__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2px 8px;
+    }
+
+    &__item {
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: 10px;
+      padding: 8px 6px;
+    }
+
+    &__well {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+
+      img {
+        width: 36px;
+        height: 36px;
+      }
+    }
+
+    &__name {
+      font-size: 14px;
+    }
+
+    &__lede,
+    &__go {
+      display: none !important; /* Vuetify's .v-icon sets its own display */
+    }
+  }
 }
 
 @media (max-width: 760px) {

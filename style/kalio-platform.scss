@@ -1329,6 +1329,61 @@
   }
 }
 
+/* Kalio's sheet (KalioQuickBuy): the product page's overview inside, under
+   a bar with "Full details" and the close button. */
+.k-quickbuy {
+  &__bar {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px 10px 28px;
+    background: var(--k-paper);
+  }
+
+  &__close {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    color: var(--k-ink) !important; /* Selldone's [type=button] reset loads after */
+    cursor: pointer;
+    transition: background-color 140ms ease;
+
+    &:hover {
+      background: var(--k-wash);
+    }
+  }
+
+  &__body.v-card-text {
+    padding: 0 28px 32px !important;
+  }
+
+  /* On the product page the packshot stays in view under the header; in
+     the sheet there is no header to clear. */
+  .k-pdp__media {
+    position: static;
+  }
+
+  .k-pdp__title {
+    font-size: clamp(26px, 2.6vw, 36px) !important;
+  }
+
+  @media (max-width: 760px) {
+    &__bar {
+      padding: 10px 10px 6px 18px;
+    }
+
+    &__body.v-card-text {
+      padding: 0 16px 24px !important;
+    }
+  }
+}
+
 /* ▆▆▆▆▆▆▆▆ Basket and checkout ▆▆▆▆▆▆▆▆
 
    Selldone's basket is a stack of white cards with large rounded corners

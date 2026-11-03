@@ -21,8 +21,8 @@ pale tint of their own. The approved mockup is in
 | Aisle row (two rows of round pictures) | `components/kalio/KalioAisleRibbon.vue` |
 | Product rows with the platform quick-buy sheet | `components/kalio/KalioRail.vue`, `KalioSellerLine.vue` |
 | Aisle mosaic, seller cards, market shelf | `components/kalio/KalioMosaic.vue`, `KalioSellerCards.vue`, `KalioShelf.vue` |
-| Quick-buy sheet for a "+" outside a product card | `components/kalio/KalioQuickBuy.vue` |
-| Product page: breadcrumb, highlights, sections, aisle row | `pages/product/StorefrontPageProduct.vue` |
+| Quick-buy sheet for every "+" (the product page's Kalio overview inside); the catalogue's "+" is routed to it | `components/kalio/KalioQuickBuy.vue`, `kalio-listing-quick-buy.ts` |
+| Product page: breadcrumb, highlights, sections, aisle index | `pages/product/StorefrontPageProduct.vue`, `components/kalio/KalioAisleIndex.vue` |
 | Product overview (packshot panel, buy column) — Selldone's SProductOverview logic via `extends`, Kalio markup | `components/kalio/product/KalioProductOverview.vue` |
 | Seller offer cards — SSmartSelectVendor logic via `extends` | `components/kalio/product/KalioSellerOffers.vue` |
 | Product page styles | `style/kalio-product.scss` |
@@ -30,7 +30,7 @@ pale tint of their own. The approved mockup is in
 | Aisle page head | `components/kalio/KalioAisleHeader.vue` |
 | Seller storefront: shelf head with their mark and aisles; offers and one row per aisle | `components/kalio/KalioSellerHero.vue`, `KalioSellerShelf.vue` |
 | Header: wordmark, Aisles menu, search, account, basket pill, aisle strip; basket and phone-menu drawers | `components/kalio/shell/KalioHeader.vue` |
-| Footer: aisle band, aisles, sellers, shop links (the merchant's footer menu), account | `components/kalio/shell/KalioFooter.vue` |
+| Footer: a band with the shop's counts, aisles, sellers, shop links (the merchant's footer menu), account | `components/kalio/shell/KalioFooter.vue` |
 | Sign-in sheet (Selldone's SShopLogin inside) | `components/kalio/shell/KalioSignIn.vue` |
 | Catalogue header: "All products", a search or the deals, with the count | `components/kalio/KalioCatalogueHeader.vue` |
 | Header, footer, drawers, sign-in, catalogue toolbar, filter panel | `style/kalio-shell.scss` |

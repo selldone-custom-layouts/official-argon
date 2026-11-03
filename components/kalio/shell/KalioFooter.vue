@@ -16,29 +16,31 @@
 <template>
   <footer class="k-footer">
     <!-- ▆▆▆▆▆▆▆▆ Back to the aisles ▆▆▆▆▆▆▆▆ -->
+    <!-- What the shop is, in three counts read live, and the way back in. -->
     <section v-if="aisleList.length" aria-labelledby="k-footer-aisles" class="k-footer__band">
       <div class="k-wrap k-footer__band-row">
         <div class="k-footer__band-copy">
           <p class="k-eyebrow">{{ shopTitle }}</p>
           <h2 id="k-footer-aisles" class="k-footer__band-title">Everything for the weekly shop</h2>
-          <router-link :to="catalogueRoute" class="k-btn k-btn--solid">
-            Browse every aisle
-            <v-icon class="k-flip" size="20">chevron_right</v-icon>
-          </router-link>
         </div>
-        <nav aria-label="Aisles" class="k-footer__band-aisles">
-          <router-link
-            v-for="aisle in aisleList.slice(0, 10)"
-            :key="aisle.id"
-            :style="{ '--k-tint': tint(aisle) }"
-            :title="aisle.title || aisle.name"
-            :to="aisleRoute(aisle)"
-            class="k-footer__band-aisle"
-          >
-            <img v-if="aisle.icon" :src="aisleImage(aisle, 128)" alt="" height="56" width="56" loading="lazy" />
-            <span class="k-sr">{{ aisle.title || aisle.name }}</span>
-          </router-link>
-        </nav>
+        <dl class="k-footer__facts">
+          <div>
+            <dt>{{ aisleList.length }}</dt>
+            <dd>{{ aisleList.length === 1 ? "aisle" : "aisles" }}</dd>
+          </div>
+          <div v-if="sellerList.length > 1">
+            <dt>{{ sellerList.length }}</dt>
+            <dd>independent sellers</dd>
+          </div>
+          <div>
+            <dt>1</dt>
+            <dd>{{ sellerList.length > 1 ? "basket for all of them" : "basket, one checkout" }}</dd>
+          </div>
+        </dl>
+        <router-link :to="catalogueRoute" class="k-btn k-btn--solid">
+          Browse every aisle
+          <v-icon class="k-flip" size="20">chevron_right</v-icon>
+        </router-link>
       </div>
     </section>
 
@@ -114,17 +116,7 @@ import UCurrencySelector from "@selldone/components-vue/ui/currency/selector/UCu
 import SFooterSectionGdpr from "@selldone/components-vue/storefront/footer/section/gdpr/SFooterSectionGdpr.vue";
 import SFooterSectionSelldone from "@selldone/components-vue/storefront/footer/section/selldone/SFooterSectionSelldone.vue";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
-import {
-  aisleImage,
-  aisleRoute,
-  aisles,
-  catalogueRoute,
-  dealsRoute,
-  sellerRoute,
-  tintFor,
-  vendorImage,
-  vendors,
-} from "../kalio-catalog";
+import { aisleRoute, aisles, catalogueRoute, dealsRoute, sellerRoute, vendorImage, vendors } from "../kalio-catalog";
 
 export default {
   name: "KalioFooter",
@@ -205,10 +197,8 @@ export default {
 
   methods: {
     aisleRoute,
-    aisleImage,
     sellerRoute,
     vendorImage,
-    tint: tintFor,
     signIn() {
       EventBus.$emit("need-login", true);
     },

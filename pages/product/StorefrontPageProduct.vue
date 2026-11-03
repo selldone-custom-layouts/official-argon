@@ -158,7 +158,7 @@
       </div>
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Every aisle (related categories) ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
       <div :style="{ order: getOrder('related-categories') }">
-        <kalio-aisle-ribbon class="k-pdp-aisles" />
+        <kalio-aisle-index class="k-pdp-aisles" />
       </div>
     </template>
   </div>
@@ -170,7 +170,7 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 import KalioProductOverview from "../../components/kalio/product/KalioProductOverview.vue";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import KalioRail from "../../components/kalio/KalioRail.vue";
-import KalioAisleRibbon from "../../components/kalio/KalioAisleRibbon.vue";
+import KalioAisleIndex from "../../components/kalio/KalioAisleIndex.vue";
 import SProductOverviewLoading from "@selldone/components-vue/storefront/product/overview/loading/SProductOverviewLoading.vue";
 
 import { GtagEcommerce } from "@selldone/components-vue/plugins/gtag/GtagEcommerce";
@@ -221,7 +221,7 @@ export default {
     SProductOverviewLoading,
     KalioProductOverview,
     KalioRail,
-    KalioAisleRibbon,
+    KalioAisleIndex,
 
   },
 
