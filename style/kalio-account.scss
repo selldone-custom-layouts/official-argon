@@ -1190,11 +1190,6 @@
       padding: 10px 0;
       border-bottom: 1px solid var(--k-line-soft);
     }
-
-    &.-wait {
-      padding-top: 14px;
-      border: 0;
-    }
   }
 
   &__pic {
@@ -1229,6 +1224,17 @@
       font-size: 13px;
       color: var(--k-muted);
     }
+  }
+
+  // the product's name while it is being read
+  &__nameghost {
+    display: block;
+    width: min(240px, 70%);
+    height: 13px;
+    margin: 3px 0 6px;
+    border-radius: 7px;
+    background: linear-gradient(90deg, var(--k-wash) 25%, #fbfaf6 50%, var(--k-wash) 75%) 0 0 / 300% 100%;
+    animation: k-ghost 1.4s linear infinite;
   }
 
   &__amount {

@@ -31,18 +31,21 @@
           </li>
         </ol>
 
-        <ul v-if="detail" class="k-ahome__lines">
-          <li v-for="item in lines" :key="item.id">
-            <span class="k-ahome__pic"><img v-if="image(item)" :src="image(item)" alt="" loading="lazy" /></span>
+        <!-- The lines: from the list at once (picture, name, how many), with
+             prices and sellers once the full order is read. -->
+        <ul v-if="lines.length" class="k-ahome__lines">
+          <li v-for="line in lines" :key="line.key">
+            <span class="k-ahome__pic"><img v-if="line.src" :src="line.src" alt="" loading="lazy" /></span>
             <span class="k-ahome__name">
-              <b>{{ item.product?.title }}</b>
-              <small>{{ item.count }} × <u-price :amount="item.price" :currency="detail.currency" /><template v-if="sellerName(item)"> · {{ sellerName(item) }}</template></small>
+              <b v-if="line.title">{{ line.title }}</b>
+              <span v-else aria-hidden="true" class="k-ahome__nameghost"></span>
+              <small v-if="line.price != null">{{ line.count }} × <u-price :amount="line.price" :currency="line.currency" /><template v-if="line.seller"> · {{ line.seller }}</template></small>
+              <small v-else>Quantity {{ line.count }}</small>
             </span>
-            <u-price :amount="lineTotal(item)" :currency="detail.currency" class="k-ahome__amount" />
+            <u-price v-if="line.total != null" :amount="line.total" :currency="line.currency" class="k-ahome__amount" />
           </li>
           <li v-if="moreLines" class="k-ahome__morelines">and {{ moreLines }} more</li>
         </ul>
-        <div v-else aria-busy="true" class="k-ahome__lines -wait"><span class="k-board__ghost"></span></div>
 
         <footer class="k-ahome__foot">
           <div class="k-ahome__sum">
@@ -138,7 +141,7 @@
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { reorder } from "../kalio-basket";
-import { productImage, vendors } from "../kalio-catalog";
+import { productImage, productsById, vendors } from "../kalio-catalog";
 import KalioBuyAgain from "./KalioBuyAgain.vue";
 import KalioOrdersBoard from "./KalioOrdersBoard.vue";
 import {
@@ -153,6 +156,7 @@ import {
   paidWords,
   standing,
   stepOf,
+  userKnown,
   when,
 } from "./kalio-account";
 
@@ -169,6 +173,7 @@ export default {
       account,
       states: STATES,
       sellers: new Map(),
+      catalogue: new Map(),
       busy_again: false,
       again_done: false,
     };
@@ -188,10 +193,37 @@ export default {
       return standing(this.latest);
     },
     lines() {
-      return (this.detail?.items || []).slice(0, LINES);
+      const detail = this.detail;
+      if (detail) {
+        return (detail.items || []).slice(0, LINES).map((item) => ({
+          key: item.id,
+          src: this.image(item),
+          title: item.product?.title || "An item",
+          count: item.count,
+          price: item.price,
+          total: this.lineTotal(item),
+          seller: this.sellerName(item),
+          currency: detail.currency,
+        }));
+      }
+      // Before the full order (or without it): the list's products and counts.
+      const missing = !!account.missing[this.latest?.id];
+      return (this.latest?.items || []).slice(0, LINES).map((item, i) => {
+        const product = this.catalogue.get(item.product_id);
+        return {
+          key: `l${i}`,
+          src: (product && productImage(product, true)) || this.getProductImage(item.product_id),
+          title: product?.title || (missing ? "An item" : null),
+          count: item.count,
+          price: null,
+          total: null,
+          seller: null,
+          currency: this.latest.currency,
+        };
+      });
     },
     moreLines() {
-      return Math.max(0, (this.detail?.items || []).length - LINES);
+      return Math.max(0, (this.detail?.items || this.latest?.items || []).length - LINES);
     },
     footWords() {
       const parts = [paidWords(this.latest)];
@@ -234,17 +266,21 @@ export default {
   },
 
   created() {
-    // A guest has only the orders kept on this device.
-    if (!this.USER()) {
-      this.$router.replace(this.ordersRoute);
-      return;
-    }
     this.setPageTitle?.("My account");
-    loadOrders(this);
-    loadAddresses();
-    loadWallets(this);
-    loadGiftcards(this);
     vendors().then((list) => (this.sellers = new Map(list.map((v) => [v.id, v]))));
+    productsById().then((map) => (this.catalogue = map));
+    // After a reload the shopper is read first; a guest has only the
+    // orders kept on this device.
+    userKnown(this).then(() => {
+      if (!this.USER()) {
+        this.$router.replace(this.ordersRoute);
+        return;
+      }
+      loadOrders(this);
+      loadAddresses();
+      loadWallets(this);
+      loadGiftcards(this);
+    });
   },
 
   methods: {

@@ -39,6 +39,8 @@ export const account = reactive({
   failed: false,
   /** Order id → the full order, once read. */
   details: {} as Record<number, any>,
+  /** Orders whose full read failed twice; pages show what the list knows. */
+  missing: {} as Record<number, boolean>,
   addresses: null as any[] | null,
   wallets: null as any[] | null,
   giftcards: null as number | null,
@@ -51,22 +53,44 @@ function guestCodes(vm: any) {
   return !vm.USER() ? StorefrontLocalStorages.GetShopHistoryGuestCodes("PHYSICAL") : undefined;
 }
 
+/** Resolves once the app knows who is signed in: after a reload it asks
+ *  (busy user) and USER() is empty until the answer, signed in or not. */
+export function userKnown(vm: any): Promise<void> {
+  const store = vm.$store;
+  if (!store?.getters?.getBusyUser) return Promise.resolve();
+  return new Promise((resolve) => {
+    const stop = store.watch(
+      (_state: any, getters: any) => getters.getBusyUser,
+      (busy: boolean) => {
+        if (busy) return;
+        stop();
+        resolve();
+      },
+    );
+  });
+}
+
 /** Read the first orders (once per visit and shopper). */
 export function loadOrders(vm: any, force = false): Promise<void> {
+  // Not as a guest while the shopper is still being read.
+  if (vm.$store?.getters?.getBusyUser) return userKnown(vm).then(() => loadOrders(vm, force));
   const user = vm.USER()?.id || null;
   if (who !== user) {
     // signed in or out since: start again
     who = user;
     reading = null;
-    Object.assign(account, { orders: [], total: 0, loaded: false, failed: false, details: {}, addresses: null, wallets: null, giftcards: null });
+    detailReads.clear();
+    Object.assign(account, { orders: [], total: 0, loaded: false, failed: false, details: {}, missing: {}, addresses: null, wallets: null, giftcards: null });
   }
   if (reading && !force) return reading;
   account.loading = true;
+  const asked = who;
   reading = window.axios
     .get(window.XAPI.GET_MY_ORDERS_HISTORY_PHYSICAL(vm.$shop.name, "PHYSICAL"), {
       params: { offset: 0, limit: PAGE, sortDesc: true, codes: guestCodes(vm) },
     })
     .then(({ data }: any) => {
+      if (asked !== who) return; // a guest's list that arrived after signing in
       if (data?.error) throw new Error(data.error_msg);
       account.orders = sortOrders(data.orders || []);
       account.total = data.total || account.orders.length;
@@ -105,25 +129,34 @@ function sortOrders(list: any[]) {
 
 const detailReads = new Map<number, Promise<any>>();
 
-/** The whole order (label, lines, sellers, payment), once per visit. */
+/** The whole order (label, lines, sellers, payment), once per visit; one
+ *  more try after a failed read, then the order is marked missing so pages
+ *  stop waiting for it (a later visit asks again). */
 export function loadDetail(vm: any, id: number): Promise<any> {
   if (!detailReads.has(id)) {
-    detailReads.set(
-      id,
+    const read = () =>
       window.axios
         .get(window.XAPI.GET_ORDER_BASKET_INFO(vm.$shop.name, id), {
           params: { code: !vm.USER() ? StorefrontLocalStorages.GetShopHistoryGuestCodeOfOrder(id) : undefined },
         })
         .then(({ data }: any) => {
           if (data?.error || !data?.basket) throw new Error("no order");
-          account.details[id] = data.basket;
           return data.basket;
-        })
-        .catch(() => {
-          detailReads.delete(id);
-          return null;
-        }),
-    );
+        });
+    const reads = account.details; // this shopper's; a sign-out replaces it
+    const asked = read()
+      .catch(() => new Promise((resolve) => setTimeout(resolve, 1500)).then(read))
+      .then((basket: any) => {
+        reads[id] = basket;
+        delete account.missing[id];
+        return basket;
+      })
+      .catch(() => {
+        if (detailReads.get(id) === asked) detailReads.delete(id);
+        if (reads === account.details) account.missing[id] = true;
+        return null;
+      });
+    detailReads.set(id, asked);
   }
   return detailReads.get(id)!;
 }

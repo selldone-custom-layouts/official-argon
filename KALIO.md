@@ -188,8 +188,16 @@ Facts that shape the code:
   header menu and footer opens `/user`. Tested with a stand-in shopper put
   in the app's store and every account read answered by the test (nothing
   sent): `../kalio-design/review/accountcheck.cjs` (variants full, real,
-  empty, guest; `--dist` serves a local build in place of a release).
+  empty, guest, reload; `--dist` serves a local build in place of a
+  release; `DETAIL=slow|fail` delays or refuses the full order).
   Not tried for real: "Buy again" against the live basket.
+  Since 0.2.20 nothing waits forever on the full order: the Overview's
+  lines show at once from the list (picture, name from the catalogue,
+  quantity) and gain prices and sellers when the order is read; a failed
+  read is tried once more, then the order is marked `missing`. After a
+  reload `USER()` is empty while the app asks who is signed in
+  (`getBusyUser`): `userKnown()` waits for the answer before reading orders
+  or sending a "guest" from the Overview to the orders.
 - **Vuetify draws icons as `<i>`.** A rule for a decorative `i` must say
   `> i` when a `<v-icon>` can sit inside it: the order page's progress
   circles used `.k-order__step i`, which also caught the tick and pinned

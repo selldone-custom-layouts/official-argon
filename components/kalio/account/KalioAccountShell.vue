@@ -29,7 +29,7 @@
               <v-progress-circular v-if="busy_out" indeterminate size="16" width="2" />
               <v-icon v-else size="18">logout</v-icon>Sign out
             </button>
-            <button v-else class="k-acct__in" type="button" @click="signIn"><v-icon size="18">person</v-icon>Sign in</button>
+            <button v-else-if="!pending" class="k-acct__in" type="button" @click="signIn"><v-icon size="18">person</v-icon>Sign in</button>
           </div>
 
           <nav aria-label="Your account" class="k-acct__tabs">
@@ -72,7 +72,7 @@
           <v-progress-circular v-if="busy_out" indeterminate size="16" width="2" />
           <v-icon v-else size="20">logout</v-icon>Sign out
         </button>
-        <button v-else class="k-acct__in -rail" type="button" @click="signIn"><v-icon size="18">person</v-icon>Sign in for the rest</button>
+        <button v-else-if="!pending" class="k-acct__in -rail" type="button" @click="signIn"><v-icon size="18">person</v-icon>Sign in for the rest</button>
       </aside>
       <div class="k-acct__main">
         <router-view />
@@ -105,6 +105,10 @@ export default {
     user() {
       return this.USER();
     },
+    /** Still asking who is signed in (just after a reload). */
+    pending() {
+      return !this.user && !!this.$store.getters.getBusyUser;
+    },
     firstName() {
       return (this.user?.name || "").trim().split(/\s+/)[0] || "there";
     },
@@ -132,6 +136,7 @@ export default {
     },
     /** What is happening to the orders, in a sentence. */
     summary() {
+      if (this.pending) return "One moment, opening your account…";
       if (!account.loaded) return this.user ? "Your orders, money and addresses in one place." : "The orders placed on this device.";
       const tones = account.orders.map((o) => standing(o).tone);
       const moving = tones.filter((t) => t === "go" || t === "prep").length;
@@ -147,6 +152,14 @@ export default {
       if (!moving && paying) parts[0] = paying === 1 ? "one order is waiting for payment" : `${say(paying)} orders are waiting for payment`;
       const sentence = parts.join(", ");
       return sentence[0].toUpperCase() + sentence.slice(1) + ".";
+    },
+  },
+
+  watch: {
+    // Signed in (or out) here, or known only now after a reload.
+    "user.id"() {
+      loadOrders(this);
+      if (this.user) loadAddresses();
     },
   },
 

@@ -146,6 +146,15 @@ export function offers(): Promise<Offers> {
   return offersRead!;
 }
 
+/** Product id → the product, from the sellers' lists read by offers(). */
+export function productsById(): Promise<Map<number, any>> {
+  return offers().then(({ shelfOf }) => {
+    const map = new Map<number, any>();
+    for (const shelf of shelfOf.values()) for (const product of shelf) if (!map.has(product.id)) map.set(product.id, product);
+    return map;
+  });
+}
+
 /* ━━━━━━━━━━━━ Featured aisles ━━━━━━━━━━━━
    The order the home page features aisles in: the fresh, everyday aisles
    first, as a grocer lays out a store, then every other aisle in the
