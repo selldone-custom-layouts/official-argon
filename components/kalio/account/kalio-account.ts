@@ -196,6 +196,15 @@ export function loadGiftcards(vm: any): Promise<number> {
 
 export const STATES = Object.values(Basket.PhysicalOrderStates || {}) as any[];
 
+/** The five steps as an order card names them, in STATES' order. */
+export const TRAIL = [
+  { icon: "receipt_long", word: "Placed" },
+  { icon: "task_alt", word: "Accepted" },
+  { icon: "inventory_2", word: "Packing" },
+  { icon: "local_shipping", word: "On the way" },
+  { icon: "home", word: "Delivered" },
+];
+
 /** Where an order is, 0 (awaiting review) to 4 (delivered). */
 export function stepOf(order: any): number {
   const at = STATES.findIndex((state) => state.code === order?.delivery_state);

@@ -866,25 +866,75 @@
     }
   }
 
-  &__bar {
+  // the five steps: a bar each, with its icon and word under it
+  &__trail {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 4px;
-    max-width: 360px;
-    margin-top: 12px;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 5px;
+    max-width: 520px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
 
-    i {
-      height: 6px;
-      border-radius: 3px;
-      background: var(--k-line);
+    li {
+      display: grid;
+      align-content: start; // a word on two lines leaves the others at the top
+      gap: 8px;
+      min-width: 0;
+      color: var(--k-muted);
+    }
+  }
 
-      &.-on {
-        background: var(--k-green);
-      }
+  &__seg {
+    display: block;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--k-line);
+  }
 
-      &.-now {
-        background: linear-gradient(90deg, var(--k-green) 50%, var(--k-line) 50%);
-      }
+  // the icon over its word, so "On the way" fits a fifth of the column
+  &__stepword {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    min-width: 0;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+
+    .v-icon {
+      flex: none;
+      color: var(--k-line-strong) !important;
+    }
+  }
+
+  &__trail li.-on {
+    color: var(--k-ink);
+
+    .k-ocardx__seg {
+      background: var(--k-green);
+    }
+
+    .v-icon {
+      color: var(--k-green) !important;
+    }
+  }
+
+  &__trail li.-now {
+    color: var(--k-green);
+
+    .k-ocardx__seg {
+      background: linear-gradient(90deg, var(--k-green) 50%, var(--k-line) 50%);
+    }
+
+    .k-ocardx__stepword {
+      font-weight: 800;
+    }
+
+    .v-icon {
+      color: var(--k-green) !important;
     }
   }
 
@@ -1654,6 +1704,15 @@
 
     &__chat {
       grid-column: 1 / -1;
+    }
+
+    // narrow steps: smaller words, which may wrap
+    &__trail {
+      gap: 4px;
+    }
+
+    &__stepword {
+      font-size: 11.5px;
     }
   }
 

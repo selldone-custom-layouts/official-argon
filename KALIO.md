@@ -197,7 +197,13 @@ Facts that shape the code:
   read is tried once more, then the order is marked `missing`. After a
   reload `USER()` is empty while the app asks who is signed in
   (`getBusyUser`): `userKnown()` waits for the answer before reading orders
-  or sending a "guest" from the Overview to the orders.
+  or sending a "guest" from the Overview to the orders. Before 0.2.20 a
+  reload read the orders as a guest first; the next read as the shopper
+  cleared the orders but not the cache of full-order reads, so every
+  order stayed unread ("SM-29504", no seller, no delivery time).
+  A's order cards name the five steps under their bars (0.2.21): an icon
+  and a word each (`TRAIL`: Placed, Accepted, Packing, On the way,
+  Delivered), the current one in green; Selldone's own name is the tooltip.
 - **Vuetify draws icons as `<i>`.** A rule for a decorative `i` must say
   `> i` when a `<v-icon>` can sit inside it: the order page's progress
   circles used `.k-order__step i`, which also caught the tick and pinned
@@ -221,8 +227,11 @@ may be registered even when the client reports an error.
 **The account has two designs, picked at build time** (4 November 2026):
 B, "home" (greeting, tabs, Overview), is the default; A, "desk" (side rail,
 order cards), is built with `VITE_KALIO_ACCOUNT=desk`. 0.2.18 is B and 0.2.19
-is A, uploaded side by side so the owner can choose. **Every later release
-must be built with the design the owner chose**; until they say, build B.
+is A, uploaded side by side so the owner can choose. **The owner chose A**
+(4 November 2026, asking only for the steps of its progress bar to be
+named): **every release from 0.2.21 on is built with `desk`**
+(`release.sh <version> desk`) unless the owner says otherwise. 0.2.20 was
+the last B.
 `../kalio-design/review/release.sh <version> [desk]` runs every step below
 and the server check.
 

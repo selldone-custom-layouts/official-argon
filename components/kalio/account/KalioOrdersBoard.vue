@@ -118,9 +118,18 @@
           <div class="k-ocardx__words">
             <b>{{ headline(order) }}</b>
             <small>{{ subline(order) }}</small>
-            <span v-if="!['pay', 'off'].includes(standing(order).tone)" aria-hidden="true" class="k-ocardx__bar">
-              <i v-for="n in 5" :key="n" :class="barClass(order, n - 1)"></i>
-            </span>
+            <ol v-if="!['pay', 'off'].includes(standing(order).tone)" aria-label="Order progress" class="k-ocardx__trail">
+              <li
+                v-for="(step, i) in trail"
+                :key="step.word"
+                :aria-current="barClass(order, i) === '-now' ? 'step' : undefined"
+                :class="barClass(order, i)"
+                :title="stepName(i)"
+              >
+                <span aria-hidden="true" class="k-ocardx__seg"></span>
+                <span class="k-ocardx__stepword"><v-icon size="15">{{ step.icon }}</v-icon>{{ step.word }}</span>
+              </li>
+            </ol>
           </div>
           <div class="k-ocardx__acts">
             <router-link v-if="standing(order).tone === 'pay'" :to="orderRoute(order)" class="k-btn -pay">
@@ -176,7 +185,9 @@ import {
   productIds,
   sellersOf,
   standing,
+  STATES,
   stepOf,
+  TRAIL,
   unitsOf,
   when,
 } from "./kalio-account";
@@ -198,6 +209,7 @@ export default {
   data() {
     return {
       account,
+      trail: TRAIL,
       filters: FILTERS,
       filter: "all",
       showing: STEP,
@@ -308,6 +320,11 @@ export default {
       const names = joinNames(sellersOf(order, this.sellers));
       const place = placeOf(order);
       return [`${n} ${n === 1 ? "item" : "items"}${names ? ` from ${names}` : ""}`, place && standing(order).tone !== "pay" ? `to ${place}` : null].filter(Boolean).join(" · ");
+    },
+    /** Selldone's own name for a step, for the tooltip. */
+    stepName(i) {
+      const name = STATES[i]?.name;
+      return name ? this.$t(name) : null;
     },
     barClass(order, i) {
       const step = stepOf(order);
