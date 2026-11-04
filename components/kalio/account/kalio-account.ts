@@ -1,0 +1,287 @@
+/*
+ * Kalio — the shopper's account (4 November 2026).
+ *
+ * Two designs share these reads and words:
+ *   "home" (B): a greeting and tabs across the top, an Overview page with
+ *               the latest order, a few numbers, the history, "Buy again"
+ *               and the addresses;
+ *   "desk" (A): a side rail of sections and the orders as cards.
+ * The build picks one: VITE_KALIO_ACCOUNT=desk builds A, anything else B.
+ *
+ * Orders come from Selldone's history list (GET_MY_ORDERS_HISTORY_PHYSICAL),
+ * which gives each order's status, delivery state, price, items as product
+ * ids and counts, chat, place and date, but no label ("SM-1"), sellers or
+ * payment. Those come from the order itself (GET_ORDER_BASKET_INFO), read
+ * only for the orders on screen and kept for the visit.
+ */
+
+import { reactive } from "vue";
+import { Basket } from "@selldone/core-js";
+import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
+
+declare const window: any;
+
+export const ACCOUNT_STYLE: "home" | "desk" = (import.meta as any).env?.VITE_KALIO_ACCOUNT === "desk" ? "desk" : "home";
+
+/** The Overview page (design B); design A sends /user to the orders. */
+export const ACCOUNT_HOME = "KalioAccountHome";
+
+/* ━━━━━━━━━━━━ The orders ━━━━━━━━━━━━ */
+
+const PAGE = 30;
+
+/** One shared, reactive copy of the shopper's grocery orders for the visit. */
+export const account = reactive({
+  orders: [] as any[],
+  total: 0,
+  loaded: false,
+  loading: false,
+  failed: false,
+  /** Order id → the full order, once read. */
+  details: {} as Record<number, any>,
+  addresses: null as any[] | null,
+  wallets: null as any[] | null,
+  giftcards: null as number | null,
+});
+
+let reading: Promise<void> | null = null;
+let who: any = undefined;
+
+function guestCodes(vm: any) {
+  return !vm.USER() ? StorefrontLocalStorages.GetShopHistoryGuestCodes("PHYSICAL") : undefined;
+}
+
+/** Read the first orders (once per visit and shopper). */
+export function loadOrders(vm: any, force = false): Promise<void> {
+  const user = vm.USER()?.id || null;
+  if (who !== user) {
+    // signed in or out since: start again
+    who = user;
+    reading = null;
+    Object.assign(account, { orders: [], total: 0, loaded: false, failed: false, details: {}, addresses: null, wallets: null, giftcards: null });
+  }
+  if (reading && !force) return reading;
+  account.loading = true;
+  reading = window.axios
+    .get(window.XAPI.GET_MY_ORDERS_HISTORY_PHYSICAL(vm.$shop.name, "PHYSICAL"), {
+      params: { offset: 0, limit: PAGE, sortDesc: true, codes: guestCodes(vm) },
+    })
+    .then(({ data }: any) => {
+      if (data?.error) throw new Error(data.error_msg);
+      account.orders = sortOrders(data.orders || []);
+      account.total = data.total || account.orders.length;
+      account.loaded = true;
+      account.failed = false;
+    })
+    .catch(() => {
+      account.failed = true;
+      reading = null;
+    })
+    .finally(() => (account.loading = false));
+  return reading!;
+}
+
+/** The next orders, after the ones already read. */
+export function loadOlder(vm: any): Promise<void> {
+  if (account.loading || account.orders.length >= account.total) return Promise.resolve();
+  account.loading = true;
+  return window.axios
+    .get(window.XAPI.GET_MY_ORDERS_HISTORY_PHYSICAL(vm.$shop.name, "PHYSICAL"), {
+      params: { offset: account.orders.length, limit: PAGE, sortDesc: true, codes: guestCodes(vm) },
+    })
+    .then(({ data }: any) => {
+      if (data?.error) return;
+      const seen = new Set(account.orders.map((o) => o.id));
+      account.orders = sortOrders([...account.orders, ...(data.orders || []).filter((o: any) => !seen.has(o.id))]);
+      account.total = data.total || account.total;
+    })
+    .catch(() => null)
+    .finally(() => (account.loading = false));
+}
+
+function sortOrders(list: any[]) {
+  return [...list].sort((a, b) => new Date(b.reserved_at || 0).getTime() - new Date(a.reserved_at || 0).getTime() || b.id - a.id);
+}
+
+const detailReads = new Map<number, Promise<any>>();
+
+/** The whole order (label, lines, sellers, payment), once per visit. */
+export function loadDetail(vm: any, id: number): Promise<any> {
+  if (!detailReads.has(id)) {
+    detailReads.set(
+      id,
+      window.axios
+        .get(window.XAPI.GET_ORDER_BASKET_INFO(vm.$shop.name, id), {
+          params: { code: !vm.USER() ? StorefrontLocalStorages.GetShopHistoryGuestCodeOfOrder(id) : undefined },
+        })
+        .then(({ data }: any) => {
+          if (data?.error || !data?.basket) throw new Error("no order");
+          account.details[id] = data.basket;
+          return data.basket;
+        })
+        .catch(() => {
+          detailReads.delete(id);
+          return null;
+        }),
+    );
+  }
+  return detailReads.get(id)!;
+}
+
+/** Read the full orders for these, a few at a time. */
+export function loadDetails(vm: any, orders: any[]) {
+  orders.filter((o) => !account.details[o.id]).slice(0, 12).forEach((o) => loadDetail(vm, o.id));
+}
+
+/* ━━━━━━━━━━━━ Money and the rest ━━━━━━━━━━━━ */
+
+export function loadAddresses(): Promise<any[]> {
+  if (account.addresses) return Promise.resolve(account.addresses);
+  return window.axios
+    .get(window.ADDRESS_API.GET_MY_ADDRESSES())
+    .then(({ data }: any) => (account.addresses = data?.error ? [] : data?.addresses || []))
+    .catch(() => (account.addresses = []));
+}
+
+export function loadWallets(vm: any): Promise<any[]> {
+  if (account.wallets) return Promise.resolve(account.wallets);
+  return window.axios
+    .get(window.XAPI.GET_MY_WALLETS(vm.$shop.name))
+    .then(({ data }: any) => (account.wallets = data?.error ? [] : data?.wallets || []))
+    .catch(() => (account.wallets = []));
+}
+
+export function loadGiftcards(vm: any): Promise<number> {
+  if (account.giftcards !== null) return Promise.resolve(account.giftcards);
+  return window.axios
+    .get(window.XAPI.GET_MY_GIFT_CARDS(vm.$shop.name), { params: { offset: 0, limit: 1 } })
+    .then(({ data }: any) => (account.giftcards = data?.total || (data?.giftcards || []).length || 0))
+    .catch(() => (account.giftcards = 0));
+}
+
+/* ━━━━━━━━━━━━ Words ━━━━━━━━━━━━ */
+
+export const STATES = Object.values(Basket.PhysicalOrderStates || {}) as any[];
+
+/** Where an order is, 0 (awaiting review) to 4 (delivered). */
+export function stepOf(order: any): number {
+  const at = STATES.findIndex((state) => state.code === order?.delivery_state);
+  return at < 0 ? 0 : at;
+}
+
+/**
+ * How an order stands, as a tag:
+ *   pay  — waiting for payment     go   — on the way
+ *   ok   — delivered               off  — cancelled or rejected
+ *   prep — with the shop (reviewed, confirmed, being prepared)
+ */
+export function standing(order: any): { tone: string; word: string; icon: string | null } {
+  if (!order) return { tone: "prep", word: "", icon: null };
+  if (order.status === "Canceled" || order.reject) return { tone: "off", word: order.reject ? "Not accepted" : "Cancelled", icon: "close" };
+  if (order.status === "Reserved") return { tone: "pay", word: "Waiting for payment", icon: "schedule" };
+  const state = order.delivery_state;
+  if (state === Basket.PhysicalOrderStates.ToCustomer.code) return { tone: "ok", word: "Delivered", icon: "check" };
+  if (state === Basket.PhysicalOrderStates.SentOrder.code) return { tone: "go", word: "On the way", icon: null };
+  if (state === Basket.PhysicalOrderStates.PreparingOrder.code) return { tone: "prep", word: "Being prepared", icon: "inventory_2" };
+  if (state === Basket.PhysicalOrderStates.OrderConfirm.code) return { tone: "prep", word: "Confirmed", icon: "thumb_up" };
+  return { tone: "prep", word: "With the shop", icon: "hourglass_top" };
+}
+
+/** The filters over the order list. */
+export const FILTERS = [
+  { key: "all", word: "All", test: () => true },
+  { key: "go", word: "On the way", test: (o: any) => ["go", "prep"].includes(standing(o).tone) },
+  { key: "pay", word: "To pay", test: (o: any) => standing(o).tone === "pay" },
+  { key: "ok", word: "Delivered", test: (o: any) => standing(o).tone === "ok" },
+  { key: "off", word: "Cancelled", test: (o: any) => standing(o).tone === "off" },
+];
+
+/** "SM-1", from the full order once read; Selldone's own fallback before. */
+export function orderCode(vm: any, order: any): string {
+  const full = account.details[order?.id];
+  return vm.getBasketOrderCode({ ...order, ...(full ? { label: full.label } : {}), type: order?.type || "PHYSICAL" });
+}
+
+/** How many things, counting each (2 breads are 2). */
+export function unitsOf(order: any): number {
+  return (order?.items || []).reduce((sum: number, item: any) => sum + (item.count || 0), 0);
+}
+
+/** The distinct products, in order. */
+export function productIds(order: any): number[] {
+  return [...new Set((order?.items || []).map((item: any) => item.product_id))] as number[];
+}
+
+/** How it is paid, in a few words, from what the list knows. */
+export function paidWords(order: any): string {
+  const full = account.details[order?.id];
+  const gateway = full?.payment?.gateway?.name;
+  if (order.status === "Payed") return gateway ? `Paid · ${gateway}` : "Paid";
+  if (order.status === "COD") return "Pay on delivery";
+  if (order.status === "Reserved") return "Not paid yet";
+  if (order.status === "Canceled") return "Cancelled";
+  return "";
+}
+
+/** A line about where it is going or when it arrived. */
+export function placeOf(order: any): string {
+  const r = order?.receiver_info;
+  if (!r) return "";
+  return [r.city, r.state].filter(Boolean).join(", ");
+}
+
+export function when(at: string, withTime = true): string {
+  if (!at) return "";
+  const locale = document.documentElement.lang || "en";
+  return new Date(at).toLocaleString(locale, { weekday: "short", month: "short", day: "numeric", ...(withTime ? { hour: "numeric", minute: "2-digit" } : {}) });
+}
+
+/** The sellers of an order, by name, once the full order is read. */
+export function sellersOf(order: any, vendorsById: Map<number, any>): string[] {
+  const full = account.details[order?.id];
+  if (!full) return [];
+  const names = [...new Set((full.items || []).map((item: any) => vendorsById.get(item.vendor_id)?.name).filter(Boolean))] as string[];
+  return names;
+}
+
+export function joinNames(names: string[]): string {
+  if (names.length <= 1) return names[0] || "";
+  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+}
+
+/** "Good morning", by the shopper's clock. */
+export function greeting(): string {
+  const h = new Date().getHours();
+  if (h < 5) return "Good evening";
+  if (h < 12) return "Good morning";
+  if (h < 18) return "Good afternoon";
+  return "Good evening";
+}
+
+/** The account's sections, in the order both designs show them. */
+export function sections(): { key: string; word: string; icon: string; route: any; group: string; user: boolean }[] {
+  const r = window.$storefront.routes;
+  return [
+    { key: "orders", word: "Orders", icon: "receipt_long", route: { name: r.HISTORY_ORDERS_PHYSICAL }, group: "Shopping", user: false },
+    { key: "returns", word: "Returns", icon: "assignment_return", route: { name: r.USER_RETURN_REQUESTS }, group: "Shopping", user: true },
+    { key: "saved", word: "Saved", icon: "favorite_border", route: { name: r.USER_FAVORITES_PAGE }, group: "Shopping", user: true },
+    { key: "wallet", word: "Wallet", icon: "account_balance_wallet", route: { name: r.USER_WALLETS_PAGE }, group: "Money", user: true },
+    { key: "gift", word: "Gift cards", icon: "card_giftcard", route: { name: r.USER_GIFTCARDS_PAGE }, group: "Money", user: true },
+    { key: "addresses", word: "Addresses", icon: "place", route: { name: r.USER_ADDRESSES_PAGE }, group: "You", user: true },
+    { key: "reviews", word: "Reviews", icon: "rate_review", route: { name: r.USER_COMMENTS_PAGE }, group: "You", user: true },
+    { key: "profile", word: "Profile", icon: "person_outline", route: { name: r.USER_PROFILE_PAGE }, group: "You", user: true },
+  ];
+}
+
+/** The kinds of orders besides groceries, as Selldone keeps them. */
+export function otherKinds(): { key: string; word: string; route: any }[] {
+  const r = window.$storefront.routes;
+  return [
+    { key: "VIRTUAL", word: "Virtual items", route: { name: r.HISTORY_ORDERS_VIRTUAL } },
+    { key: "FILE", word: "Downloads", route: { name: r.HISTORY_ORDERS_FILE } },
+    { key: "SERVICE", word: "Services", route: { name: r.HISTORY_ORDERS_SERVICE } },
+    { key: "SUBSCRIPTION", word: "Subscriptions", route: { name: r.HISTORY_ORDERS_SUBSCRIPTION } },
+    { key: "POS", word: "In store", route: { name: r.HISTORY_ORDERS_POS } },
+    { key: "AVO", word: "Custom orders", route: { name: r.HISTORY_ORDERS_AVOCADO } },
+  ];
+}

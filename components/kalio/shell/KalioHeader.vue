@@ -366,8 +366,9 @@ export default {
     savedRoute() {
       return { name: window.$storefront.routes.USER_FAVORITES_PAGE };
     },
+    /** "My account": the Overview (design B) or the orders (design A). */
     profileRoute() {
-      return { name: window.$storefront.routes.USER_PROFILE_PAGE };
+      return { name: "KalioAccountHome" };
     },
     drawerOpen() {
       return this.basket || this.menu;

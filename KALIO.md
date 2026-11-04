@@ -34,6 +34,7 @@ pale tint of their own. The approved mockup is in
 | Order page: where it stands, Invoice and Share, the steps as a line, items by seller; Selldone's vendor orders, returns and refunds in Kalio cards | `pages/basket/order/StorefrontPageBasketOrder.vue`, `pages/basket/order/physical/dashbaord/StorefrontPageBasketOrderPhysicalDashboard.vue` |
 | Order page cards (0.2.15, the trip 0.2.16): the receipt with how it is paid and Pay now; Delivery (deliver to, when, courier, carrier, tracking, billing, map, change address, the trip); Messages (bubbles and a message box, also on file and service orders) | `components/kalio/order/KalioOrderReceipt.vue`, `KalioOrderDelivery.vue`, `KalioOrderChat.vue` |
 | Basket page, sheets, payment window and order page styles | `style/kalio-checkout.scss` |
+| The shopper's account (0.2.18 design B / 0.2.19 design A): B — greeting, tabs, Overview (latest order with its steps, orders, saved with deals, wallet, gift cards, pay reminder, history, Buy again, addresses); A — side rail in three groups and order cards; both — grocery orders with filters and the kind picker, other kinds in Selldone's table under a Kalio head | `components/kalio/account/` (`kalio-account.ts`, `KalioAccountShell.vue`, `KalioAccountHome.vue`, `KalioOrdersBoard.vue`, `KalioOrderKinds.vue`, `KalioBuyAgain.vue`), `pages/user/StorefrontPageUser.vue`, `pages/user/orders/`, `style/kalio-account.scss`, the `/user` index route in `router/StorefrontRouter.ts` |
 | Product page styles | `style/kalio-product.scss` |
 | Shelf head (design A) for every shop page that lists products: crumbs, title, count, a row of aisle words | `components/kalio/KalioShelfHead.vue` |
 | Aisle page head | `components/kalio/KalioAisleHeader.vue` |
@@ -173,6 +174,22 @@ Facts that shape the code:
   parcel". "Has it arrived?" stays away once the parcel came back. Test
   variants `live` (SM-1 as delivered), `moving`, `carrier`; the script
   also reports anything sticking out of a card (`spill`).
+- **The account** (0.2.18 B, 0.2.19 A; mockups in
+  `../kalio-design/account-options/`). Selldone's history list gives each
+  order's status, delivery state, price, items (product id and count), chat,
+  place and date, but no label, sellers or payment: those come from the
+  order itself, read only for the orders on screen and kept for the visit
+  (`kalio-account.ts`), so a row shows "SM-1" once its order is read.
+  Filters count the orders read (30 at a time). "Buy again" on an order puts
+  its lines back with their size and seller (`reorder` in `kalio-basket.ts`);
+  the "Buy again" shelf maps past products onto today's catalogue
+  (`offers()`). `/user` is the Overview in B and redirects to the orders in A;
+  a guest sees only the orders kept on the device. "My account" in the
+  header menu and footer opens `/user`. Tested with a stand-in shopper put
+  in the app's store and every account read answered by the test (nothing
+  sent): `../kalio-design/review/accountcheck.cjs` (variants full, real,
+  empty, guest; `--dist` serves a local build in place of a release).
+  Not tried for real: "Buy again" against the live basket.
 - **Vuetify draws icons as `<i>`.** A rule for a decorative `i` must say
   `> i` when a `<v-icon>` can sit inside it: the order page's progress
   circles used `.k-order__step i`, which also caught the tick and pinned
@@ -193,9 +210,17 @@ The official build and `selldone-cli` 1.0.16 do not pass the current upload
 endpoint. The steps below are what does. Never re-upload a version: a version
 may be registered even when the client reports an error.
 
+**The account has two designs, picked at build time** (4 November 2026):
+B, "home" (greeting, tabs, Overview), is the default; A, "desk" (side rail,
+order cards), is built with `VITE_KALIO_ACCOUNT=desk`. 0.2.18 is B and 0.2.19
+is A, uploaded side by side so the owner can choose. **Every later release
+must be built with the design the owner chose**; until they say, build B.
+`../kalio-design/review/release.sh <version> [desk]` runs every step below
+and the server check.
+
 ```bash
 # 1. bump "version" in manifest.json (never reuse one)
-npm run build-production
+npm run build-production                  # design A: VITE_KALIO_ACCOUNT=desk npm run build-production
 rm dist/index.html                        # every ZIP member must be under app/
 node scripts/kalio-svg-flatten.mjs dist/app
 file -b --mime-type dist/app/js/*.js | sort | uniq -c   # no text/x-java allowed

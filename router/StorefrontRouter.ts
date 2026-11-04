@@ -48,6 +48,10 @@ const StorefrontPageComparison = () =>
     import( "../pages/comparison/StorefrontPageComparison.vue");
 const StorefrontPageUser = () =>
     import( "@app-storefront/pages/user/StorefrontPageUser.vue");
+// Kalio: the account's Overview (design B); design A sends /user to the orders.
+import {ACCOUNT_HOME, ACCOUNT_STYLE} from "../components/kalio/account/kalio-account";
+const KalioAccountHome = () =>
+    import( "../components/kalio/account/KalioAccountHome.vue");
 const StorefrontPageUserProfile = () =>
     import( "../pages/user/profile/StorefrontPageUserProfile.vue");
 const StorefrontUserAddresses = () =>
@@ -487,6 +491,11 @@ const routes: IVueRoute[] = [
 
 
         children: [
+          // ▶ ▶ ⬬⬬⬬⬬⬬⬬⬬⬬ Kalio: the account's Overview ⬬⬬⬬⬬⬬⬬⬬⬬
+          ACCOUNT_STYLE === "home"
+            ? {path: "", name: ACCOUNT_HOME, component: KalioAccountHome}
+            : {path: "", name: ACCOUNT_HOME, redirect: {name: StorefrontRoutesName.HISTORY_ORDERS_PHYSICAL}},
+
           // ▶ ▶ ⬬⬬⬬⬬⬬⬬⬬⬬ My Orders Page (Virtual, Physical ...) ⬬⬬⬬⬬⬬⬬⬬⬬
           {
             path: "orders",

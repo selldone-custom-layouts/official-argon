@@ -23,6 +23,7 @@
 @use "kalio-product"; // Kalio: the product page
 @use "kalio-shell"; // Kalio: header, footer, drawers, filter panel
 @use "kalio-checkout"; // Kalio: basket page, its sheets, payment, order page
+@use "kalio-account"; // Kalio: the shopper's account (orders, overview, rail)
 
 // --------------------------------------------------------
 .add-marginal-side-menu-open {

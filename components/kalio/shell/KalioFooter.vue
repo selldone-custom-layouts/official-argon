@@ -87,7 +87,7 @@
         <nav aria-labelledby="k-footer-account" class="k-footer__col">
           <h3 id="k-footer-account" class="k-footer__head">Your account</h3>
           <template v-if="user">
-            <router-link :to="{ name: window.$storefront.routes.USER_PROFILE_PAGE }">My account</router-link>
+            <router-link :to="{ name: 'KalioAccountHome' }">My account</router-link>
             <router-link :to="{ name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL }">Orders</router-link>
             <router-link :to="{ name: window.$storefront.routes.USER_FAVORITES_PAGE }">Saved</router-link>
           </template>

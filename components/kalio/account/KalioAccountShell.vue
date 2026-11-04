@@ -1,0 +1,180 @@
+<!--
+  Kalio — the frame of the shopper's account (4 November 2026).
+
+  Two designs, picked when the layout is built (kalio-account.ts):
+    home (B): a greeting with what is happening to the orders, and the
+              sections as tabs across the page (Overview first);
+    desk (A): a rail at the side with the shopper and the sections in
+              three groups (Shopping, Money, You), and sign out.
+  Every section of Selldone's account stays: orders of every kind,
+  returns, saved, wallet, gift cards, addresses, reviews, profile. A guest
+  (orders kept on this device) sees only the orders and a way to sign in.
+-->
+<template>
+  <div :class="`-${style}`" class="k-acct">
+    <!-- ━━━━━━━━ B: greeting and tabs ━━━━━━━━ -->
+    <template v-if="style === 'home'">
+      <section class="k-acct__hero">
+        <div class="k-wrap">
+          <div class="k-acct__hi">
+            <span aria-hidden="true" class="k-acct__ava -lg">
+              <img v-if="avatar" :src="avatar" alt="" @error="avatar_failed = true" />
+              <template v-else>{{ initials }}</template>
+            </span>
+            <div class="k-acct__words">
+              <h1>{{ user ? `${hello}, ${firstName}` : "Your orders" }}</h1>
+              <p>{{ summary }}</p>
+            </div>
+            <button v-if="user" :disabled="busy_out" class="k-acct__out" type="button" @click="signOut">
+              <v-progress-circular v-if="busy_out" indeterminate size="16" width="2" />
+              <v-icon v-else size="18">logout</v-icon>Sign out
+            </button>
+            <button v-else class="k-acct__in" type="button" @click="signIn"><v-icon size="18">person</v-icon>Sign in</button>
+          </div>
+
+          <nav aria-label="Your account" class="k-acct__tabs">
+            <router-link v-if="user" :class="{ '-on': $route.name === ACCOUNT_HOME }" :to="{ name: ACCOUNT_HOME }">
+              <v-icon size="19">grid_view</v-icon>Overview
+            </router-link>
+            <router-link v-for="item in shown" :key="item.key" :class="{ '-on': isOn(item) }" :to="item.route">
+              <v-icon size="19">{{ item.icon }}</v-icon>{{ item.word }}<em v-if="countOf(item)">{{ countOf(item) }}</em>
+            </router-link>
+          </nav>
+        </div>
+      </section>
+      <div class="k-wrap k-acct__body">
+        <router-view />
+      </div>
+    </template>
+
+    <!-- ━━━━━━━━ A: the desk ━━━━━━━━ -->
+    <div v-else class="k-wrap k-acct__desk">
+      <aside class="k-acct__rail">
+        <div class="k-acct__me">
+          <span aria-hidden="true" class="k-acct__ava">
+            <img v-if="avatar" :src="avatar" alt="" @error="avatar_failed = true" />
+            <template v-else>{{ initials }}</template>
+          </span>
+          <div>
+            <b>{{ user ? user.name : "Your orders" }}</b>
+            <small>{{ user ? user.phone || user.email : "Kept on this device" }}</small>
+          </div>
+        </div>
+        <nav aria-label="Your account" class="k-acct__nav">
+          <template v-for="group in groups" :key="group.name">
+            <p class="k-acct__grp">{{ group.name }}</p>
+            <router-link v-for="item in group.items" :key="item.key" :class="{ '-on': isOn(item) }" :to="item.route">
+              <v-icon size="20">{{ item.icon }}</v-icon>{{ item.word }}<em v-if="countOf(item)">{{ countOf(item) }}</em>
+            </router-link>
+          </template>
+        </nav>
+        <button v-if="user" :disabled="busy_out" class="k-acct__railout" type="button" @click="signOut">
+          <v-progress-circular v-if="busy_out" indeterminate size="16" width="2" />
+          <v-icon v-else size="20">logout</v-icon>Sign out
+        </button>
+        <button v-else class="k-acct__in -rail" type="button" @click="signIn"><v-icon size="18">person</v-icon>Sign in for the rest</button>
+      </aside>
+      <div class="k-acct__main">
+        <router-view />
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
+import { ACCOUNT_HOME, ACCOUNT_STYLE, account, greeting, loadAddresses, loadOrders, sections, standing } from "./kalio-account";
+
+const WORDS = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+
+export default {
+  name: "KalioAccountShell",
+  inject: ["$shop"],
+
+  data() {
+    return {
+      style: ACCOUNT_STYLE,
+      ACCOUNT_HOME,
+      account,
+      avatar_failed: false,
+      busy_out: false,
+    };
+  },
+
+  computed: {
+    user() {
+      return this.USER();
+    },
+    firstName() {
+      return (this.user?.name || "").trim().split(/\s+/)[0] || "there";
+    },
+    initials() {
+      const parts = (this.user?.name || "").trim().split(/\s+/).filter(Boolean);
+      return parts.length ? (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase() : "";
+    },
+    avatar() {
+      return this.user && !this.avatar_failed ? this.getUserAvatar(this.user.id) : null;
+    },
+    hello() {
+      return greeting();
+    },
+    shown() {
+      return sections().filter((item) => this.user || !item.user);
+    },
+    groups() {
+      const groups = [];
+      for (const item of this.shown) {
+        let group = groups.find((g) => g.name === item.group);
+        if (!group) groups.push((group = { name: item.group, items: [] }));
+        group.items.push(item);
+      }
+      return groups;
+    },
+    /** What is happening to the orders, in a sentence. */
+    summary() {
+      if (!account.loaded) return this.user ? "Your orders, money and addresses in one place." : "The orders placed on this device.";
+      const tones = account.orders.map((o) => standing(o).tone);
+      const moving = tones.filter((t) => t === "go" || t === "prep").length;
+      const paying = tones.filter((t) => t === "pay").length;
+      const say = (n) => (n < WORDS.length ? WORDS[n] : String(n));
+      const parts = [];
+      if (moving) parts.push(moving === 1 ? "one order is on its way to you" : `${say(moving)} orders are on their way to you`);
+      if (paying) parts.push(paying === 1 ? "one is waiting for payment" : `${say(paying)} are waiting for payment`);
+      if (!parts.length) {
+        if (!account.total) return "No orders yet. Your first basket is a few taps away.";
+        return tones[0] === "ok" ? "Everything you ordered has reached you." : "Your orders, money and addresses in one place.";
+      }
+      if (!moving && paying) parts[0] = paying === 1 ? "one order is waiting for payment" : `${say(paying)} orders are waiting for payment`;
+      const sentence = parts.join(", ");
+      return sentence[0].toUpperCase() + sentence.slice(1) + ".";
+    },
+  },
+
+  created() {
+    loadOrders(this);
+    if (this.user) loadAddresses();
+  },
+
+  methods: {
+    isOn(item) {
+      if (item.key === "orders") return this.$route.matched.some((m) => m.name === window.$storefront.routes.ORDERS_PAGE);
+      return this.$route.name === item.route.name;
+    },
+    countOf(item) {
+      if (item.key === "orders") return account.total || null;
+      if (item.key === "addresses") return account.addresses?.length || null;
+      return null;
+    },
+    signIn() {
+      EventBus.$emit("need-login", true);
+    },
+    signOut() {
+      this.busy_out = true;
+      this.Logout(() => {
+        this.busy_out = false;
+        this.$router.push({ path: "/" });
+      });
+    },
+  },
+};
+</script>

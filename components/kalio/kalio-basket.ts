@@ -241,3 +241,27 @@ export function quickAdd(vm: any, product: any, openSheet: (product: any) => voi
     ),
   ).catch(() => null);
 }
+
+/** "Buy again": put an order's lines back in the basket, each with the size
+ *  and seller it had, adding to what the basket already holds. One line at
+ *  a time; a line the shop no longer sells is skipped and counted. */
+export async function reorder(vm: any, items: any[]): Promise<{ added: number; failed: number }> {
+  if (!mayBuy(vm)) return { added: 0, failed: 0 };
+  let added = 0;
+  let failed = 0;
+  for (const item of items || []) {
+    const product = { id: item.product_id, type: item.product?.type || "PHYSICAL" };
+    const variant = item.variant_id ? { id: item.variant_id } : null;
+    try {
+      await inTurn(lineKey(product, item.variant_id), () => {
+        const line = basketLine(vm, product, variant);
+        const offer = item.vendor_product_id ? { id: item.vendor_product_id } : line?.vendor_product_id ? { id: line.vendor_product_id } : null;
+        return add(vm, product, variant, (line?.count || 0) + (item.count || 1), offer, item.preferences || null);
+      });
+      added++;
+    } catch {
+      failed++;
+    }
+  }
+  return { added, failed };
+}

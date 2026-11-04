@@ -1,135 +1,68 @@
 <!--
   - Copyright (c) 2023. Selldone® Business OS™
   -
-  - Author: M.Pajuhaan
-  - Web: https://selldone.com
-  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  -
-  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
-  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
-  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
-  - Our journey is not just about reaching a destination, but about creating a masterpiece.
-  - Tread carefully, for you're treading on dreams.
+  - Kalio (4 November 2026): Selldone's row of order-type icons is gone.
+  - Grocery orders are Kalio's own list, which carries its own heading and
+  - the kind picker (KalioOrderKinds); the other kinds (virtual, downloads,
+  - services, subscriptions, in store, custom orders) keep Selldone's table
+  - under a Kalio heading with the same picker.
   -->
 
 <template>
-  <v-container fluid>
-    <div class="widget-box -x-large">
-      <v-toolbar
-        color="transparent"
-        extended
-        extension-height="18px"
-        flat
-        style="overflow-x: auto"
-      >
-        <template v-slot:extension>
-          <div style="height: 18px"></div>
-        </template>
-
-        <u-button-circle
-          v-for="type in types"
-          :key="type.code"
-          :badge-number="getBadgeCount(type.code)"
-          :disabled="!type.enable"
-          :outline="$route.name === page_name(type)"
-          :src="type.image"
-          :tooltip="$t(type.name)"
-          has-badge
-          persist-badge
-          tile
-          @click="goToHistoryPage(type)"
-        />
-
-        <u-button-circle
-          v-if="USER()"
-          key="pos"
-          :src="require('@selldone/components-vue/assets/icons/pos-order-type.svg')"
-          :to="{ name: window.$storefront.routes.HISTORY_ORDERS_POS }"
-          :tooltip="$t('global.commons.pos')"
-          exact
-          has-badge
-          tile
-        />
-
-        <u-button-circle
-          v-if="USER()"
-          key="avo"
-          :badge-number="getBadgeCount('AVO')"
-          :src="require('@selldone/components-vue/assets/icons/avocado.svg')"
-          :to="{ name: window.$storefront.routes.HISTORY_ORDERS_AVOCADO }"
-          :tooltip="$t('global.commons.avocado')"
-          exact
-          has-badge
-          persist-badge
-          tile
-        />
-        <div style="min-width: 46px; height: 100%"></div>
-
-        <v-spacer />
-      </v-toolbar>
-
-      <!-- ======================= Container ======================= -->
-      <router-view />
-    </div>
-  </v-container>
+  <div class="k-orders">
+    <header v-if="kind !== 'PHYSICAL'" class="k-board__head">
+      <div class="k-board__titles">
+        <h2>{{ title }}</h2>
+        <p>Kept apart from your grocery orders.</p>
+      </div>
+      <kalio-order-kinds :current="kind" />
+    </header>
+    <router-view :class="{ 'k-orders__selldone': kind !== 'PHYSICAL' }" />
+  </div>
 </template>
 
 <script lang="ts">
-import { ProductType } from "@selldone/core-js/enums/product/ProductType";
+import KalioOrderKinds from "../../../components/kalio/account/KalioOrderKinds.vue";
+import { otherKinds } from "../../../components/kalio/account/kalio-account";
 
 export default {
   name: "StorefrontPageUserOrders",
-  components: {},
-  data: function () {
-    return {
-      types: ProductType,
-    };
+  components: { KalioOrderKinds },
+
+  computed: {
+    kind() {
+      const r = window.$storefront.routes;
+      const byRoute = {
+        [r.HISTORY_ORDERS_VIRTUAL]: "VIRTUAL",
+        [r.HISTORY_ORDERS_FILE]: "FILE",
+        [r.HISTORY_ORDERS_SERVICE]: "SERVICE",
+        [r.HISTORY_ORDERS_SUBSCRIPTION]: "SUBSCRIPTION",
+        [r.HISTORY_ORDERS_POS]: "POS",
+        [r.HISTORY_ORDERS_AVOCADO]: "AVO",
+      };
+      return byRoute[this.$route.name] || "PHYSICAL";
+    },
+    title() {
+      return otherKinds().find((k) => k.key === this.kind)?.word || "Orders";
+    },
   },
 
-  computed: {},
-  watch: {},
+  watch: {
+    $route() {
+      this.toGroceries();
+    },
+  },
+
   created() {
-    this.setPageTitle("My orders"); // Set Page Title!
+    this.setPageTitle("My orders");
+    this.toGroceries();
   },
 
   methods: {
-    getBadgeCount(type) {
-      let out = 0;
-      if (this.getOrdersState())
-        this.getOrdersState()
-          .filter((it) => it.type === type)
-          .forEach((item) => {
-            out += item.count;
-          });
-
-      return out;
-    },
-
-    page_name(type) {
-      let page_name = null;
-      if (type.code === ProductType.PHYSICAL.code) {
-        page_name = window.$storefront.routes.HISTORY_ORDERS_PHYSICAL;
-      } else if (type.code === ProductType.VIRTUAL.code) {
-        page_name = window.$storefront.routes.HISTORY_ORDERS_VIRTUAL;
-      } else if (type.code === ProductType.FILE.code) {
-        page_name = window.$storefront.routes.HISTORY_ORDERS_FILE;
-      } else if (type.code === ProductType.SERVICE.code) {
-        page_name = window.$storefront.routes.HISTORY_ORDERS_SERVICE;
-      } else if (type.code === ProductType.SUBSCRIPTION.code) {
-        page_name = window.$storefront.routes.HISTORY_ORDERS_SUBSCRIPTION;
-      } else if (type === "POS") {
-        page_name = window.$storefront.routes.HISTORY_ORDERS_POS;
-      }
-      return page_name;
-    },
-
-    goToHistoryPage(type) {
-      this.$router.replace({
-        name: this.page_name(type),
-      });
+    /** /user/orders alone opens the grocery orders. */
+    toGroceries() {
+      if (this.$route.name === window.$storefront.routes.ORDERS_PAGE) this.$router.replace({ name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL });
     },
   },
 };
 </script>
-
-<style lang="scss" scoped></style>
