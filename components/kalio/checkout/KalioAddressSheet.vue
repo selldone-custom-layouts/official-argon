@@ -63,9 +63,18 @@
             </li>
           </ul>
           <span aria-hidden="true" class="k-addr__shadow"></span>
-          <div aria-hidden="true" class="k-addr__pin">
-            <span v-if="!moved && !form.address" class="k-addr__bubble">Move the map to place the pin</span>
-            <svg height="56" viewBox="0 0 44 56" width="44">
+          <div class="k-addr__pin">
+            <span v-if="bubble" class="k-addr__bubble">{{ bubble }}</span>
+            <svg
+              aria-label="Use the address under the pin"
+              height="56"
+              role="button"
+              tabindex="0"
+              viewBox="0 0 44 56"
+              width="44"
+              @click="pinHere"
+              @keydown.enter="pinHere"
+            >
               <path d="M22 55S3 34 3 21a19 19 0 0 1 38 0c0 13-19 34-19 34z" fill="#0e3f2e" />
               <circle cx="22" cy="21" fill="#fff" r="8" />
               <circle cx="22" cy="21" fill="#3baa5c" r="3.6" />
@@ -126,7 +135,7 @@
             </span>
             <span>
               <b>{{ form.address || "No address yet" }}</b>
-              <small>{{ form.address ? "From the pin on the map. You can edit it below." : "Move the map or search above." }}</small>
+              <small>{{ form.address ? "Where the pin is. You can edit the details below." : "Tap the map where it should go, or search above." }}</small>
             </span>
           </div>
 
@@ -196,9 +205,11 @@
 import Mapbox from "@selldone/components-vue/ui/map/providers/mapbox/MapBox";
 import { Countries } from "@selldone/core-js/models/general/country/country.model";
 
-/* A light, quiet map: the shop's greens sit on it better than the
-   default street colours. */
-const MAP_STYLE = "mapbox://styles/mapbox/light-v11";
+/* Streets in colour: a shopper finds their door by the parks, the water
+   and the road colours (the light style read as a grey, broken map). */
+const MAP_STYLE = "mapbox://styles/mapbox/streets-v12";
+/* Below this zoom the pin covers a whole district, not a door. */
+const ZOOM_ADDRESS = 13;
 const ZOOM_STREET = 16;
 
 function blank() {
@@ -233,6 +244,7 @@ export default {
       results: [],
       book: [],
       busy_geo: false,
+      zoomed_out: false,
       busy_search: false,
       busy_locate: false,
     };
@@ -248,6 +260,11 @@ export default {
         return Countries.filter((c) => allowed.has(c.code));
       }
       return Countries;
+    },
+    bubble() {
+      if (this.zoomed_out) return "Zoom in to place the pin";
+      if (!this.form.address) return "Tap the map where it should go";
+      return null;
     },
     missing() {
       if (!this.noMap && !this.location) return "Place the pin on the map.";
@@ -326,18 +343,28 @@ export default {
         zoom: at ? ZOOM_STREET : 1.4,
         attributionControl: false,
       });
-      this.map.addControl(new Mapbox.AttributionControl({ compact: true }), "bottom-left");
+      this.map.addControl(new Mapbox.AttributionControl({ compact: true }), "bottom-right");
       this.map.on("dragstart", () => (this.moved = true));
       this.map.on("zoomstart", (e) => {
         if (e.originalEvent) this.moved = true;
       });
+      /* A tap on the map takes the pin there. */
+      this.map.on("click", (e) => {
+        this.moved = true;
+        this.map.flyTo(
+          { center: e.lngLat, zoom: Math.max(this.map.getZoom(), ZOOM_STREET - 1), essential: true },
+          { byKalio: true },
+        );
+      });
       this.map.on("moveend", (e) => {
+        this.zoomed_out = this.map.getZoom() < ZOOM_ADDRESS;
         if (!this.moved && !e.byKalio) return;
-        if (this.map.getZoom() < 12) return; // a whole region is not an address
+        if (this.zoomed_out) return; // a whole district is not an address
         const c = this.map.getCenter();
         this.location = { lat: c.lat, lng: c.lng };
         if (!e.keepText) this.lookUp(c);
       });
+      this.map.on("load", () => (this.zoomed_out = this.map.getZoom() < ZOOM_ADDRESS));
       if (!at && !this.location) this.locate(true);
     },
 
@@ -351,12 +378,13 @@ export default {
             params: { lat: c.lat, lon: c.lng, local: this.getCurrentLanguage?.()?.locale },
           })
           .then(({ data }) => {
-            if (!data || data.error) return;
-            if (data.address) this.form.address = data.address;
-            if (data.city) this.form.city = data.city;
-            if (data.state) this.form.state = data.state;
-            if (data.postal) this.form.postal = data.postal;
-            if (data.no && !this.form.no) this.form.no = data.no;
+            if (!data || data.error || !data.address) return;
+            // One place, all of it: no street from here with a postcode from there.
+            this.form.address = data.address;
+            this.form.city = data.city || "";
+            this.form.state = data.state || "";
+            this.form.postal = data.postal || "";
+            if (data.no) this.form.no = data.no;
             if (data.country && this.countryList.some((x) => x.code === data.country)) this.form.country = data.country;
           })
           .catch(() => {})
@@ -405,9 +433,9 @@ export default {
     pickResult(item) {
       Object.assign(this.form, {
         address: item.address || item.title || this.form.address,
-        city: item.city || this.form.city,
-        state: item.state || this.form.state,
-        postal: item.postal || this.form.postal,
+        city: item.city || "",
+        state: item.state || "",
+        postal: item.postal || "",
       });
       if (item.country && this.countryList.some((x) => x.code === item.country)) this.form.country = item.country;
       const [lng, lat] = item.geometry?.coordinates || [];
@@ -416,11 +444,25 @@ export default {
       this.query = "";
     },
 
+    /* The pin itself: the address under it, now (zooming in first when the
+       map shows a whole district). */
+    pinHere() {
+      if (!this.map) return;
+      this.moved = true;
+      if (this.map.getZoom() < ZOOM_ADDRESS) {
+        this.map.flyTo({ center: this.map.getCenter(), zoom: ZOOM_STREET, essential: true }, { byKalio: true });
+        return;
+      }
+      const c = this.map.getCenter();
+      this.location = { lat: c.lat, lng: c.lng };
+      this.lookUp(c);
+    },
+
     /* Move the map to a point; keepText leaves the form's address alone. */
     goTo(point, keepText = false) {
       this.location = { lat: point.lat, lng: point.lng };
       this.moved = true;
-      if (this.map) this.map.flyTo({ center: [point.lng, point.lat], zoom: ZOOM_STREET, essential: true }, { byKalio: true, keepText });
+      if (this.map) this.map.flyTo({ center: [point.lng, point.lat], zoom: ZOOM_STREET, essential: true, maxDuration: 1600 }, { byKalio: true, keepText });
     },
 
     locate(quiet = false) {

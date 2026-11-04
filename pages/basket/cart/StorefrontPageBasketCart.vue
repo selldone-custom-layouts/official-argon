@@ -1004,6 +1004,17 @@ export default {
     guest_email_ok() {
       return !this.guest_email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.guest_email);
     },
+    /** The ways to pay this basket: the shop's gateways in its currency
+     *  (cash on delivery only when the delivery allows it), as Selldone's
+     *  payment window lists them. null when the shop did not say. */
+    payment_ways() {
+      const gateways = this.$shop?.gateways;
+      if (!Array.isArray(gateways)) return null;
+      const currency = this.basket?.currency;
+      return gateways.filter(
+        (g) => g.enable !== false && (!currency || g.currency === currency) && (this.deliverySupportCOD || !g.cod),
+      );
+    },
     /** What still stands between the shopper and paying, in a line. */
     pay_blocker() {
       if (!this.user && !this.has_guest_payment) return "Sign in to place the order.";
@@ -1012,6 +1023,14 @@ export default {
       if (this.enter_guest_email_error) return "Add your email to pay.";
       if (!this.guest_email_ok) return "Check your email address.";
       if (this.bill && !this.can_pay) return "This basket cannot be paid yet.";
+      if (
+        this.payment_ways &&
+        !this.payment_ways.length &&
+        this.final_price > 0 &&
+        !this.is_service_need_pricing &&
+        !this.isSubscription
+      )
+        return "This shop is not taking payments yet. Please check back soon.";
       return null;
     },
     can_press_pay() {
@@ -1141,7 +1160,11 @@ export default {
         input?.focus({ preventScroll: true });
         return;
       }
-      if (!this.canPayAndComplete || (this.bill && !this.can_pay)) return;
+      if (!this.canPayAndComplete || this.pay_blocker) {
+        // Nothing to fill in: show the receipt's reason (out of view on a phone).
+        this.$el?.querySelector?.(".k-cart__pay")?.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
       if (this.is_service_need_pricing) return this.submitServiceOrder();
       this.goToPaymentBasket(null);
     },

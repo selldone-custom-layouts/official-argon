@@ -119,12 +119,24 @@ Facts that shape the code:
   the payment window. The When card shows only when there is something to
   choose; on 4 November 2026 molino has one method, Pickup, with no pickup
   point, so it does not show and Selldone asks only for an address.
-- **The address sheet** uses Selldone's Mapbox wrapper with the
+- **The address sheet** (0.2.13 after a buyer's walk-through at 1920×923,
+  1440×900, 1366×700 and 390×844, `../kalio-design/review/buyer.cjs`):
+  the map is `streets-v12` (the light style read as a grey, broken map);
+  a tap on the map takes the pin there and a tap on the pin looks up the
+  address under it; a lookup replaces street, city, county and postcode
+  together (no New York street with a London postcode); below zoom 13 the
+  pin asks to zoom in; the map and the form have a fixed height and the
+  footer sits above them (the map, a positioned box, used to paint over
+  Save address when the form grew taller than the window). It started
+  from Selldone's Mapbox wrapper with the
   `light-v11` style and Selldone's address lookups (`gto-to-address`,
   `autocomplete`, `address/all`); it saves the same receiver_info fields
   (`no`, `unit`, `name`, `phone`, …). mapbox-gl.css gives `.mapboxgl-map`
   `position: relative`, which collapsed the map to 0 px; the canvas keeps
   `position: absolute !important`.
+- **No way to pay**: when the shop has no payment method for the
+  basket's currency, the receipt says so and Pay does not open an empty
+  payment window (`payment_ways`, `pay_blocker`).
 - **Payment methods**: on 4 November 2026 the storefront receives no
   payment method (`shop.gateways` is empty: only the POS "Cash payment" is
   on; Stripe and Cash on delivery are off), so the payment window has
