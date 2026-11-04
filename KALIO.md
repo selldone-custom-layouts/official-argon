@@ -32,7 +32,7 @@ pale tint of their own. The approved mockup is in
 | When: shipping methods and pickup points as cards, any time or days and parts of the day, or a date | `pages/basket/cart/SCartShippingOptions.vue` (Selldone's script kept), in the basket page's When sheet |
 | Pay: Selldone's payment window restyled (heading, total on the stone ground, each way to pay as a card) | `style/kalio-checkout.scss` (`.s--storefront-master-payment-dialog`) |
 | Order page: where it stands, Invoice and Share, the steps as a line, items by seller; Selldone's vendor orders, returns and refunds in Kalio cards | `pages/basket/order/StorefrontPageBasketOrder.vue`, `pages/basket/order/physical/dashbaord/StorefrontPageBasketOrderPhysicalDashboard.vue` |
-| Order page cards (0.2.15): the receipt with how it is paid and Pay now; Delivery (deliver to, when, tracking, billing, map, change address); Messages (bubbles and a message box, also on file and service orders) | `components/kalio/order/KalioOrderReceipt.vue`, `KalioOrderDelivery.vue`, `KalioOrderChat.vue` |
+| Order page cards (0.2.15, the trip 0.2.16): the receipt with how it is paid and Pay now; Delivery (deliver to, when, courier, carrier, tracking, billing, map, change address, the trip); Messages (bubbles and a message box, also on file and service orders) | `components/kalio/order/KalioOrderReceipt.vue`, `KalioOrderDelivery.vue`, `KalioOrderChat.vue` |
 | Basket page, sheets, payment window and order page styles | `style/kalio-checkout.scss` |
 | Product page styles | `style/kalio-product.scss` |
 | Shelf head (design A) for every shop page that lists products: crumbs, title, count, a row of aisle words | `components/kalio/KalioShelfHead.vue` |
@@ -161,6 +161,18 @@ Facts that shape the code:
   address sheet's Save). Tested with SM-1's own data and three variants
   (paid and sent, waiting for payment, delivered):
   `../kalio-design/review/ordercards.cjs`.
+- **"The trip" in the Delivery card** (0.2.16). Selldone's
+  `DeliveryTimeline` (Vuetify's `v-timeline`) has no styles in this
+  layout: once SM-1 was delivered its lines and dates spilled over the
+  Messages card. The card now writes the transportation order itself:
+  left the shop, the carrier's updates (`history`), delivered (with the
+  time on the road), paid the courier (cash on delivery), came back to
+  the shop, cancelled, and "On the way to you" with a beating dot while
+  it travels; the day is written once. Courier (name, Call) and Carrier
+  rows join the list, and `transportation_order.track` backs "Follow the
+  parcel". "Has it arrived?" stays away once the parcel came back. Test
+  variants `live` (SM-1 as delivered), `moving`, `carrier`; the script
+  also reports anything sticking out of a card (`spill`).
 - **The basket drawer** reads the savings from the lines (`dis` × count +
   `offer_amount`): a basket read on page load has no `bill`. The "Added to
   basket" notice keeps quiet while the drawer is open (`basketView`).

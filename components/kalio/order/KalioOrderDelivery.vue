@@ -10,7 +10,12 @@
   receiver widget (SShopCustomerDeliveryInfoWidget) and keeps its rules:
   the address can change until the order is sent, and not when sellers
   ship their parts themselves; a pickup shows the place and directions.
+  Under it, "The trip": Selldone's transportation order as a short log
+  (left the shop, carrier updates, delivered, paid the courier, returned),
+  in place of Selldone's DeliveryTimeline, which had no styles in this
+  layout and spilled over the next card (0.2.16).
 -->
+
 <template>
   <section :class="{ '-pickup': is_pickup }" class="k-ocard k-odel">
     <header class="k-ocard__head">
@@ -69,6 +74,21 @@
         <div v-if="whenText" class="k-odel__row">
           <dt>When</dt>
           <dd><p>{{ whenText }}</p></dd>
+        </div>
+
+        <div v-if="courier" class="k-odel__row">
+          <dt>Courier</dt>
+          <dd>
+            <p class="k-odel__who">{{ courier.name }}</p>
+            <div class="k-odel__links">
+              <a v-if="courier.phone" :href="`tel:${courier.phone}`" class="k-odel__link">Call {{ courier.phone }}</a>
+            </div>
+          </dd>
+        </div>
+
+        <div v-if="carrier" class="k-odel__row">
+          <dt>Carrier</dt>
+          <dd><p class="k-odel__who">{{ carrier }}</p></dd>
         </div>
 
         <div v-if="tracking.code || tracking.url" class="k-odel__row">
@@ -131,12 +151,19 @@
       </a>
     </div>
 
-    <delivery-timeline-transportation-order
-      v-if="basket.transportation_order && !is_pickup"
-      :delivery-info="delivery_info"
-      :transportation-order="basket.transportation_order"
-      class="k-odel__timeline"
-    />
+    <div v-if="trip.length" class="k-odel__trip">
+      <p class="k-odel__triphead">The trip</p>
+      <ol>
+        <li v-for="step in trip" :key="step.key" :class="`-${step.tone}`">
+          <span aria-hidden="true" class="k-odel__dot"><v-icon v-if="step.icon" size="15">{{ step.icon }}</v-icon></span>
+          <span class="k-odel__stepwords">
+            <b>{{ step.title }}</b>
+            <small v-if="step.note">{{ step.note }}</small>
+          </span>
+          <time v-if="step.at" :datetime="step.at">{{ step.time }}</time>
+        </li>
+      </ol>
+    </div>
 
     <kalio-address-sheet
       v-if="canEditAddress"
@@ -155,7 +182,6 @@
 <script lang="ts">
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import SOrderDeliveryAutoComplete from "@selldone/components-vue/storefront/order/auto-complete/SOrderDeliveryAutoComplete.vue";
-import DeliveryTimelineTransportationOrder from "@selldone/components-vue/storefront/order/delivery/DeliveryTimelineTransportationOrder.vue";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import { TimeSpans } from "@selldone/core-js/enums/logistic/TimeSpans";
 import { MapHelper } from "@selldone/core-js/helper/map/MapHelper";
@@ -173,7 +199,7 @@ function hour(h) {
 
 export default {
   name: "KalioOrderDelivery",
-  components: { KalioAddressSheet, SOrderDeliveryAutoComplete, DeliveryTimelineTransportationOrder },
+  components: { KalioAddressSheet, SOrderDeliveryAutoComplete },
   inject: ["$shop"],
 
   props: {
@@ -210,7 +236,8 @@ export default {
       return this.basket?.delivery_state;
     },
     canConfirmReceived() {
-      return this.state === Basket.PhysicalOrderStates.SentOrder.code;
+      // not once the parcel has come back to the shop
+      return this.state === Basket.PhysicalOrderStates.SentOrder.code && !this.transport?.return_at;
     },
     delivered() {
       return this.state === Basket.PhysicalOrderStates.ToCustomer.code;
@@ -283,7 +310,59 @@ export default {
 
     tracking() {
       if (this.is_pickup) return {};
-      return { code: this.delivery_info?.tracking_code, url: this.delivery_info?.tracking_url };
+      return { code: this.delivery_info?.tracking_code, url: this.delivery_info?.tracking_url || this.transport?.track };
+    },
+
+    /** Selldone's record of the trip: sent, paid to the courier, delivered, returned. */
+    transport() {
+      return this.is_pickup ? null : this.basket?.transportation_order || null;
+    },
+    courier() {
+      const user = this.transport?.person?.user;
+      return user?.name ? { name: user.name, phone: user.phone } : null;
+    },
+    /** The delivery service carrying it, found as Selldone finds it. */
+    carrier() {
+      const t = this.transport;
+      if (!t?.service) return null;
+      if (t.service.delivery_service?.name) return t.service.delivery_service.name;
+      const transportation = (this.$shop.transportations || []).find((item) => item.id === t.transportation_id);
+      return transportation?.transportation_services?.find((item) => item.id === t.service.service_id)?.delivery_service?.name || null;
+    },
+    /** The trip as a short log, oldest first; the day is written once. */
+    trip() {
+      const t = this.transport;
+      if (!t) return [];
+      const cod = this.basket?.payment?.gateway?.cod || this.basket?.payment_type === "cod";
+      const steps = [];
+      if (t.send_at) steps.push({ key: "sent", at: t.send_at, icon: "local_shipping", title: "Left the shop", tone: "done" });
+      (t.history || []).forEach((record, i) => {
+        const tone = { DELIVERED: "ok", CANCELED: "off", RETURNED: "warn" }[record.status] || "done";
+        const place = record.location ? [record.location.city, record.location.state, record.location.zip].filter(Boolean).join(", ") : null;
+        steps.push({ key: `h${i}`, at: record.date, icon: tone === "done" ? "place" : null, title: record.detail || "Update from the carrier", note: place, tone });
+      });
+      if (t.deliver_at) steps.push({ key: "delivered", at: t.deliver_at, icon: "check", title: "Delivered", note: this.took(t.send_at, t.deliver_at), tone: "ok" });
+      if (t.payment_at) steps.push({ key: "paid", at: t.payment_at, icon: "payments", title: cod ? "Paid the courier" : "Payment confirmed", note: cod && this.basket?.payment ? this.money(this.basket.payment.amount) : null, tone: "ok" });
+      if (t.return_at) steps.push({ key: "returned", at: t.return_at, icon: "keyboard_return", title: "Came back to the shop", tone: "warn" });
+      if (t.status === "CANCELED") steps.push({ key: "cancelled", at: t.updated_at, icon: "close", title: "Delivery cancelled", tone: "off" });
+      steps.sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
+
+      if (t.send_at && t.status === "PENDING" && !t.deliver_at && !t.return_at)
+        steps.push({ key: "moving", title: "On the way to you", note: this.courier ? `With ${this.courier.name}` : null, tone: "live" });
+      else if (!t.send_at && t.scheduled_at && t.status !== "CANCELED")
+        steps.unshift({ key: "planned", at: t.scheduled_at, icon: "schedule", title: "Planned to leave", tone: "wait" });
+
+      let lastDay = null;
+      return steps.map((step) => {
+        if (!step.at) return step;
+        const d = new Date(step.at);
+        const day = d.toDateString();
+        const locale = this.$i18n?.locale || "en";
+        const clock = d.toLocaleTimeString(locale, { hour: "numeric", minute: "2-digit" });
+        const time = day === lastDay ? clock : `${d.toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" })}, ${clock}`;
+        lastDay = day;
+        return { ...step, time };
+      });
     },
 
     billing() {
@@ -323,6 +402,16 @@ export default {
     },
     when(at) {
       return new Date(at).toLocaleString(this.$i18n?.locale || "en", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+    },
+    /** "40 min on the road", or nothing under a minute. */
+    took(from, to) {
+      if (!from || !to) return null;
+      const minutes = Math.round((new Date(to).getTime() - new Date(from).getTime()) / 60000);
+      if (minutes < 1) return null;
+      if (minutes < 60) return `${minutes} min on the road`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 48) return `${hours} h${minutes % 60 ? ` ${minutes % 60} min` : ""} on the road`;
+      return `${Math.round(hours / 24)} days on the road`;
     },
     countryName(code) {
       try {
