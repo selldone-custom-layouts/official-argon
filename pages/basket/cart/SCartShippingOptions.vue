@@ -12,400 +12,171 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
+<!--
+  Kalio — one package's way to the shopper, in the basket page's When
+  sheet (design C, 4 November 2026). How it gets there as cards (the
+  shop's shipping methods, then its pickup points), and when: any time,
+  or the days and parts of the day that suit the shopper, or a date when
+  the method asks for one. Selldone's dropdowns and blue chips are gone;
+  the data and every rule below are Selldone's (days and time spans the
+  method offers, lead time, the date's earliest day).
+-->
 <template>
-  <!-- ════════════════════════ Shipping options ════════════════════════ -->
-  <div
-    v-if="warehouse"
-    class="text-subtitle-2 single-line"
-    :title="warehouse_address"
-  >
-    <span class="small min-width-50 d-inline-block">{{
-      $t("global.commons.origin")
-    }}</span>
-    <v-icon class="flip-rtl me-2">arrow_right</v-icon>
-
-    <b v-if="warehouse.title" class="me-2">{{ warehouse.title }}</b>
-
-    <flag
-      v-if="warehouse.country"
-      :iso="warehouse.country"
-      :squared="false"
-      class="me-2"
-    />
-    {{ warehouse_address }}
-  </div>
-  <div class="d-flex align-center my-2">
-    <span class="small min-width-50 d-inline-block">{{
-      $t("global.commons.shipping")
-    }}</span>
-    <v-icon class="flip-rtl">arrow_right</v-icon>
-    <products-dense-images-circles
-      :ids="
-        basket.items
-          .filter((i) => itemIds?.includes(i.id))
-          .map((i) =>
-            getShopImagePath(
-              i.variant?.image ? i.variant.image : i.product.icon,
-              128,
-            ),
-          )
-      "
-      inline
-      border
-      raw-images-path
-    ></products-dense-images-circles>
-    <v-spacer></v-spacer>
-    <span v-if="cost !== null && cost !== undefined" class="text-subtitle-2">
-      <u-price v-if="cost > 0" :amount="cost"></u-price>
-
-      <span v-else-if="cost === 0">
-        {{ $t("basket_page.free_shipping") }}
+  <section class="k-ship">
+    <header class="k-ship__head">
+      <products-dense-images-circles
+        :ids="
+          basket.items
+            .filter((i) => itemIds?.includes(i.id))
+            .map((i) => getShopImagePath(i.variant?.image ? i.variant.image : i.product.icon, 128))
+        "
+        border
+        inline
+        raw-images-path
+      ></products-dense-images-circles>
+      <span class="k-ship__from">
+        <template v-if="warehouse?.title">From {{ warehouse.title }}</template>
       </span>
-
-      <span v-else>
-        {{ $t("basket_page.shipping_not_pay") }}
+      <span v-if="cost !== null && cost !== undefined" :class="{ '-free': cost === 0 }" class="k-ship__cost">
+        <u-price v-if="cost > 0" :amount="cost"></u-price>
+        <template v-else-if="cost === 0">Free</template>
+        <template v-else>Paid on delivery</template>
       </span>
-    </span>
-  </div>
-  <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Select Shipping Method (Except Pickup) ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃  -->
+    </header>
 
-  <template v-if="transportation_exclude_pickup?.length">
-    <div class="font-weight-bold mt-5 mb-2">
-      <v-scroll-y-transition group leave-absolute>
-        <template v-if="transportation?.type && !selectedPickup">
-          <v-icon class="me-1 zoomIn" color="success" size="small"
-            >check_circle
-          </v-icon>
-          {{ $t("global.commons.delivery_selected") }}
-        </template>
-        <template v-else
-          >{{ $t("global.commons.delivery_options") }}
-          <v-icon class="ms-1" size="small">expand_more</v-icon>
-        </template>
-      </v-scroll-y-transition>
-    </div>
-
-    <u-smart-select
-      :background-color="!light_checkout ? ThemeColorDark : '#fafafa'"
-      :dark="!light_checkout"
-      :item-image="
-        (item) =>
-          item.logo
-            ? getShopImagePath(item.logo)
-            : getShopTransportationObject(item.type).icon
-      "
-      :item-text="
-        (item) =>
-          item.title
-            ? item.title
-            : $t(getShopTransportationObject(item.type).name)
-      "
-      :items="transportation_exclude_pickup"
-      :model-value="transportation?.type"
-      force-show-all
-      item-description="message"
-      item-value="type"
-      rounded
-      @update:model-value="
-        (_type) => {
-          $emit(
-            'update:transportation',
-            transportation_exclude_pickup.find((x) => x.type === _type),
-          );
-          $nextTick(() => {
-            setBasketConfig();
-          });
-        }
-      "
-      class="mb-2"
-      gray-unselected
-    >
-      <template v-slot:description="{ item }">
-        <v-row no-gutters>
-          <span v-if="item.cod && cod_payment_exists" class="me-4 small"
-            >● {{ $t("global.commons.cod") }}</span
-          >
-          <span v-if="item.sod" class="me-4 small"
-            >● {{ $t("global.commons.sod") }}
+    <!-- How it gets there -->
+    <template v-if="transportation_exclude_pickup?.length || pickups?.length">
+      <p class="k-ship__label">How you get it</p>
+      <div class="k-ship__ways">
+        <button
+          v-for="item in transportation_exclude_pickup"
+          :key="item.type"
+          :class="{ '-on': transportation?.type === item.type && !selectedPickup }"
+          class="k-ship__way"
+          type="button"
+          @click="pickWay(item)"
+        >
+          <span aria-hidden="true" class="k-ship__radio"></span>
+          <img v-if="item.logo || getShopTransportationObject(item.type)?.icon" :src="item.logo ? getShopImagePath(item.logo) : getShopTransportationObject(item.type).icon" alt="" class="k-ship__ico" height="40" width="40" />
+          <span v-else aria-hidden="true" class="k-ship__ico -pickup"><v-icon size="20">local_shipping</v-icon></span>
+          <span class="k-ship__name">
+            <b>{{ item.title ? item.title : getShopTransportationObject(item.type) ? $t(getShopTransportationObject(item.type).name) : item.type }}</b>
+            <small>
+              <template v-if="item.message">{{ item.message }}</template>
+              <template v-if="item.cod && cod_payment_exists"> · Pay on delivery</template>
+              <template v-if="item.sod"> · Pay at the door</template>
+            </small>
           </span>
-
-          <span v-if="item.free_shipping" class="me-2 small">
-            ● {{ $t("global.commons.free_shipping") }}
-            {{
-              item.free_shipping_limit ? `${$t("global.commons.for")} + ` : ""
-            }}
-            <u-price
-              :amount="item.free_shipping_limit"
-              :currency="item.currency"
-            ></u-price>
+          <span v-if="item.free_shipping" class="k-ship__free">
+            Free<template v-if="item.free_shipping_limit"> over <u-price :amount="item.free_shipping_limit" :currency="item.currency"></u-price></template>
           </span>
-        </v-row>
+        </button>
+
+        <button
+          v-for="(pickup, i) in pickups || []"
+          :key="'p' + i"
+          :class="{ '-on': selectedPickup?.address && selectedPickup.address === pickup.address }"
+          class="k-ship__way"
+          type="button"
+          @click="$emit('pickupSelected', { pickup, transportation: pickup_transportation })"
+        >
+          <span aria-hidden="true" class="k-ship__radio"></span>
+          <span aria-hidden="true" class="k-ship__ico -pickup"><v-icon size="20">storefront</v-icon></span>
+          <span class="k-ship__name">
+            <b>Pickup · {{ pickup.title || pickup.name || pickup.address }}</b>
+            <small>{{ MapHelper.GenerateFullAddressFromMapInfo(pickup) }}<template v-if="pickup.phone"> · {{ pickup.phone }}</template></small>
+          </span>
+          <span class="k-ship__free">Free</span>
+        </button>
+      </div>
+    </template>
+
+    <!-- When -->
+    <template v-if="transportation">
+      <template v-if="!showCustomDeliveryTimeButton">
+        <p class="k-ship__label">When</p>
+        <p class="k-ship__hint"><v-icon size="16">place</v-icon>Add your address first; the times depend on where it goes.</p>
       </template>
-    </u-smart-select>
-  </template>
-
-  <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Select Pickup Address ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃  -->
-
-  <s-cart-shipping-pickups
-    :basket="basket"
-    :transportations="transportations"
-    @pickupSelected="
-      ({ pickup, transportation }) => {
-        $emit('pickupSelected', { pickup, transportation });
-      }
-    "
-    :selectedPickup="selectedPickup"
-    :item-bg-color="pickupItemBgColor"
-  ></s-cart-shipping-pickups>
-
-  <!-- ════════════════════════ Delivery time ════════════════════════ -->
-  <div v-if="showCustomDeliveryTimeButton" class="font-weight-medium data-row">
-    <!-- ━━━━━━━━━━━━━━━━━━ Select preferred arrival time button ━━━━━━━━━━━━━━━━━━ -->
-
-    <u-text-value-dashed wrap>
-      <template v-slot:label>
-        <i class="fas fa-calendar-check me-1" />
-        {{ $t("basket_page.receive_time") }}
-
-        <v-btn
-          v-if="weight > 0 || (volume && volume.width > 0) || distance > 0"
-          class="ms-1"
-          icon
-          variant="text"
-          size="24"
-          title="Show package and distance info."
-          @click="show_package_info = !show_package_info"
-        >
-          <v-icon size="small">info</v-icon>
-        </v-btn>
-      </template>
-
-      <span v-if="transportation" class="mx-auto me-0">
-        <v-btn
-          :color="customDeliveryTimes ? 'primary' : '#fafafa'"
-          class="select-time-button mx-1 animated-all-normal tnt"
-          variant="flat"
-          height="48"
-          rounded="s-xl e-lg"
-          @click.stop="customDeliveryTimes = !customDeliveryTimes"
-        >
-          <v-avatar
-            v-if="transportation"
-            :image="
-              transportation.logo
-                ? getShopImagePath(transportation.logo)
-                : getShopTransportationObject(transportation.type).icon
-            "
-            class="me-1 ms-n2 avatar-gradient -thin -gray"
-            size="32"
-            start
-          />
-          <div>
-            <div>
-              {{
-                customDeliveryTimes
-                  ? $t("basket_page.select_time")
-                  : $t("basket_page.no_select_time")
-              }}
-            </div>
-
-            <div
-              v-if="max_lead_time > 0"
-              :style="{
-                color: customDeliveryTimes ? '#8BC34A' : '#b22a2a ',
-              }"
-              class="text-capitalize small mt-1"
-            >
-              {{
-                $t("global.commons.from_lead_time", {
-                  hours: max_lead_time,
-                })
-              }}
-            </div>
-          </div>
-        </v-btn>
-      </span>
-      <span v-else>
-        {{ $t("basket_page.no_select_time") }}
-      </span>
-    </u-text-value-dashed>
-
-    <!-- ━━━━━━━━━━━━━━━━━━ Show package and distance info ━━━━━━━━━━━━━━━━━━ -->
-
-    <v-expand-transition>
-      <div v-if="show_package_info">
-        <div
-          class="d-flex justify-content-between align-items-center text-center fadeIn py-2 mb-2"
-        >
-          <span
-            v-if="weight > 0"
-            :class="{ 'text-success': weight > 0 }"
-            class="small"
-            ><i class="fas fa-weight-hanging me-1" /> {{ weight }}
-            {{ mass_unit }}
-          </span>
-
-          <span
-            v-if="volume && volume.width > 0"
-            :class="{ 'text-success': volume.width > 0 }"
-            class="small"
-          >
-            <i class="fas fa-ruler-combined me-1" />
-            {{ volume.width }}
-            <i class="fas fa-times mx-2" />{{ volume.length }}
-            <i class="fas fa-times mx-2" />{{ volume.height }}
-            {{ size_unit }}
-          </span>
-
-          <span
-            v-if="distance > 0"
-            :class="{ 'text-success': distance > 0 }"
-            class="small"
-            ><i class="fas fa-location-arrow me-1" />
-            {{ Math.round(distance) }}
-            {{ distance_unit }}
-          </span>
+      <template v-else>
+        <p class="k-ship__label">When</p>
+        <div v-if="!need_ask_shipping_date" class="k-ship__modes">
+          <button :class="{ '-on': !customDeliveryTimes }" class="k-ship__mode" type="button" @click="customDeliveryTimes = false">
+            <b>Any time</b><small>As soon as it is ready</small>
+          </button>
+          <button :class="{ '-on': customDeliveryTimes }" class="k-ship__mode" type="button" @click="customDeliveryTimes = true">
+            <b>Choose a time</b><small>Days and hours that suit you</small>
+          </button>
         </div>
-      </div>
-    </v-expand-transition>
 
-    <!-- ━━━━━━━━━━━━━━━━━━ Lead time ━━━━━━━━━━━━━━━━━━ -->
+        <div v-if="customDeliveryTimes" class="k-ship__times">
+          <template v-if="[ETA.weekday_timeframe.code, ETA.weekday.code].includes(transportation?.eta)">
+            <p class="k-ship__sub">Days that suit you</p>
+            <div class="k-ship__days">
+              <button
+                v-for="day in dayItems"
+                :key="day.value"
+                :class="{ '-on': deliveryInfo.days?.includes(day.value) }"
+                :disabled="day.props?.disabled"
+                class="k-ship__day"
+                type="button"
+                @click="toggle('days', day.value)"
+              >
+                {{ $t(day.name) }}
+              </button>
+            </div>
+          </template>
 
-    <div class="font-weight-medium data-row">
-      <u-text-value-dashed>
-        <template v-slot:label>
-          <i class="fas fa-clock me-1" />
-          {{ $t("basket_page.lead_time") }}
-        </template>
-        <span>
-          {{ max_lead_time + (transportation?.etd ? transportation.etd : 0) }}
-          {{ $t("basket_page.lead_time_unit") }}
-        </span>
-      </u-text-value-dashed>
-    </div>
+          <template v-if="[ETA.weekday_timeframe.code, ETA.timeframe.code].includes(transportation?.eta)">
+            <p class="k-ship__sub">Parts of the day</p>
+            <div class="k-ship__spans">
+              <button
+                v-for="span in timeItems"
+                :key="span.value"
+                :class="{ '-on': deliveryInfo.time_spans?.includes(span.value) }"
+                :disabled="span.props?.disabled"
+                class="k-ship__span"
+                type="button"
+                @click="toggle('time_spans', span.value)"
+              >
+                <img v-if="span.icon" :src="span.icon" alt="" height="28" width="28" />
+                <span>
+                  <b>{{ $t(span.name) }}</b>
+                </span>
+                <v-icon v-if="deliveryInfo.time_spans?.includes(span.value)" class="k-ship__tick" size="18">check_circle</v-icon>
+              </button>
+            </div>
+          </template>
 
-    <!-- ════════════════════════ Custom delivery time ════════════════════════ -->
-    <v-expand-transition>
-      <div v-if="customDeliveryTimes" class="font-weight-regular">
-        <!-- ━━━━━━━━━━━━━━━━━━ PTA > Custom delivery > Weekdays ━━━━━━━━━━━━━━━━━━ -->
-        <template
-          v-if="
-            [ETA.weekday_timeframe.code, ETA.weekday.code].includes(
-              transportation?.eta,
-            )
-          "
-        >
-          <v-list-subheader>
-            {{ $t("basket_page.days_input") }}
-          </v-list-subheader>
-          <v-select
-            v-model="deliveryInfo.days"
-            :hint="$t('basket_page.days_input_label')"
-            :item-title="(item) => $t(item.name)"
-            :items="dayItems"
-            :no-data-text="$t('basket_page.days_input_no_data')"
-            prepend-inner-icon="fa:fas fa-calendar-week"
-            chips
-            class="mx-2 mt-3"
-            closable-chips
-            item-value="value"
-            multiple
-            variant="outlined"
-            @update:model-value="setBasketConfig"
-          >
-            <template v-slot:chip="{ item, props }">
-              <v-chip v-bind="props" color="#0061e0" variant="elevated">
-                <span>{{ $t(item.raw.name) }}</span>
-              </v-chip>
-            </template>
-          </v-select>
-        </template>
+          <template v-if="need_ask_shipping_date">
+            <p class="k-ship__sub">Date</p>
+            <input
+              :min="minDate"
+              :type="transportation.eta === ETA.date.code ? 'date' : 'datetime-local'"
+              :value="dateValue"
+              class="k-ship__date"
+              @change="setDate($event.target.value)"
+            />
+          </template>
+        </div>
 
-        <!-- ━━━━━━━━━━━━━━━━━━ PTA > Custom delivery > Timeframe ━━━━━━━━━━━━━━━━━━ -->
-
-        <template
-          v-if="
-            [ETA.weekday_timeframe.code, ETA.timeframe.code].includes(
-              transportation?.eta,
-            )
-          "
-        >
-          <v-list-subheader>
-            {{ $t("basket_page.time_input") }}
-          </v-list-subheader>
-
-          <v-select
-            v-model="deliveryInfo.time_spans"
-            :hint="$t('basket_page.time_input_label')"
-            :item-title="(it) => $t(it.name)"
-            :items="timeItems"
-            :no-data-text="$t('basket_page.time_input_label_no_data')"
-            prepend-inner-icon="fa:fas fa-clock"
-            chips
-            :return-object="false"
-            class="mx-2 mt-3"
-            closable-chips
-            item-value="value"
-            multiple
-            variant="outlined"
-            @update:model-value="setBasketConfig"
-          >
-            <template v-slot:chip="{ item, props }">
-              <v-chip v-bind="props" color="#0061e0" variant="elevated">
-                <img :src="item.raw.icon" class="me-1" width="14px" />
-
-                <span>{{ $t(item.raw.name) }}</span>
-              </v-chip>
-            </template>
-          </v-select>
-        </template>
-
-        <!-- ━━━━━━━━━━━━━━━━━━ PTA > Custom delivery > Date ━━━━━━━━━━━━━━━━━━ -->
-        <template v-if="need_ask_shipping_date && transportation">
-          <v-list-subheader> Receive date</v-list-subheader>
-          <u-date-input
-            v-model="deliveryInfo.date"
-            :date-only="[ETA.date.code].includes(transportation.eta)"
-            :min="
-              new Date().addHours(
-                transportation.etd + (max_lead_time > 0 ? max_lead_time : 0),
-              )
-            "
-            class="mx-2 mt-3"
-            outlined
-            placeholder="Select a date to receive order..."
-            return-utc
-            @change="setBasketConfig"
-          >
-            <template v-slot:prepend-inner>
-              <v-icon v-if="deliveryInfo.date" color="green"
-                >check_circle
-              </v-icon>
-              <v-icon v-else class="blink-me-linear" color="red"
-                >warning
-              </v-icon>
-            </template>
-          </u-date-input>
-        </template>
-      </div>
-    </v-expand-transition>
-    <div class="mb-3 mt-4" />
-  </div>
+        <p v-if="max_lead_time > 0 || transportation?.etd" class="k-ship__hint">
+          <v-icon size="16">schedule</v-icon>
+          Ready in about {{ max_lead_time + (transportation?.etd ? transportation.etd : 0) }} hours.
+        </p>
+      </template>
+    </template>
+  </section>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import UTextValueDashed from "@selldone/components-vue/ui/text/value-dashed/UTextValueDashed.vue";
 import ProductsDenseImagesCircles from "@selldone/components-vue/storefront/product/products-dense-images-circles/ProductsDenseImagesCircles.vue";
-import UDateInput from "@selldone/components-vue/ui/date/input/UDateInput.vue";
-import USmartSelect from "@selldone/components-vue/ui/smart/select/USmartSelect.vue";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations.ts";
 import { ETA } from "@selldone/core-js/enums/logistic/ETA.ts";
 import { MapHelper, ShopOptionsHelper } from "@selldone/core-js/helper";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType.ts";
 import { WeekDays } from "@selldone/core-js/enums/logistic/WeekDays.ts";
 import { TimeSpans } from "@selldone/core-js/enums/logistic/TimeSpans.ts";
-import SCartShippingPickups from "@app-storefront/pages/basket/cart/SCartShippingPickups.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
@@ -415,11 +186,7 @@ export default defineComponent({
   mixins: [TemplateMixin, ProductMixin, MapMixin],
 
   components: {
-    SCartShippingPickups,
-    USmartSelect,
-    UDateInput,
     ProductsDenseImagesCircles,
-    UTextValueDashed,
   },
   inject: ["$shop"],
   emits: ["update:transportation", "set-basket-config", "pickupSelected"],
@@ -457,6 +224,26 @@ export default defineComponent({
   }),
 
   computed: {
+    MapHelper() {
+      return MapHelper;
+    },
+    /** The shop's pickup points for this package. */
+    pickups() {
+      return this.isPhysicalBasket ? this.pickup_transportation?.pickups || [] : [];
+    },
+    isPhysicalBasket() {
+      return this.basket?.type === ProductType.PHYSICAL.code;
+    },
+    /** The earliest the shopper may ask for (now + the method's dispatch
+     *  time + the slowest product's lead time), as the date input wants it. */
+    minDate() {
+      if (!this.transportation) return null;
+      const hours = (this.transportation.etd || 0) + (this.max_lead_time > 0 ? this.max_lead_time : 0);
+      return this.inputDate(new Date(Date.now() + hours * 3600e3));
+    },
+    dateValue() {
+      return this.deliveryInfo?.date ? this.inputDate(new Date(this.deliveryInfo.date)) : "";
+    },
     cod_payment_exists() {
       return this.$shop.gateways?.some(
         (gateway) => gateway.currency === this.basket.currency && gateway.cod,
@@ -738,6 +525,33 @@ export default defineComponent({
 
     setBasketConfig() {
       this.$emit("set-basket-config");
+    },
+
+    // ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Kalio ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
+    pickWay(item) {
+      this.$emit("update:transportation", item);
+      this.$nextTick(() => this.setBasketConfig());
+    },
+    /* A day or a part of the day on or off; one always stays on. */
+    toggle(field, value) {
+      const list = [...(this.deliveryInfo[field] || [])];
+      const at = list.indexOf(value);
+      if (at >= 0) {
+        if (list.length === 1) return;
+        list.splice(at, 1);
+      } else list.push(value);
+      this.deliveryInfo[field] = list;
+      this.setBasketConfig();
+    },
+    setDate(value) {
+      this.deliveryInfo.date = value ? new Date(value).toISOString() : null;
+      this.setBasketConfig();
+    },
+    /* yyyy-mm-dd (a date) or yyyy-mm-ddThh:mm (a date and time), local. */
+    inputDate(date) {
+      const pad = (n) => String(n).padStart(2, "0");
+      const day = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+      return this.transportation?.eta === ETA.date.code ? day : `${day}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
     },
   },
 });

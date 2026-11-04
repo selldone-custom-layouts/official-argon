@@ -12,75 +12,48 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
+<!--
+  Kalio — an order's page: a light page with the way back to the orders,
+  then the order itself (the router's child; a physical order draws its
+  own steps, KalioOrder in physical/dashbaord). Other kinds of order keep
+  Selldone's steps above theirs. Fetching the order is Selldone's, below.
+-->
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-card
-    :color="ThemeColorDeepDark"
-    class="s--shop-card s--shadow-no-padding -hide1720 pb-4 mb-16"
-  >
-    <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Order > Toolbar ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-
-    <v-toolbar
-      :color="ThemeColorDeepDark"
-      dark
-      extended
-      extension-height="64px"
-      flat
-      style="overflow-x: auto"
-    >
-      <template v-slot:extension>
-        <div style="height: 64px"></div>
-      </template>
-
-      <!-- ⦿ Back -->
-
-      <u-button-circle
-        :icon="$t('icons.arrow_back')"
-        :to="
-          buildReturnRoute(
-            $route.query.return_id
-              ? window.$storefront.routes.USER_RETURN_REQUESTS
-              : history_list_page_name,
-          )
-        "
-        :tooltip="$t('global.actions.back')"
-      />
-
-      <v-spacer></v-spacer>
+  <div class="k-order">
+    <div class="k-wrap">
+      <nav aria-label="Back" class="k-cart__crumbs">
+        <router-link
+          :to="
+            buildReturnRoute(
+              $route.query.return_id
+                ? window.$storefront.routes.USER_RETURN_REQUESTS
+                : history_list_page_name,
+            )
+          "
+        >
+          <v-icon size="16">chevron_left</v-icon>{{ $route.query.return_id ? "Your returns" : "Your orders" }}
+        </router-link>
+      </nav>
 
       <s-order-delivery-status-stepper
-        v-if="orders_states"
+        v-if="orders_states && basket && !isPhysical"
         :has-subscription="isSubscription"
         :is-subscribed="isSubscription && basket.status === 'Payed'"
         :state="basket.delivery_state"
         :states="orders_states"
-        dark
-        style="min-width: 250px; width: 20%"
+        class="k-order__stepper"
       />
-      <u-loading-ellipsis v-else css-mode></u-loading-ellipsis>
 
-      <v-spacer></v-spacer>
-
-      <template v-if="type">
-        <div class="d-flex flex-column align-center px-3">
-          {{ $t("global.commons.order_detail") }}
-          <div v-if="USER()" class="small mt-1">
-            {{ USER().name }}
-          </div>
-        </div>
-        <img :src="type.basket" class="me-5" height="28" width="28" />
-      </template>
-    </v-toolbar>
-
-    <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Order > Card ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-
-    <v-card class="s--card-window-content" flat style="min-height: 80vh">
+      <div v-if="!basket" class="k-order__loading">
+        <u-loading-ellipsis css-mode></u-loading-ellipsis>
+      </div>
       <router-view
-        v-if="basket"
+        v-else
         :basket="basket"
         @request:refresh="fetchOrderInfo()"
       />
-    </v-card>
-  </v-card>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -115,6 +88,9 @@ export default {
   computed: {
     isSubscription() {
       return this.basket && this.basket.type === ProductType.SUBSCRIPTION.code;
+    },
+    isPhysical() {
+      return this.basket && this.basket.type === ProductType.PHYSICAL.code;
     },
 
     type() {

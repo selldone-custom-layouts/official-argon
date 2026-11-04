@@ -27,6 +27,12 @@ pale tint of their own. The approved mockup is in
 | Seller offer cards — SSmartSelectVendor logic via `extends` | `components/kalio/product/KalioSellerOffers.vue` |
 | In the basket: quantity and "Checkout · total" on the product page (design C); a card's "+" adds straight away and becomes − n +; "Added to basket" notice | `components/kalio/product/KalioBasketLine.vue`, `KalioCardStep.vue`, `kalio-card-basket.ts`, `kalio-basket.ts`, `shell/KalioBasketToast.vue` |
 | Basket drawer (design C, 0.2.11): a receipt with the subtotal, savings and Checkout; compact rows with a stepper; three "Often added" | `components/kalio/shell/KalioBasketDrawer.vue` (styles in `kalio-shell.scss`, `.k-bdrawer`) |
+| Basket page (design C, 0.2.12): lines by seller; When · Where · Who cards; a receipt with every line of Selldone's bill, the discount code and Pay; on a phone a bar with the total and Pay | `pages/basket/cart/StorefrontPageBasketCart.vue` (Selldone's script kept), `components/kalio/checkout/KalioCartLines.vue`, `components/kalio/KalioOftenAdded.vue` (also in the drawer) |
+| Where: the address sheet (a light Mapbox map with a fixed pin, search, "Use my location", saved addresses, every address field) | `components/kalio/checkout/KalioAddressSheet.vue` |
+| When: shipping methods and pickup points as cards, any time or days and parts of the day, or a date | `pages/basket/cart/SCartShippingOptions.vue` (Selldone's script kept), in the basket page's When sheet |
+| Pay: Selldone's payment window restyled (heading, total on the stone ground, each way to pay as a card) | `style/kalio-checkout.scss` (`.s--storefront-master-payment-dialog`) |
+| Order page: where it stands, Invoice and Share, the steps as a line, items by seller, a receipt; Selldone's payment, delivery, chat and return widgets in Kalio cards | `pages/basket/order/StorefrontPageBasketOrder.vue`, `pages/basket/order/physical/dashbaord/StorefrontPageBasketOrderPhysicalDashboard.vue` |
+| Basket page, sheets, payment window and order page styles | `style/kalio-checkout.scss` |
 | Product page styles | `style/kalio-product.scss` |
 | Shelf head (design A) for every shop page that lists products: crumbs, title, count, a row of aisle words | `components/kalio/KalioShelfHead.vue` |
 | Aisle page head | `components/kalio/KalioAisleHeader.vue` |
@@ -105,6 +111,24 @@ Facts that shape the code:
   the buttons were disabled while a request ran, so a quick second tap was
   lost, and changing the seller during a slow "+" sent the old count: on 4
   November 2026, 2 quarts from Alina became 1 from Mason.
+- **The basket page** keeps Selldone's whole script (bill, basket config,
+  coupons, lottery, club, wallet, shipping options, payment, service
+  orders); only its template is Kalio's. Coupons and lottery prizes show
+  only when the shopper has some (no empty "Add coupon" row). Pay leads
+  to whatever is still missing (address, phone, email) before it opens
+  the payment window. The When card shows only when there is something to
+  choose; on 4 November 2026 molino has one method, Pickup, with no pickup
+  point, so it does not show and Selldone asks only for an address.
+- **The address sheet** uses Selldone's Mapbox wrapper with the
+  `light-v11` style and Selldone's address lookups (`gto-to-address`,
+  `autocomplete`, `address/all`); it saves the same receiver_info fields
+  (`no`, `unit`, `name`, `phone`, …). mapbox-gl.css gives `.mapboxgl-map`
+  `position: relative`, which collapsed the map to 0 px; the canvas keeps
+  `position: absolute !important`.
+- **Payment methods**: on 4 November 2026 the storefront receives no
+  payment method (`shop.gateways` is empty: only the POS "Cash payment" is
+  on; Stripe and Cash on delivery are off), so the payment window has
+  nothing to offer until one is switched on in the dashboard.
 - **The basket drawer** reads the savings from the lines (`dis` × count +
   `offer_amount`): a basket read on page load has no `bill`. The "Added to
   basket" notice keeps quiet while the drawer is open (`basketView`).

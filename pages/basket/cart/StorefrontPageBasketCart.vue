@@ -12,931 +12,326 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <div
-    :style="{
-      '--color-bg-1': theme?.color_bill ? theme.color_bill : ThemeColorDeepDark,
-      '--color-bg-2': ShadeColor(
-        theme?.color_bill ? theme.color_bill : ThemeColorDeepDark,
-        -30,
-      ),
-    }"
-  >
-    <v-card
-      :flat="isMobile"
-      class="s--shop-card mb-16 s--shadow-no-padding -hide1720 text-start"
-      style="min-height: 80vh"
-    >
-      <v-toolbar color="transparent" flat>
-        <v-btn icon @click.stop="$router.go(-1)" variant="text">
-          <v-icon>{{ $t("icons.arrow_back") }}</v-icon>
-        </v-btn>
+<!--
+  Kalio — the basket page (design C, drawn on 4 November 2026 in
+  ../kalio-design/basket-page-options/ and basket-flow-options/).
 
-        <v-toolbar-title class="body-title">
-          {{ $t("basket_page.title") }}
-        </v-toolbar-title>
+  The lines by seller, the shopper's details in three small cards (When,
+  Where, Who) and "Often added" on the left; on the right a receipt: the
+  total large, what the shopper saves, every line of the bill Selldone
+  works out, the discount code, and Pay. On a phone the receipt follows
+  the details and a bar with the total and Pay stays at the foot of the
+  window.
 
-        <v-spacer />
-      </v-toolbar>
+  Everything that works is Selldone's and stays as it was in the script
+  below: the bill, the basket config (address, delivery, billing, custom
+  form, guest email), coupons and lottery prizes (shown when the shopper
+  has some), the club, the wallet, the
+  shipping options, the payment dialog and the service order.
+-->
+<template>
+  <div class="k-cart">
+    <div class="k-wrap k-cart__wrap">
+      <nav aria-label="Back" class="k-cart__crumbs">
+        <a href="#" @click.prevent="$router.go(-1)"><v-icon size="16">chevron_left</v-icon>Keep shopping</a>
+      </nav>
 
-      <div v-if="filtered_types.length > 1" class="text-center pt-2">
-        <u-button-circle
-          v-for="item in filtered_types"
-          :key="item.code"
-          :badge-number="getCount(item.code)"
-          :disabled="!item.enable"
-          :outline="type === item.code"
-          :src="item.image"
-          :tooltip="$t(item.name)"
-          has-badge
-          persist-badge
-          @click="type = item.code"
-        />
+      <div class="k-cart__head">
+        <h1 class="k-cart__title">Your basket</h1>
+        <span v-if="seller_count > 1" class="k-cart__one">
+          <v-icon size="18">storefront</v-icon>{{ seller_count }} sellers, one basket and one checkout.
+        </span>
+        <s-shop-share-order-button v-if="basket?.items?.length" :basket="basket" class="k-cart__share" />
       </div>
 
-      <v-container
-        v-if="basket && basket.items && basket.items.length"
-        class="mt-4"
-        style="max-width: 100%; overflow: hidden"
-      >
-        <v-row dense>
-          <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ List ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-          <v-col class="px-md-0 px-lg-3" cols="12" lg="8" md="7" sm="12">
-            <div
-              class="widget-box -large mb-5 mt-2 min-height-50vh d-flex flex-column"
-            >
-              <s-shop-basket-items :items="items" />
+      <nav v-if="filtered_types.length > 1" aria-label="Baskets" class="k-cart__types">
+        <button
+          v-for="item in filtered_types"
+          :key="item.code"
+          :class="{ '-on': type === item.code }"
+          :disabled="!item.enable"
+          type="button"
+          @click="type = item.code"
+        >
+          {{ $t(item.name) }}<em>{{ getCount(item.code) }}</em>
+        </button>
+      </nav>
 
-              <v-spacer></v-spacer>
-              <!-- Share order - Secure link generator -->
-              <s-shop-share-order-button
-                :basket="basket"
-                class="mt-3 text-end"
-              ></s-shop-share-order-button>
+      <div v-if="basket && basket.items && basket.items.length" class="k-cart__grid">
+        <!-- ▆▆▆▆▆▆▆▆ Left: lines, details, often added ▆▆▆▆▆▆▆▆ -->
+        <div class="k-cart__main">
+          <kalio-cart-lines :basket="basket" />
+
+          <s-storefront-coupons-list
+            v-if="!isSubscription"
+            v-model="basket.coupon"
+            :basket="basket"
+            class="k-cart__offers"
+            return-object
+            selectable
+            @loading="(val) => (refreshing_price = val)"
+            @update:model-value="selectCoupon"
+          ></s-storefront-coupons-list>
+
+          <s-storefront-lottery-prizes-list
+            v-if="!isSubscription"
+            v-model="basket.lottery"
+            :basket="basket"
+            class="k-cart__offers"
+            return-object
+            selectable
+            @loading="(val) => (refreshing_price = val)"
+            @update:model-value="selectLottery"
+          ></s-storefront-lottery-prizes-list>
+
+          <p class="k-eyebrow k-cart__label">Your details</p>
+          <div :class="`-n${detail_cards}`" class="k-cart__details">
+            <!-- When -->
+            <section v-if="show_when" class="k-cart__detail">
+              <h3><span class="k-cart__ico"><v-icon size="18">schedule</v-icon></span>When</h3>
+              <p>{{ when_text }}</p>
+              <div class="k-cart__chips">
+                <span v-if="when_chip" class="k-cart__chip -on">{{ when_chip }}</span>
+                <button class="k-cart__chip" type="button" @click="delivery_sheet = true">
+                  {{ when_chip ? "Change" : "Choose" }}
+                </button>
+              </div>
+            </section>
+
+            <!-- Where -->
+            <section v-if="has_delivery" :class="{ '-todo': !is_valid_location }" class="k-cart__detail">
+              <h3><span class="k-cart__ico"><v-icon size="18">place</v-icon></span>Where</h3>
+              <template v-if="is_valid_location && receiver_info?.address">
+                <p class="k-cart__addr">
+                  <b v-if="receiver_info.name">{{ receiver_info.name }}</b>
+                  {{ address_line }}
+                  <span v-if="receiver_info.phone" class="k-cart__phone">{{ receiver_info.phone }}</span>
+                </p>
+                <p v-if="error_message_payment" class="k-cart__need">
+                  <v-icon size="16">error_outline</v-icon>{{ error_message_payment }}
+                </p>
+                <button class="k-cart__link" type="button" @click="openAddress()">
+                  {{ error_message_payment ? "Add the missing details" : "Change" }}
+                </button>
+              </template>
+              <template v-else>
+                <p>
+                  {{
+                    isService
+                      ? "Where the service takes place."
+                      : all_is_pickup
+                        ? "Your billing address."
+                        : "Your address, for the receipt and the seller."
+                  }}
+                </p>
+                <button class="k-cart__map" type="button" @click="openAddress()">
+                  <v-icon size="18">place</v-icon>{{ no_map ? "Add your address" : "Add on the map" }}
+                </button>
+              </template>
+            </section>
+
+            <!-- Who -->
+            <section class="k-cart__detail">
+              <h3><span class="k-cart__ico"><v-icon size="18">mail_outline</v-icon></span>Who</h3>
+              <template v-if="user">
+                <div class="k-cart__user">
+                  <img :src="getUserAvatar(user.id)" alt="" height="36" width="36" />
+                  <span>
+                    <b>{{ user.name }}</b>
+                    <small>{{ user.email || user.phone }}</small>
+                  </span>
+                </div>
+              </template>
+              <template v-else-if="has_guest_payment">
+                <p>
+                  We send the receipt here.
+                  <button class="k-cart__link -inline" type="button" @click="NeedLogin">Sign in</button>
+                </p>
+                <input
+                  v-model.trim="guest_email"
+                  :class="{ '-error': guest_email_touched && !guest_email_ok }"
+                  aria-label="Email"
+                  autocomplete="email"
+                  class="k-cart__input"
+                  inputmode="email"
+                  placeholder="Email"
+                  type="email"
+                  @blur="onGuestEmail"
+                />
+                <small v-if="guest_email_touched && !guest_email_ok" class="k-cart__need">
+                  <v-icon size="16">error_outline</v-icon>Enter an email like name@example.com
+                </small>
+              </template>
+              <template v-else>
+                <p>Sign in to place the order.</p>
+                <button class="k-btn k-btn--solid" type="button" @click="NeedLogin">Sign in</button>
+              </template>
+            </section>
+          </div>
+
+          <!-- Billing address and the shop's own checkout questions -->
+          <section v-if="canPayAndComplete" class="k-cart__more">
+            <p class="k-eyebrow">Billing</p>
+            <s-shop-billing-address-form
+              v-model="billing"
+              :receiver-info="receiver_info"
+              @change="setBasketConfig"
+            ></s-shop-billing-address-form>
+          </section>
+          <s-order-checkout-form
+            :key="'socf-' + basket?.id /*Force update*/"
+            v-model="form"
+            :country="receiver_info?.country ? receiver_info.country : billing?.country"
+            class="k-cart__form"
+            @changed="setBasketConfig"
+          ></s-order-checkout-form>
+        </div>
+
+        <!-- ▆▆▆▆▆▆▆▆ Right: the receipt ▆▆▆▆▆▆▆▆ -->
+        <aside class="k-cart__side">
+          <div :class="{ '-busy': busy_bill || refreshing_price }" class="k-cart__receipt">
+            <u-loading-progress v-if="busy_save"></u-loading-progress>
+            <p class="k-eyebrow">Total · {{ units }} {{ units === 1 ? "item" : "items" }}</p>
+            <div class="k-cart__top">
+              <p class="k-cart__total">
+                <u-loading-ellipsis v-if="busy_bill" css-mode light></u-loading-ellipsis>
+                <u-price v-else :amount="final_price" :currency="basket.currency"></u-price>
+                <small v-if="isSubscription && subscription_period_obj">/ {{ $t(subscription_period_obj.title) }}</small>
+              </p>
+              <span v-if="saved_total >= 0.01" class="k-cart__save">
+                You save <u-price :amount="saved_total" :currency="basket.currency"></u-price>
+              </span>
             </div>
 
-            <!-- NOTE: In service all calculated by seller manually -->
+            <div v-if="bill" class="k-cart__rows">
+              <p class="k-cart__row">
+                <span>Items ({{ units }})</span><u-price :amount="raw_items_price" :currency="basket.currency"></u-price>
+              </p>
+              <p v-if="total_items_discount" class="k-cart__row -save">
+                <span>You save</span><span>−<u-price :amount="total_items_discount" :currency="basket.currency"></u-price></span>
+              </p>
+              <p v-if="total_offers_amount" class="k-cart__row -save">
+                <span>Offers</span><span>−<u-price :amount="total_offers_amount" :currency="basket.currency"></u-price></span>
+              </p>
+              <p v-if="cross_selling_discount > 0" class="k-cart__row -save">
+                <span>Bought together</span><span>−<u-price :amount="cross_selling_discount" :currency="basket.currency"></u-price></span>
+              </p>
+              <p v-if="discount_code_amount > 0" class="k-cart__row -save">
+                <span>Code{{ discount_code?.code ? ` ${discount_code.code}` : "" }}</span>
+                <span>−<u-price :amount="discount_code_amount" :currency="basket.currency"></u-price></span>
+              </p>
+              <p v-if="customer_club_discount > 0" class="k-cart__row -save">
+                <span>Club</span><span>−<u-price :amount="customer_club_discount" :currency="basket.currency"></u-price></span>
+              </p>
+              <p v-if="coupon" class="k-cart__row -save">
+                <span>{{ coupon.title || $t("global.commons.coupon") }}</span>
+                <span>−<u-price :amount="coupon_discount" :currency="basket.currency"></u-price></span>
+              </p>
+              <p v-if="prize" class="k-cart__row -save">
+                <span>{{ prize.title || $t("global.commons.prize") }}</span>
+                <span v-if="prize.discount || prize.amount">−<u-price :amount="prize_discount" :currency="basket.currency"></u-price></span>
+                <span v-else-if="prize.product">{{ prize.product.title }}</span>
+              </p>
+              <p v-if="wallet" class="k-cart__row -save">
+                <span>{{ $t("global.commons.my_wallet") }}</span><span>−<u-price :amount="wallet" :currency="basket.currency"></u-price></span>
+              </p>
+              <p v-if="!isService && receiver_info && is_valid_location" :class="{ '-free': shipping_cost === 0 }" class="k-cart__row">
+                <span>{{ all_is_pickup ? "Pickup" : "Delivery" }}</span>
+                <u-price v-if="shipping_cost > 0" :amount="shipping_cost" :currency="basket.currency"></u-price>
+                <span v-else-if="shipping_cost === 0">Free</span>
+                <span v-else>Paid on delivery</span>
+              </p>
+              <p v-if="bill.tax" class="k-cart__row">
+                <span>{{ $t("global.commons.tax") }}</span><u-price :amount="bill.tax" :currency="basket.currency"></u-price>
+              </p>
+              <p v-if="bill.tax_shipping" class="k-cart__row">
+                <span>{{ $t("global.commons.shipping_tax") }}</span><u-price :amount="bill.tax_shipping" :currency="basket.currency"></u-price>
+              </p>
+            </div>
+            <p v-else-if="!busy_bill" class="k-cart__need">
+              <v-icon size="16">error_outline</v-icon>We could not work out the bill. Please reload the page.
+            </p>
 
-            <s-storefront-coupons-list
-              v-if="!isSubscription"
-              v-model="basket.coupon"
-              :basket="basket"
-              force-show
-              return-object
-              selectable
-              @loading="(val) => (refreshing_price = val)"
-              @update:model-value="selectCoupon"
-            ></s-storefront-coupons-list>
+            <!-- Lottery prize with sizes: the shopper picks one -->
+            <v-menu v-if="prize_available_variants && lottery_win_selected_variant">
+              <template v-slot:activator="{ props }">
+                <div class="k-cart__prize" v-bind="props">
+                  <variant-item-mini :product-variant="lottery_win_selected_variant" force-enable selected />
+                  <v-icon>expand_more</v-icon>
+                </div>
+              </template>
+              <v-sheet class="py-2" color="#fff">
+                <variant-item-mini
+                  v-for="(product_variant, index) in prize_available_variants"
+                  :key="index"
+                  :product-variant="product_variant"
+                  :selected="product_variant === lottery_win_selected_variant"
+                  class="m-2"
+                  @select="lottery_win_selected_variant = product_variant"
+                />
+              </v-sheet>
+            </v-menu>
 
-            <!-- NOTE: In service all calculated by seller manually -->
+            <div v-if="!isSubscription" class="k-cart__code">
+              <s-discount-code-input
+                v-model="basket.discount_code"
+                :basket="basket"
+                :currency="basket.currency"
+                @loading="(val) => (refreshing_price = val)"
+                @update:model-value="selectDiscountCode"
+              />
+              <p v-if="discount_code" class="k-cart__code-info">
+                <b>{{ discount_code.title }}</b> {{ discount_code.description }}
+              </p>
+            </div>
 
-            <s-storefront-lottery-prizes-list
-              v-if="!isSubscription"
-              v-model="basket.lottery"
-              :basket="basket"
-              force-show
-              return-object
-              selectable
-              @loading="(val) => (refreshing_price = val)"
-              @update:model-value="selectLottery"
+            <div v-if="bill?.user_messages?.length" class="k-cart__messages">
+              <p v-for="(msg, i) in bill.user_messages" :key="i"><v-icon size="16">info</v-icon><span v-html="msg"></span></p>
+            </div>
+
+            <p v-if="extra_shipping_counts" class="k-cart__note">
+              <v-icon size="16">local_shipping</v-icon>
+              {{ $t("basket_page.extra_shipping_count", { count: has_custom_delivery ? 1 + extra_shipping_counts : extra_shipping_counts }) }}
+            </p>
+
+            <!-- Pay, or what is still needed to pay -->
+            <div
+              v-intersect="(isIntersecting) => (intersect_payment_btn = isIntersecting)"
+              class="k-cart__pay"
             >
-            </s-storefront-lottery-prizes-list>
-          </v-col>
-
-          <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Receipt ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-          <v-col
-            :class="{ dark: !light_checkout }"
-            class="receipt"
-            cols="12"
-            lg="4"
-            md="5"
-            sm="12"
-          >
-            <v-sheet
-              :class="{
-                success: canPayAndComplete,
-                error: hasErrorInReceiverInfo,
-              }"
-              :theme="light_checkout ? 'light' : 'dark'"
-              class="receipt-bg m-0"
-              color="transparent"
-            >
-              <div class="receipt-container m-lg-2 m-md-1 position-relative">
-                <u-loading-progress v-if="busy_save"></u-loading-progress>
-
-                <div v-if="busy_bill" class="text-center">
-                  <u-loading-ellipsis
-                    css-mode
-                    :light="light_checkout"
-                  ></u-loading-ellipsis>
-                </div>
-                <div v-else-if="bill">
-                  <!-- START OF PRICES -->
-
-                  <div class="font-weight-medium data-row">
-                    <!-- SERVICE: Dont show price for service -->
-                    <u-text-value-dashed>
-                      <template v-slot:label>
-                        {{ $t("basket_page.total_price") }}
-                      </template>
-                      <u-price :amount="raw_items_price" medium></u-price>
-                    </u-text-value-dashed>
-                  </div>
-
-                  <!-- Delivery price -->
-
-                  <div
-                    v-if="!isService && receiver_info && is_valid_location"
-                    class="font-weight-medium data-row"
-                  >
-                    <!-- SERVICE: Dont show price for service / Show shipping cost after user select address! -->
-                    <u-text-value-dashed>
-                      <template v-slot:label>
-                        <i class="fas fa-shipping-fast me-1" />
-                        {{ $t("basket_page.shipping") }}
-                      </template>
-
-                      <u-price
-                        v-if="shipping_cost > 0"
-                        :amount="shipping_cost"
-                        medium
-                      ></u-price>
-
-                      <span v-else-if="shipping_cost === 0">
-                        {{ $t("basket_page.free_shipping") }}
-                      </span>
-
-                      <span v-else>
-                        {{ $t("basket_page.shipping_not_pay") }}
-                      </span>
-                    </u-text-value-dashed>
-                  </div>
-
-                  <!-- Products Discount -->
-
-                  <div
-                    v-if="total_items_discount"
-                    class="data-row font-weight-medium"
-                  >
-                    <!-- SERVICE: Dont show price for service -->
-                    <u-text-value-dashed>
-                      <template v-slot:label>
-                        <i class="fas fa-tags me-1" />
-                        {{ $t("basket_page.total_discount") }}
-                      </template>
-                      <p class="text-success">
-                        <u-price
-                          :amount="-total_items_discount"
-                          medium
-                        ></u-price>
-
-                        <span v-if="total_offers_amount">
-                          <v-icon class="mx-1 align-baseline" size="small"
-                            >add</v-icon
-                          >
-
-                          <v-icon
-                            class="align-baseline vertical-align-baseline me-1"
-                            color="#2ab27b"
-                            size="small"
-                            >fa:fas fa-gift</v-icon
-                          >
-                          <u-price
-                            :amount="-total_offers_amount"
-                            medium
-                          ></u-price>
-                        </span>
-                      </p>
-                    </u-text-value-dashed>
-                  </div>
-
-                  <!-- Cross selling discount -->
-
-                  <div
-                    v-if="cross_selling_discount > 0"
-                    class="data-row font-weight-medium"
-                  >
-                    <!-- SERVICE: Dont show price for service -->
-                    <u-text-value-dashed>
-                      <template v-slot:label>
-                        <v-icon class="me-1" size="small">whatshot</v-icon>
-                        {{ $t("basket_page.cross_selling_discount") }}
-                      </template>
-                      <p class="text-success">
-                        <u-price
-                          :amount="-cross_selling_discount"
-                          medium
-                        ></u-price>
-                      </p>
-                    </u-text-value-dashed>
-                  </div>
-
-                  <!-- Discount Code -->
-                  <div
-                    v-if="!isSubscription"
-                    class="data-row d-flex align-center"
-                  >
-                    <s-discount-code-input
-                      v-model="basket.discount_code"
-                      :basket="basket"
-                      :currency="basket.currency"
-                      @loading="(val) => (refreshing_price = val)"
-                      @update:model-value="selectDiscountCode"
-                      class="flex-grow-1 me-2"
-                    />
-
-                    <u-price
-                      v-if="discount_code_amount > 0 /*&& !isService*/"
-                      :amount="-discount_code_amount"
-                      class="text-success font-weight-medium"
-                      medium
-                    ></u-price>
-                    <!-- SERVICE: Dont show price for service -->
-                  </div>
-
-                  <!-- Discount Code Info -->
-
-                  <v-expand-transition>
-                    <p v-if="discount_code" class="small">
-                      <span class="font-weight-bold">
-                        {{ discount_code.title }}</span
-                      >
-                      <br />
-                      {{ discount_code.description }}
-                    </p>
-                  </v-expand-transition>
-
-                  <!-- Customer Club Discount -->
-                  <div v-if="club">
-                    <div class="text-center mt-2">
-                      <img
-                        :src="getCustomerClubLevel(club.level).icon"
-                        class="mx-auto mb-1"
-                        height="48"
-                        width="48"
-                      />
-                      <p class="text-subtitle-2">
-                        {{ $t("basket_page.customer_club") }}
-                      </p>
-                      <p class="small m-0" v-text="club.description"></p>
-                    </div>
-
-                    <div
-                      v-if="customer_club_discount > 0"
-                      class="font-weight-medium data-row"
-                    >
-                      <!-- SERVICE: Dont show price for service -->
-                      <u-text-value-dashed>
-                        <template v-slot:label>
-                          <i class="fas fa-heart me-1" />{{
-                            $t("basket_page.customer_club_discount")
-                          }}
-                        </template>
-                        <u-price
-                          :amount="-customer_club_discount"
-                          class="text-success"
-                          medium
-                        ></u-price>
-                      </u-text-value-dashed>
-                    </div>
-                  </div>
-
-                  <!-- Coupon -->
-
-                  <v-expand-transition>
-                    <div v-if="coupon">
-                      <div class="text-center mt-2">
-                        <img
-                          class="mx-auto mb-1"
-                          height="48"
-                          src="@selldone/components-vue/assets/icons/coupon.svg"
-                          width="48"
-                        />
-                        <p>{{ coupon.title }}</p>
-                        <p class="small m-0" v-text="coupon.description"></p>
-                      </div>
-
-                      <div class="font-weight-medium data-row">
-                        <!-- SERVICE: Dont show price for service -->
-                        <u-text-value-dashed>
-                          <template v-slot:label>
-                            <i class="fas fa-ticket-alt me-1" />{{
-                              $t("global.commons.coupon")
-                            }}
-                          </template>
-                          <u-price
-                            :amount="-coupon_discount"
-                            class="text-success"
-                            medium
-                          ></u-price>
-                        </u-text-value-dashed>
-                      </div>
-                    </div>
-                  </v-expand-transition>
-
-                  <!-- Lottery -->
-
-                  <v-expand-transition>
-                    <div v-if="prize">
-                      <div class="text-center mt-2">
-                        <img
-                          class="mx-auto mb-1"
-                          height="48"
-                          src="@selldone/components-vue/assets/icons/lottery-win.svg"
-                          width="48"
-                        />
-                        <p>{{ prize.title }}</p>
-                        <p class="small m-0" v-text="prize.description"></p>
-                      </div>
-
-                      <div class="font-weight-medium data-row">
-                        <!-- SERVICE: Dont show price for service -->
-                        <u-text-value-dashed>
-                          <template v-slot:label>
-                            <i class="fas fa-dice me-1" />{{
-                              $t("global.commons.prize")
-                            }}
-                          </template>
-                          <u-price
-                            v-if="prize.discount || prize.amount"
-                            :amount="-prize_discount"
-                            class="text-success"
-                            medium
-                          ></u-price>
-                          <div v-else-if="prize.product">
-                            <v-avatar
-                              class="me-1 hover-scale-small pointer-pointer"
-                              size="20"
-                              @click="goToProduct(prize.product.id)"
-                            >
-                              <v-img
-                                :src="getShopImagePath(prize.product.icon)"
-                              />
-                            </v-avatar>
-
-                            {{ prize.product.title }}
-                          </div>
-                        </u-text-value-dashed>
-                      </div>
-
-                      <!-- Product has variant! User can select variant for prize. -->
-                      <div
-                        v-if="
-                          prize_available_variants &&
-                          lottery_win_selected_variant
-                        "
-                      >
-                        <v-menu>
-                          <template v-slot:activator="{ props }">
-                            <div class="position-relative" v-bind="props">
-                              <variant-item-mini
-                                :product-variant="lottery_win_selected_variant"
-                                class="m-2"
-                                force-enable
-                                selected
-                              />
-                              <v-icon class="absolute-top-end">
-                                arrow_drop_down
-                              </v-icon>
-                            </div>
-                          </template>
-                          <v-sheet class="py-2" color="#fff">
-                            <variant-item-mini
-                              v-for="(
-                                product_variant, index
-                              ) in prize_available_variants"
-                              :key="index"
-                              :product-variant="product_variant"
-                              :selected="
-                                product_variant === lottery_win_selected_variant
-                              "
-                              class="m-2"
-                              @select="
-                                lottery_win_selected_variant = product_variant
-                              "
-                            />
-                          </v-sheet>
-                        </v-menu>
-                      </div>
-                    </div>
-                  </v-expand-transition>
-
-                  <!-- SERVICE: Dont show price for service -->
-
-                  <!-- ========== Spacer ========== -->
-
-                  <!-- ========== Wallet (Pay by customer wallet) ========== -->
-
-                  <div v-if="wallet" class="font-weight-medium data-row">
-                    <u-text-value-dashed>
-                      <template v-slot:label>
-                        <v-icon class="me-1">wallet</v-icon>
-                        {{ $t("global.commons.my_wallet") }}
-                      </template>
-                      <u-price
-                        :amount="-wallet"
-                        medium
-                        class="text-success"
-                      ></u-price>
-                    </u-text-value-dashed>
-                  </div>
-
-                  <!-- ========== Net Price ========== -->
-
-                  <div class="font-weight-medium data-row">
-                    <u-text-value-dashed>
-                      <template v-slot:label>
-                        {{ $t("global.commons.net_price") }}
-                      </template>
-                      <u-price :amount="net_price" medium></u-price>
-                    </u-text-value-dashed>
-                  </div>
-
-                  <!-- ========== Tax ========== -->
-
-                  <div v-if="bill.tax" class="font-weight-medium data-row">
-                    <u-text-value-dashed>
-                      <template v-slot:label>
-                        {{ $t("global.commons.tax") }}
-                      </template>
-                      <u-price :amount="bill.tax" medium></u-price>
-                    </u-text-value-dashed>
-                  </div>
-
-                  <div
-                    v-if="bill.tax_shipping"
-                    class="font-weight-medium data-row"
-                  >
-                    <u-text-value-dashed>
-                      <template v-slot:label>
-                        {{ $t("global.commons.shipping_tax") }}
-                      </template>
-                      <u-price :amount="bill.tax_shipping" medium></u-price>
-                    </u-text-value-dashed>
-                  </div>
-
-                  <!-- ========== Spacer ========== -->
-
-                  <!-- ====================================== TOTAL PRICE ================================= -->
-
-                  <div class="total-price-after-discount">
-                    <p class="label m-0 text-uppercase">
-                      {{ $t("basket_page.final_price") }}
-                    </p>
-                    <p class="value font-weight-black">
-                      <u-loading-ellipsis
-                        v-if="refreshing_price"
-                        css-mode
-                        :light="light_checkout"
-                      ></u-loading-ellipsis>
-
-                      <u-price v-else :amount="final_price" x-large></u-price>
-
-                      <span v-if="isSubscription && subscription_period_obj">
-                        / {{ $t(subscription_period_obj.title) }}</span
-                      >
-                    </p>
-                  </div>
-                </div>
-                <!-- END OF PRICES -->
-                <div v-else class="text-h4 text-center p-3">
-                  Sorry, Can not calculate the bill. contact us by :
-                  info@selldone.com
-                </div>
-
-                <template v-if="!isService">
-                  <!-- ════════════════════════ 🦠 Connect Shipping Options ════════════════════════ -->
-
-                  <s-shop-connect-shipping-options
-                    :basket="basket"
-                    @change="
-                      (connect_shippings) => {
-                        delivery_info.connect_shippings = connect_shippings;
-                        setBasketConfig();
-                      }
-                    "
-                    :start-package-index="0"
-                  ></s-shop-connect-shipping-options>
-
-                  <!-- ════════════════════════ 🍇 Vendors Shipping Options ════════════════════════ -->
-                  <s-order-shipping-vendors-options
-                    :basket="basket"
-                    :deliveryInfo="delivery_info"
-                    @set-basket-config="setBasketConfig"
-                    :start-package-index="
-                      bill?.connect_shipping_options?.length
-                    "
-                  ></s-order-shipping-vendors-options>
-
-                  <!-- ════════════════════════ 🥬 Store Shipping Options (Multi Warehouse - soon) ════════════════════════ -->
-
-                  <s-order-shipping-stores-options
-                    :basket="basket"
-                    :delivery-info="delivery_info"
-                    @set-basket-config="setBasketConfig"
-                    :start-package-index="
-                      bill?.connect_shipping_options?.length +
-                      bill?.vendor_shipping_options?.length
-                    "
-                  ></s-order-shipping-stores-options>
-
-                  <!-- ════════════════════════ 🥕 Drop Shipping delivery ════════════════════════ -->
-                  <div v-if="extra_shipping_counts" class="my-4">
-                    <p class="text-center font-weight-bold">
-                      <v-icon class="blink-me me-1" color="green" size="x-small"
-                        >lens
-                      </v-icon>
-                      {{
-                        $t("basket_page.extra_shipping_count", {
-                          count: has_custom_delivery
-                            ? 1 + extra_shipping_counts
-                            : extra_shipping_counts,
-                        })
-                      }}
-                    </p>
-                    <p class="text-start small">
-                      <v-icon class="me-1" size="small">info</v-icon>
-                      {{ $t("basket_page.extra_shipping_message") }}
-                    </p>
-                  </div>
+              <p v-if="pay_blocker" class="k-cart__need -center">
+                <v-icon size="16">error_outline</v-icon>{{ pay_blocker }}
+              </p>
+              <button
+                :class="{ '-off': !can_press_pay }"
+                :disabled="busy_submit"
+                class="k-cart__go"
+                type="button"
+                @click="onPay"
+              >
+                <v-progress-circular v-if="busy_save || busy_bill || busy_submit" indeterminate size="20" width="2" />
+                <v-icon v-else size="20">{{ is_service_need_pricing ? "check_circle" : "lock" }}</v-icon>
+                {{ pay_label }}
+                <template v-if="final_price > 0 && !is_service_need_pricing">
+                  <span aria-hidden="true" class="k-cart__dot">·</span>
+                  <u-price :amount="final_price" :currency="basket.currency"></u-price>
                 </template>
+              </button>
+              <p v-if="can_pay_cod" class="k-cart__note -center">
+                <v-icon size="16">payments</v-icon>{{ $t("basket_page.can_pay_cod_message") }}
+              </p>
+            </div>
 
-                <!-- ========== Alert ========== -->
+            <u-payment-stripe-split
+              v-if="canPayAndComplete && !isService"
+              :basket="basket"
+              :country-code="receiver_info?.country"
+            ></u-payment-stripe-split>
+          </div>
+        </aside>
 
-                <p
-                  v-if="error_message_payment"
-                  class="bg-danger-match text-white text-center font-weight-medium mt-3 px-2 mx-n3 py-2"
-                >
-                  {{ error_message_payment }}
-                  <v-icon class="mx-1 blink-me" dark size="small"
-                    >arrow_downward
-                  </v-icon>
-                </p>
-
-                <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Select Receiver Address ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃  -->
-                <div v-if="has_delivery">
-                  <div
-                    class="spacer-line my-3"
-                    :caption="$t('global.commons.receiver')"
-                  />
-
-                  <div
-                    v-intersect="
-                      (isIntersecting, entries, observer) => {
-                        intersect_location_btn = isIntersecting;
-                      }
-                    "
-                    style="min-height: 78px"
-                  >
-                    <div v-if="!is_valid_location" class="widget-buttons">
-                      <v-btn
-                        :class="{
-                          's--shop-basket-buy-button slideInUp':
-                            !intersect_location_btn,
-                          'is-mobile': isMobile,
-                          '-up': bottom_nav_show,
-                        }"
-                        class="select-address-button"
-                        color="#4d90fe"
-                        @click.stop="showMap()"
-                        variant="elevated"
-                      >
-                        <v-icon class="me-2"> near_me</v-icon>
-                        {{
-                          isService
-                            ? $t("global.receiver_info.service_address")
-                            : all_is_pickup
-                              ? $t(
-                                  "global.receiver_info.select_billing_address",
-                                )
-                              : $t("global.receiver_info.receiver_address")
-                        }}
-
-                        <u-price
-                          v-if="final_price > 0 && !intersect_location_btn"
-                          :amount="final_price"
-                          :currency="basket.currency"
-                          class="ms-3 ps-3 border-start"
-                        ></u-price>
-                      </v-btn>
-                    </div>
-
-                    <s-shop-customer-receiver-info-widget
-                      v-else
-                      :dark="!light_checkout"
-                      :noMap="no_map"
-                      :receiver-info="receiver_info"
-                      @show:detail="
-                        () => {
-                          startup_mode_map_dialog = 'detail';
-                          showMap();
-                        }
-                      "
-                      @show:map="
-                        startup_mode_map_dialog = 'default';
-                        showMap();
-                      "
-                      @update:country="setBasketConfig"
-                    ></s-shop-customer-receiver-info-widget>
-                  </div>
-                </div>
-
-                <!-- ========== Alert Not Click On Location!========== -->
-
-                <p
-                  v-if="
-                    has_delivery && !error_message_payment && !is_valid_location
-                  "
-                  class="bg-danger-match text-white text-center font-weight-medium mt-3 px-2 mx-n3 py-2 my-2"
-                >
-                  <v-icon class="me-1 blink-me" dark size="small"
-                    >error_outline
-                  </v-icon>
-                  {{ $t("basket_page.select_location_error") }}
-                </p>
-
-                <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Collect Email ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃  -->
-
-                  <div
-                    class="spacer-line mt-6 mb-3"
-                    :caption="$t('global.commons.user')"
-                  />
-                  <template v-if="user">
-                    <div class="d-flex align-center py-1 text-start">
-                      <v-avatar
-                        :size="42"
-                        class="hover-scale m-2 avatar-gradient -thin"
-                      >
-                        <v-img :src="getUserAvatar(user.id)" />
-                      </v-avatar>
-
-                      <div class="flex-grow-1">
-                        <b class="single-line"
-                          >{{ user.name }}
-                          <v-icon
-                            v-if="user.verified"
-                            class="ms-1"
-                            color="blue"
-                            size="small"
-                            >verified
-                          </v-icon>
-                          <v-icon
-                            v-if="user.ban"
-                            :title="`User banned for ${user.ban}`"
-                            class="ms-1"
-                            color="red"
-                            >block
-                          </v-icon>
-                          <v-icon
-                            v-if="user.block_at"
-                            :title="`Blocked by system at ${getFromNowString(
-                              user.block_at,
-                            )} for ${user.block_hours} hours!`"
-                            class="ms-1"
-                            color="red"
-                          >
-                            crisis_alert
-                          </v-icon>
-                        </b>
-
-                        <v-row
-                          v-if="user.email || user.phone"
-                          :class="{ 'my-1': !small }"
-                          class="small"
-                          no-gutters
-                        >
-                          <div class="flex-grow-1">
-                            <span  class="py-1">{{
-                              user.email
-                            }}</span>
-                          </div>
-                          <div v-if="user.phone" class="flex-grow-1">
-                            <span class="py-1" >{{
-                              user.phone
-                            }}</span>
-                          </div>
-                        </v-row>
-                      </div>
-                    </div>
-                  </template>
-                  <template v-else-if="has_guest_payment">
-                    <v-text-field
-                      v-model="guest_email"
-                      variant="solo"
-                      prepend-inner-icon="email"
-                      class="mt-5 mx-auto"
-                      placeholder="john@gmail.com"
-                      :label="$t('global.commons.email')"
-                      persistent-placeholder
-                      max-width="500"
-                      :rules="[GlobalRules.required(), GlobalRules.email()]"
-                      rounded="lg"
-                      @blur="setBasketConfig"
-                      messages=" "
-                    >
-                      <template v-slot:append-inner>
-                        <v-icon
-                          v-if="enter_guest_email_error"
-                          color="red"
-                          class="blink-me-linear"
-                          >warning</v-icon
-                        >
-                      </template>
-
-                      <template v-slot:message>
-                        <div class="small d-flex align-center">
-                          {{ $t("global.commons.or") }}
-                          <v-btn
-                            variant="text"
-                            slim
-                            color="primary"
-                            class="tnt mx-1"
-                            @click="NeedLogin"
-                            prepend-icon="login"
-                            ><b>{{ $t("global.actions.login") }}</b></v-btn
-                          >
-                        </div>
-                      </template>
-                    </v-text-field>
-                  </template>
-
-                <div v-else class="widget-buttons">
-                  <v-btn
-                      variant="text"
-                      color="primary"
-                      size="x-large"
-                      @click="NeedLogin"
-                      prepend-icon="login"
-                  ><b>{{ $t("global.actions.login") }}</b></v-btn
-                  >
-                </div>
-
-                <!-- ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ Billing Info ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃  -->
-
-                <div v-if="canPayAndComplete" class="mt-3">
-                  <div
-                    class="spacer-line my-3"
-                    :caption="$t('global.commons.billing')"
-                  />
-
-                  <s-shop-billing-address-form
-                    v-model="billing"
-                    :dark="!light_checkout"
-                    :receiver-info="receiver_info"
-                    @change="setBasketConfig"
-                  ></s-shop-billing-address-form>
-                </div>
-
-                <!-- ============== Custom Checkout Form ============== -->
-
-                <s-order-checkout-form
-                  v-model="form"
-                  :country="receiver_info?.country?receiver_info.country:billing?.country"
-                  class="my-5"
-                  @changed="setBasketConfig"
-                  :key="'socf-' + basket?.id /*Force update*/"
-                ></s-order-checkout-form>
-
-                <!-- ============== User messages (by server) ============== -->
-
-                <div
-                  v-if="bill?.user_messages?.length"
-                  class="py-2 border-between-vertical mt-5 text-h4"
-                >
-                  <div
-                    v-for="(msg, i) in bill.user_messages"
-                    :key="i"
-                    class="py-2"
-                  >
-                    <v-icon class="me-1" color="amber" size="large"
-                      >warning
-                    </v-icon>
-                    <span v-html="msg"></span>
-                  </div>
-                </div>
-
-                <!-- ********************************** Payment ********************************** -->
-
-                <div
-                  v-intersect="
-                    (isIntersecting, entries, observer) => {
-                      intersect_payment_btn = isIntersecting;
-                    }
-                  "
-                  class="d-flex"
-                  style="min-height: 78px"
-                >
-                  <div class="widget-buttons">
-                    <!-- Payment button (Online & COD) -->
-                    <v-btn
-                      v-if="canPayAndComplete && !is_service_need_pricing"
-                      :class="{
-                        's--shop-basket-buy-button slideInUp':
-                          !intersect_payment_btn,
-                        'is-mobile': isMobile,
-                        /*disabled: !bill,*/
-                        '-up': bottom_nav_show,
-                        disabled:
-                          !can_pay /*System tell us that user can not pay! (on bill calculation step in server)*/,
-                      }"
-                      class="select-address-button"
-                      color="#16a085"
-                      variant="elevated"
-                      rounded
-                      :disabled="enter_guest_email_error"
-                      @click.stop="goToPaymentBasket(null)"
-                    >
-                      <span
-                        v-if="!$vuetify.display.xs"
-                        class="me-4"
-                        style="min-width: 28px"
-                      >
-                      </span>
-                      <v-icon class="me-2"> payment</v-icon>
-                      {{ $t("basket_page.pay_and_complete_action") }}
-
-                      <u-price
-                        v-if="final_price > 0 && !intersect_payment_btn"
-                        :amount="final_price"
-                        :currency="basket.currency"
-                        class="ms-3 ps-3 border-start"
-                      ></u-price>
-
-                      <span
-                        v-if="!$vuetify.display.xs || busy_save || busy_bill"
-                        class="ms-4"
-                        style="min-width: 28px"
-                      >
-                        <v-fab-transition>
-                          <v-progress-circular
-                            v-if="busy_save || busy_bill"
-                            indeterminate
-                            size="24"
-                          ></v-progress-circular>
-                        </v-fab-transition>
-                      </span>
-                      <small v-if="enter_guest_email_error" class="ms-1">
-                        <v-icon>warning</v-icon>
-                        {{$t('global.commons.enter_email')}}!</small>
-                    </v-btn>
-
-                    <!-- Checkout without payment (Service) -->
-
-                    <v-btn
-                      v-if="canPayAndComplete && is_service_need_pricing"
-                      :class="{
-                        's--shop-basket-buy-button slideInUp':
-                          !intersect_payment_btn,
-                        'is-mobile': isMobile,
-                        /*disabled: !bill,*/
-                        '-up': bottom_nav_show,
-                        disabled:
-                          !can_pay /*System tell us that user can not pay! (on bill calculation step in server)*/,
-                      }"
-                      :loading="busy_submit"
-                      class="select-address-button"
-                      color="#16a085"
-                      variant="elevated"
-                      rounded
-                      :disabled="enter_guest_email_error"
-                      @click.stop="submitServiceOrder()"
-                    >
-                      <v-icon class="me-2"> check_circle</v-icon>
-                      {{ $t("basket_page.pre_confirm_service") }}
-
-                      <u-price
-                        v-if="final_price > 0 && !intersect_payment_btn"
-                        :amount="final_price"
-                        :currency="basket.currency"
-                        class="ms-3 ps-3 border-start"
-                      ></u-price>
-
-
-                      <small v-if="enter_guest_email_error" class="ms-1">
-                        <v-icon>warning</v-icon>
-                        {{$t('global.commons.enter_email')}}!</small>
-                    </v-btn>
-                  </div>
-                </div>
-                <span v-if="can_pay_cod" class="mx-1 small d-flex align-center"
-                  ><v-icon class="me-1">check_circle</v-icon>
-                  {{ $t("basket_page.can_pay_cod_message") }}</span
-                >
-
-                <!-- ******************************************************************************************** -->
-
-                <template v-if="canPayAndComplete && !isService">
-                  <u-payment-stripe-split
-                    :basket="basket"
-                    :country-code="receiver_info?.country"
-                    :dark="!light_checkout"
-                  ></u-payment-stripe-split>
-                </template>
-              </div>
-            </v-sheet>
-          </v-col>
-        </v-row>
-      </v-container>
+        <kalio-often-added :count="4" class="k-cart__often" />
+      </div>
 
       <!-- Kalio: an empty basket is a starting point, so it offers the way back
            to the aisles instead of only announcing itself. The heading keeps
@@ -965,56 +360,100 @@
       <div v-if="busy_shop" class="busy-overlay">
         <div class="text-h4 font-weight-thin">
           <v-icon class="me-2" size="large">hourglass_empty</v-icon>
-
           {{ $t("global.commons.waiting") }}...
         </div>
       </div>
-    </v-card>
+    </div>
 
-    <!-- █████████████████████ Dialog > Map █████████████████████ -->
-
-    <v-dialog
-      v-if="has_delivery"
-      v-model="map_dialog"
-      :content-class="no_map ? 'bg-gray' : 'bg-map'"
-      fullscreen
-      :scrim="false"
-      transition="dialog-bottom-transition"
+    <!-- On a phone: the total and Pay stay at the foot of the window
+         while the receipt's own button is out of view. -->
+    <div
+      v-if="basket?.items?.length && !intersect_payment_btn"
+      :class="{ '-up': bottom_nav_show }"
+      class="k-cart__bar"
     >
-      <!-- Shop Configuration ➡ Map enabled / disabled -->
-      <u-map-view
-        v-if="dialog_pre"
-        v-model="basket.receiver_info"
-        v-model:center="center"
-        :address-type="$t('global.receiver_info.map.address_type')"
-        :availableCountries="
-          $shop.countries?.length ? $shop.countries : undefined
-        "
-        :color="ThemeColorDark"
-        :confirm-text="$t('global.receiver_info.map.confirm')"
-        :delay-load="1000"
-        :hide="!map_dialog"
-        :noMap="no_map"
-        :receptor-type="$t('global.receiver_info.map.receptor_type')"
-        :startup-mode="startup_mode_map_dialog"
-        :title="$t('global.receiver_info.map.title')"
-        :zoom="17"
-        can-select-address
-        has-address-book
-        has-bottom-bar
-        has-top-bar
-        style="width: 100%; height: 100%"
-        @clickSetLocation="onClickSetLocation"
-        @close="map_dialog = false"
-      />
+      <span class="k-cart__bar-total">
+        <small>Total</small>
+        <u-price :amount="final_price" :currency="basket.currency"></u-price>
+      </span>
+      <button :class="{ '-off': !can_press_pay }" class="k-cart__go" type="button" @click="onPay">
+        <v-icon size="20">{{ is_service_need_pricing ? "check_circle" : "lock" }}</v-icon>{{ pay_label_short }}
+      </button>
+    </div>
+
+    <!-- ▆▆▆▆▆▆▆▆ When: the shipping options, in a sheet ▆▆▆▆▆▆▆▆ -->
+    <v-dialog
+      v-if="basket && !isService"
+      v-model="delivery_sheet"
+      :fullscreen="$vuetify.display.xs"
+      class="k-sheet-dialog"
+      content-class="k-sheet-host"
+      eager
+      max-width="580"
+      scrollable
+      :transition="$vuetify.display.xs ? 'dialog-bottom-transition' : 'dialog-transition'"
+    >
+      <div class="k-sheet">
+        <div class="k-sheet__head">
+          <div>
+            <h2>When do you want it?</h2>
+            <p>How it reaches you, and a day and a part of it.</p>
+          </div>
+          <button aria-label="Close" class="k-sheet__x" type="button" @click="delivery_sheet = false">
+            <v-icon>close</v-icon>
+          </button>
+        </div>
+        <div class="k-sheet__body">
+          <s-shop-connect-shipping-options
+            :basket="basket"
+            :start-package-index="0"
+            @change="
+              (connect_shippings) => {
+                delivery_info.connect_shippings = connect_shippings;
+                setBasketConfig();
+              }
+            "
+          ></s-shop-connect-shipping-options>
+          <s-order-shipping-vendors-options
+            :basket="basket"
+            :deliveryInfo="delivery_info"
+            :start-package-index="bill?.connect_shipping_options?.length"
+            @set-basket-config="setBasketConfig"
+          ></s-order-shipping-vendors-options>
+          <s-order-shipping-stores-options
+            :basket="basket"
+            :delivery-info="delivery_info"
+            :start-package-index="bill?.connect_shipping_options?.length + bill?.vendor_shipping_options?.length"
+            @set-basket-config="setBasketConfig"
+          ></s-order-shipping-stores-options>
+          <p v-if="extra_shipping_counts" class="k-cart__note">
+            <v-icon size="16">info</v-icon>{{ $t("basket_page.extra_shipping_message") }}
+          </p>
+        </div>
+        <div class="k-sheet__foot">
+          <button class="k-sheet__go" type="button" @click="delivery_sheet = false">Done</button>
+        </div>
+      </div>
     </v-dialog>
+
+    <!-- ▆▆▆▆▆▆▆▆ Where: the address sheet (replaces Selldone's full-screen map) ▆▆▆▆▆▆▆▆ -->
+    <kalio-address-sheet
+      v-if="has_delivery"
+      v-model="address_sheet"
+      :center="center"
+      :countries="$shop.countries?.length ? $shop.countries : null"
+      :heading="isService ? 'Where should we come?' : all_is_pickup ? 'Your billing address' : 'Where should it go?'"
+      :lede="isService ? 'The address for the service.' : 'Your address, for the receipt and the seller.'"
+      :no-map="no_map"
+      :receiver-info="receiver_info"
+      @save="onClickSetLocation"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
-import SShopBasketItems from "@selldone/components-vue/storefront/order/basket/SShopBasketItems.vue";
 import { ShopTransportations } from "@selldone/core-js/enums/logistic/ShopTransportations";
 import SDiscountCodeInput from "@selldone/components-vue/storefront/discount-code/input/SDiscountCodeInput.vue";
 import { GtagEcommerce } from "@selldone/components-vue/plugins/gtag/GtagEcommerce";
@@ -1022,7 +461,6 @@ import SStorefrontCouponsList from "@selldone/components-vue/storefront/coupon/l
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SStorefrontLotteryPrizesList from "@selldone/components-vue/storefront/lottery/prizes-list/SStorefrontLotteryPrizesList.vue";
 import VariantItemMini from "@selldone/components-vue/storefront/product/variant/VariantItemMini.vue";
-import SShopCustomerReceiverInfoWidget from "@selldone/components-vue/storefront/order/delivery/SShopCustomerReceiverInfoWidget.vue";
 import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
 import UTextValueDashed from "@selldone/components-vue/ui/text/value-dashed/UTextValueDashed.vue";
 import { StorefrontLocalStorages } from "@selldone/core-js/helper/local-storage/StorefrontLocalStorages";
@@ -1040,7 +478,6 @@ import SOrderShippingStoresOptions from "@selldone/components-vue/storefront/ord
 import ULoadingEllipsis from "@selldone/components-vue/ui/loading/ellipsis/ULoadingEllipsis.vue";
 import { Basket } from "@selldone/core-js/models";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
-import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import ProductMixin from "@selldone/components-vue/mixin/product/ProductMixin.ts";
 import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
@@ -1048,7 +485,11 @@ import AuthMixin from "@selldone/components-vue/mixin/auth/AuthMixin.ts";
 import ClubMixin from "@selldone/components-vue/mixin/club/ClubMixin.ts";
 import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
 import SOrderCheckoutForm from "@selldone/components-vue/storefront/order/checkout/SOrderCheckoutForm.vue";
-import UButtonWhatsapp from "@selldone/components-vue/ui/button/whatsapp/UButtonWhatsapp.vue";
+import { WeekDays } from "@selldone/core-js/enums/logistic/WeekDays";
+import { TimeSpans } from "@selldone/core-js/enums/logistic/TimeSpans";
+import KalioCartLines from "../../../components/kalio/checkout/KalioCartLines.vue";
+import KalioOftenAdded from "../../../components/kalio/KalioOftenAdded.vue";
+import KalioAddressSheet from "../../../components/kalio/checkout/KalioAddressSheet.vue";
 
 export default {
   name: "StorefrontPageBasketCart",
@@ -1063,9 +504,10 @@ export default {
   ],
 
   components: {
-    UButtonWhatsapp,
+    KalioCartLines,
+    KalioOftenAdded,
+    KalioAddressSheet,
     SOrderCheckoutForm,
-    UMapView,
     ULoadingEllipsis,
     SOrderShippingStoresOptions,
     SOrderShippingVendorsOptions,
@@ -1075,13 +517,10 @@ export default {
     SShopBillingAddressForm,
     SShopShareOrderButton,
 
-    UTextValueDashed,
-    SShopCustomerReceiverInfoWidget,
     VariantItemMini,
     SStorefrontLotteryPrizesList,
     SStorefrontCouponsList,
     SDiscountCodeInput,
-    SShopBasketItems,
   },
 
   inject: ["$shop"],
@@ -1138,6 +577,11 @@ export default {
     //-------------- Dynamic buttons -------------
     intersect_location_btn: false,
     intersect_payment_btn: false,
+
+    //-------------- Kalio -------------
+    delivery_sheet: false,
+    address_sheet: false,
+    guest_email_touched: false,
   }),
   /**
    * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -1482,7 +926,106 @@ export default {
     },
     enter_guest_email_error(){
       return   !this.user &&  this.has_guest_payment && !this.guest_email // Guest email is required!
-    }
+    },
+
+    // ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Kalio ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
+    /** How many things are in the basket (2 breads are 2). */
+    units() {
+      return this.items.reduce((sum, item) => sum + (item.count || 0), 0);
+    },
+    seller_count() {
+      return new Set(this.items.map((item) => item.vendor_id || 0)).size;
+    },
+    /** Everything the shopper saves, for the receipt's pill. */
+    saved_total() {
+      return (
+        (this.total_items_discount || 0) +
+        (this.total_offers_amount || 0) +
+        (this.cross_selling_discount > 0 ? this.cross_selling_discount : 0) +
+        (this.discount_code_amount > 0 ? this.discount_code_amount : 0) +
+        (this.customer_club_discount > 0 ? this.customer_club_discount : 0) +
+        (this.coupon ? this.coupon_discount || 0 : 0) +
+        (this.prize ? this.prize_discount || 0 : 0)
+      );
+    },
+    address_line() {
+      const info = this.receiver_info;
+      if (!info) return "";
+      return [info.address, info.no && `No. ${info.no}`, info.unit && `Unit ${info.unit}`].filter(Boolean).join(", ");
+    },
+    /** Every way the shop has to send this basket (shipping methods, pickup
+     *  points), from the bill. */
+    transportation_list() {
+      const out = [];
+      for (const option of this.store_shipping_options || []) out.push(...(option.transportations || []));
+      for (const option of this.vendor_shipping_options || []) out.push(...(option.transportations || []));
+      return out;
+    },
+    /** The When card shows when there is something to choose: a shipping
+     *  method, a pickup point, or a delivery service. */
+    show_when() {
+      if (!this.has_delivery || this.isService || !this.bill) return false;
+      if (this.connect_shipping_options?.length) return true;
+      return this.transportation_list.some(
+        (t) => t.type !== ShopTransportations.Pickup.code || t.pickups?.length,
+      );
+    },
+    transportation_now() {
+      const type = this.delivery_info?.type;
+      return type ? this.transportation_list.find((t) => t.type === type) : null;
+    },
+    when_chip() {
+      const info = this.delivery_info || {};
+      const parts = [];
+      if (info.date) {
+        parts.push(new Date(info.date).toLocaleDateString(this.$i18n?.locale || "en", { weekday: "short", month: "short", day: "numeric" }));
+      } else if (info.custom && info.days?.length && info.days.length < 7) {
+        parts.push(info.days.map((day) => (WeekDays[day] ? this.$t(WeekDays[day].name).slice(0, 3) : day)).join(", "));
+      }
+      if (info.custom && info.time_spans?.length && info.time_spans.length < (this.transportation_now?.time_spans?.length || 99)) {
+        parts.push(info.time_spans.map((span) => (TimeSpans[span] ? this.$t(TimeSpans[span].name) : span)).join(", "));
+      }
+      if (!parts.length && this.transportation_now) parts.push(this.transportationName(this.transportation_now));
+      return parts.join(" · ");
+    },
+    when_text() {
+      const t = this.transportation_now;
+      if (!t) return "Choose how it reaches you, and when.";
+      const name = this.transportationName(t);
+      if (t.type === ShopTransportations.Pickup.code) {
+        const place = this.receiver_info?.title || this.receiver_info?.name || this.receiver_info?.address;
+        return place ? `Pickup from ${place}.` : `${name}.`;
+      }
+      return this.shipping_cost === 0 ? `${name}, free.` : `${name}.`;
+    },
+    detail_cards() {
+      return (this.show_when ? 1 : 0) + (this.has_delivery ? 1 : 0) + 1;
+    },
+    guest_email_ok() {
+      return !this.guest_email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.guest_email);
+    },
+    /** What still stands between the shopper and paying, in a line. */
+    pay_blocker() {
+      if (!this.user && !this.has_guest_payment) return "Sign in to place the order.";
+      if (this.has_delivery && !this.is_valid_location) return "Add your address to pay.";
+      if (this.error_message_payment) return this.error_message_payment;
+      if (this.enter_guest_email_error) return "Add your email to pay.";
+      if (!this.guest_email_ok) return "Check your email address.";
+      if (this.bill && !this.can_pay) return "This basket cannot be paid yet.";
+      return null;
+    },
+    can_press_pay() {
+      return !this.pay_blocker && this.canPayAndComplete;
+    },
+    pay_label() {
+      if (this.is_service_need_pricing) return this.$t("basket_page.pre_confirm_service");
+      if (!this.user && !this.has_guest_payment) return "Sign in";
+      if (this.has_delivery && !this.is_valid_location) return "Add your address";
+      return "Pay";
+    },
+    pay_label_short() {
+      return this.is_service_need_pricing ? this.$t("basket_page.pre_confirm_service") : this.pay_label;
+    },
   },
 
   /**
@@ -1493,6 +1036,9 @@ export default {
 
   watch: {
     map_dialog(val) {
+      this.$store.commit("setForceHideNavigation", val);
+    },
+    address_sheet(val) {
       this.$store.commit("setForceHideNavigation", val);
     },
 
@@ -1571,6 +1117,34 @@ export default {
    */
   methods: {
     ShadeColor,
+
+    // ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Kalio ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
+    transportationName(transportation) {
+      return transportation.title || this.$t(ShopTransportations[transportation.type]?.name || transportation.type);
+    },
+    openAddress() {
+      this.address_sheet = true;
+    },
+    onGuestEmail() {
+      this.guest_email_touched = true;
+      if (this.guest_email_ok) this.setBasketConfig();
+    },
+    /* Pay, or take the shopper to what is still missing. */
+    onPay() {
+      if (!this.user && !this.has_guest_payment) return this.NeedLogin();
+      if (this.has_delivery && !this.is_valid_location) return this.openAddress();
+      if (this.error_message_payment) return this.openAddress();
+      if (this.enter_guest_email_error || !this.guest_email_ok) {
+        this.guest_email_touched = true;
+        const input = this.$el?.querySelector?.(".k-cart__input");
+        input?.scrollIntoView({ behavior: "smooth", block: "center" });
+        input?.focus({ preventScroll: true });
+        return;
+      }
+      if (!this.canPayAndComplete || (this.bill && !this.can_pay)) return;
+      if (this.is_service_need_pricing) return this.submitServiceOrder();
+      this.goToPaymentBasket(null);
+    },
     selectLottery(lottery) {
       // console.log("---selectLottery---", lottery);
       this.basket.lottery = lottery;
@@ -1734,6 +1308,7 @@ export default {
 
       this.basket.receiver_info = info;
       this.map_dialog = false;
+      this.address_sheet = false;
 
       this.setBasketConfig();
 

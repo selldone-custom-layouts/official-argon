@@ -750,84 +750,10 @@ $k-header-strip: 46px;
     font-size: 14.5px;
     font-weight: 700;
   }
-
-  /* Often added: three minis with their own "+". */
-  &__label {
-    margin: 20px 0 10px;
-  }
-
-  &__minis {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  &__mini {
-    min-width: 0;
-  }
-
-  &__mini-pic {
-    position: relative;
-    aspect-ratio: 1;
-    border-radius: 14px;
-    background: var(--k-well);
-
-    > a {
-      display: grid;
-      place-items: center;
-      width: 100%;
-      height: 100%;
-    }
-
-    img {
-      width: 76%;
-      height: 76%;
-      object-fit: contain;
-      mix-blend-mode: multiply;
-    }
-  }
-
-  &__mini-add {
-    position: absolute;
-    right: 6px;
-    bottom: 6px;
-    display: grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #fff;
-    color: var(--k-green) !important;
-    box-shadow: 0 4px 10px -4px rgba(16, 35, 27, 0.35);
-    transition: background 0.15s, color 0.15s;
-
-    &:hover:not(:disabled) {
-      background: var(--k-green);
-      color: #fff !important;
-    }
-  }
-
-  &__mini-name {
-    display: -webkit-box;
-    margin-top: 6px;
-    overflow: hidden;
-    color: var(--k-ink) !important;
-    font-size: 12.5px;
-    line-height: 1.3;
-    text-decoration: none;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-  }
-
-  &__mini-price {
-    font-size: 13px;
-    font-weight: 700;
-  }
 }
 
-[dir="rtl"] .k-bdrawer__mini-add {
-  right: auto;
-  left: 6px;
+.k-bdrawer__often {
+  margin-top: 20px;
 }
 
 @media (max-width: 599px) {

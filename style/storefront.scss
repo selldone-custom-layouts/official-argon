@@ -22,6 +22,7 @@
 @use "kalio-sections"; // Kalio: the sections Kalio owns outright
 @use "kalio-product"; // Kalio: the product page
 @use "kalio-shell"; // Kalio: header, footer, drawers, filter panel
+@use "kalio-checkout"; // Kalio: basket page, its sheets, payment, order page
 
 // --------------------------------------------------------
 .add-marginal-side-menu-open {

@@ -4,7 +4,7 @@
   A receipt first: the subtotal large, what the shopper saves, and
   Checkout right there. Then the basket in compact rows (picture, name,
   size and seller, a quantity stepper, the line's price), and under it
-  three products often added, each with its own "+". Design C of three
+  three products often added, each with its own "+" (KalioOftenAdded). Design C of three
   drawn on 4 November 2026 (../kalio-design/basket-drawer-options/).
 
   It replaces Selldone's BasketTopMenu ("YOUR CART", a black "Count"
@@ -63,42 +63,15 @@
       </ul>
     </section>
 
-    <div v-if="suggestions.length" class="k-bdrawer__suggest">
-      <p class="k-eyebrow k-bdrawer__label">Often added</p>
-      <div class="k-bdrawer__minis">
-        <div v-for="product in suggestions" :key="product.id" class="k-bdrawer__mini">
-          <div class="k-bdrawer__mini-pic">
-            <router-link :to="productRoute(product.id)" :aria-label="product.title" @click="$emit('close')">
-              <img v-if="image(product)" :src="image(product)" alt="" loading="lazy" />
-            </router-link>
-            <button
-              :aria-label="`Add ${product.title}`"
-              :disabled="adding(product)"
-              class="k-bdrawer__mini-add"
-              type="button"
-              @click="add(product)"
-            >
-              <v-progress-circular v-if="adding(product)" indeterminate size="16" width="2" />
-              <v-icon v-else size="18">add</v-icon>
-            </button>
-          </div>
-          <router-link :to="productRoute(product.id)" class="k-bdrawer__mini-name" @click="$emit('close')">
-            {{ product.title }}
-          </router-link>
-          <u-price :amount="priceOf(product).now" :currency="currency" class="k-bdrawer__mini-price" />
-        </div>
-      </div>
-    </div>
+    <kalio-often-added :count="3" class="k-bdrawer__often" @navigate="$emit('close')" />
   </div>
 </template>
 
 <script>
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
-import { hasSizes, pendingLine, quickAdd, settling, shownCount, stepTo } from "../kalio-basket";
-import { offers, priceOf, productImage, vendors } from "../kalio-catalog";
-
-const SUGGESTED = 3;
+import { settling, shownCount, stepTo } from "../kalio-basket";
+import { productImage, vendors } from "../kalio-catalog";
+import KalioOftenAdded from "../KalioOftenAdded.vue";
 
 /* The size of a variant in words: its volume, weight, pack, colour or style. */
 function sizeOf(variant) {
@@ -108,23 +81,17 @@ function sizeOf(variant) {
 
 export default {
   name: "KalioBasketDrawer",
-  mixins: [CurrencyMixin],
-  inject: ["$shop"],
+  components: { KalioOftenAdded },
 
   emits: ["close"],
 
   data() {
     return {
       sellerNames: new Map(),
-      catalogue: [],
     };
   },
 
   computed: {
-    currency() {
-      return this.GetUserSelectedCurrency()?.code;
-    },
-
     /* One receipt per basket with something in it: usually the one basket
        of groceries. Rows taken to zero leave at once; the bill follows. */
     groups() {
@@ -150,41 +117,11 @@ export default {
         })
         .filter((group) => group.items.length);
     },
-
-    inBasket() {
-      const ids = new Set();
-      for (const basket of this.getBaskets()) for (const item of basket?.items || []) ids.add(item.product_id);
-      return ids;
-    },
-
-    /* Three products to add with one tap: none already in the basket, none
-       that needs a size chosen, in stock; first from the aisles the basket
-       already has, best deal first. */
-    suggestions() {
-      if (!this.catalogue.length) return [];
-      const aisles = new Set();
-      for (const basket of this.getBaskets())
-        for (const item of basket?.items || []) if (item.product?.category_id) aisles.add(item.product.category_id);
-      const pick = this.catalogue
-        .filter((product) => !this.inBasket.has(product.id) && !hasSizes(product) && product.quantity > 0)
-        .map((product) => ({
-          product,
-          near: aisles.has(product.category_id) ? 1 : 0,
-          off: product.discount && product.price ? product.discount / product.price : 0,
-        }))
-        .sort((a, b) => b.near - a.near || b.off - a.off || a.product.id - b.product.id);
-      return pick.slice(0, SUGGESTED).map(({ product }) => product);
-    },
   },
 
   created() {
     vendors().then((list) => {
       this.sellerNames = new Map(list.map((vendor) => [vendor.id, vendor.name]));
-    });
-    offers().then(({ shelfOf }) => {
-      const seen = new Map();
-      for (const shelf of shelfOf.values()) for (const product of shelf) if (!seen.has(product.id)) seen.set(product.id, product);
-      this.catalogue = [...seen.values()];
     });
   },
 
@@ -193,10 +130,6 @@ export default {
 
     image(product) {
       return productImage(product, true);
-    },
-
-    priceOf(product) {
-      return priceOf(this.$shop, product, this.currency);
     },
 
     meta(item) {
@@ -219,18 +152,6 @@ export default {
     step(item, delta) {
       const product = { id: item.product_id, type: item.product?.type };
       stepTo(this, product, item, this.shown(item) + delta);
-    },
-
-    /* Its "+" was pressed and the basket has not answered yet. */
-    adding(product) {
-      return !!pendingLine(product);
-    },
-
-    add(product) {
-      quickAdd(this, product, (picked) => {
-        this.$emit("close");
-        this.$router.push(this.productRoute(picked.id));
-      });
     },
 
     productRoute(id) {
