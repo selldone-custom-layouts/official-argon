@@ -17,9 +17,12 @@
   ../kalio-design/basket-flow-options/): a word on where the order stands
   with its number, the invoice and a share link; its steps (placed,
   confirmed, packing, sent, received) as a line; the items by seller; then
-  Selldone's own widgets, in Kalio's cards: payment (which also pays an
-  order still waiting for it), delivery, the chat with the shop, the
-  sellers' own orders and returns.
+  Kalio's delivery card (KalioOrderDelivery) and the conversation with the
+  shop (KalioOrderChat), and beside them the receipt with how the order is
+  paid (KalioOrderReceipt, with "Pay now" while a payment waits). A bank
+  transfer's details and receipt upload, the sellers' own orders, returns
+  and refunds stay Selldone's own, in Kalio's cards. On a phone the
+  receipt comes right after the items.
 -->
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="k-order__page">
@@ -88,47 +91,34 @@
           </section>
         </div>
 
-        <s-shop-customer-order-payment-widget
+        <section v-if="transfers.length" class="k-ocard k-order__transfer">
+          <header class="k-ocard__head">
+            <span aria-hidden="true" class="k-ocard__ico"><v-icon size="22">account_balance</v-icon></span>
+            <div class="k-ocard__titles">
+              <h2>Pay by bank transfer</h2>
+              <p>Send the amount with these details, then add a photo of the receipt.</p>
+            </div>
+          </header>
+          <table class="k-order__legacy">
+            <tbody>
+              <s-shop-row-customer-pending-payment v-for="t in transfers" :key="t.id" :order="basket" :transaction="t" />
+            </tbody>
+          </table>
+        </section>
+        <kalio-order-delivery :basket="basket" />
+        <kalio-order-chat :basket="basket" />
+        <s-basket-vendor-orders :basket="basket" class="k-order__box"></s-basket-vendor-orders>
+        <s-order-basket-return :basket="basket" class="k-order__box" />
+        <s-shop-customer-order-withdraw
           :order="basket"
+          :payment="basket.payment"
           class="k-order__box"
           @request:refresh="$emit('request:refresh')"
-        ></s-shop-customer-order-payment-widget>
-        <s-basket-vendor-orders :basket="basket" class="k-order__box"></s-basket-vendor-orders>
-        <s-shop-customer-delivery-info-widget :basket="basket" class="k-order__box"></s-shop-customer-delivery-info-widget>
-        <s-order-chat-widget :basket="basket" class="k-order__box"></s-order-chat-widget>
-        <s-order-basket-return :basket="basket" class="k-order__box" />
+        />
       </div>
 
       <aside class="k-order__side">
-        <div class="k-cart__receipt k-order__receipt">
-          <p class="k-eyebrow">{{ paidWord }} · {{ units }} {{ units === 1 ? "item" : "items" }}</p>
-          <div class="k-cart__top">
-            <p class="k-cart__total"><u-price :amount="total" :currency="basket.currency" /></p>
-            <span :class="`-${tone}`" class="k-order__pill">{{ pillWord }}</span>
-          </div>
-          <div class="k-cart__rows">
-            <p class="k-cart__row"><span>Items ({{ units }})</span><u-price :amount="itemsBefore" :currency="basket.currency" /></p>
-            <p v-if="saved >= 0.01" class="k-cart__row -save">
-              <span>You saved</span><span>−<u-price :amount="saved" :currency="basket.currency" /></span>
-            </p>
-            <p v-if="basket.discount > 0" class="k-cart__row -save">
-              <span>Discount</span><span>−<u-price :amount="basket.discount" :currency="basket.currency" /></span>
-            </p>
-            <p :class="{ '-free': basket.delivery_price === 0 }" class="k-cart__row">
-              <span>Delivery</span>
-              <u-price v-if="basket.delivery_price > 0" :amount="basket.delivery_price" :currency="basket.currency" />
-              <span v-else-if="basket.delivery_price === 0">Free</span>
-              <span v-else>Paid on delivery</span>
-            </p>
-            <p v-if="basket.tax > 0" class="k-cart__row">
-              <span>Tax{{ basket.tax_included ? " (included)" : "" }}</span><u-price :amount="basket.tax" :currency="basket.currency" />
-            </p>
-          </div>
-          <p v-if="basket.payment?.gateway" class="k-order__paidby">
-            <img v-if="basket.payment.gateway.icon" :src="getShopImagePath(basket.payment.gateway.icon)" alt="" height="22" width="22" />
-            {{ tone === "ok" ? "Paid with" : "Paying with" }} {{ basket.payment.gateway.name }}
-          </p>
-        </div>
+        <kalio-order-receipt :basket="basket" />
         <router-link :to="{ name: window.$storefront.routes.SHOP_PAGE }" class="k-order__more">
           <v-icon size="18">shopping_bag</v-icon>Keep shopping
         </router-link>
@@ -139,12 +129,14 @@
 
 <script lang="ts">
 import SOrderBasketReturn from "@selldone/components-vue/storefront/order/basket/return/SOrderBasketReturn.vue";
-import SShopCustomerOrderPaymentWidget from "@selldone/components-vue/storefront/order/payment/SShopCustomerOrderPaymentWidget.vue";
-import SShopCustomerDeliveryInfoWidget from "@selldone/components-vue/storefront/order/delivery/SShopCustomerDeliveryInfoWidget.vue";
+import SShopRowCustomerPendingPayment from "@selldone/components-vue/storefront/order/payment/rows/SShopRowCustomerPendingPayment.vue";
+import SShopCustomerOrderWithdraw from "@selldone/components-vue/storefront/order/payment/withdraw/SShopCustomerOrderWithdraw.vue";
+import KalioOrderDelivery from "../../../../../components/kalio/order/KalioOrderDelivery.vue";
+import KalioOrderChat from "../../../../../components/kalio/order/KalioOrderChat.vue";
+import KalioOrderReceipt from "../../../../../components/kalio/order/KalioOrderReceipt.vue";
 
 import SShopShareOrderButton from "@selldone/components-vue/storefront/order/share-order/SShopShareOrderButton.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import SOrderChatWidget from "@selldone/components-vue/storefront/order/chat/widget/SOrderChatWidget.vue";
 import SBasketVendorOrders from "@selldone/components-vue/storefront/order/vendor-order/SBasketVendorOrders.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 import { Basket } from "@selldone/core-js";
@@ -160,11 +152,13 @@ export default {
   name: "StorefrontPageBasketOrderPhysicalDashboard",
   components: {
     SBasketVendorOrders: SBasketVendorOrders,
-    SOrderChatWidget,
     SShopShareOrderButton,
-    SShopCustomerDeliveryInfoWidget,
-    SShopCustomerOrderPaymentWidget,
+    SShopRowCustomerPendingPayment,
+    SShopCustomerOrderWithdraw,
     SOrderBasketReturn,
+    KalioOrderDelivery,
+    KalioOrderChat,
+    KalioOrderReceipt,
   },
 
   emits: ["request:refresh"],
@@ -219,28 +213,9 @@ export default {
       const state = this.states[this.stateIndex];
       return state ? this.$t(state.name) : null;
     },
-    units() {
-      return (this.basket?.items || []).reduce((sum, item) => sum + (item.count || 0), 0);
-    },
-    /** The items at their prices before the sellers' discounts. */
-    itemsBefore() {
-      return (this.basket?.items || []).reduce((sum, item) => sum + ((item.price || 0) + (item.dis || 0)) * (item.count || 0), 0);
-    },
-    saved() {
-      return (this.basket?.items || []).reduce((sum, item) => sum + (item.dis || 0) * (item.count || 0) + (item.offer_amount || 0), 0);
-    },
-    /** What the order costs: the amount paid when there is a payment,
-     *  else the order's price with delivery and any tax on top. */
-    total() {
-      const b = this.basket || {};
-      if (b.payment?.amount) return b.payment.amount;
-      return (b.price || 0) + (b.delivery_price > 0 ? b.delivery_price : 0) + (b.tax_included ? 0 : b.tax || 0) + (b.tax_shipping || 0);
-    },
-    paidWord() {
-      return { ok: this.basket?.status === "COD" ? "To pay on delivery" : "Paid", wait: "To pay", off: "Cancelled" }[this.tone];
-    },
-    pillWord() {
-      return { ok: this.basket?.status === "COD" ? "On delivery" : "Paid", wait: "Waiting", off: "Cancelled" }[this.tone];
+    /** Bank transfers still waiting: their details and the receipt upload. */
+    transfers() {
+      return (this.basket?.transactions_pending || []).filter((t) => t.dir && t.status !== "Succeeded");
     },
     placedAt() {
       const at = this.basket?.reserved_at || this.basket?.created_at;

@@ -31,7 +31,8 @@ pale tint of their own. The approved mockup is in
 | Where: the address sheet (a light Mapbox map with a fixed pin, search, "Use my location", saved addresses, every address field) | `components/kalio/checkout/KalioAddressSheet.vue` |
 | When: shipping methods and pickup points as cards, any time or days and parts of the day, or a date | `pages/basket/cart/SCartShippingOptions.vue` (Selldone's script kept), in the basket page's When sheet |
 | Pay: Selldone's payment window restyled (heading, total on the stone ground, each way to pay as a card) | `style/kalio-checkout.scss` (`.s--storefront-master-payment-dialog`) |
-| Order page: where it stands, Invoice and Share, the steps as a line, items by seller, a receipt; Selldone's payment, delivery, chat and return widgets in Kalio cards | `pages/basket/order/StorefrontPageBasketOrder.vue`, `pages/basket/order/physical/dashbaord/StorefrontPageBasketOrderPhysicalDashboard.vue` |
+| Order page: where it stands, Invoice and Share, the steps as a line, items by seller; Selldone's vendor orders, returns and refunds in Kalio cards | `pages/basket/order/StorefrontPageBasketOrder.vue`, `pages/basket/order/physical/dashbaord/StorefrontPageBasketOrderPhysicalDashboard.vue` |
+| Order page cards (0.2.15): the receipt with how it is paid and Pay now; Delivery (deliver to, when, tracking, billing, map, change address); Messages (bubbles and a message box, also on file and service orders) | `components/kalio/order/KalioOrderReceipt.vue`, `KalioOrderDelivery.vue`, `KalioOrderChat.vue` |
 | Basket page, sheets, payment window and order page styles | `style/kalio-checkout.scss` |
 | Product page styles | `style/kalio-product.scss` |
 | Shelf head (design A) for every shop page that lists products: crumbs, title, count, a row of aisle words | `components/kalio/KalioShelfHead.vue` |
@@ -137,10 +138,29 @@ Facts that shape the code:
 - **No way to pay**: when the shop has no payment method for the
   basket's currency, the receipt says so and Pay does not open an empty
   payment window (`payment_ways`, `pay_blocker`).
-- **Payment methods**: on 4 November 2026 the storefront receives no
-  payment method (`shop.gateways` is empty: only the POS "Cash payment" is
-  on; Stripe and Cash on delivery are off), so the payment window has
-  nothing to offer until one is switched on in the dashboard.
+- **Payment methods**: on 4 November 2026 the storefront first received no
+  payment method (`shop.gateways` was empty); later that day the owner
+  switched on Cash on delivery and a Motorbike method, and placed the
+  first order, SM-1 (basket 29504, $55.15 with $25 delivery).
+- **The order page's payment, delivery and chat** (0.2.15; the upload
+  named 0.2.14 carried 0.2.13's files, see the release steps). Selldone's
+  payment table, receiver widget and full-screen chat window gave way to
+  Kalio cards (`components/kalio/order/`): the receipt in the side column
+  now says how the order is paid (by card with the date, cash to the
+  courier, cash at the shop, a bank transfer, or "Pay now" and "Use
+  another way to pay" while an online payment waits), the Delivery card
+  lists deliver to, when, tracking and billing beside a small map, with
+  "Change address" (the address sheet) and billing edited in place, and
+  the messages sit on the page as bubbles with a box under them. The
+  sums follow Selldone's: an order's `price` is after every discount and
+  the wallet, with delivery in it (the receipt used to add delivery
+  again: SM-1 showed $80.15 instead of $55.15, and "Discount" repeated
+  "You saved"). A bank transfer's details and receipt upload stay
+  Selldone's row. On a phone the receipt follows the items, and the
+  bottom bar hides while any sheet or window is open (it covered the
+  address sheet's Save). Tested with SM-1's own data and three variants
+  (paid and sent, waiting for payment, delivered):
+  `../kalio-design/review/ordercards.cjs`.
 - **The basket drawer** reads the savings from the lines (`dis` × count +
   `offer_amount`): a basket read on page load has no `bill`. The "Added to
   basket" notice keeps quiet while the drawer is open (`basketView`).
@@ -162,7 +182,8 @@ npm run build-production
 rm dist/index.html                        # every ZIP member must be under app/
 node scripts/kalio-svg-flatten.mjs dist/app
 file -b --mime-type dist/app/js/*.js | sort | uniq -c   # no text/x-java allowed
-python <cli-source>/.agents/skills/package-selldone-storefront-layout/scripts/package_layout.py dist dist.zip --manifest manifest.json
+python <cli-source>/.agents/skills/package-selldone-storefront-layout/scripts/package_layout.py dist dist.zip --manifest manifest.json --force
+unzip -p dist.zip app/shop.js | cmp - dist/app/shop.js   # the ZIP is this build
 node scripts/kalio-deploy.mjs "$(npm root -g)/selldone-cli"
 ```
 
@@ -170,6 +191,10 @@ node scripts/kalio-deploy.mjs "$(npm root -g)/selldone-cli"
 not ship `.agents/`. Locally, `file` calls a few large lazy chunks
 `application/octet-stream`; the server has served those as JavaScript
 (checked on 0.2.2), so only `text/x-java` blocks a release.
+
+Without `--force` the packager keeps an existing `dist.zip` (it says so on
+stderr and still prints PASS for the old file): on 4 November 2026 the upload
+named 0.2.14 carried 0.2.13's files that way.
 
 `kalio-deploy.mjs` reuses the official CLI's saved login, 2FA check and version
 check, and sends the manifest as JSON text of the six contract keys.

@@ -58,7 +58,7 @@
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Chat ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-      <s-order-chat-widget :basket="basket"></s-order-chat-widget>
+      <kalio-order-chat :basket="basket" class="my-3 mx-0 mx-md-3" />
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Payment ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
@@ -100,12 +100,12 @@ import SShopCustomerDeliveryInfoWidget from "@selldone/components-vue/storefront
 import SShopServiceTasks from "@selldone/components-vue/storefront/product/service/SShopServiceTasks.vue";
 import SShopShareOrderButton from "@selldone/components-vue/storefront/order/share-order/SShopShareOrderButton.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
-import SOrderChatWidget from "@selldone/components-vue/storefront/order/chat/widget/SOrderChatWidget.vue";
+import KalioOrderChat from "../../../../../components/kalio/order/KalioOrderChat.vue";
 
 export default {
   name: "StorefrontPageBasketOrderServiceDashboard",
   components: {
-    SOrderChatWidget,
+    KalioOrderChat,
     SShopShareOrderButton,
     SShopServiceTasks,
 

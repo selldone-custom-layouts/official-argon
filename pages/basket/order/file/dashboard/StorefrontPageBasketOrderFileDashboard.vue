@@ -58,7 +58,7 @@
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Chat ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-      <s-order-chat-widget :basket="basket"></s-order-chat-widget>
+      <kalio-order-chat :basket="basket" class="my-3 mx-0 mx-md-3" />
 
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Payment ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
@@ -135,12 +135,12 @@ import SOrderDeliveryState from "@selldone/components-vue/storefront/order/deliv
 import SShopProductFilesList from "@selldone/components-vue/storefront/product/file/SShopProductFilesList.vue";
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import SShopShareOrderButton from "@selldone/components-vue/storefront/order/share-order/SShopShareOrderButton.vue";
-import SOrderChatWidget from "@selldone/components-vue/storefront/order/chat/widget/SOrderChatWidget.vue";
+import KalioOrderChat from "../../../../../components/kalio/order/KalioOrderChat.vue";
 
 export default {
   name: "StorefrontPageBasketOrderFileDashboard",
   components: {
-    SOrderChatWidget,
+    KalioOrderChat,
     SShopShareOrderButton,
     SShopProductFilesList,
     SOrderDeliveryState,

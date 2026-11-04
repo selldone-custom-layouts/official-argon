@@ -1737,6 +1737,14 @@ $k-filter-gap: 36px;
   body:has(.s--storefront-products-filter-menu.v-navigation-drawer--active) .v-bottom-navigation {
     display: none !important;
   }
+
+  /* Any open sheet or window (the address sheet, the time sheet, the
+     payment window) covers the whole screen; the bar would sit on its
+     buttons. */
+  body:has(.v-overlay--active.v-dialog) .v-bottom-navigation,
+  body:has(.v-overlay--active.v-bottom-sheet) .v-bottom-navigation {
+    display: none !important;
+  }
 }
 
 /* ▆▆▆▆▆▆▆▆ Sign in ▆▆▆▆▆▆▆▆
