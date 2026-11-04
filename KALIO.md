@@ -173,6 +173,11 @@ Facts that shape the code:
   parcel". "Has it arrived?" stays away once the parcel came back. Test
   variants `live` (SM-1 as delivered), `moving`, `carrier`; the script
   also reports anything sticking out of a card (`spill`).
+- **Vuetify draws icons as `<i>`.** A rule for a decorative `i` must say
+  `> i` when a `<v-icon>` can sit inside it: the order page's progress
+  circles used `.k-order__step i`, which also caught the tick and pinned
+  it to the circle's top-left (2 px left, 4 px up) until 0.2.17.
+  `../kalio-design/review/tickprobe.cjs` measures the tick's offset.
 - **The basket drawer** reads the savings from the lines (`dis` × count +
   `offer_amount`): a basket read on page load has no `bill`. The "Added to
   basket" notice keeps quiet while the drawer is open (`basketView`).

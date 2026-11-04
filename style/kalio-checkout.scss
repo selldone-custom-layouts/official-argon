@@ -2251,7 +2251,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       background: linear-gradient(90deg, var(--k-green) 0 13px, var(--k-line) 13px);
     }
 
-    i {
+    > i {
       position: absolute;
       top: 0;
       left: 0;
@@ -2265,7 +2265,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       font-style: normal;
     }
 
-    &.-done i {
+    &.-done > i {
       border-color: var(--k-green);
       background: var(--k-green);
 
@@ -2274,7 +2274,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       }
     }
 
-    &.-now i {
+    &.-now > i {
       border-color: var(--k-green);
       box-shadow: 0 0 0 5px var(--k-green-soft);
 
