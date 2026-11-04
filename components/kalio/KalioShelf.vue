@@ -105,7 +105,7 @@
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import KalioQuickBuy from "./KalioQuickBuy.vue";
 import KalioCardStep from "./KalioCardStep.vue";
-import { basketLine, hasSizes, quickAdd } from "./kalio-basket";
+import { basketLine, hasSizes, pendingLine, quickAdd, shownCount } from "./kalio-basket";
 import {
   aisleImage,
   aisleRoute,
@@ -251,7 +251,7 @@ export default {
     },
 
     inBasket(product) {
-      return !hasSizes(product) && !!basketLine(this, product);
+      return !hasSizes(product) && shownCount(product, basketLine(this, product) || pendingLine(product)) > 0;
     },
   },
 };

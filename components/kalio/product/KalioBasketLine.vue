@@ -9,27 +9,31 @@
   (../kalio-design/basket-options/).
 
   The stepper sets the line's count through the storefront's own basket
-  methods (kalio-basket.ts); at one, "−" takes the product out and the buy
-  button comes back.
+  methods (stepTo in kalio-basket.ts): the number changes as it is tapped
+  and the basket follows, one request at a time. At one, "−" takes the
+  product out and the buy button comes back once the basket has answered.
 -->
 <template>
   <div :class="{ '-busy': busy }" class="k-basket-line">
     <p class="k-basket-line__cap">
       <i aria-hidden="true"></i>
-      {{ shown }} in your basket<template v-if="seller">, from {{ seller }}</template>
+      <template v-if="shown > 0">
+        {{ shown }} in your basket<template v-if="seller">, from {{ seller }}</template>
+      </template>
+      <template v-else>Taking it out of your basket…</template>
     </p>
     <div class="k-basket-line__row">
       <div aria-label="Quantity in basket" class="k-basket-line__qty" role="group">
         <button
           :aria-label="shown > 1 ? 'One fewer' : 'Remove from basket'"
-          :disabled="busy"
+          :disabled="shown <= 0"
           type="button"
           @click="step(-1)"
         >
           <v-icon size="22">{{ shown > 1 ? "remove" : "delete_outline" }}</v-icon>
         </button>
         <output aria-live="polite">{{ shown }}</output>
-        <button :disabled="busy || shown >= max" aria-label="One more" type="button" @click="step(1)">
+        <button :disabled="shown >= max" aria-label="One more" type="button" @click="step(1)">
           <v-icon size="22">add</v-icon>
         </button>
       </div>
@@ -45,7 +49,7 @@
 </template>
 
 <script>
-import { setCount } from "../kalio-basket";
+import { settling, shownCount, stepTo } from "../kalio-basket";
 
 export default {
   name: "KalioBasketLine",
@@ -60,16 +64,12 @@ export default {
     stock: { type: Number, default: null },
   },
 
-  data() {
-    return {
-      busy: false,
-      pending: null,
-    };
-  },
-
   computed: {
     shown() {
-      return this.pending ?? this.line.count;
+      return shownCount(this.product, this.line);
+    },
+    busy() {
+      return settling(this.product, this.line);
     },
     max() {
       return this.stock ?? this.vendorProduct?.quantity ?? this.product.quantity ?? 99;
@@ -94,15 +94,7 @@ export default {
 
   methods: {
     step(delta) {
-      const count = this.shown + delta;
-      this.busy = true;
-      this.pending = Math.max(count, 0);
-      setCount(this, this.product, this.line, count)
-        .catch(() => {})
-        .finally(() => {
-          this.busy = false;
-          this.pending = null;
-        });
+      stepTo(this, this.product, this.line, this.shown + delta);
     },
   },
 };

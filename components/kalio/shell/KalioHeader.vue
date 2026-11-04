@@ -9,8 +9,8 @@
 
   Every working part is the platform's: the search box and its events (the
   layout's onSearch/onClear), the signed-in account menu
-  (SHeaderSectionUser), the basket drawer (BasketTopMenu, the same drawer
-  Selldone's header opens), the language and currency pickers, sign-in
+  (SHeaderSectionUser), the basket (the storefront's, shown by Kalio's
+  own drawer, KalioBasketDrawer), the language and currency pickers, sign-in
   through the app's need-login event, and the basket count from the
   storefront mixin. A shop with custom header code keeps Selldone's header
   (the layout decides), and a native app shell shows none.
@@ -184,17 +184,19 @@
       </div>
     </nav>
 
-    <!-- ▆▆▆▆▆▆▆▆ Basket drawer (Selldone's basket menu) ▆▆▆▆▆▆▆▆ -->
+    <!-- ▆▆▆▆▆▆▆▆ Basket drawer ▆▆▆▆▆▆▆▆ -->
     <teleport to="body">
       <v-navigation-drawer
         v-model="basket"
         :location="$vuetify.locale.isRtl ? 'left' : 'right'"
-        :width="Math.min(560, windowWidth * 0.92)"
+        :width="windowWidth < 520 ? windowWidth : 460"
         class="k-drawer -basket"
         temporary
       >
         <div class="k-drawer__head">
-          <p class="k-drawer__title">Your basket</p>
+          <p class="k-drawer__title">
+            Your basket<small v-if="basketUnits">{{ basketUnits }} {{ basketUnits === 1 ? "item" : "items" }}</small>
+          </p>
           <button aria-label="Close" class="k-header__icon" type="button" @click="basket = false">
             <v-icon>close</v-icon>
           </button>
@@ -226,7 +228,7 @@
             </nav>
           </template>
         </div>
-        <basket-top-menu v-else class="k-drawer__body" @close="basket = false" />
+        <kalio-basket-drawer v-else @close="basket = false" />
       </v-navigation-drawer>
 
       <!-- ▆▆▆▆▆▆▆▆ Phone menu ▆▆▆▆▆▆▆▆ -->
@@ -287,9 +289,10 @@ import { defineAsyncComponent } from "vue";
 import SStorefrontSearchBox from "@selldone/components-vue/storefront/search/SStorefrontSearchBox.vue";
 import SLanguageSelector from "@selldone/components-vue/storefront/language/selector/SLanguageSelector.vue";
 import UCurrencySelector from "@selldone/components-vue/ui/currency/selector/UCurrencySelector.vue";
-import BasketTopMenu from "@selldone/components-vue/storefront/order/basket/BasketTopMenu.vue";
+import KalioBasketDrawer from "./KalioBasketDrawer.vue";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import { aisleImage, aisleRoute, aisles, catalogueRoute, dealsRoute, tintFor } from "../kalio-catalog";
+import { basketView } from "../kalio-basket";
 
 export default {
   name: "KalioHeader",
@@ -297,7 +300,7 @@ export default {
     SStorefrontSearchBox,
     SLanguageSelector,
     UCurrencySelector,
-    BasketTopMenu,
+    KalioBasketDrawer,
     SHeaderSectionUser: defineAsyncComponent(
       () => import("@selldone/components-vue/storefront/header/section/user/SHeaderSectionUser.vue"),
     ),
@@ -341,6 +344,13 @@ export default {
     itemsCount() {
       return this.getTotalItemInBaskets() || 0;
     },
+    /** How many things are in the basket, counting each one (2 breads are 2). */
+    basketUnits() {
+      return this.getBaskets().reduce(
+        (sum, basket) => sum + (basket?.items || []).reduce((n, item) => n + (item.count || 0), 0),
+        0,
+      );
+    },
     homeRoute() {
       return { path: "/" };
     },
@@ -368,6 +378,9 @@ export default {
     drawerOpen(open) {
       /* The phone bottom bar would sit over either drawer. */
       this.$store.commit("setForceHideNavigation", open);
+    },
+    basket(open) {
+      basketView.drawerOpen = open;
     },
     $route() {
       this.menu = false;

@@ -527,6 +527,319 @@ $k-header-strip: 46px;
   }
 }
 
+/* ▆▆▆▆▆▆▆▆ Basket drawer (KalioBasketDrawer, design C) ▆▆▆▆▆▆▆▆ */
+
+.k-drawer.-basket {
+  .k-drawer__head {
+    padding: 18px 14px 12px 24px;
+    border-bottom: 0;
+  }
+
+  .k-drawer__title {
+    font-size: 26px;
+    letter-spacing: -0.02em;
+
+    small {
+      margin-inline-start: 8px;
+      font-family: var(--k-body);
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0;
+      color: var(--k-muted);
+    }
+  }
+}
+
+.k-bdrawer {
+  padding: 0 24px 28px;
+  color: var(--k-ink);
+
+  &__group + &__group {
+    margin-top: 22px;
+  }
+
+  /* The receipt: subtotal, savings and the way to pay, before the rows. */
+  &__receipt {
+    margin: 2px 0 6px;
+    padding: 18px 18px 16px;
+    border-radius: 22px;
+    background: var(--k-well);
+  }
+
+  &__sum {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__total {
+    margin: 0;
+    font-family: var(--k-display);
+    font-size: 40px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+
+    small {
+      display: block;
+      margin-bottom: 8px;
+      font-family: var(--k-body);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      line-height: 1.3;
+      text-transform: uppercase;
+      color: var(--k-muted);
+    }
+
+    .u--price {
+      transition: opacity 0.2s;
+
+      .small {
+        font-size: inherit;
+      }
+    }
+  }
+
+  &__receipt.-settling &__total .u--price {
+    opacity: 0.5;
+  }
+
+  &__save {
+    flex: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    padding: 6px 11px;
+    border-radius: var(--k-pill);
+    background: var(--k-coral-soft);
+    color: var(--k-coral);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+
+    .u--price .small {
+      font-size: inherit;
+    }
+  }
+
+  &__go {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 56px;
+    margin-top: 14px;
+    border-radius: var(--k-pill);
+    background: var(--k-green-deep);
+    color: #fff !important;
+    font-size: 16.5px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.15s;
+
+    &:hover {
+      background: var(--k-green);
+    }
+
+    .v-icon {
+      color: #fff;
+    }
+  }
+
+  /* Rows: compact, a dashed rule between them like a till slip. */
+  &__rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--k-line);
+  }
+
+  &__pic {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--k-well);
+
+    img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+  }
+
+  &__name {
+    min-width: 0;
+    color: var(--k-ink) !important;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.3;
+    text-decoration: none;
+
+    span,
+    small {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    small {
+      font-size: 12.5px;
+      color: var(--k-muted);
+    }
+
+    &:hover span {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  }
+
+  &__qty {
+    display: inline-grid;
+    grid-template-columns: 28px 22px 28px;
+    align-items: center;
+    height: 30px;
+    border: 1px solid var(--k-line);
+    border-radius: var(--k-pill);
+    background: #fff;
+    text-align: center;
+
+    button {
+      display: grid;
+      place-items: center;
+      height: 28px;
+      border-radius: var(--k-pill);
+      color: var(--k-green-deep) !important;
+
+      &:hover:not(:disabled) {
+        background: var(--k-wash);
+      }
+
+      &:disabled {
+        opacity: 0.35;
+      }
+    }
+
+    output {
+      font-size: 13px;
+      font-weight: 700;
+      transition: opacity 0.2s;
+    }
+
+    &.-busy output {
+      opacity: 0.6;
+    }
+  }
+
+  &__price {
+    min-width: 54px;
+    text-align: end;
+    font-size: 14.5px;
+    font-weight: 700;
+  }
+
+  /* Often added: three minis with their own "+". */
+  &__label {
+    margin: 20px 0 10px;
+  }
+
+  &__minis {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  &__mini {
+    min-width: 0;
+  }
+
+  &__mini-pic {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 14px;
+    background: var(--k-well);
+
+    > a {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    img {
+      width: 76%;
+      height: 76%;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+  }
+
+  &__mini-add {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--k-green) !important;
+    box-shadow: 0 4px 10px -4px rgba(16, 35, 27, 0.35);
+    transition: background 0.15s, color 0.15s;
+
+    &:hover:not(:disabled) {
+      background: var(--k-green);
+      color: #fff !important;
+    }
+  }
+
+  &__mini-name {
+    display: -webkit-box;
+    margin-top: 6px;
+    overflow: hidden;
+    color: var(--k-ink) !important;
+    font-size: 12.5px;
+    line-height: 1.3;
+    text-decoration: none;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  &__mini-price {
+    font-size: 13px;
+    font-weight: 700;
+  }
+}
+
+[dir="rtl"] .k-bdrawer__mini-add {
+  right: auto;
+  left: 6px;
+}
+
+@media (max-width: 599px) {
+  .k-drawer.-basket .k-drawer__head {
+    padding: 14px 8px 10px 16px;
+  }
+
+  .k-bdrawer {
+    padding: 0 16px 24px;
+  }
+}
+
 /* ▆▆▆▆▆▆▆▆ Footer ▆▆▆▆▆▆▆▆ */
 
 .k-footer {

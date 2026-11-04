@@ -3,7 +3,8 @@
 
   A small notice under the header when a product first goes into the
   basket: its packshot, its name with the size and the seller, and the way
-  to the basket. It fades by itself. Selldone pinned a green strip ("1 This
+  to the basket. It fades by itself, and keeps quiet while the basket
+  drawer is open (the drawer shows the new line). Selldone pinned a green strip ("1 This
   item is in your cart.") to the foot of the window for as long as the
   product page was open; the count now lives on the header's basket.
 
@@ -32,6 +33,7 @@
 <script>
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import { productImage } from "../kalio-catalog";
+import { basketView } from "../kalio-basket";
 
 const SHOWN_FOR = 4500;
 
@@ -65,6 +67,7 @@ export default {
 
   created() {
     this.onAdded = ({ product, variant, vendor_product, type }) => {
+      if (basketView.drawerOpen) return; // the drawer shows the new line itself
       const parts = [product?.title, sizeOf(variant), vendor_product?.vendor?.name && `from ${vendor_product.vendor.name}`];
       this.type = type || product?.type || "PHYSICAL";
       this.note = { image: productImage(product, true), line: parts.filter(Boolean).join(" · ") };

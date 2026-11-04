@@ -26,6 +26,7 @@ pale tint of their own. The approved mockup is in
 | Product overview (packshot panel, buy column) — Selldone's SProductOverview logic via `extends`, Kalio markup | `components/kalio/product/KalioProductOverview.vue` |
 | Seller offer cards — SSmartSelectVendor logic via `extends` | `components/kalio/product/KalioSellerOffers.vue` |
 | In the basket: quantity and "Checkout · total" on the product page (design C); a card's "+" adds straight away and becomes − n +; "Added to basket" notice | `components/kalio/product/KalioBasketLine.vue`, `KalioCardStep.vue`, `kalio-card-basket.ts`, `kalio-basket.ts`, `shell/KalioBasketToast.vue` |
+| Basket drawer (design C, 0.2.11): a receipt with the subtotal, savings and Checkout; compact rows with a stepper; three "Often added" | `components/kalio/shell/KalioBasketDrawer.vue` (styles in `kalio-shell.scss`, `.k-bdrawer`) |
 | Product page styles | `style/kalio-product.scss` |
 | Shelf head (design A) for every shop page that lists products: crumbs, title, count, a row of aisle words | `components/kalio/KalioShelfHead.vue` |
 | Aisle page head | `components/kalio/KalioAisleHeader.vue` |
@@ -96,6 +97,17 @@ Facts that shape the code:
   AddToBasket / RemoveFromBasket; AddToBasket announces a first add
   (`kalio:basket-added`) for the notice. Selldone's green in-basket strip
   is not mounted (`layouts/StorefrontLayout.vue`).
+- **Taps never wait for the server** (0.2.11). A basket answer takes about
+  a second, sometimes three. Every stepper (card, shelf, product page,
+  drawer) shows the count tapped at once (`wanted` in `kalio-basket.ts`);
+  the requests for a line go out one at a time, each with the latest count,
+  and a change of seller waits its turn and keeps the count. Before this
+  the buttons were disabled while a request ran, so a quick second tap was
+  lost, and changing the seller during a slow "+" sent the old count: on 4
+  November 2026, 2 quarts from Alina became 1 from Mason.
+- **The basket drawer** reads the savings from the lines (`dis` × count +
+  `offer_amount`): a basket read on page load has no `bill`. The "Added to
+  basket" notice keeps quiet while the drawer is open (`basketView`).
 - **Nothing is named.** Aisles, sellers, deals, slides and tiles all come
   from live data; an aisle Kalio does not know still gets a tint, a row and,
   if featured, a tile.

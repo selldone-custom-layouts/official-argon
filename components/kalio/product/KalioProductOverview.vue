@@ -200,6 +200,7 @@ import SProductOverview from "@selldone/components-vue/storefront/product/overvi
 import KalioSellerOffers from "./KalioSellerOffers.vue";
 import KalioBasketLine from "./KalioBasketLine.vue";
 import { aisleIndex, aisleRoute, tintFor } from "../kalio-catalog";
+import { switchOffer } from "../kalio-basket";
 import "../kalio-offer-price"; // the struck price follows the chosen seller
 
 export default {
@@ -243,18 +244,17 @@ export default {
 
     /* Another seller chosen while the product is in the basket: the line
        moves to that seller's offer, keeping its count. */
+    /* A line already in the basket moves to the seller just chosen, with
+       its count; after any count taps still on their way (kalio-basket.ts),
+       so a slow answer cannot bring the old count back. */
     changeVendor() {
-      const found = this.corresponding_basket_item;
-      if (!found) return;
-      this.AddToBasket(
-        this.getShop().name,
+      if (!this.corresponding_basket_item) return;
+      switchOffer(
+        this,
         this.$product,
         this.current_variant,
-        found.count,
-        null,
-        null,
-        this.preferences,
         this.selected_vendor_product,
+        this.preferences,
         this.selected_subscription_price,
       );
     },
