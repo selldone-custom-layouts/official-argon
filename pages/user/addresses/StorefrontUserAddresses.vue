@@ -12,163 +12,103 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
+<!--
+  Kalio — the account's address book (5 November 2026).
+
+  Each saved address is a card: a small map of the spot, the flag and the
+  name, the address, who receives it and the note for the seller, with Edit
+  and Delete (Delete asks once, in the card). "New address" and Edit open
+  Kalio's address sheet (KalioAddressSheet, `titled`), the one the basket
+  uses: the name of the address first, then the map with its pin and every
+  field, saved in one step.
+
+  Selldone's page asked for a name in a dialog of its own, then opened its
+  full-screen map with the address book's chips across the top; deleting
+  was only possible from those chips.
+-->
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="py-10">
-    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Add  ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-
     <div class="widget-box -large mb-5">
       <u-widget-header
-        :title="$t('addresses_page.title')"
-        icon="fmd_good"
         :add-caption="$t('addresses_page.new_action')"
-        @click:add="showAdd"
+        :title="$t('addresses_page.title')"
         add-icon="add_location"
+        icon="fmd_good"
+        @click:add="showAdd"
       ></u-widget-header>
 
       <v-list-subheader>{{ $t("addresses_page.subtitle") }}</v-list-subheader>
 
       <u-loading-progress v-if="busy"></u-loading-progress>
 
-      <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Address  ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-      <v-list
-        lines="three"
-        class="border-between-vertical"
-        bg-color="transparent"
-      >
-        <v-list-item v-for="address in addresses" :key="address.id">
-          <template v-slot:prepend>
-            <u-avatar-folder
-              elevated
-              placeholder-icon="map"
-              side-icon="place"
-              is-gray
-              :src="`https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${address.location.lng},${address.location.lat},13.96,0,0/200x200?access_token=pk.eyJ1IjoicGFqdWhhYW4iLCJhIjoiY2sxaHNtbnU3MDFjcjNta2V0OTZ0d2ExYiJ9.YKRh0EP7NnhbmuSil7AvSw`"
-            >
-            </u-avatar-folder>
-          </template>
+      <ul v-if="addresses.length" class="k-book">
+        <li v-for="address in addresses" :key="address.id" class="k-book__card">
+          <span class="k-book__map">
+            <img v-if="address.location?.lat" :src="mapOf(address)" alt="" loading="lazy" />
+            <v-icon v-else size="26">map</v-icon>
+          </span>
 
-          <v-list-item-title>
-            <flag
-              v-if="address.country"
-              :iso="address.country"
-              :squared="false"
-              class="me-3"
-            />
-            <b>{{ address.title }}</b>
-          </v-list-item-title>
+          <span class="k-book__words">
+            <b>
+              <flag v-if="address.country" :iso="address.country" :squared="false" class="k-book__flag" />
+              {{ address.title || "Address" }}
+            </b>
+            <span class="k-book__line">{{ getFullAddress(address) }}</span>
+            <small v-if="address.name || address.phone">
+              <v-icon size="15">person_outline</v-icon>{{ [address.name, address.phone].filter(Boolean).join(" · ") }}
+            </small>
+            <small v-if="address.message"><v-icon size="15">chat_bubble_outline</v-icon>{{ address.message }}</small>
+          </span>
 
-          <v-list-item-subtitle class="mt-1">
-            {{ getFullAddress(address) }}
-          </v-list-item-subtitle>
-
-          <v-list-item-subtitle v-if="address.message" class="mt-1">
-            <v-icon class="me-1">textsms</v-icon>
-            {{ address.message }}
-          </v-list-item-subtitle>
-
-          <template v-slot:append>
-            <v-list-item-action end>
-              <v-btn
-                @click="showEdit(address)"
-                prepend-icon="edit"
-                size="small"
+          <span :class="{ '-asking': confirming === address.id }" class="k-book__acts">
+            <template v-if="confirming === address.id">
+              <span class="k-book__ask">Delete this address?</span>
+              <button :disabled="busy_delete" class="k-book__btn -danger" type="button" @click="remove(address)">
+                <v-progress-circular v-if="busy_delete" indeterminate size="14" width="2" />Delete
+              </button>
+              <button class="k-book__btn" type="button" @click="confirming = null">Keep</button>
+            </template>
+            <template v-else>
+              <button class="k-book__btn" type="button" @click="showEdit(address)">
+                <v-icon size="17">edit</v-icon>Edit
+              </button>
+              <button
+                :aria-label="`Delete ${address.title || 'this address'}`"
+                class="k-book__btn -icon"
+                type="button"
+                @click="confirming = address.id"
               >
-                {{ $t("global.actions.edit") }}
-              </v-btn>
-            </v-list-item-action>
-          </template>
-        </v-list-item>
-      </v-list>
+                <v-icon size="18">delete_outline</v-icon>
+              </button>
+            </template>
+          </span>
+        </li>
+      </ul>
+
+      <div v-else-if="!busy && loaded" class="k-board__empty k-book__empty">
+        <v-icon size="28">add_location_alt</v-icon>
+        <p>No saved addresses yet. Save one here and pick it at checkout in a tap.</p>
+        <button class="k-btn k-btn--solid" type="button" @click="showAdd">
+          <v-icon size="20">add_location</v-icon>Add an address
+        </button>
+      </div>
     </div>
 
-    <!-- Select Address -->
-
-    <v-dialog
-      v-model="map_dialog"
-      content-class="bg-map"
-      fullscreen
-      :scrim="false"
-      transition="dialog-bottom-transition"
-    >
-      <u-map-view
-        v-if="dialog_pre"
-        ref="map_view_dialog"
-        v-model="map_location"
-        :address-type="$t('addresses_page.map.address_type')"
-        v-model:center="center"
-        :color="ThemeColorDark"
-        :confirm-text="$t('addresses_page.map.confirm')"
-        :new-address-title="new_address_title"
-        :receptor-type="$t('addresses_page.map.receptor_type')"
-        :selected-address-id="selected_address_from_list_id"
-        :selected-address-title="selected_address_from_list_title"
-        :startup-mode="startup_mode_map_dialog"
-        :title="$t('addresses_page.map.title')"
-        :zoom="17"
-        can-select-address
-        has-address-book
-        has-bottom-bar
-        has-top-bar
-        style="width: 100%; height: 100%"
-        @clickSetLocation="onClickSetLocation"
-        @close="map_dialog = false"
-      />
-    </v-dialog>
-
-    <v-dialog
-      v-model="dialog_add_to_address_book"
-      :max-width="640"
-      content-class="rounded-xl"
-    >
-      <v-card class="text-start">
-        <v-card-title>
-          {{ $t("addresses_page.add_dialog.title") }}
-        </v-card-title>
-        <v-card-subtitle>
-          {{ $t("addresses_page.add_dialog.message") }}
-        </v-card-subtitle>
-        <v-card-text>
-          <v-text-field
-            v-model="new_address_title"
-            :label="$t('addresses_page.add_dialog.address_name_input')"
-            class="text-right mx-2"
-            prepend-inner-icon="fa:fas fa-tag"
-            variant="outlined"
-          >
-            <template v-slot:append-inner>
-              <v-fade-transition leave-absolute>
-                <v-icon v-if="new_address_title" color="success">
-                  check_circle
-                </v-icon>
-              </v-fade-transition>
-            </template>
-          </v-text-field>
-        </v-card-text>
-        <v-card-actions>
-          <div class="widget-buttons">
-            <v-btn
-              color="default"
-              variant="text"
-              size="x-large"
-              @click="dialog_add_to_address_book = false"
-              prepend-icon="close"
-            >
-              {{ $t("global.actions.cancel") }}
-            </v-btn>
-            <v-btn
-              :class="{ disabled: !new_address_title }"
-              color="primary"
-              variant="elevated"
-              size="x-large"
-              @click="onSetAddressTitle()"
-            >
-              {{ $t("global.actions.next") }}
-              <v-icon end>{{ $t("icons.chevron_next") }}</v-icon>
-            </v-btn>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <kalio-address-sheet
+      v-model="sheet"
+      :busy="busy_save"
+      :center="center"
+      :countries="$shop?.countries?.length ? $shop.countries : null"
+      :heading="editing ? 'Edit address' : 'New address'"
+      :lede="editing ? 'Move the pin or change the details, then save.' : 'Name it, place the pin, and check the details.'"
+      :no-map="noMap"
+      :phone-required="false"
+      :receiver-info="editing"
+      :saved-list="false"
+      :title="editing?.title || ''"
+      titled
+      @save="onSave"
+    />
   </div>
 </template>
 
@@ -177,46 +117,45 @@ import NotificationService from "@selldone/components-vue/plugins/notification/N
 
 import UWidgetHeader from "@selldone/components-vue/ui/widget/header/UWidgetHeader.vue";
 import { MapHelper } from "@selldone/core-js/helper";
-import UAvatarFolder from "@selldone/components-vue/ui/avatar/folder/UAvatarFolder.vue";
-import UMapView from "@selldone/components-vue/ui/map/view/UMapView.vue";
-import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
-import MapMixin from "@selldone/components-vue/mixin/map/MapMixin.ts";
+import { ShopOptionsHelper } from "@selldone/core-js/helper/shop/ShopOptionsHelper";
+import KalioAddressSheet from "@app-storefront/components/kalio/checkout/KalioAddressSheet.vue";
+
+/* The fields an address keeps (Selldone's address book). */
+const FIELDS = ["country", "state", "state_code", "city", "address", "location", "no", "unit", "name", "phone", "message", "postal"];
 
 export default {
   name: "StorefrontUserAddresses",
-  mixins: [TemplateMixin, MapMixin],
+  components: { UWidgetHeader, KalioAddressSheet },
+  inject: ["$shop"],
 
-  components: { UMapView, UAvatarFolder, UWidgetHeader },
   data() {
     return {
       addresses: [],
       busy: false,
+      loaded: false,
 
-      // Map
-
-      map_dialog: false,
-      dialog_pre: false,
-
-      center: { lat: 0, lng: 0 },
-      startup_mode_map_dialog: "default", // detail
-
-      map_location: {},
-
-      // New address:
-      dialog_add_to_address_book: false,
-      new_address_title: null,
-      selected_address: null,
-
-      selected_address_from_list_id: null,
-      selected_address_from_list_title: null,
-
+      sheet: false,
+      editing: null,
       busy_save: false,
+
+      confirming: null,
+      busy_delete: false,
     };
+  },
+
+  computed: {
+    noMap() {
+      return !ShopOptionsHelper.HasMap(this.$shop);
+    },
+    /* Edit starts at the address; a new one at the last address saved. */
+    center() {
+      const at = (this.editing || this.addresses[0])?.location;
+      return at?.lat ? { lat: at.lat, lng: at.lng } : null;
+    },
   },
 
   created() {
     this.setPageTitle("My address book"); // Set Page Title!
-
     this.fetchAddressBook();
   },
 
@@ -225,172 +164,76 @@ export default {
       return MapHelper.GenerateFullAddressFromMapInfo(address);
     },
 
+    /* The spot on a small map, with Kalio's green pin (Mapbox's static
+       image, the token Selldone's page used). */
+    mapOf(address) {
+      const { lng, lat } = address.location;
+      return `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s+0e3f2e(${lng},${lat})/${lng},${lat},14,0,0/160x160@2x?access_token=pk.eyJ1IjoicGFqdWhhYW4iLCJhIjoiY2sxaHNtbnU3MDFjcjNta2V0OTZ0d2ExYiJ9.YKRh0EP7NnhbmuSil7AvSw`;
+    },
+
     fetchAddressBook() {
       this.busy = true;
-      axios
+      window.axios
         .get(window.ADDRESS_API.GET_MY_ADDRESSES())
-        .then((response) => {
-          if (!response.data.error) {
-            this.addresses = response.data.addresses;
-          } else {
-            NotificationService.showErrorAlert(null, response.data.error_msg);
-          }
+        .then(({ data }) => {
+          if (data.error) return NotificationService.showErrorAlert(null, data.error_msg);
+          this.addresses = data.addresses || [];
         })
-        .catch((error) => {
-          NotificationService.showLaravelError(error);
-        })
+        .catch((error) => NotificationService.showLaravelError(error))
         .finally(() => {
           this.busy = false;
+          this.loaded = true;
         });
     },
 
     showAdd() {
-      this.new_address_title = "";
-      this.selected_address = null;
-      this.dialog_add_to_address_book = true;
+      this.editing = null;
+      this.confirming = null;
+      this.sheet = true;
     },
+
     showEdit(address) {
-      this.new_address_title = address.title;
-      this.selected_address = address;
-      this.dialog_add_to_address_book = true;
+      this.editing = address;
+      this.confirming = null;
+      this.sheet = true;
     },
 
-    onSetAddressTitle() {
-      this.dialog_add_to_address_book = false;
-      if (this.selected_address) {
-        this.editAddress(this.selected_address);
-      } else {
-        this.addNewLocation();
-      }
-    },
-
-    editAddress(address) {
-      this.selected_address_from_list_id = address.id;
-      this.selected_address_from_list_title = address.title;
-
-      this.map_location = address;
-      this.center.lat = address.location.lat;
-      this.center.lng = address.location.lng;
-
-      this.dialog_pre = false;
-      this.$nextTick(() => {
-        this.dialog_pre = true;
-        this.$nextTick(() => {
-          this.map_dialog = true;
-        });
-      });
-    },
-
-    addNewLocation() {
-      this.selected_address_from_list_id = null;
-
-      this.dialog_add_to_address_book = false;
-
-      this.map_location = {};
-
-      this.dialog_pre = false;
-      this.$nextTick(() => {
-        this.dialog_pre = true;
-        this.$nextTick(() => {
-          this.map_dialog = true;
-        });
-      });
-    },
-
-    onClickSetLocation(address) {
-      if (this.selected_address) {
-        this.updateAddress(address);
-      } else {
-        this.addAddress(address);
-      }
-    },
-
-    addAddress(pack) {
+    onSave(pack) {
+      const body = { title: pack.title };
+      for (const key of FIELDS) body[key] = pack[key] ?? null;
+      const editing = this.editing;
       this.busy_save = true;
-
-      axios
-        .post(window.ADDRESS_API.POST_ADDRESS(), {
-          title: this.new_address_title,
-
-          country: pack.country,
-          state: pack.state,
-          state_code: pack.state_code,
-          city: pack.city,
-          address: pack.address,
-          location: pack.location,
-          no: pack.no,
-          unit: pack.unit,
-          name: pack.name,
-          phone: pack.phone,
-          message: pack.message,
-          postal: pack.postal,
-        })
+      (editing
+        ? window.axios.put(window.ADDRESS_API.PUT_ADDRESS(editing.id), body)
+        : window.axios.post(window.ADDRESS_API.POST_ADDRESS(), body)
+      )
         .then(({ data }) => {
-          if (!data.error) {
-            NotificationService.showSuccessAlert(
-              null,
-              this.$t("global.map_view.notifications.save_in_list"),
-            );
-            this.AddOrUpdateItemByID(this.addresses, data.address);
-            this.$emit("update:modelValue", null);
-
-            this.map_dialog = false;
-            this.fetchAddressBook();
-          } else {
-            NotificationService.showErrorAlert(null, data.error_msg);
-          }
+          if (data.error) return NotificationService.showErrorAlert(null, data.error_msg);
+          NotificationService.showSuccessAlert(
+            null,
+            editing
+              ? this.$t("global.map_view.notifications.edit_success", { title: data.address?.title || body.title })
+              : this.$t("global.map_view.notifications.save_in_list"),
+          );
+          this.sheet = false;
+          this.fetchAddressBook();
         })
-        .catch((error) => {
-          NotificationService.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_save = false;
-        });
+        .catch((error) => NotificationService.showLaravelError(error))
+        .finally(() => (this.busy_save = false));
     },
 
-    updateAddress(pack) {
-      this.busy_save = true;
-      axios
-        .put(window.ADDRESS_API.PUT_ADDRESS(this.selected_address.id), {
-          title: this.new_address_title,
-
-          country: pack.country,
-          state: pack.state,
-          state_code: pack.state_code,
-          city: pack.city,
-          address: pack.address,
-          location: pack.location,
-          no: pack.no,
-          unit: pack.unit,
-          name: pack.name,
-          phone: pack.phone,
-          message: pack.message,
-          postal: pack.postal,
-        })
+    remove(address) {
+      this.busy_delete = true;
+      window.axios
+        .delete(window.ADDRESS_API.DELETE_MY_ADDRESSES(address.id))
         .then(({ data }) => {
-          if (!data.error) {
-            this.UpdateItemByID(this.addresses, data.address);
-            NotificationService.showSuccessAlert(
-              null,
-              this.$t("global.map_view.notifications.edit_success", {
-                title: data.address.title,
-              }),
-            );
-            this.map_dialog = false;
-            this.fetchAddressBook();
-          } else {
-            NotificationService.showErrorAlert(null, data.error_msg);
-          }
+          if (data.error) return NotificationService.showErrorAlert(null, data.error_msg);
+          this.addresses = this.addresses.filter((it) => it.id !== address.id);
+          this.confirming = null;
         })
-        .catch((error) => {
-          NotificationService.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_save = false;
-        });
+        .catch((error) => NotificationService.showLaravelError(error))
+        .finally(() => (this.busy_delete = false));
     },
   },
 };
 </script>
-
-<style lang="scss" scoped></style>

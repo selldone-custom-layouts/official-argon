@@ -1429,6 +1429,23 @@
     margin-bottom: 14px;
   }
 
+  /* The address book's "Name this address" with its quick names (the
+     account's Addresses, 5 November 2026). */
+  &__named {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--k-line-soft);
+
+    .k-addr__field {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    .k-addr__book.-names {
+      margin: 10px 0 0;
+    }
+  }
+
   &__label {
     font-size: 12px;
     font-weight: 700;

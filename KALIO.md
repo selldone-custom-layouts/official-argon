@@ -299,6 +299,14 @@ Facts that shape the code:
     stick, and keep the header scrolling away as everywhere else. Doing
     it site-wide would make the header stick on every page: the owner's
     call.
+- **0.2.25 (5 November 2026): the account's address book.** Each address
+  is a card (small map with the pin, flag and name, address, receiver,
+  note) with Edit and Delete; Delete asks once in the card
+  (`DELETE_MY_ADDRESSES`). New and Edit open `KalioAddressSheet` with
+  `titled` ("Name this address" with Home / Work / Other first, no saved
+  list, phone optional, Save waits on the page), replacing Selldone's
+  "New Address Name" dialog and full-screen map. `kalio-design/review/
+  addresscheck.cjs` runs the whole flow with every write caught.
 
 Market Hall, the first design, is tagged `market-hall-0.1.5`.
 

@@ -15,6 +15,12 @@
   the same receiver_info fields, which the page saves as before
   (onClickSetLocation). When the shop has no map, the form stands alone.
   Design: ../kalio-design/basket-flow-options/ (4 November 2026).
+
+  The account's address book opens it too (`titled`, 5 November 2026): the
+  form then starts with "Name this address" (Home, Work, Other or the
+  shopper's own word), the saved list is not offered, the phone may stay
+  empty, and Save waits for the page (`busy`). Selldone's two steps — a
+  "New Address Name" dialog, then its full-screen map — are gone there too.
 -->
 <template>
   <v-dialog
@@ -114,6 +120,25 @@
             </li>
           </ul>
 
+          <div v-if="titled" class="k-addr__named">
+            <label :class="{ '-error': tried && !form.title }" class="k-addr__field -wide">
+              <span>Name this address <em>*</em></span>
+              <input v-model.trim="form.title" maxlength="64" placeholder="Home, Work, Mum's…" type="text" />
+            </label>
+            <div class="k-addr__book -names">
+              <button
+                v-for="word in NAMES"
+                :key="word.text"
+                :class="{ '-on': form.title === word.text }"
+                class="k-addr__saved"
+                type="button"
+                @click="form.title = word.text"
+              >
+                <v-icon size="16">{{ word.icon }}</v-icon>{{ word.text }}
+              </button>
+            </div>
+          </div>
+
           <div v-if="book.length" class="k-addr__book">
             <span class="k-addr__label">Saved</span>
             <button
@@ -158,8 +183,8 @@
               <span>Full name</span>
               <input v-model.trim="form.name" autocomplete="name" placeholder="Who receives it" type="text" />
             </label>
-            <label :class="{ '-error': tried && !form.phone }" class="k-addr__field">
-              <span>Phone <em>*</em></span>
+            <label :class="{ '-error': tried && phoneRequired && !form.phone }" class="k-addr__field">
+              <span>Phone <em v-if="phoneRequired">*</em></span>
               <input v-model.trim="form.phone" autocomplete="tel" inputmode="tel" placeholder="For the courier" type="tel" />
             </label>
           </div>
@@ -195,7 +220,9 @@
       <div class="k-sheet__foot">
         <p v-if="tried && missing" class="k-addr__missing"><v-icon size="16">error_outline</v-icon>{{ missing }}</p>
         <button class="k-sheet__ghost" type="button" @click="$emit('update:modelValue', false)">Cancel</button>
-        <button class="k-sheet__go" type="button" @click="save">Save address</button>
+        <button :disabled="busy" class="k-sheet__go" type="button" @click="save">
+          <v-progress-circular v-if="busy" indeterminate size="18" width="2" />{{ saveText }}
+        </button>
       </div>
     </div>
   </v-dialog>
@@ -212,8 +239,15 @@ const MAP_STYLE = "mapbox://styles/mapbox/streets-v12";
 const ZOOM_ADDRESS = 13;
 const ZOOM_STREET = 16;
 
+/* Quick names for an address in the address book. */
+const NAMES = [
+  { text: "Home", icon: "home" },
+  { text: "Work", icon: "work_outline" },
+  { text: "Other", icon: "place" },
+];
+
 function blank() {
-  return { address: "", no: "", unit: "", name: "", phone: "", city: "", state: "", postal: "", country: null, message: "" };
+  return { title: "", address: "", no: "", unit: "", name: "", phone: "", city: "", state: "", postal: "", country: null, message: "" };
 }
 
 export default {
@@ -230,12 +264,24 @@ export default {
     countries: { type: Array, default: null },
     heading: { type: String, default: "Where should it go?" },
     lede: { type: String, default: "Your address, for the receipt and the seller." },
+    /** The address book: the address has a name, asked first. */
+    titled: Boolean,
+    /** The address's name, when it has one. */
+    title: { type: String, default: "" },
+    /** The page is saving: Save waits. */
+    busy: Boolean,
+    /** A phone is needed (the basket's courier); optional in the book. */
+    phoneRequired: { type: Boolean, default: true },
+    /** Offer the shopper's saved addresses above the form. */
+    savedList: { type: Boolean, default: true },
+    saveText: { type: String, default: "Save address" },
   },
 
   emits: ["update:modelValue", "save"],
 
   data() {
     return {
+      NAMES,
       form: blank(),
       location: null,
       moved: false,
@@ -267,9 +313,10 @@ export default {
       return null;
     },
     missing() {
+      if (this.titled && !this.form.title) return "Name this address.";
       if (!this.noMap && !this.location) return "Place the pin on the map.";
       if (!this.form.address) return "Add the street address.";
-      if (!this.form.phone) return "Add a phone number.";
+      if (this.phoneRequired && !this.form.phone) return "Add a phone number.";
       return null;
     },
   },
@@ -293,6 +340,7 @@ export default {
     start() {
       const info = this.receiverInfo || {};
       this.form = Object.assign(blank(), {
+        title: this.title || "",
         address: info.address || "",
         no: info.no || "",
         unit: info.unit || "",
@@ -309,7 +357,8 @@ export default {
       this.tried = false;
       this.query = "";
       this.results = [];
-      if (this.USER()) this.loadBook();
+      this.book = [];
+      if (this.USER() && this.savedList) this.loadBook();
       if (!this.noMap) this.$nextTick(() => setTimeout(this.mountMap, 60));
     },
 
@@ -507,9 +556,11 @@ export default {
       this.tried = true;
       if (this.missing) return;
       const before = this.receiverInfo || {};
+      const { title, ...fields } = this.form; // a name only in the address book
       this.$emit("save", {
         ...before,
-        ...this.form,
+        ...fields,
+        ...(this.titled ? { title } : {}),
         // Selldone's state code belongs to the state it came with.
         state_code: this.form.state === before.state && this.form.country === before.country ? before.state_code : null,
         location: this.location ? { lat: this.location.lat, lng: this.location.lng } : this.receiverInfo?.location,
