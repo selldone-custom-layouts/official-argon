@@ -1040,7 +1040,7 @@ $k-shelf-pic-phone: 150px;
       }
 
       .k-shelf__tag {
-        height: 92px;
+        height: 132px;
       }
     }
 
@@ -1140,7 +1140,6 @@ $k-shelf-pic-phone: 150px;
     display: flex;
     align-items: baseline;
     min-height: 32px;
-    padding-inline-end: 38px;
     font-size: 19px;
     font-weight: 700;
     color: var(--k-ink);
@@ -1179,35 +1178,46 @@ $k-shelf-pic-phone: 150px;
     -webkit-box-orient: vertical;
   }
 
-  &__add {
-    position: absolute;
-    top: 10px;
-    inset-inline-end: 9px;
-    display: grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--k-green-deep);
+  /* The label's foot: "+ Add", and once the product is in the basket
+     "− n +" in the same place (KalioCardStep -strip, kalio-platform.scss).
+     Design A, chosen by the owner on 5 November 2026: 0.2.23 lifted the
+     stepper onto the packshot, and before that it sat over the price. */
+  &__strip {
+    width: calc(100% + 24px);
+    height: 40px;
+    margin: 10px -12px -12px;
+    border-radius: 0 0 10px 10px;
+  }
+
+  button.k-shelf__strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: rgba(14, 63, 46, 0.08);
     /* !important: Selldone's [type=button] { color: inherit } loads later. */
-    color: #fff !important;
+    color: var(--k-green-deep) !important;
+    font-family: var(--k-body);
+    font-size: 14px;
+    font-weight: 700;
     cursor: pointer;
     transition: background-color 140ms ease;
 
+    .v-icon {
+      color: inherit !important;
+    }
+
     &:hover {
-      background: var(--k-green);
+      background: rgba(14, 63, 46, 0.15);
     }
   }
 
-  /* In the basket the "+" becomes a small − n +. It stands on the
-     packshot's corner just above the label, clear of the "Save" sticker:
-     in the label's corner it covered the price ("$2." of $2.63, found by
-     the owner, 5 November 2026). */
-  &__step {
-    position: absolute;
-    bottom: calc(100% + 16px);
-    inset-inline-end: 6px;
-    z-index: 2;
+  &__tag.-offer button.k-shelf__strip {
+    background: rgba(14, 63, 46, 0.1);
+
+    &:hover {
+      background: rgba(14, 63, 46, 0.18);
+    }
   }
 
   &__foot {
@@ -1939,49 +1949,8 @@ $k-shelf-pic-phone: 150px;
     color: var(--k-ink);
   }
 
-  &__missing {
-    display: grid;
-    justify-items: start;
-    gap: 10px;
-    max-width: 620px;
-    padding: 32px;
-    border: 1px dashed var(--k-line-strong);
-    border-radius: var(--k-radius-lg);
-    background: var(--k-well);
-
-    > .v-icon {
-      color: var(--k-green) !important;
-    }
-
-    h2 {
-      margin: 0;
-      font-family: var(--k-display);
-      font-size: clamp(22px, 2.4vw, 28px);
-      font-weight: 600;
-      color: var(--k-ink);
-    }
-
-    p {
-      max-width: 480px;
-      margin: 0;
-      font-size: 15.5px;
-      color: var(--k-ink-2);
-    }
-  }
-
-  &__missingacts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 8px;
-  }
-
   @media (max-width: 600px) {
     padding-top: 16px;
-
-    &__missing {
-      padding: 24px 20px;
-    }
   }
 }
 

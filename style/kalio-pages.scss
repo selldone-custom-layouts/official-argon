@@ -1,0 +1,1545 @@
+/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Kalio — the journal and the shop's own pages ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+
+   Chosen by the owner on 5 November 2026 from two mockups each
+   (kalio-design/pages-options): the journal list B "Market journal", a note
+   A "Article with a shopping list", About us B "A letter", Terms of use and
+   Privacy A "Contents and sections". Until the shop writes them, About,
+   Terms and Privacy show sample text under an amber note that says it is a
+   test (KalioSampleNote). */
+
+/* ▆▆▆▆▆▆▆▆ Shared ▆▆▆▆▆▆▆▆ */
+
+/* The side columns (the journal's, About's facts, the legal contents) stay
+   in view while the text scrolls. Vuetify's wrapper has overflow: hidden,
+   which stops anything inside it from sticking — the header's own sticky
+   has never worked for that reason. On these pages the wrapper clips
+   instead (the same clipping, without a scroll box), and the header keeps
+   scrolling away as it does on every other page. */
+.v-application.v-layout:has(.k-legal__toc, .k-journal__side, .k-story__side) {
+  overflow: clip !important;
+
+  .k-header {
+    position: relative !important;
+  }
+}
+
+/* kalio-sections' shimmer (its k-shimmer keyframes are global); a
+   placeholder cannot be extended across Sass modules. */
+%k-pages-skeleton {
+  background: linear-gradient(90deg, var(--k-wash) 25%, #efece4 50%, var(--k-wash) 75%);
+  background-size: 200% 100%;
+  animation: k-shimmer 1.4s linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.k-sample {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 1px dashed #d9b765;
+  border-radius: 16px;
+  background: #fdf0d5;
+  color: #5b4300;
+  font-family: var(--k-body);
+  font-size: 14.5px;
+  line-height: 1.5;
+  text-align: start;
+
+  > .v-icon {
+    margin-top: 1px;
+    color: #8a5a00 !important;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  b {
+    color: #3e2e00;
+  }
+}
+
+.k-topic {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: var(--k-pill);
+  background: var(--k-green-soft);
+  color: var(--k-green-deep) !important;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.k-who {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--k-ink-2);
+
+  i {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--k-green);
+    color: #fff;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+  }
+}
+
+.k-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 16px;
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-pill);
+  background: #fff;
+  color: var(--k-ink) !important;
+  font-family: var(--k-body);
+  font-size: 14.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--k-green);
+    color: var(--k-green) !important;
+  }
+
+  .v-icon {
+    color: inherit !important;
+  }
+}
+
+/* Long text written by people: the shop's pages and notes. */
+.k-prose {
+  font-family: var(--k-body);
+  color: var(--k-ink-2);
+  overflow-wrap: break-word;
+
+  p,
+  li {
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  p {
+    margin: 16px 0 0;
+  }
+
+  h2,
+  h3,
+  h4 {
+    color: var(--k-ink);
+    line-height: 1.2;
+  }
+
+  h2 {
+    margin: 36px 0 0;
+    font-family: var(--k-display);
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  h3 {
+    margin: 26px 0 0;
+    font-family: var(--k-body);
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  ul,
+  ol {
+    display: grid;
+    gap: 8px;
+    margin: 12px 0 0;
+    padding-inline-start: 22px;
+  }
+
+  ul li::marker {
+    color: var(--k-leaf);
+  }
+
+  a:not(.k-btn) {
+    color: var(--k-green) !important;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 18px;
+  }
+
+  figure {
+    margin: 26px 0 0;
+  }
+
+  figcaption {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--k-muted);
+    text-align: center;
+  }
+
+  blockquote {
+    margin: 26px 0 0;
+    padding: 16px 22px;
+    border-inline-start: 4px solid var(--k-leaf);
+    border-radius: 0 18px 18px 0;
+    background: var(--k-green-soft);
+    color: var(--k-green-deep);
+  }
+
+  table {
+    width: 100%;
+    margin-top: 16px;
+    border-collapse: collapse;
+    font-size: 15px;
+
+    td,
+    th {
+      padding: 10px 12px;
+      border: 1px solid var(--k-line);
+      text-align: start;
+    }
+  }
+
+  > :first-child {
+    margin-top: 0;
+  }
+
+  @media (max-width: 600px) {
+    p,
+    li {
+      font-size: 16.5px;
+    }
+  }
+}
+
+/* A block that stands in while a page is read. */
+%k-page-loading {
+  display: grid;
+  gap: 14px;
+  margin-top: 8px;
+
+  span {
+    display: block;
+    height: 18px;
+    border-radius: 9px;
+    @extend %k-pages-skeleton;
+
+    &:nth-child(2) {
+      width: 86%;
+    }
+
+    &:nth-child(3) {
+      width: 64%;
+    }
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ The journal: design B ▆▆▆▆▆▆▆▆ */
+
+.k-journal {
+  padding: 24px 0 72px;
+  font-family: var(--k-body);
+  text-align: start;
+
+  &__hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 24px;
+    margin-top: 10px;
+    padding: 40px 44px;
+    border-radius: 32px;
+    background: var(--k-green-deep);
+    color: #fff;
+
+    h1 {
+      margin: 8px 0 0;
+      font-family: var(--k-display);
+      font-size: clamp(38px, 4.6vw, 56px);
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+
+    p {
+      max-width: 560px;
+      margin: 12px 0 0;
+      font-size: 17px;
+      line-height: 1.5;
+      color: #cfe3d7;
+    }
+  }
+
+  &__eyebrow {
+    margin: 0 !important;
+    font-size: 12.5px !important;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #9fd3b5 !important;
+  }
+
+  &__count {
+    margin: 0 !important;
+    text-align: end;
+    font-size: 14px !important;
+    color: #9fd3b5 !important;
+
+    b {
+      display: block;
+      font-family: var(--k-display);
+      font-size: 44px;
+      font-weight: 600;
+      line-height: 1;
+      color: #fff;
+    }
+  }
+
+  &__note {
+    margin-top: 20px;
+  }
+
+  &__cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 40px;
+    margin-top: 30px;
+    align-items: start;
+  }
+
+  &__tabs {
+    display: flex;
+    gap: 22px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--k-line);
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    a {
+      flex: none;
+      padding: 12px 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--k-muted) !important;
+      text-decoration: none;
+      white-space: nowrap;
+
+      &:hover {
+        color: var(--k-ink) !important;
+      }
+
+      &.-on {
+        color: var(--k-ink) !important;
+        box-shadow: inset 0 -3px 0 var(--k-green);
+      }
+    }
+  }
+
+  &__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    transition: opacity 160ms ease;
+
+    &.-busy {
+      opacity: 0.55;
+    }
+
+    &.-skeleton .k-jentry {
+      height: 150px;
+      margin-top: 18px;
+      border-radius: 22px;
+      @extend %k-pages-skeleton;
+    }
+  }
+
+  &__empty {
+    margin-top: 24px;
+  }
+
+  &__pages {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 26px;
+    font-size: 14.5px;
+    color: var(--k-muted);
+  }
+
+  &__side {
+    position: sticky;
+    top: 24px;
+    display: grid;
+    gap: 18px;
+  }
+
+  @media (max-width: 960px) {
+    &__cols {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    &__side {
+      position: static;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+  }
+
+  @media (max-width: 600px) {
+    padding-top: 16px;
+
+    &__hero {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 28px 24px;
+      border-radius: 26px;
+
+      p {
+        font-size: 16px;
+      }
+    }
+
+    &__count {
+      text-align: start;
+
+      b {
+        display: inline;
+        margin-inline-end: 8px;
+        font-size: 30px;
+      }
+    }
+  }
+}
+
+/* One note in the list: the date block, the words, the picture. */
+.k-jentry {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) 150px;
+  align-items: start;
+  gap: 22px;
+  padding: 26px 0;
+  border-bottom: 1px solid var(--k-line);
+  color: var(--k-ink) !important;
+  text-decoration: none;
+
+  &:hover .k-jentry__title {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+
+  &__date {
+    padding: 10px 0 12px;
+    border-radius: 18px;
+    background: var(--k-wash);
+    text-align: center;
+
+    b {
+      display: block;
+      font-family: var(--k-display);
+      font-size: 34px;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    span {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--k-muted);
+    }
+  }
+
+  &__text {
+    display: grid;
+    justify-items: start;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  &__title {
+    font-family: var(--k-display);
+    font-size: 25px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  &__lede {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--k-ink-2);
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin-top: 2px;
+    font-size: 13.5px;
+    color: var(--k-muted);
+  }
+
+  &__pic {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border-radius: 20px;
+    background: var(--k-well);
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .v-icon {
+      color: var(--k-muted) !important;
+    }
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 16px;
+    padding: 22px 0;
+
+    &__date b {
+      font-size: 26px;
+    }
+
+    &__title {
+      font-size: 21px;
+    }
+
+    &__lede {
+      font-size: 15px;
+    }
+
+    &__pic {
+      display: none;
+    }
+  }
+}
+
+/* The side column's boxes. */
+.k-jbox {
+  padding: 22px;
+  border-radius: 24px;
+  background: var(--k-wash);
+
+  h2 {
+    margin: 0 0 14px;
+    font-family: var(--k-display);
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--k-ink);
+  }
+
+  p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--k-ink-2);
+  }
+
+  .k-btn {
+    margin-top: 14px;
+    min-height: 42px;
+    font-size: 14.5px;
+  }
+
+  .k-more {
+    margin-top: 6px;
+  }
+
+  &.-ask {
+    background: var(--k-green-soft);
+  }
+
+  &__ranks {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: rank;
+
+    li {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      gap: 6px;
+      counter-increment: rank;
+
+      &::before {
+        content: counter(rank);
+        font-family: var(--k-display);
+        font-size: 22px;
+        line-height: 1;
+        color: var(--k-green);
+      }
+    }
+
+    a {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--k-ink) !important;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+/* A small product card (KalioMiniProduct). */
+.k-mini {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  min-width: 0;
+  font-family: var(--k-body);
+
+  &__well {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border-radius: 18px;
+    background: var(--k-well);
+
+    > a {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    img {
+      width: 74%;
+      height: 74%;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+  }
+
+  .k-jbox &__well {
+    background: #fff;
+  }
+
+  &__add {
+    position: absolute;
+    inset-inline-end: 8px;
+    bottom: 8px;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--k-green-deep) !important;
+    box-shadow: 0 6px 14px -8px rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+
+    .v-icon {
+      color: inherit !important;
+    }
+
+    &:hover {
+      background: var(--k-green-deep);
+      color: #fff !important;
+    }
+  }
+
+  .k-jbox &__add {
+    background: var(--k-wash);
+  }
+
+  &__step {
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    bottom: 6px;
+    grid-template-columns: 34px minmax(0, 1fr) 34px !important;
+  }
+
+  &__price {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 2px 8px;
+    margin-top: 6px;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--k-ink);
+
+    s {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--k-muted);
+    }
+  }
+
+  &__name {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 13.5px;
+    line-height: 1.3;
+    color: var(--k-ink-2) !important;
+    text-decoration: none;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ A note: design A ▆▆▆▆▆▆▆▆ */
+
+.k-post {
+  padding: 24px 0 72px;
+  font-family: var(--k-body);
+  text-align: start;
+
+  /* The reading column. */
+  &__col {
+    width: min(760px, 100% - 2 * var(--k-gutter));
+    margin-inline: auto;
+  }
+
+  &__loading {
+    @extend %k-page-loading;
+    margin-top: 40px;
+  }
+
+  &__head {
+    display: grid;
+    justify-items: start;
+    margin-top: 8px;
+
+    h1 {
+      margin: 14px 0 0;
+      font-family: var(--k-display);
+      font-size: clamp(34px, 4.6vw, 50px);
+      font-weight: 600;
+      line-height: 1.06;
+      letter-spacing: -0.02em;
+      color: var(--k-ink);
+    }
+
+    .k-sample {
+      justify-self: stretch;
+      margin-top: 4px;
+    }
+  }
+
+  &__lede {
+    margin: 16px 0 0;
+    font-size: 20px;
+    line-height: 1.55;
+    color: var(--k-ink-2);
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin: 18px 0 22px;
+    font-size: 14px;
+    color: var(--k-muted);
+
+    > span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .v-icon {
+      color: inherit !important;
+    }
+  }
+
+  &__hero {
+    width: min(1080px, 100% - 2 * var(--k-gutter));
+    margin: 28px auto 0;
+    aspect-ratio: 21 / 9;
+    border-radius: 28px;
+    background: var(--k-well);
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__body {
+    margin-top: 34px;
+
+    /* Selldone's editor wraps pictures in its own blocks. */
+    .medium-insert-images,
+    .medium-insert-embeds {
+      margin: 26px 0 0;
+    }
+
+    figure img {
+      display: block;
+      margin-inline: auto;
+    }
+  }
+
+  &__shop {
+    margin: 36px 0 0;
+    padding: 22px;
+    border-radius: 26px;
+    background: var(--k-wash);
+
+    > header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: var(--k-display);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--k-ink);
+    }
+
+    .k-mini__well {
+      background: #fff;
+    }
+  }
+
+  &__addall {
+    min-height: 42px;
+    padding: 0 18px;
+    font-size: 14.5px;
+
+    .u--price {
+      font-family: var(--k-body);
+    }
+
+    &:disabled {
+      opacity: 0.75;
+      cursor: default;
+    }
+  }
+
+  &__shoprow {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  &__share {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 32px;
+    padding-top: 22px;
+    border-top: 1px solid var(--k-line);
+
+    > span:first-child {
+      margin-inline-end: 6px;
+      font-size: 14.5px;
+      color: var(--k-muted);
+    }
+  }
+
+  &__spacer {
+    flex: 1;
+  }
+
+  &__comments {
+    margin-top: 40px;
+
+    /* Selldone keeps a fifth of the screen for an empty comment list, and
+       under the sign-in prompt says "Write first comment..." again in grey
+       capitals (as on the product page, kalio-product.scss). */
+    .s-expand-view,
+    .min-height-20vh {
+      min-height: 0 !important;
+    }
+
+    &:has(.k-post__login) .text-muted.text-uppercase.text-center {
+      display: none;
+    }
+
+    .text-muted.text-uppercase.text-center {
+      text-align: start !important;
+      font-size: 15px !important;
+      font-weight: 400 !important;
+      text-transform: none !important;
+      letter-spacing: 0 !important;
+    }
+
+    > h2 {
+      margin: 0 0 6px;
+      font-family: var(--k-display);
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--k-ink);
+    }
+  }
+
+  &__more {
+    margin-top: 64px;
+
+    > h2 {
+      margin: 0;
+      font-family: var(--k-display);
+      font-size: 30px;
+      font-weight: 600;
+      color: var(--k-ink);
+    }
+  }
+
+  &__morerow {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    margin-top: 18px;
+  }
+
+  &__card {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    color: var(--k-ink) !important;
+    text-decoration: none;
+
+    &:hover .k-post__cardtitle {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+
+  &__cardpic {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    border-radius: 22px;
+    background: var(--k-well);
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__cardtitle {
+    margin-top: 4px;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  &__cardmeta {
+    font-size: 13.5px;
+    color: var(--k-muted);
+  }
+
+  @media (max-width: 760px) {
+    &__shoprow {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    &__morerow {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    padding-top: 16px;
+
+    &__lede {
+      font-size: 18px;
+    }
+
+    &__hero {
+      aspect-ratio: 4 / 3;
+      border-radius: 22px;
+    }
+
+    &__shop {
+      padding: 18px 16px;
+    }
+
+    &__more > h2 {
+      font-size: 26px;
+    }
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ Terms of use and Privacy: design A ▆▆▆▆▆▆▆▆ */
+
+.k-legal {
+  font-family: var(--k-body);
+  text-align: start;
+
+  &__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 20px;
+
+    .k-official__title {
+      margin: 8px 0 0;
+    }
+  }
+
+  &__date {
+    margin: 0 0 6px;
+    font-size: 14.5px;
+    line-height: 1.4;
+    color: var(--k-muted);
+    text-align: end;
+
+    b {
+      display: block;
+      color: var(--k-ink);
+    }
+  }
+
+  &__loading {
+    @extend %k-page-loading;
+    margin-top: 28px;
+  }
+
+  &__note {
+    margin-top: 20px;
+  }
+
+  &__short {
+    margin-top: 24px;
+    padding: 26px 28px;
+    border-radius: 26px;
+    background: var(--k-green-soft);
+
+    h2 {
+      margin: 0;
+      font-family: var(--k-display);
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--k-green-deep);
+    }
+
+    ul {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 28px;
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    li {
+      display: grid;
+      grid-template-columns: 26px minmax(0, 1fr);
+      gap: 8px;
+      font-size: 15.5px;
+      line-height: 1.5;
+      color: var(--k-green-deep);
+
+      .v-icon {
+        margin-top: 2px;
+        color: var(--k-green) !important;
+      }
+    }
+  }
+
+  &__cols {
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr);
+    align-items: start;
+    gap: 52px;
+    margin-top: 36px;
+
+    &.-solo {
+      grid-template-columns: minmax(0, 800px);
+    }
+  }
+
+  &__toc {
+    position: sticky;
+    top: 24px;
+    display: grid;
+    padding: 18px;
+    border-radius: 22px;
+    background: var(--k-wash);
+
+    p {
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--k-muted);
+    }
+
+    a {
+      display: grid;
+      grid-template-columns: 26px minmax(0, 1fr);
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-size: 14.5px;
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--k-ink-2) !important;
+      text-decoration: none;
+      transition: background-color 140ms ease;
+
+      span {
+        color: var(--k-muted);
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.6);
+      }
+
+      &.-on {
+        background: #fff;
+        color: var(--k-green-deep) !important;
+        box-shadow: 0 6px 16px -12px rgba(0, 0, 0, 0.4);
+      }
+    }
+  }
+
+  &__text {
+    min-width: 0;
+  }
+
+  &__sec,
+  &__anchor {
+    scroll-margin-top: 24px;
+  }
+
+  &__sec {
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--k-line);
+
+    &.-last {
+      border-bottom: 0;
+      margin-bottom: 0;
+    }
+
+    h2 {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin: 0;
+      font-size: 27px;
+
+      span {
+        font-size: 18px;
+        color: var(--k-green);
+      }
+    }
+  }
+
+  &__real + &__sec {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid var(--k-line);
+  }
+
+  &__acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  @media (max-width: 960px) {
+    &__cols {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 28px;
+    }
+
+    &__toc {
+      position: static;
+    }
+  }
+
+  @media (max-width: 600px) {
+    &__head {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 6px;
+    }
+
+    &__date {
+      text-align: start;
+    }
+
+    &__short {
+      padding: 22px 20px;
+
+      ul {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    &__sec h2 {
+      font-size: 23px;
+    }
+  }
+}
+
+.k-cookies {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+
+  &__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    border: 1px solid var(--k-line);
+    border-radius: 18px;
+    background: #fff;
+
+    b {
+      display: block;
+      font-size: 16px;
+      color: var(--k-ink);
+    }
+
+    small {
+      display: block;
+      margin-top: 3px;
+      font-size: 14px;
+      line-height: 1.45;
+      color: var(--k-muted);
+    }
+
+    &.-none {
+      background: var(--k-wash);
+    }
+
+    .v-switch {
+      flex: none;
+    }
+  }
+
+  /* A row with nothing to switch says so, rather than a greyed switch. */
+  &__fixed {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: var(--k-pill);
+    background: var(--k-green-soft);
+    color: var(--k-green-deep);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+
+    .v-icon {
+      color: inherit !important;
+    }
+
+    &.-off {
+      background: #fff;
+      color: var(--k-muted);
+      box-shadow: inset 0 0 0 1px var(--k-line);
+    }
+  }
+
+  &__acts {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    margin-top: 6px;
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: default;
+    }
+  }
+
+  &__state {
+    font-size: 14px;
+    color: var(--k-muted);
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ About us: design B ▆▆▆▆▆▆▆▆
+   .k-story: .k-about is the product page's "About this product". */
+
+.k-story {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 56px;
+  margin-top: 16px;
+  font-family: var(--k-body);
+  text-align: start;
+
+  &__side {
+    position: sticky;
+    top: 24px;
+    align-self: start;
+  }
+
+  &__pic {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    aspect-ratio: 1;
+    padding: 6% 8% 10%;
+    border-radius: 28px;
+    background: #f8ecdc;
+
+    /* Packshots are square with room around the pack: three overlap a
+       little, the middle one in front, so the packs read at this size. */
+    img {
+      position: relative;
+      width: 46%;
+      aspect-ratio: 1;
+      margin-inline: -6%;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+      filter: drop-shadow(0 12px 14px rgba(40, 30, 10, 0.18));
+
+      &:nth-child(2) {
+        z-index: 1;
+        width: 54%;
+      }
+    }
+  }
+
+  &__facts {
+    display: grid;
+    gap: 14px;
+    margin: 22px 0 0;
+
+    dt {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--k-muted);
+    }
+
+    dd {
+      margin: 2px 0 0;
+      font-size: 15.5px;
+      font-weight: 600;
+      line-height: 1.45;
+      color: var(--k-ink);
+
+      a {
+        color: var(--k-green) !important;
+      }
+    }
+  }
+
+  &__main {
+    min-width: 0;
+
+    > .k-sample {
+      margin-top: 4px;
+    }
+  }
+
+  &__title {
+    margin: 10px 0 24px;
+    font-family: var(--k-display);
+    font-size: clamp(40px, 5.6vw, 64px);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--k-ink);
+  }
+
+  &__lead {
+    margin: 26px 0 0;
+    font-family: var(--k-display);
+    font-size: clamp(21px, 2.2vw, 27px);
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    color: var(--k-ink);
+  }
+
+  &__lead + .k-prose {
+    margin-top: 16px;
+  }
+
+  &__values {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 32px;
+    margin-top: 36px;
+    border-top: 1px solid var(--k-line);
+
+    > div {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--k-line);
+    }
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      font-family: var(--k-body);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0;
+      color: var(--k-ink);
+
+      em {
+        font-family: var(--k-display);
+        font-size: 22px;
+        font-style: normal;
+        color: var(--k-green);
+      }
+    }
+
+    p {
+      margin: 6px 0 0;
+      font-size: 15.5px;
+      line-height: 1.6;
+      color: var(--k-ink-2);
+    }
+  }
+
+  &__time {
+    margin: 40px 0 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr);
+      gap: 20px;
+      padding: 16px 0;
+      border-top: 1px dashed var(--k-line-strong);
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--k-ink-2);
+    }
+
+    b {
+      font-family: var(--k-display);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--k-green);
+    }
+  }
+
+  &__sign {
+    margin: 36px 0 0;
+    font-family: var(--k-display);
+    font-size: 30px;
+    font-style: italic;
+    color: var(--k-green-deep);
+  }
+
+  &__acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+
+    &__side {
+      position: static;
+      display: grid;
+      grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    &__facts {
+      margin: 0;
+    }
+  }
+
+  @media (max-width: 600px) {
+    &__side {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    &__pic {
+      aspect-ratio: 16 / 9;
+    }
+
+    &__values {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    &__time li {
+      grid-template-columns: 90px minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    &__sign {
+      font-size: 26px;
+    }
+  }
+}

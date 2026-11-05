@@ -12,75 +12,20 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
+<!--
+  Kalio: the shop's terms page in design A (KalioLegalPage), chosen by the
+  owner on 5 November 2026. Sample text, marked as a test, stands in while
+  the shop has not written it.
+-->
 <template>
-  <div>
-    <v-container>
-      <h1 class="k-official__title">
-        {{ $t("official_pages.terms") }}
-      </h1>
-      <u-loading-progress v-if="busy"></u-loading-progress>
-
-      <div class="text-start px-lg-5 px-md-4 px-3 master-article-container">
-        <s-article-editor
-          v-if="profile"
-          :body="profile.body"
-          :edit="false"
-          :enable-title="false"
-          :only-view="true"
-          class="p-lg-5 p-md-4 p-3 article"
-        />
-      </div>
-
-      <!-- Kalio: the shop has not written this page yet -->
-      <kalio-official-missing v-if="missing" kind="terms" />
-    </v-container>
-  </div>
+  <kalio-legal-page kind="terms" />
 </template>
 
 <script lang="ts">
-import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
-
-import SArticleEditor from "@selldone/components-vue/article/SArticleEditor.vue";
-import KalioOfficialMissing from "../../../components/kalio/KalioOfficialMissing.vue";
+import KalioLegalPage from "@app-storefront/components/kalio/pages/KalioLegalPage.vue";
 
 export default {
   name: "StorefrontPageOfficialTerms",
-  components: { SArticleEditor, KalioOfficialMissing },
-  inject: ["$shop"],
-  data: () => ({
-    state: "editing",
-    profile: null,
-    missing: false, // Kalio: no text for this page in the shop's profiles
-    busy: false,
-  }),
-  watch: {},
-  created() {
-    this.setPageTitle("Terms of use"); // Set Page Title!
-
-    this.fetchProfile();
-  },
-  methods: {
-    fetchProfile() {
-      this.busy = true;
-      axios
-        .get(window.XAPI.GET_SHOP_PROFILE(this.$shop.name, "terms"))
-        .then(({ data }) => {
-          // Kalio: a page the shop has not written is said on the page,
-          // not as an error.
-          if (data.error) return (this.missing = true);
-          this.profile = data.profile;
-          this.missing = !String(data.profile?.body || "").replace(/<[^>]*>/g, "").trim();
-        })
-        .catch((error) => {
-          this.missing = true;
-          if (error?.response?.status !== 404) NotificationService.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy = false;
-        });
-    },
-  },
+  components: { KalioLegalPage },
 };
 </script>
-
-<style scoped></style>

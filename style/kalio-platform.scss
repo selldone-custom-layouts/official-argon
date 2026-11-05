@@ -748,6 +748,44 @@
       font-size: 15px;
     }
   }
+
+  /* The foot of a home-shelf label (KalioShelf): the strip "+ Add" was,
+     with "n in basket" between round buttons. A phone's label is 132px, so
+     there it keeps the number alone. */
+  &.-strip {
+    grid-template-columns: 32px minmax(0, 1fr) 32px;
+    height: 40px;
+    padding: 0 4px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: none;
+
+    button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+
+      &:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.24);
+      }
+    }
+
+    .k-card-step__count {
+      white-space: nowrap;
+
+      small {
+        display: inline;
+        margin-inline-start: 4px;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .k-card-step__count small {
+        display: none;
+      }
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,838 +1,298 @@
 <!--
-  - Copyright (c) 2023-2024. Selldone® Business OS™
-  -
-  - Author: M.Pajuhaan
-  - Web: https://selldone.com
-  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  -
-  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
-  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
-  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
-  - Our journey is not just about reaching a destination, but about creating a masterpiece.
-  - Tread carefully, for you're treading on dreams.
-  -->
+  Kalio — the journal (the shop's blog), design B "Market journal", chosen by
+  the owner on 5 November 2026.
 
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-card
-    class="s--shop-card s--shadow-with-padding text-start px-2"
-    style="margin-bottom: 20vh"
-  >
-    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Top Shop Menu ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+  A deep-green banner, then the notes as a dated list — date block, topic,
+  title, a few lines and the picture — beside a column with the most read
+  notes, this week's deals (real products, "+" adds them) and a way to ask
+  the shop. A category, an author, a tag or a search keeps the same page
+  with its own heading. Posts that came with Selldone's demo content are
+  marked as sample text (KalioSampleNote), as the owner asked.
+
+  Selldone's page was a card with a headline carousel, an "interest" slider
+  and cards; its list asked the API with `extra`, which answers no posts,
+  so the list under the headline stayed empty.
+-->
+<template>
+  <div class="k-journal">
     <slot name="header"></slot>
-    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-    <u-loading-progress v-if="busy"></u-loading-progress>
-
-    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Header ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-
-    <v-toolbar
-      flat
-      color="transparent"
-      class="t-all-400"
-      :height="in_search_mode ? 120 : 64"
-    >
-      <template v-if="!in_search_mode">
-        <v-btn
-          v-if="
-            current_author ||
-            current_author_id ||
-            current_category ||
-            current_tag
-          "
-          :to="to_home"
-          class="flipInX"
-          exact
-          variant="text"
-        >
-          <v-icon class="me-1">{{ $t("icons.arrow_back") }}</v-icon>
-
-          <v-avatar
-            v-if="categoryObj"
-            start
-            class="zoomIn avatar-gradient -thin -category mx-1"
-            size="24"
-          >
-            <img :src="getShopImagePath(categoryObj.icon)" />
-          </v-avatar>
-
-          {{ $t("global.actions.back") }}
-        </v-btn>
-      </template>
-
-      <v-spacer></v-spacer>
-
-      <v-text-field
-        v-model="search"
-        :placeholder="$t('global.commons.search')"
-        append-inner-icon="search"
-        :class="{
-          'max-width-field-mini': !in_search_mode,
-          'max-width-field-large mt-12': in_search_mode,
-        }"
-        clearable
-        :flat="!in_search_mode"
-        hide-details
-        single-line
-        variant="solo"
-        class="t-all-400"
-        rounded="xl"
-      >
-        <template v-slot:prepend-inner>
-          <v-slide-x-reverse-transition>
-            <v-chip
-              v-if="categoryObj && in_search_mode"
-              class="me-2"
-              variant="text"
-              closable
-              @click:close="current_category = null"
-            >
-              <v-avatar start class="zoomIn">
-                <img :src="getShopImagePath(categoryObj.icon)" />
-              </v-avatar>
-              {{ categoryObj.category }}
-            </v-chip>
-          </v-slide-x-reverse-transition>
+    <div class="k-wrap">
+      <nav aria-label="Breadcrumb" class="k-official__crumbs">
+        <router-link :to="{ name: 'ShopPage' }">{{ shopTitle }}</router-link>
+        <v-icon size="16">chevron_right</v-icon>
+        <router-link v-if="filtered" :to="homeRoute">Journal</router-link>
+        <span v-else>Journal</span>
+        <template v-if="filtered">
+          <v-icon size="16">chevron_right</v-icon>
+          <span>{{ heading }}</span>
         </template>
-      </v-text-field>
-      <v-spacer v-if="in_search_mode"></v-spacer>
-    </v-toolbar>
+      </nav>
 
-    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Headlines ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-
-    <v-expand-transition>
-      <v-container v-if="loaded_data" v-show="!in_search_mode" fluid>
-        <v-row>
-          <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Headlines > Last article ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-
-          <v-col cols="12" md="4" sm="5">
-            <router-link
-              v-if="latest_article"
-              :to="{
-                name: window.$storefront.routes.SHOP_BLOG_PAGE_SLUG,
-                params: {
-                  blog_id: latest_article.parent_id,
-                  slug: latest_article.slug,
-                },
-              }"
-              class="text-black"
-              exact
-            >
-              <img
-                :alt="latest_article.title"
-                :src="getShopImagePath(latest_article.image)"
-                class="rounded fadeIn"
-                height="auto"
-                width="100%"
-              />
-              <s-blog-card-author-category
-                v-if="latest_article.parent"
-                :categories="categories"
-                :category-name="latest_article.parent.category_id"
-                :user="latest_article.user"
-                class="mt-4"
-              ></s-blog-card-author-category>
-
-              <h2 class="my-2 font-weight-black fadeInUp delay_200">
-                {{ latest_article.title }}
-              </h2>
-              <p class="normal-text fadeInUp delay_300">
-                {{ latest_article.description }}
-              </p>
-            </router-link>
-          </v-col>
-
-          <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Headlines > Last 4 articles ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-
-          <v-col class="px-0 px-sm-1 px-md-2 px-lg-3" cols="12" md="4" sm="7">
-            <v-list class="overflow-visible">
-              <v-list-item
-                v-for="(article, i) in latest4_articles"
-                :key="article.id"
-                :style="{ 'animation-delay': i * 100 + 'ms' }"
-                :to="{
-                  name: window.$storefront.routes.SHOP_BLOG_PAGE_SLUG,
-                  params: { blog_id: article.parent_id, slug: article.slug },
-                }"
-                class="fadeInUp rounded-xl"
-                exact
-                style="min-height: 136px"
-              >
-                <template v-slot:prepend>
-                  <v-avatar rounded size="100">
-                    <v-img
-                      :alt="article.title"
-                      :src="getShopImagePath(article.image, IMAGE_SIZE_BLOG)"
-                      style="object-fit: cover"
-                    />
-                  </v-avatar>
-                </template>
-
-                <v-list-item-subtitle class="op-1-0">
-                  <s-blog-card-author-category
-                    :categories="categories"
-                    :category-name="article.parent.category_id"
-                    :user="article.user"
-                  ></s-blog-card-author-category>
-                </v-list-item-subtitle>
-                <v-list-item-title>
-                  <h2
-                    class="my-1 font-weight-black line-height-normal font-size-16px"
-                    style="white-space: normal; min-height: 50px"
-                  >
-                    {{ article.title }}
-                  </h2>
-                </v-list-item-title>
-                <v-list-item-subtitle class="my-0"
-                  >{{
-                    getLocalTimeString(article.updated_at, true, false, true)
-                  }}
-                </v-list-item-subtitle>
-              </v-list-item>
-            </v-list>
-          </v-col>
-
-          <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Headlines > Categories ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-
-          <!-- Stared Categories -->
-          <v-col class="d-flex flex-column" cols="12" md="4" sm="12">
-            <p class="font-weight-bold">
-              <v-icon class="me-1" size="small">photo_filter</v-icon>
-              {{ $t("blogs.topics") }}
-            </p>
-
-            <!-- Current Category Page View -->
-
-            <v-expand-transition>
-              <div v-if="categoryObj" class="text-center position-relative">
-                <v-btn
-                  :to="to_home"
-                  class="absolute-top-end"
-                  exact
-                  icon
-                  variant="text"
-                >
-                  <v-icon>close</v-icon>
-                </v-btn>
-                <v-avatar :size="64" class="zoomIn" rounded>
-                  <img :src="getShopImagePath(categoryObj.icon)" />
-                </v-avatar>
-                <b class="d-block fadeInUp delay_200 mt-1"
-                  >{{ categoryObj.category }}
-                </b>
-                <p class="my-2 fadeInUp delay_300">
-                  {{ categoryObj.description }}
-                </p>
-              </div>
-            </v-expand-transition>
-            <!-- Current Author Page View -->
-            <v-expand-transition>
-              <div v-if="authorObj" class="text-center position-relative">
-                <v-btn
-                  :to="to_home"
-                  class="absolute-top-end"
-                  exact
-                  icon
-                  variant="text"
-                >
-                  <v-icon>close</v-icon>
-                </v-btn>
-                <v-avatar :size="64" class="zoomIn">
-                  <img :src="getUserAvatar(authorObj.id)" />
-                </v-avatar>
-                <b class="d-block fadeInUp delay_200 mt-1"
-                  >{{ authorObj.name }}
-                </b>
-              </div>
-            </v-expand-transition>
-
-            <v-list
-              class="border-between-vertical flex-grow-1 overflow-visible"
-            >
-              <v-list-item
-                v-for="(category, i) in stared_categories"
-                :key="category.category"
-                :style="{ 'animation-delay': 500 + i * 100 + 'ms' }"
-                :to="{
-                  name: window.$storefront.routes.BLOGS_PAGE,
-                  query: {
-                    page: 1,
-                    category: category.id,
-                    scroll: false,
-                  },
-                }"
-                class="flipInX"
-                exact
-              >
-                <template v-slot:prepend>
-                  <v-avatar rounded class="border">
-                    <img
-                      v-if="category.icon"
-                      :alt="category.category"
-                      :src="getShopImagePath(category.icon)"
-                      class="x-small"
-                    />
-                  </v-avatar>
-                </template>
-
-                <v-list-item-title
-                  class="font-weight-bold list-item-bold line-height-normal"
-                  style="white-space: normal"
-                >
-                  {{ category.category }}
-                  <small class="float-end">
-                    {{ category.articles }}
-                    {{ $t("global.commons.articles") }}</small
-                  >
-                </v-list-item-title>
-                <v-list-item-subtitle
-                  >{{ category.description }}
-                </v-list-item-subtitle>
-              </v-list-item>
-            </v-list>
-            <div v-if="category_pages > 1">
-              <v-btn
-                :disabled="category_page === 1"
-                class="fadeIn delay_2s"
-                icon
-                variant="text"
-                size="small"
-                @click="category_page--"
-              >
-                <v-icon size="small">north</v-icon>
-              </v-btn>
-              <v-btn
-                :disabled="category_page === category_pages"
-                class="fadeIn delay_2s"
-                icon
-                variant="text"
-                size="small"
-                @click="category_page++"
-              >
-                <v-icon size="small">south</v-icon>
-              </v-btn>
-            </div>
-          </v-col>
-
-          <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Trends ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-
-          <v-col cols="12">
-            <hr />
-            <p class="font-weight-bold">
-              <v-icon class="me-1" size="small">trending_up</v-icon>
-              {{ $t("blogs.popular") }}
-            </p>
-          </v-col>
-
-          <v-col
-            v-for="(article, index) in popular"
-            :key="article.id"
-            :style="{ 'animation-delay': index * 100 + 'ms' }"
-            class="p-0 p-sm-1 p-md-2 p-lg-3 slideInUp"
-            cols="12"
-            md="4"
-            sm="6"
-          >
-            <v-list-item
-              :to="{
-                name: window.$storefront.routes.SHOP_BLOG_PAGE_SLUG,
-                params: { blog_id: article.parent_id, slug: article.slug },
-              }"
-              exact
-            >
-              <template v-slot:prepend>
-                <v-avatar
-                  class="text-h4 op-0-2 not-selectable font-weight-black"
-                >
-                  {{ index + 1 }}
-                </v-avatar>
-              </template>
-
-              <s-blog-card-author-category
-                :categories="categories"
-                :category-name="
-                  article.parent ? article.parent.category_id : null
-                "
-                :user="article.user"
-              ></s-blog-card-author-category>
-              <v-list-item-title
-                class="font-weight-bold list-item-bold line-height-normal my-1"
-                style="white-space: normal; min-height: 40px"
-              >
-                {{ article.title }}
-              </v-list-item-title>
-              <v-list-item-subtitle
-                >{{ getLocalTimeString(article.updated_at, true, false, true) }}
-              </v-list-item-subtitle>
-            </v-list-item>
-          </v-col>
-
-          <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Interest ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-
-          <v-col v-if="show_interested_blogs" cols="12">
-            <hr />
-            <p class="font-weight-bold fadeIn delay_500">
-              <v-icon class="me-1" size="small">assistant</v-icon>
-              {{ $t("blogs.suggestions") }}
-            </p>
-          </v-col>
-
-          <v-col
-            v-if="show_interested_blogs"
-            class="fadeInUp delay_1s"
-            cols="12"
-          >
-            <v-carousel
-              :interval="8000 * chunk_size"
-              cycle
-              height="600px"
-              hide-delimiter-background
-              show-arrows="hover"
-            >
-              <v-carousel-item v-for="(chunk, i) in chunks" :key="i">
-                <v-container fluid style="padding-top: 32px">
-                  <v-row align="stretch" class="fill-height" justify="center">
-                    <v-col
-                      v-for="article in chunk"
-                      :key="article.id"
-                      cols="12"
-                      lg="3"
-                      md="4"
-                      sm="6"
-                    >
-                      <s-blog-card
-                        :article="article"
-                        :categories="categories"
-                        rounded="xl"
-                      ></s-blog-card>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-carousel-item>
-            </v-carousel>
-          </v-col>
-        </v-row>
-      </v-container>
-
-      <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Skeleton Loader ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-
-      <v-container v-else v-show="!in_search_mode" class="mt-16" fluid>
-        <v-row>
-          <!-- Last article -->
-          <v-col cols="12" md="4" sm="6">
-            <v-skeleton-loader
-              class="mx-auto"
-              :type="['card', 'text@3']"
-            ></v-skeleton-loader>
-          </v-col>
-
-          <!-- Last 4 articles -->
-
-          <v-col cols="12" md="4" sm="6">
-            <v-skeleton-loader
-              v-for="i in 4"
-              :key="i"
-              type="list-item-three-line"
-            ></v-skeleton-loader>
-          </v-col>
-          <!-- Stared Categories -->
-          <v-col cols="12" md="4" sm="12">
-            <p class="font-weight-bold">
-              <v-icon class="me-1" size="small">photo_filter</v-icon>
-              {{ $t("blogs.topics") }}
-            </p>
-
-            <v-skeleton-loader
-              v-for="i in 3"
-              :key="i"
-              :type="['list-item-avatar', 'list-item-two-line']"
-            ></v-skeleton-loader>
-          </v-col>
-
-          <!-- Trends -->
-
-          <v-col cols="12">
-            <hr />
-            <p class="font-weight-bold">
-              <v-icon class="me-1" size="small">trending_up</v-icon>
-              {{ $t("blogs.popular") }}
-            </p>
-          </v-col>
-
-          <v-col v-for="index in 9" :key="index" cols="12" md="4" sm="6">
-            <v-skeleton-loader
-              height="100"
-              type="image"
-              width="100%"
-            ></v-skeleton-loader>
-          </v-col>
-
-          <v-col cols="12">
-            <hr />
-            <p class="font-weight-bold">
-              <v-icon class="me-1" size="small">school</v-icon>
-              {{ $t("blogs.title") }}
-            </p>
-          </v-col>
-
-          <v-col
-            v-for="j in $vuetify.display.smAndDown
-              ? 2
-              : $vuetify.display.md
-                ? 3
-                : 4"
-            :key="'j' + j"
-            cols="12"
-            lg="3"
-            md="4"
-            sm="6"
-          >
-            <v-skeleton-loader class="mx-auto" type="card"></v-skeleton-loader>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-expand-transition>
-
-    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Articles list ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-
-    <v-container v-if="articles.length > 0" fluid>
-      <template v-if="!in_search_mode">
-        <hr class="my-16" />
-        <p class="font-weight-bold fadeIn delay_500">
-          <v-icon class="me-1" size="small">school</v-icon>
-          {{ $t("blogs.title") }}
+      <section class="k-journal__hero">
+        <div>
+          <p class="k-journal__eyebrow">{{ filtered ? "Market journal" : `The ${shopTitle} journal` }}</p>
+          <h1>{{ heading }}</h1>
+          <p>{{ lede }}</p>
+        </div>
+        <p v-if="total" class="k-journal__count">
+          <b>{{ total }}</b>{{ total === 1 ? "note" : "notes" }}{{ filtered ? "" : " so far" }}
         </p>
-      </template>
+      </section>
 
-      <v-row id="first" align="start" justify="center">
-        <v-col :order="1" :order-md="2" class="p-0" cols="12" lg="8" xl="9">
-          <v-data-iterator
-            :items="articles"
-            :items-length="totalItems"
-            :items-per-page="itemsPerPage"
-            :no-data-text="$t('global.commons.no_data')"
-            :search="search"
-            hide-default-footer
-            item-value="id"
-          >
-            <template v-slot:header></template>
+      <kalio-sample-note v-if="demo" class="k-journal__note">
+        These notes came with the shop's demo content to show the page. They are not real {{ shopTitle }} articles.
+      </kalio-sample-note>
 
-            <template v-slot:default="props">
-              <v-list>
-                <s-blog-row
-                  v-for="item in props.items"
-                  :key="item.id"
-                  :article="item.raw"
-                  :categories="categories"
-                >
-                </s-blog-row>
-              </v-list>
-            </template>
+      <div class="k-journal__cols">
+        <div class="k-journal__main">
+          <nav aria-label="Topics" class="k-journal__tabs">
+            <router-link :class="{ '-on': !current_category }" :to="homeRoute">Latest</router-link>
+            <router-link
+              v-for="category in categories"
+              :key="category.id"
+              :class="{ '-on': String(category.id) === String(current_category) }"
+              :to="journalRoute({ category: category.id })"
+            >
+              {{ category.title || category.name }}
+            </router-link>
+          </nav>
 
-            <template v-slot:bottom>
-              <div class="text-center pt-2 mt-3">
-                <v-pagination
-                  :length="pageCount"
-                  :model-value="page"
-                  rounded
-                  @update:model-value="
-                    (val) => {
-                      page = val;
-                      $router.replace({
-                        query: { page: val, 'no-scroll': true, scroll: true },
-                      });
-                    }
-                  "
-                />
-              </div>
-            </template>
-          </v-data-iterator>
-        </v-col>
-      </v-row>
-    </v-container>
+          <ol v-if="articles.length" :class="{ '-busy': busy }" class="k-journal__list">
+            <li v-for="article in articles" :key="article.id">
+              <router-link :to="postRoute(article)" class="k-jentry">
+                <span class="k-jentry__date">
+                  <b>{{ dateParts(article.created_at).day }}</b>
+                  <span>{{ dateParts(article.created_at).mon }}</span>
+                </span>
+                <span class="k-jentry__text">
+                  <span v-if="topicOf(article)" class="k-topic">{{ topicOf(article) }}</span>
+                  <span class="k-jentry__title">{{ article.title }}</span>
+                  <span v-if="article.description" class="k-jentry__lede">{{ article.description }}</span>
+                  <span class="k-jentry__meta">
+                    <span v-if="article.user?.name" class="k-who">
+                      <i>{{ initials(article.user.name) }}</i>{{ article.user.name }}
+                    </span>
+                    <span>{{ dateParts(article.created_at).full }}</span>
+                  </span>
+                </span>
+                <span class="k-jentry__pic">
+                  <img v-if="article.image" :src="article.image" alt="" loading="lazy" />
+                  <v-icon v-else size="32">article</v-icon>
+                </span>
+              </router-link>
+            </li>
+          </ol>
 
-    <div style="min-height: 5vh"></div>
-  </v-card>
+          <div v-else-if="busy" aria-hidden="true" class="k-journal__list -skeleton">
+            <div v-for="n in 3" :key="n" class="k-jentry"></div>
+          </div>
+
+          <div v-else class="k-board__empty k-journal__empty">
+            <v-icon size="30">menu_book</v-icon>
+            <h2>{{ filtered ? "No notes here yet" : "The journal is empty for now" }}</h2>
+            <p>{{ filtered ? "Nothing matches this yet. The latest notes are one tap away." : `${shopTitle} has not written any notes yet.` }}</p>
+            <router-link v-if="filtered" :to="homeRoute" class="k-btn k-btn--line">All notes</router-link>
+          </div>
+
+          <nav v-if="pageCount > 1" aria-label="Pages" class="k-journal__pages">
+            <router-link v-if="page > 1" :to="pageRoute(page - 1)" class="k-btn k-btn--line">
+              <v-icon class="k-flip" size="20">chevron_left</v-icon>Newer
+            </router-link>
+            <span>Page {{ page }} of {{ pageCount }}</span>
+            <router-link v-if="page < pageCount" :to="pageRoute(page + 1)" class="k-btn k-btn--line">
+              Older<v-icon class="k-flip" size="20">chevron_right</v-icon>
+            </router-link>
+          </nav>
+        </div>
+
+        <aside class="k-journal__side">
+          <section v-if="popular.length" class="k-jbox">
+            <h2>Most read</h2>
+            <ol class="k-jbox__ranks">
+              <li v-for="article in popular.slice(0, 4)" :key="article.id">
+                <router-link :to="postRoute(article)">{{ article.title }}</router-link>
+              </li>
+            </ol>
+          </section>
+
+          <section v-if="offers.length" class="k-jbox">
+            <h2>On offer this week</h2>
+            <div class="k-jbox__grid">
+              <kalio-mini-product v-for="product in offers" :key="product.id" :product="product" @sheet="openSheet" />
+            </div>
+            <router-link :to="dealsRoute" class="k-more">
+              Every deal<v-icon class="k-flip" size="20">chevron_right</v-icon>
+            </router-link>
+          </section>
+
+          <section class="k-jbox -ask">
+            <h2>Got a question?</h2>
+            <p>Ask the sellers anything about a product before you order.</p>
+            <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }" class="k-btn k-btn--line">
+              Contact the shop
+            </router-link>
+          </section>
+        </aside>
+      </div>
+    </div>
+
+    <kalio-quick-buy v-model="sheet" :product="picked" />
+  </div>
 </template>
 
 <script lang="ts">
-import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import KalioSampleNote from "@app-storefront/components/kalio/pages/KalioSampleNote.vue";
+import KalioMiniProduct from "@app-storefront/components/kalio/pages/KalioMiniProduct.vue";
+import KalioQuickBuy from "@app-storefront/components/kalio/KalioQuickBuy.vue";
+import { dealsRoute } from "@app-storefront/components/kalio/kalio-catalog";
+import {
+  dateParts,
+  deals,
+  initials,
+  isDemoPost,
+  journalExtra,
+  journalPage,
+  journalRoute,
+  postRoute,
+} from "@app-storefront/components/kalio/pages/kalio-journal";
 
-import SBlogCard from "@selldone/components-vue/storefront/blog/card/SBlogCard.vue";
-import SBlogCardAuthorCategory from "@selldone/components-vue/storefront/blog/card/author-category/SBlogCardAuthorCategory.vue";
-import { throttle } from "lodash-es";
-import ScrollHelper from "@selldone/core-js/utils/scroll/ScrollHelper";
-import SBlogRow from "@app-storefront/components/blog/row/SBlogRow.vue";
-import DateMixin from "@selldone/components-vue/mixin/date/DateMixin.ts";
+const PER_PAGE = 8;
 
 export default {
   name: "StorefrontPageBlogsList",
-  mixins: [DateMixin],
-
-  components: {
-    SBlogRow,
-    SBlogCardAuthorCategory,
-    SBlogCard,
-  },
-
+  components: { KalioSampleNote, KalioMiniProduct, KalioQuickBuy },
   inject: ["$shop"],
 
-  /**
-   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-   *  🔷 Data
-   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-   */
   data: () => ({
-    to_home: {
-      name: window.$storefront.routes.BLOGS_PAGE,
-      query: {
-        page: 1,
-        category: undefined,
-        author: undefined,
-        author_id: undefined,
-        search: undefined,
-        scroll: false,
-        tags: undefined,
-      },
-    },
-
-    //----------------------------------
-
     articles: [],
-    last_articles: [],
+    total: 0,
+    busy: false,
     popular: [],
     categories: [],
-    interest: [],
-    //----------------------------------
-
-    busy: false,
-
-    search: "",
-    filter: {},
-    sortDesc: true,
-    sortBy: [{ key: null, order: "desc" }],
-
-    // Pagination:
-    page: 1,
-    itemsPerPage: 12,
-    totalItems: 0,
-    options: {},
-
-    //---------------------------
-    first_start: true,
-    category_old: null,
-    author_old: null,
-    author_id_old: null,
-    tag_old: null,
-
-    loaded_data: false,
-
-    //----------------------------------
-
-    category_page: 1,
+    offers: [],
+    sheet: false,
+    picked: null,
   }),
-  /**
-   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-   *  🔷 Computed
-   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-   */
+
   computed: {
+    shopTitle() {
+      return this.$shop?.title || "The shop";
+    },
+    page() {
+      return Math.max(1, parseInt(this.$route.query.page) || 1);
+    },
     pageCount() {
-      return Math.ceil(this.totalItems / this.itemsPerPage);
+      return Math.ceil(this.total / PER_PAGE);
     },
-    // ......................... Headline .........................
-
-    latest_article() {
-      return this.last_articles[0];
-    },
-    latest4_articles() {
-      return this.last_articles.slice(1, 5);
-    },
-    // ......................... Categories .........................
-
-    stared_categories() {
-      return this.categories
-        .filter((it) => it.star)
-        .slice((this.category_page - 1) * 8, this.category_page * 8);
-    },
-    category_pages() {
-      return Math.ceil(this.categories.length / 8);
-    },
-
-    // ......................... Query values .........................
     current_category() {
-      return this.$route.query.category;
-    },
-    current_author_id() {
-      return this.$route.params.author_id;
-    },
-    current_author() {
-      return this.$route.params.author;
+      return this.$route.query.category || null;
     },
     current_tag() {
-      return this.$route.query.tags;
+      return this.$route.query.tags || null;
     },
-    // .................................................................
-
-    in_search_mode() {
-      return this.search;
+    current_search() {
+      return this.$route.query.search || "";
     },
-
-    show_interested_blogs() {
-      return this.chunks.length > 0;
-      /*  return (
-              !this.current_category &&
-              !this.current_author_id &&
-              !this.current_author
-      );*/
+    current_author() {
+      return this.$route.params.author || null;
     },
-
-    // ......................... Category page mode .........................
-
-    categoryObj() {
-      return this.categories.find(
-        (it) => "" + it.id === "" + this.current_category,
-      );
+    current_author_id() {
+      return this.$route.params.author_id || null;
     },
-    // ......................... Author page mode .........................
-
-    authorObj() {
-      return (
-        (this.current_author_id || this.current_author) &&
-        this.blogs &&
-        this.blogs.length &&
-        this.blogs[0].article.user
-      );
+    filtered() {
+      return !!(this.current_category || this.current_tag || this.current_search || this.current_author_id);
     },
-
-    // ......................... Interest .........................
-
-    chunk_size() {
-      return this.$vuetify.display.lgAndUp
-        ? 4
-        : this.$vuetify.display.mdAndUp
-          ? 3
-          : this.$vuetify.display.smAndUp
-            ? 2
-            : 1;
+    category() {
+      return this.categories.find((it) => String(it.id) === String(this.current_category)) || null;
     },
-
-    loops() {
-      return Math.ceil(this.interest.length / this.chunk_size);
+    heading() {
+      if (this.current_category) return this.category?.title || this.category?.name || "Topic";
+      if (this.current_author_id) return this.articles[0]?.user?.name || this.current_author || "Author";
+      if (this.current_tag) return `#${this.current_tag}`;
+      if (this.current_search) return `“${this.current_search}”`;
+      return "Notes from the aisles";
     },
-    chunks() {
-      const out = [];
-      for (let i = 0; i < this.loops; i++) {
-        out.push(
-          this.interest.slice(i * this.chunk_size, (i + 1) * this.chunk_size),
-        );
-      }
-      return out;
+    lede() {
+      if (this.current_category) return this.category?.description || "Every note on this topic, newest first.";
+      if (this.current_author_id) return "Every note by this author, newest first.";
+      if (this.current_tag || this.current_search) return "The notes that match, newest first.";
+      return "Short, useful reads for the weekly shop: what's good now, how to keep it fresh and what to cook with it.";
+    },
+    homeRoute() {
+      return journalRoute();
+    },
+    dealsRoute() {
+      return dealsRoute();
+    },
+    /* Every note on the page came with the demo content. */
+    demo() {
+      return this.articles.length > 0 && this.articles.every((article) => isDemoPost(article, this.$shop));
     },
   },
-  /**
-   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-   *  🔷 Watch
-   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-   */
+
   watch: {
-    "$route.query"(query) {
-      // Set page by query if exist:
-      this.page = parseInt(this.$route.query.page ? this.$route.query.page : 1);
-      this.search = this.$route.query.search ? this.$route.query.search : "";
+    "$route.fullPath"() {
+      this.load();
+    },
+  },
 
-      this.fetchBlogs(
-        this.page,
-        query.scroll === true || query.scroll === "true",
-      );
+  created() {
+    this.setPageTitle?.("Journal");
+    this.load();
+    journalExtra().then(({ popular, categories }) => {
+      this.popular = popular;
+      this.categories = categories;
+    });
+    deals(4).then((list) => (this.offers = list));
+  },
+
+  methods: {
+    dateParts,
+    initials,
+    postRoute,
+    journalRoute,
+
+    topicOf(article) {
+      const id = article?.parent?.category_id;
+      const category = id && this.categories.find((it) => it.id === id);
+      return category ? category.title || category.name : "";
     },
 
-    search: throttle(function () {
-      this.fetchBlogs(1, false);
-    }, window.SERACH_THROTTLE),
-  },
-  /**
-   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-   *  🔷 Component Lifecycle
-   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-   */
-  created() {
-    // Set page by query if exist:
-    this.page = parseInt(this.$route.query.page ? this.$route.query.page : 1);
-    this.search = this.$route.query.search ? this.$route.query.search : "";
+    pageRoute(page) {
+      return { name: this.$route.name, params: this.$route.params, query: { ...this.$route.query, page } };
+    },
 
-    this.fetchBlogs(this.page, false);
-
-    this.first_start = false;
-  },
-  mounted() {},
-
-  /**
-   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-   *  🔷 Methods
-   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-   */
-  methods: {
-    fetchBlogs(page, scroll = true) {
-      // Each category and author page has its publication full page!
-      const need_extra =
-        this.first_start ||
-        this.category_old !== this.current_category ||
-        this.author_old !== this.current_author ||
-        this.author_id_old !== this.current_author_id ||
-        this.tag_old !== this.current_tag;
+    load() {
+      const asked = this.$route.fullPath;
       this.busy = true;
-
-      //const t = this;
-      axios
-        .get(window.XAPI.GET_SHOP_BLOGS(this.$shop.name), {
-          params: {
-            extra: need_extra, // Load full data (latest, popular & ...)
-
-            category: this.current_category,
-            author: this.current_author,
-            author_id: this.current_author_id,
-
-            tags: this.current_tag ? [this.current_tag] : undefined,
-
-            offset: (page - 1) * this.itemsPerPage,
-            limit: this.itemsPerPage,
-            //sortBy: sortBy,
-            //  sortDesc: sortDesc,
-            search: this.search,
-          },
+      journalPage({
+        page: this.page,
+        limit: PER_PAGE,
+        category: this.current_category,
+        author: this.current_author,
+        author_id: this.current_author_id,
+        tag: this.current_tag,
+        search: this.current_search,
+      })
+        .then(({ articles, total }) => {
+          if (asked !== this.$route.fullPath) return;
+          this.articles = articles;
+          this.total = total;
         })
-        .then(({ data }) => {
-          if (data.error) {
-            NotificationService.showErrorAlert(null, data.error_msg);
-            return;
-          }
-          this.loaded_data = true;
-
-          this.articles = data.articles;
-
-          if (data.last_articles) this.last_articles = data.last_articles;
-
-          if (data.popular) this.popular = data.popular;
-
-          if (data.categories) this.categories = data.categories;
-
-          if (data.interest) this.interest = data.interest;
-
-          this.totalItems = data.total;
+        .catch(() => {
+          if (asked !== this.$route.fullPath) return;
+          this.articles = [];
+          this.total = 0;
         })
-        .catch((error) => {
-          NotificationService.showLaravelError(error);
-        })
-
         .finally(() => {
-          this.busy = false;
-          if (scroll) ScrollHelper.scrollToElement("#first", 200, "smooth");
+          if (asked === this.$route.fullPath) this.busy = false;
         });
+    },
 
-      this.category_old = this.current_category;
-      this.author_old = this.current_author;
-      this.author_id_old = this.current_author_id;
-      this.tag_old = this.current_tag;
+    openSheet(product) {
+      this.picked = product;
+      this.sheet = true;
     },
   },
 };

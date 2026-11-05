@@ -4,8 +4,12 @@
   A shop shelf in the middle of the home page: pick an aisle from the tabs
   and its best sellers stand on a wooden board, each with a shelf-edge label
   under it — the price, then what it was or the unit it is sold by, then the
-  name and a "+" that opens the quick-buy sheet. A label on offer is yellow
-  with the saving on a coral sticker, as a supermarket marks one.
+  name, and at the label's foot a strip: "+ Add", and once the product is in
+  the basket "− n +" in the same place (design A, chosen by the owner on 5
+  November 2026, so nothing jumps onto the packshot or over the price). A
+  product with sizes keeps "+ Add", which opens the quick-buy sheet. A label
+  on offer is yellow with the saving on a coral sticker, as a supermarket
+  marks one.
 
   The aisles are passed in by the home page. An aisle's products are read
   the first time its tab is chosen, and the first tab only when the shelf is
@@ -65,15 +69,15 @@
                   </span>
                   <span class="k-shelf__name">{{ product.title }}</span>
                 </router-link>
-                <kalio-card-step v-if="inBasket(product)" :product="product" class="k-shelf__step" inline />
+                <kalio-card-step v-if="inBasket(product)" :product="product" class="k-shelf__strip" strip />
                 <button
                   v-else
                   :aria-label="`Add ${product.title}`"
-                  class="k-shelf__add"
+                  class="k-shelf__strip"
                   type="button"
                   @click="add(product)"
                 >
-                  <v-icon size="20">add</v-icon>
+                  <v-icon size="20">add</v-icon>Add
                 </button>
               </div>
             </div>
@@ -241,8 +245,8 @@ export default {
       this.swapping = false;
     },
 
-    /* "+" puts the product straight into the basket; one with sizes opens
-       the sheet. In the basket, the label shows − n + instead. */
+    /* "+ Add" puts the product straight into the basket; one with sizes
+       opens the sheet. In the basket, the strip shows − n + instead. */
     add(product) {
       quickAdd(this, product, (picked) => {
         this.picked = picked;

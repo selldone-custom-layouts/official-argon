@@ -4,8 +4,9 @@
   Once a product without sizes is in the basket, its card's "+" becomes
   "− n +": each "+" adds one more, "−" takes one away, and at one "−" takes
   the product out and the "+" comes back. Laid over the card's picture by
-  kalio-card-basket.ts (the card is Selldone's), or set inline in a shelf
-  label. A product with sizes keeps its "+", which opens the sheet.
+  kalio-card-basket.ts (the card is Selldone's), as the foot of a home-shelf
+  label (strip), or small on a journal card (inline). A product with sizes
+  keeps its "+", which opens the sheet.
 
   The count changes the moment it is tapped and the basket follows
   (stepTo in kalio-basket.ts), so quick taps add up. It shows "1" as soon
@@ -14,7 +15,7 @@
 <template>
   <div
     v-if="line && shown > 0"
-    :class="{ '-busy': busy, '-inline': inline }"
+    :class="{ '-busy': busy, '-inline': inline, '-strip': strip }"
     aria-label="Quantity in basket"
     class="k-card-step"
     role="group"
@@ -44,8 +45,10 @@ export default {
 
   props: {
     product: { type: Object, required: true },
-    /** In a shelf label rather than over a card's picture. */
+    /** Small, beside a price or over a small picture, without "in basket". */
     inline: Boolean,
+    /** The foot of a home-shelf label: full width, square top corners. */
+    strip: Boolean,
   },
 
   computed: {

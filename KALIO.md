@@ -269,6 +269,36 @@ Facts that shape the code:
   swirled crumb"); the blog holds Selldone's demo posts (power tools,
   gaming microphones); About/Terms/Privacy are not written; "DairyCove
   Whole Milk 1 gal" opens on its 1 quart size.
+- **0.2.24 (5 November 2026): the owner's picks from two mockups each.**
+  - *Home shelf, buy strip (A)* (`kalio-design/shelf-step-options`): the
+    label's foot is "+ Add", and in the basket "− n +" in the same place
+    (`KalioCardStep` `strip`). 0.2.23's stepper on the packshot was
+    rejected ("jumping up is not a good idea").
+  - *Journal B, note A, About B, Terms A, Privacy A*
+    (`kalio-design/pages-options`), in `components/kalio/pages/` and
+    `style/kalio-pages.scss`. The journal and a note read Selldone's blog
+    API directly (`kalio-journal.ts`; asked with `extra` the list answers
+    no posts, so the side lists are a second call). A note's shopping box
+    lists the shop's products it names, else this week's deals; "Add all"
+    adds them one at a time. Comments are still Selldone's.
+  - *Sample text the owner asked for:* About/Terms/Privacy show general
+    text (`kalio-sample-pages.ts`) under an amber "Sample text — molino is
+    a test shop" note (`KalioSampleNote`) until the shop writes its own
+    profile; the journal and a note show the note when the posts are
+    Selldone's demo posts (their pictures sit in another shop's folder).
+    Nothing is written to the shop.
+  - *Cookie choices* on Privacy are Selldone's real ones (the shop's apps,
+    "GDPR-Cookie"); molino runs no app, so the page says there is nothing
+    optional rather than showing switches that do nothing.
+  - `.k-about` is the product page's "About this product"; About us is
+    `.k-story`.
+  - **Sticky does not work inside Vuetify's wrapper** (`.v-application`
+    has `overflow: hidden`): the header's `position: sticky` and the
+    product page's sticky packshot have never stuck. These pages switch
+    the wrapper to `overflow: clip` (with `:has()`) so their side columns
+    stick, and keep the header scrolling away as everywhere else. Doing
+    it site-wide would make the header stick on every page: the owner's
+    call.
 
 Market Hall, the first design, is tagged `market-hall-0.1.5`.
 

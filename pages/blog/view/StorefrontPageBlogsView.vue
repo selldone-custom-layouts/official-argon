@@ -1,111 +1,339 @@
 <!--
-  - Copyright (c) 2023-2024. Selldone® Business OS™
-  -
-  - Author: M.Pajuhaan
-  - Web: https://selldone.com
-  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  -
-  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
-  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
-  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
-  - Our journey is not just about reaching a destination, but about creating a masterpiece.
-  - Tread carefully, for you're treading on dreams.
-  -->
+  Kalio — a journal note, design A "Article with a shopping list", chosen by
+  the owner on 5 November 2026.
 
+  One readable column: the topic, the title, a lede, who wrote it, when and
+  how long it takes to read; the picture wide; the text; then a box of the
+  shop's products the note names — "Add all" puts them in the basket in one
+  go — or, when it names none, this week's deals. Share, the comments and
+  three more notes follow. A note that came with Selldone's demo content
+  says it is sample text (KalioSampleNote), as the owner asked.
+
+  Selldone's page was its ArticleViewer in a floating card: an editor that
+  shows a note, with its own toolbar. The note is read here directly
+  (GET_SHOP_BLOG_DATA) and the comments are still Selldone's own.
+-->
 <template>
-  <v-card
-    class="s--shop-card s--shadow-with-padding"
-    style="margin-bottom: 20vh"
-  >
-    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Top Shop Menu ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+  <div class="k-post">
     <slot name="header"></slot>
-    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
 
-    <v-toolbar color="transparent" flat>
-      <u-button-circle
-        :icon="$t('icons.arrow_back')"
-        :to="{ name: 'Blogs' }"
-        :tooltip="$t('global.actions.back')"
-      />
-    </v-toolbar>
+    <div class="k-wrap">
+      <nav aria-label="Breadcrumb" class="k-official__crumbs">
+        <router-link :to="{ name: 'ShopPage' }">{{ shopTitle }}</router-link>
+        <v-icon size="16">chevron_right</v-icon>
+        <router-link :to="journalRoute()">Journal</router-link>
+        <template v-if="topic">
+          <v-icon size="16">chevron_right</v-icon>
+          <router-link :to="journalRoute({ category: category.id })">{{ topic }}</router-link>
+        </template>
+      </nav>
+    </div>
 
-    <article-viewer
-      :key="$route.fullPath"
-      :article-type="article_type.code"
-      :target-id="$route.params.blog_id"
-      class="blog-container p-3"
-      show-comments
-      show-user-feedback-buttons
-      @update-article="updateArticleSeo"
-    >
-      <template v-slot:tags="{ article }">
-        <v-btn
-          v-for="tag in article.tags"
-          :key="tag"
-          :to="{
-            name: window.$storefront.routes.BLOGS_PAGE,
-            query: { tags: tag },
-          }"
-          class="m-1"
-          color="blue"
-          rounded
-          variant="text"
-        >
-          {{ tag }}
-        </v-btn>
-      </template>
-      <template v-slot:login>
-        <!-- Shop Login -->
-        <s-shop-login  class="mt-16 rounded-16px"></s-shop-login>
-      </template>
-    </article-viewer>
+    <div v-if="busy && !article" aria-hidden="true" class="k-post__col k-post__loading">
+      <span></span><span></span><span></span>
+    </div>
 
-    <div style="min-height: 5vh"></div>
-  </v-card>
+    <div v-else-if="failed" class="k-post__col">
+      <div class="k-board__empty k-journal__empty">
+        <v-icon size="30">menu_book</v-icon>
+        <h2>We can't find this note</h2>
+        <p>It may have been moved or taken down. The rest of the journal is still here.</p>
+        <router-link :to="journalRoute()" class="k-btn k-btn--solid">Back to the journal</router-link>
+      </div>
+    </div>
+
+    <article v-else-if="article" class="k-post__article">
+      <header class="k-post__col k-post__head">
+        <router-link v-if="topic" :to="journalRoute({ category: category.id })" class="k-topic">{{ topic }}</router-link>
+        <h1>{{ article.title }}</h1>
+        <p v-if="lede" class="k-post__lede">{{ lede }}</p>
+        <p class="k-post__meta">
+          <span v-if="article.user?.name" class="k-who"><i>{{ initials(article.user.name) }}</i>{{ article.user.name }}</span>
+          <span v-if="date">{{ date }}</span>
+          <span><v-icon size="17">schedule</v-icon>{{ minutes }} min read</span>
+        </p>
+        <kalio-sample-note v-if="demo">
+          This note came with the shop's demo content to show the page. It is not a real {{ shopTitle }} article.
+        </kalio-sample-note>
+      </header>
+
+      <figure v-if="hero" class="k-post__hero">
+        <img :src="hero" alt="" />
+      </figure>
+
+      <div class="k-post__col">
+        <!-- The shop's own note, as written in its dashboard. -->
+        <div class="k-post__body k-prose" v-html="body"></div>
+
+        <section v-if="list.length" class="k-post__shop">
+          <header>
+            <h2>{{ named ? "Shop this list" : "On offer this week" }}</h2>
+            <button
+              v-if="addable.length > 1"
+              :disabled="adding || allIn"
+              class="k-btn k-btn--solid k-post__addall"
+              type="button"
+              @click="addAll"
+            >
+              <v-icon size="20">{{ allIn ? "check" : "shopping_basket" }}</v-icon>
+              <template v-if="allIn">All in your basket</template>
+              <template v-else>Add all {{ addable.length }} · <u-price :amount="addableTotal" :currency="currency" /></template>
+            </button>
+          </header>
+          <div class="k-post__shoprow">
+            <kalio-mini-product v-for="product in list" :key="product.id" :product="product" @sheet="openSheet" />
+          </div>
+        </section>
+
+        <footer class="k-post__share">
+          <span>Share</span>
+          <button class="k-chip" type="button" @click="copyLink">
+            <v-icon size="18">{{ copied ? "check" : "link" }}</v-icon>{{ copied ? "Link copied" : "Copy link" }}
+          </button>
+          <a :href="mailto" class="k-chip"><v-icon size="18">mail_outline</v-icon>Email</a>
+          <span class="k-post__spacer"></span>
+          <router-link :to="journalRoute()" class="k-more">
+            <v-icon class="k-flip" size="20">chevron_left</v-icon>All notes
+          </router-link>
+        </footer>
+
+        <section class="k-post__comments">
+          <h2>Comments</h2>
+          <s-article-comments
+            :article-id="article.id"
+            :article-user-id="article.user_id"
+            is-selldone
+            is-shop
+          >
+            <template v-slot:login>
+              <s-shop-login class="k-post__login mt-6 rounded-16px"></s-shop-login>
+            </template>
+          </s-article-comments>
+        </section>
+      </div>
+    </article>
+
+    <section v-if="more.length" class="k-wrap k-post__more">
+      <h2>More from the journal</h2>
+      <div class="k-post__morerow">
+        <router-link v-for="note in more" :key="note.id" :to="postRoute(note)" class="k-post__card">
+          <span class="k-post__cardpic">
+            <img v-if="note.image" :src="note.image" alt="" loading="lazy" />
+            <v-icon v-else size="32">article</v-icon>
+          </span>
+          <span class="k-post__cardtitle">{{ note.title }}</span>
+          <span class="k-post__cardmeta">{{ dateParts(note.created_at).full }}</span>
+        </router-link>
+      </div>
+    </section>
+
+    <kalio-quick-buy v-model="sheet" :product="picked" />
+  </div>
 </template>
 
 <script lang="ts">
-import ArticleViewer from "@selldone/components-vue/article/ArticleViewer.vue";
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import SArticleComments from "@selldone/components-vue/article/comment/SArticleComments.vue";
 import SShopLogin from "@selldone/components-vue/storefront/login/SShopLogin.vue";
-import { Article } from "@selldone/core-js";
-import {StorefrontSeo} from "../../../helpers/StorefrontSeo";
+import { StorefrontSeo } from "../../../helpers/StorefrontSeo";
+import KalioSampleNote from "@app-storefront/components/kalio/pages/KalioSampleNote.vue";
+import KalioMiniProduct from "@app-storefront/components/kalio/pages/KalioMiniProduct.vue";
+import KalioQuickBuy from "@app-storefront/components/kalio/KalioQuickBuy.vue";
+import { basketLine, hasSizes, mayBuy, pendingLine, quickAdd, shownCount } from "@app-storefront/components/kalio/kalio-basket";
+import { priceOf, productsById } from "@app-storefront/components/kalio/kalio-catalog";
+import {
+  dateParts,
+  deals,
+  initials,
+  isDemoPost,
+  journalPage,
+  journalPost,
+  journalRoute,
+  postRoute,
+  productsIn,
+  readMinutes,
+} from "@app-storefront/components/kalio/pages/kalio-journal";
+import { plainText } from "@app-storefront/components/kalio/pages/kalio-sample-pages";
 
 export default {
   name: "StorefrontPageBlogsView",
+  components: { SArticleComments, SShopLogin, KalioSampleNote, KalioMiniProduct, KalioQuickBuy },
+  mixins: [CurrencyMixin],
+  inject: ["$shop"],
 
-  components: {
-    SShopLogin,
-    ArticleViewer,
-  },
-
-  /**
-   * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-   *  🔷 Data Section
-   * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-   */
   data: () => ({
-    article_type: Article.Types.Blog,
+    article: null,
+    category: null,
+    busy: false,
+    failed: false,
+    list: [],
+    named: false,
+    more: [],
+    adding: false,
+    copied: false,
+    sheet: false,
+    picked: null,
     seoNavigation: StorefrontSeo.captureNavigation(),
   }),
 
   computed: {
-    shop() {
-      return this.getShop();
+    shopTitle() {
+      return this.$shop?.title || "The shop";
+    },
+    currency() {
+      return this.GetUserSelectedCurrency().code;
+    },
+    blogId() {
+      return this.$route.params.blog_id;
+    },
+    topic() {
+      return this.category ? this.category.title || this.category.name : "";
+    },
+    /* The shop's text, with the editor's leftovers taken out. */
+    body() {
+      return String(this.article?.body || "")
+        .replace(/\scontenteditable="[^"]*"/g, "")
+        .replace(/src="http:/g, 'src="');
+    },
+    /* The note's picture, wide, unless the text opens with it anyway
+       (Selldone's demo notes do: the same photo twice). */
+    hero() {
+      const image = this.article?.image;
+      if (!image) return null;
+      const file = image.split("/").pop().split("?")[0].slice(0, 40);
+      const first = /<img[^>]+src="([^"]+)"/.exec(this.article.body || "");
+      return first && file && first[1].includes(file) ? null : image;
+    },
+    /* The description, unless it is only the first lines of the text. */
+    lede() {
+      const description = plainText(this.article?.description);
+      if (!description) return "";
+      const start = plainText(this.article?.body).slice(0, 60);
+      return start && description.startsWith(start.slice(0, 40)) ? "" : description;
+    },
+    date() {
+      return dateParts(this.article?.created_at).full;
+    },
+    minutes() {
+      return readMinutes(this.article?.body);
+    },
+    demo() {
+      return isDemoPost(this.article, this.$shop);
+    },
+    mailto() {
+      return `mailto:?subject=${encodeURIComponent(this.article?.title || "")}&body=${encodeURIComponent(location.href)}`;
+    },
+    /* Products "Add all" can put straight in the basket (no size to pick). */
+    addable() {
+      return this.list.filter((product) => !hasSizes(product));
+    },
+    addableTotal() {
+      const shop = this.$store.getters.getShop;
+      return this.addable.reduce((sum, product) => sum + (priceOf(shop, product, this.currency).now || 0), 0);
+    },
+    allIn() {
+      return this.addable.every(
+        (product) => shownCount(product, basketLine(this, product) || pendingLine(product)) > 0,
+      );
     },
   },
 
   watch: {
+    blogId() {
+      this.load();
+    },
     "$route.fullPath"() {
       this.seoNavigation = StorefrontSeo.captureNavigation();
     },
   },
 
+  created() {
+    this.load();
+  },
+
   methods: {
-    updateArticleSeo(article) {
-      StorefrontSeo.updateArticle(article, this.shop, this.seoNavigation);
+    dateParts,
+    initials,
+    postRoute,
+    journalRoute,
+
+    load() {
+      const asked = this.blogId;
+      this.busy = true;
+      this.failed = false;
+      this.article = null;
+      this.list = [];
+      this.more = [];
+      journalPost(asked)
+        .then((data) => {
+          if (asked !== this.blogId) return;
+          this.article = data.article;
+          this.category = data.category || null;
+          StorefrontSeo.updateArticle(data.article, this.$store.getters.getShop, this.seoNavigation);
+          this.shopList(data.article);
+          this.moreNotes(data.article);
+        })
+        .catch(() => {
+          if (asked === this.blogId) this.failed = true;
+        })
+        .finally(() => {
+          if (asked === this.blogId) this.busy = false;
+        });
+    },
+
+    /* The products the note names; this week's deals when it names none. */
+    shopList(article) {
+      productsById()
+        .then((catalogue) => productsIn(article.body, catalogue.values(), 4))
+        .then((found) => {
+          if (article.id !== this.article?.id) return;
+          if (found.length) {
+            this.named = true;
+            this.list = found;
+            return;
+          }
+          return deals(4).then((list) => {
+            if (article.id !== this.article?.id) return;
+            this.named = false;
+            this.list = list;
+          });
+        });
+    },
+
+    moreNotes(article) {
+      journalPage({ page: 1, limit: 4 })
+        .then(({ articles }) => {
+          if (article.id !== this.article?.id) return;
+          this.more = articles.filter((note) => note.id !== article.id).slice(0, 3);
+        })
+        .catch(() => {});
+    },
+
+    /* One line at a time, as a shopper's taps would go. */
+    async addAll() {
+      if (!mayBuy(this)) return; // a guest is asked to sign in, once
+      this.adding = true;
+      try {
+        for (const product of this.addable) {
+          if (shownCount(product, basketLine(this, product) || pendingLine(product)) > 0) continue;
+          await quickAdd(this, product, () => {});
+        }
+      } finally {
+        this.adding = false;
+      }
+    },
+
+    copyLink() {
+      navigator.clipboard?.writeText(location.href).then(() => {
+        this.copied = true;
+        setTimeout(() => (this.copied = false), 2500);
+      });
+    },
+
+    openSheet(product) {
+      this.picked = product;
+      this.sheet = true;
     },
   },
 };
 </script>
-
-<style scoped></style>

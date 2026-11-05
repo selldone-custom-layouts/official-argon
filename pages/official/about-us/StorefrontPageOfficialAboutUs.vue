@@ -12,78 +12,142 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
+<!--
+  Kalio — About us, design B "A letter", chosen by the owner on 5 November
+  2026.
+
+  Beside the letter: three of the shop's best sellers on a warm ground and
+  the facts read from the shop itself — its sellers, its aisles, how many
+  products it stocks — with the way to reach it. The letter is the shop's
+  own About profile (Selldone dashboard › Shop › Profile) when it has one;
+  until then a sample letter, marked as a test, with its values, a
+  timeline (marked as examples) and a signature.
+-->
 <template>
-  <div>
-    <v-container>
-      <h1 class="k-official__title">
-        {{ $t("official_pages.about_us") }}
-      </h1>
-      <u-loading-progress v-if="busy"></u-loading-progress>
-
-      <div class="text-start px-lg-5 px-md-4 px-3 master-article-container">
-        <s-article-editor
-          v-if="profile"
-          :body="profile.body"
-          :edit="false"
-          :enableTitle="false"
-          :only-view="true"
-          class="p-lg-5 p-md-4 p-3 article"
-        />
+  <div class="k-story">
+    <aside class="k-story__side">
+      <div class="k-story__pic">
+        <img v-for="product in packs" :key="product.id" :src="picture(product)" alt="" />
       </div>
+      <dl class="k-story__facts">
+        <template v-if="sellers.length">
+          <dt>{{ sellers.length === 1 ? "Seller" : "Sellers" }}</dt>
+          <dd>{{ sellers.map((it) => it.name).join(" · ") }}</dd>
+        </template>
+        <template v-if="aisleList.length">
+          <dt>Aisles</dt>
+          <dd>{{ aisleLine }}</dd>
+        </template>
+        <template v-if="productCount">
+          <dt>Products</dt>
+          <dd>About {{ productCount }}, in one basket</dd>
+        </template>
+        <dt>Contact</dt>
+        <dd>
+          <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }">Contact the shop</router-link>
+        </dd>
+      </dl>
+    </aside>
 
-      <!-- Kalio: the shop has not written this page yet -->
-      <kalio-official-missing v-if="missing" kind="about" />
-    </v-container>
+    <div class="k-story__main">
+      <p class="k-eyebrow">A note from {{ shopTitle }}</p>
+      <h1 class="k-story__title">{{ missing || busy ? sample.title : `About ${shopTitle}` }}</h1>
+
+      <div v-if="busy" aria-hidden="true" class="k-legal__loading"><span></span><span></span><span></span></div>
+
+      <template v-else-if="missing">
+        <kalio-sample-note>
+          This letter is general text written to show the page. It is not {{ shopTitle }}'s real story; the timeline is an example.
+        </kalio-sample-note>
+        <p class="k-story__lead">{{ sample.lead }}</p>
+        <div class="k-prose">
+          <p v-for="text in sample.text" :key="text">{{ text }}</p>
+        </div>
+        <div class="k-story__values">
+          <div v-for="(value, i) in sample.values" :key="value.title">
+            <h2><em>{{ String(i + 1).padStart(2, "0") }}</em>{{ value.title }}</h2>
+            <p>{{ value.text }}</p>
+          </div>
+        </div>
+        <ol class="k-story__time">
+          <li v-for="step in sample.timeline" :key="step.when"><b>{{ step.when }}</b><span>{{ step.text }}</span></li>
+        </ol>
+        <p class="k-story__sign">{{ sample.sign }}</p>
+      </template>
+
+      <!-- The shop's own page, as written in its dashboard. -->
+      <div v-else class="k-story__real k-prose" v-html="profile.body"></div>
+
+      <div v-if="!busy" class="k-story__acts">
+        <router-link :to="catalogueRoute" class="k-btn k-btn--solid">Start shopping</router-link>
+        <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }" class="k-btn k-btn--line">Contact the shop</router-link>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
-
-import SArticleEditor from "@selldone/components-vue/article/SArticleEditor.vue";
-import KalioOfficialMissing from "../../../components/kalio/KalioOfficialMissing.vue";
+import KalioSampleNote from "@app-storefront/components/kalio/pages/KalioSampleNote.vue";
+import { aboutSample, plainText } from "@app-storefront/components/kalio/pages/kalio-sample-pages";
+import { aisles, catalogueRoute, countProducts, productImage, vendors } from "@app-storefront/components/kalio/kalio-catalog";
 
 export default {
   name: "StorefrontPageOfficialAboutUs",
-  components: { SArticleEditor, KalioOfficialMissing },
+  components: { KalioSampleNote },
   inject: ["$shop"],
+
   data: () => ({
     profile: null,
-    missing: false, // Kalio: no text for this page in the shop's profiles
-    busy: false,
+    missing: false,
+    busy: true,
+    packs: [],
+    sellers: [],
+    aisleList: [],
+    productCount: null,
   }),
 
-  computed: {},
-  watch: {},
-  created() {
-    this.setPageTitle("About us"); // Set Page Title!
+  computed: {
+    shopTitle() {
+      return this.$shop?.title || "This shop";
+    },
+    sample() {
+      return aboutSample(this.shopTitle);
+    },
+    catalogueRoute() {
+      return catalogueRoute();
+    },
+    aisleLine() {
+      const names = this.aisleList.map((it) => it.title || it.name);
+      if (names.length <= 3) return names.join(", ");
+      return `${names.length}: ${names.slice(0, 3).join(", ")} and ${names.length - 3} more`;
+    },
+  },
 
-    this.fetchProfile();
+  created() {
+    this.setPageTitle?.("About us");
+
+    window.axios
+      .get(window.XAPI.GET_SHOP_PROFILE(this.$shop.name, "about-us"))
+      .then(({ data }) => {
+        this.profile = data?.error ? null : data?.profile || null;
+        this.missing = !plainText(this.profile?.body);
+      })
+      .catch(() => (this.missing = true))
+      .finally(() => (this.busy = false));
+
+    window.$storefront.products
+      .list(null, 0, 8, { products_only: true, available: true, sort: "bestselling" })
+      .then(({ products }) => (this.packs = (products || []).filter((it) => it.icon).slice(0, 3)))
+      .catch(() => {});
+    vendors().then((list) => (this.sellers = list.filter((it) => it && it.name)));
+    aisles().then((list) => (this.aisleList = list));
+    countProducts(null).then((count) => (this.productCount = count));
   },
 
   methods: {
-    fetchProfile() {
-      this.busy = true;
-
-      axios
-        .get(window.XAPI.GET_SHOP_PROFILE(this.$shop.name, "about-us"))
-        .then(({ data }) => {
-          // Kalio: a page the shop has not written is said on the page,
-          // not as an error.
-          if (data.error) return (this.missing = true);
-          this.profile = data.profile;
-          this.missing = !String(data.profile?.body || "").replace(/<[^>]*>/g, "").trim();
-        })
-        .catch((error) => {
-          this.missing = true;
-          if (error?.response?.status !== 404) NotificationService.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy = false;
-        });
+    picture(product) {
+      return productImage(product);
     },
   },
 };
 </script>
-
-<style scoped></style>
