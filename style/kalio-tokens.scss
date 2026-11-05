@@ -86,6 +86,36 @@
   text-wrap: pretty;
 }
 
+/* A struck price ("was $1.78", the basket line's old total) is Selldone's
+   price boxes inside <s>; a text decoration does not cross those boxes,
+   so the line missed the cents and looked like an underline. One line is
+   drawn across the whole price instead (5 November 2026). */
+s:has(> .u--price) {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+
+  .u--price,
+  .u--price * {
+    text-decoration: none !important;
+  }
+
+  .u--price .small {
+    vertical-align: baseline !important;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 55%;
+    right: -1px;
+    left: -1px;
+    height: 1.5px;
+    border-radius: 1px;
+    background: currentColor;
+  }
+}
+
 /* The app surface. */
 .v-application {
   font-family: var(--k-body);

@@ -248,6 +248,10 @@ Facts that shape the code:
   load-more read "62 More.." in blue under the filters; headings left one
   word alone (`text-wrap: balance`); the update notice; the wallet's empty
   page; Selldone's account sections dressed in Kalio's buttons.
+  0.2.23 (found by the owner): on the home shelf the in-basket − n + sat
+  in the label's corner over the price; it now stands above the label on
+  the packshot's corner. A struck price inside `<s>` ("was $1.78", basket
+  lines) is drawn as one line across, as on the product page.
   **Five fixes live in Selldone's synced `modules/`** (the product list's
   filter and empty state and load-more, the price chip, the update notice,
   the bottom bar, the words "basket" and "Sort by"). `modules/` is not

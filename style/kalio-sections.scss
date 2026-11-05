@@ -1199,11 +1199,15 @@ $k-shelf-pic-phone: 150px;
     }
   }
 
-  /* In the basket the "+" becomes a small − n + in the label's corner. */
+  /* In the basket the "+" becomes a small − n +. It stands on the
+     packshot's corner just above the label, clear of the "Save" sticker:
+     in the label's corner it covered the price ("$2." of $2.63, found by
+     the owner, 5 November 2026). */
   &__step {
     position: absolute;
-    top: 8px;
+    bottom: calc(100% + 16px);
     inset-inline-end: 6px;
+    z-index: 2;
   }
 
   &__foot {
