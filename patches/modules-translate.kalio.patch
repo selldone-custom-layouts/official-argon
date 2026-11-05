@@ -1,0 +1,57 @@
+diff --git a/global/en.ts b/global/en.ts
+index cca6510..aa08d0e 100644
+--- a/global/en.ts
++++ b/global/en.ts
+@@ -340,7 +340,7 @@ export default {
+     transactions: "Transactions",
+     vat: "VAT",
+     pos_vat: "POS VAT",
+-    sort_by: "Sort by..",
++    sort_by: "Sort by", // Kalio: no double period
+     from: "From",
+     from_lead_time: "Within the next {hours} hours",
+     no_credit_card_info: "No Card Info!",
+@@ -897,7 +897,7 @@ export default {
+ 
+   actions: {
+     upload:"Upload",
+-    add_to_cart: "Add to cart",
++    add_to_cart: "Add to basket", // Kalio: "basket" as everywhere else in the shop
+     add_emoji: "Add emoji",
+     cancel: "Cancel",
+     update: "Update",
+@@ -2831,7 +2831,7 @@ export default {
+   product_section_incentivise: {
+     total_sold:'Total Sold',
+     available_items:'Available Items',
+-    have_in_their_bag:"<b>{in_carts}</b> others have this in their carts!",
++    have_in_their_bag:"<b>{in_carts}</b> others have this in their basket!",
+ 
+     physical: {
+       popular_selling_with_low_quantity:"🔥 Popular choice! Stocks are running low, grab yours while you can!",
+diff --git a/shop/en.ts b/shop/en.ts
+index 7ef09f4..053b9cf 100644
+--- a/shop/en.ts
++++ b/shop/en.ts
+@@ -69,7 +69,7 @@ export default {
+   /** @see SortView **/
+   sort: {
+     title: "Sort by",
+-    title_small: "Sort by..",
++    title_small: "Sort by", // Kalio: no double period
+     nothing: "Nothing",
+     most_views: "Most Views",
+     most_likes: "Most Popular",
+@@ -133,10 +133,10 @@ export default {
+     inform_me_when_available: "Waiting for this?",
+     pay_buy: "Pay & Buy",
+     quantity: "Count",
+-    quantity_in_basket: "Items in cart",
++    quantity_in_basket: "In your basket",
+     count_unit: "x",
+     remove: "Remove",
+-    add_to_basket: "Add to cart",
++    add_to_basket: "Add to basket", // Kalio: "basket" as everywhere else in the shop
+     buy: "Buy",
+     subscribe_now: "Subscribe Now",
+     unsubscribe: "Unsubscribe",

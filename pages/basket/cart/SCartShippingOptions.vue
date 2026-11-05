@@ -294,7 +294,7 @@ export default defineComponent({
     },
 
     receiver_info() {
-      return this.basket.receiver_info;
+      return this.basket?.receiver_info || null;
     },
 
     has_delivery() {

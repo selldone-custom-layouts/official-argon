@@ -215,6 +215,56 @@ Facts that shape the code:
 - **Nothing is named.** Aisles, sellers, deals, slides and tiles all come
   from live data; an aisle Kalio does not know still gets a tint, a row and,
   if featured, a tile.
+- **Vuetify's primary is Kalio's green** (0.2.22, `kalio-tokens.scss`). The
+  shop's theme makes it purple (112, 85, 126), so Selldone's parts that
+  Kalio keeps (gift cards, addresses, the GDPR panel, the payment window)
+  showed purple buttons; `--v-theme-primary` and `-secondary` are set to the
+  green and deep green.
+- **The QA pass of 5 November 2026 (0.2.22).** `../kalio-design/review/`:
+  - `qasweep.cjs` opens every kind of page (home, aisles, deals, all,
+    search with and without results, sellers, four kinds of product page,
+    basket, guest orders, an order not one's own, blog, FAQ, the official
+    pages) at p390, t768, t1024 and d1440, scrolls each to the end, takes a
+    full-page shot and runs `qa-audit.js` (overlapping or clipped text,
+    things past the edge, broken pictures, "undefined", raw keys);
+  - `qasheets.py` cuts the shots into contact sheets for reading by eye;
+  - `buyer.cjs`, `accountcheck.cjs` (variant `tour`: every account section;
+    `SIZES=` for tablet sizes) and `ordercards.cjs` (`SIZES=`) audit too.
+
+  Full-page shots put fixed bars (header, phone bottom bar, the floating
+  buy bar) in mid-page: not bugs. What the pass fixed: the basket page
+  crashed blank for a guest without a basket (`receiver_info` of null);
+  Deals → All products kept "Only discounted" (`SProductsListing` now
+  follows `?filter`); empty search, filters or aisle said nothing
+  (`.k-noresult`); an order one may not open showed dots and "Cart not
+  found" (`.k-order__missing`); About/Terms/Privacy without a profile were
+  blank with an error (`KalioOfficialMissing`, and a Kalio frame); the FAQ
+  was Selldone's bar and grey all-caps button; the aisle tabs kept the last
+  aisle's scroll and hid the tab under the arrow; the phone account row did
+  not scroll to the open section; the floating buy bar's 220 px button left
+  the name "Dairy…"; struck old prices crossed only the dollars; the grey
+  spec table; the bottom bar's Home changed icon and lit on other pages;
+  the header aisle row had no way to its end at 1024 px (arrows, wheel);
+  load-more read "62 More.." in blue under the filters; headings left one
+  word alone (`text-wrap: balance`); the update notice; the wallet's empty
+  page; Selldone's account sections dressed in Kalio's buttons.
+  **Five fixes live in Selldone's synced `modules/`** (the product list's
+  filter and empty state and load-more, the price chip, the update notice,
+  the bottom bar, the words "basket" and "Sort by"). `modules/` is not
+  tracked here, so they are kept as patches:
+  `patches/modules-components.kalio.patch` and
+  `patches/modules-translate.kalio.patch`. After the modules are restored
+  or upgraded, apply them with
+  `git -C modules/components apply ../../patches/modules-components.kalio.patch`
+  (and the same for `modules/translate`); a patch that no longer applies
+  must be redone by hand, not skipped.
+  **Not fixed (shop content, not the Layout):** about 140 product
+  descriptions carry the generator's notes ("The fictional PantryVale name
+  is printed consistently on the package and saved in the actual product
+  brand field…") and a few have a missing word ("a soft with a gently
+  swirled crumb"); the blog holds Selldone's demo posts (power tools,
+  gaming microphones); About/Terms/Privacy are not written; "DairyCove
+  Whole Milk 1 gal" opens on its 1 quart size.
 
 Market Hall, the first design, is tagged `market-hall-0.1.5`.
 

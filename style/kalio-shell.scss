@@ -316,6 +316,59 @@ $k-header-strip: 46px;
   mask-image: linear-gradient(to left, #000 calc(100% - 48px), transparent);
 }
 
+/* The row inside its frame: the frame holds the width and the arrows, the
+   row scrolls; the fade shows only on a side with more to see. */
+.k-strip__frame {
+  position: relative;
+
+  > .k-strip__row {
+    mask-image: none;
+  }
+
+  &.-more > .k-strip__row {
+    mask-image: linear-gradient(to right, #000 calc(100% - 72px), transparent);
+  }
+
+  &.-back > .k-strip__row {
+    mask-image: linear-gradient(to left, #000 calc(100% - 72px), transparent);
+  }
+
+  &.-more.-back > .k-strip__row {
+    mask-image: linear-gradient(to right, transparent, #000 72px, #000 calc(100% - 72px), transparent);
+  }
+}
+
+.k-strip__nudge {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--k-line);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--k-shadow);
+  transform: translateY(-50%);
+
+  &.-on {
+    inset-inline-end: calc(var(--k-gutter) - 4px);
+  }
+
+  &.-back {
+    inset-inline-start: calc(var(--k-gutter) - 4px);
+  }
+
+  .v-icon {
+    color: var(--k-ink) !important;
+  }
+
+  &:hover {
+    border-color: var(--k-green);
+  }
+}
+
 /* The Aisles menu. */
 .k-mega {
   width: min(760px, 92vw);
@@ -2321,4 +2374,50 @@ $k-filter-gap: 36px;
 .k-toast-leave-to {
   opacity: 0;
   transform: translateY(-8px);
+}
+
+/* The "newer version" notice (SPwaVersionCheck, 5 November 2026): a
+   deep-green card with a white Refresh pill, above the phone's bottom bar. */
+.v-snackbar__wrapper.k-update,
+.k-update.v-snackbar__wrapper {
+  min-width: 0 !important;
+  max-width: min(520px, calc(100vw - 24px)) !important;
+  border-radius: var(--k-radius) !important;
+  background: var(--k-green-deep) !important;
+  box-shadow: 0 18px 40px -18px rgba(16, 35, 27, 0.6) !important;
+  color: #fff !important;
+  font-family: var(--k-body);
+
+  .v-snackbar__content {
+    padding: 14px 6px 14px 18px !important;
+    font-size: 15px;
+  }
+
+  .k-update__words {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    .v-icon {
+      color: #b9e3c9 !important;
+    }
+  }
+
+  .k-update__go {
+    height: 40px !important;
+    margin-inline-end: 6px;
+    padding: 0 18px !important;
+    border-radius: var(--k-pill) !important;
+    background: #fff !important;
+    color: var(--k-green-deep) !important;
+    font-weight: 700;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+  }
+}
+
+@media (max-width: 960px) {
+  .v-snackbar:has(.k-update) {
+    padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important;
+  }
 }

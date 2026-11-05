@@ -109,18 +109,23 @@ export default {
   methods: {
     /* The current tab may sit past the edge (Snacks, Kitchen): it is
        scrolled into view, not left to be found. */
+    /* (5 November 2026) Measured against where the row is scrolled now, and
+       centred clear of the arrows: the row kept the last aisle's scroll
+       (Baby Care opened on "Pantry… Snacks") and a tab put 24 px from the
+       edge sat under the back arrow ("eli & Prepared"). */
     reveal() {
       const row = this.$refs.tabs;
       if (!row) return;
       const on = row.querySelector(".-on");
       if (on) {
-        const rtl = getComputedStyle(row).direction === "rtl";
-        const start = rtl ? row.clientWidth - on.offsetLeft - on.offsetWidth : on.offsetLeft;
-        if (start + on.offsetWidth > row.clientWidth - 48) {
-          row.scrollLeft = (rtl ? -1 : 1) * Math.max(0, start - 24);
-        }
+        const r = row.getBoundingClientRect();
+        const o = on.getBoundingClientRect();
+        const room = 52; // an arrow's width and a little air
+        if (o.left < r.left + room || o.right > r.right - room) row.scrollLeft += o.left - r.left - (r.width - o.width) / 2;
+      } else {
+        row.scrollLeft = 0;
       }
-      this.measure();
+      this.$nextTick(this.measure);
     },
 
     measure() {

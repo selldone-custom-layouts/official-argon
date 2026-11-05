@@ -13,91 +13,69 @@
   -->
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-card class="min-height-100vh overflow-hidden s--shadow-with-padding">
-    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Top Shop Menu ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+  <!-- Kalio (5 November 2026): the questions in the shop's own page frame
+       (trail, title, the way to ask, topics as chips) and a word when there
+       are none yet; Selldone showed a bar with a menu button, an all-caps
+       grey button and two arrows over an empty page. -->
+  <div class="k-official k-faq">
     <slot name="header"></slot>
-    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+    <div class="k-wrap">
+      <nav aria-label="Breadcrumb" class="k-official__crumbs">
+        <router-link :to="{ name: 'ShopPage' }">{{ shop?.title || "Home" }}</router-link>
+        <v-icon size="16">chevron_right</v-icon>
+        <router-link v-if="current_tag" :to="{ name: 'ShopFAQ' }">Questions and answers</router-link>
+        <span v-else>Questions and answers</span>
+        <template v-if="current_tag">
+          <v-icon size="16">chevron_right</v-icon>
+          <span>{{ current_tag }}</span>
+        </template>
+      </nav>
 
-    <v-app-bar color="#fff" extended extension-height="12px" flat>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <div class="k-faq__head">
+        <div>
+          <h1 class="k-official__title">Questions and answers</h1>
+          <p class="k-faq__lede">Answers to what shoppers ask most. Can’t find yours? Ask the shop.</p>
+        </div>
+        <button v-if="USER()" class="k-btn k-btn--solid" type="button" @click="dialog_faq = true">
+          <v-icon size="18">add</v-icon>Ask a question
+        </button>
+        <button v-else class="k-btn k-btn--line" type="button" @click="signIn">
+          <v-icon size="18">person_outline</v-icon>Sign in to ask
+        </button>
+      </div>
 
-      <v-toolbar-title>
-        {{ $t("global.faq.faq") }}
-        <v-icon v-if="current_tag" class="mx-2" size="small"
-          >{{ $t("icons.angle_next") }}
-        </v-icon>
-        {{ current_tag }}
-      </v-toolbar-title>
-
-      <v-spacer />
-    </v-app-bar>
-
-    <v-container class="faq-container s-table-loading" :aria-busy="busy_fetch">
-      <u-widget-header
-        :title="$t('global.faq.title')"
-        :disabled="!USER()"
-        disabled-reason="Login to add a question"
-        :add-caption="$t('global.faq.add_question_action')"
-        @click:add="dialog_faq = true"
-      ></u-widget-header>
-      <v-list-subheader>
-        {{ $t("global.faq.message") }}
-      </v-list-subheader>
+      <nav v-if="tags?.length" aria-label="Topics" class="k-faq__tags">
+        <router-link :class="{ '-on': !current_tag }" :to="{ name: 'ShopFAQ' }" exact>All</router-link>
+        <router-link v-for="tag in tags" :key="tag" :class="{ '-on': current_tag === tag }" :to="{ name: 'ShopFAQ', params: { tag: tag } }">{{ tag }}</router-link>
+      </nav>
 
       <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
-      <v-fade-transition
-        class="border-between-vertical"
-        group
-        hide-on-leave
-        tag="div"
-      >
-        <div v-for="faq in faqs" :key="faq.id" class="faq">
-          <p class="question" v-html="faq.question"></p>
-          <p class="answer" v-html="faq.answer"></p>
-          <div class="text-end">
-            <v-btn
-              v-if="faq.link"
-              :href="faq.link"
-              color="blue"
-              target="_blank"
-              variant="text"
-            >
-              {{ $t("global.faq.read_more") }}
-            </v-btn>
-          </div>
+      <div v-if="faqs?.length" class="k-faq__list">
+        <div v-for="faq in faqs" :key="faq.id" class="k-faq__item">
+          <p class="k-faq__q" v-html="faq.question"></p>
+          <div class="k-faq__a" v-html="faq.answer"></div>
+          <a v-if="faq.link" :href="faq.link" class="k-faq__more" target="_blank">{{ $t("global.faq.read_more") }}<v-icon size="16">open_in_new</v-icon></a>
         </div>
-      </v-fade-transition>
+      </div>
+      <div v-else-if="!busy_fetch" class="k-official__missing">
+        <v-icon size="30">forum</v-icon>
+        <h2>No questions here yet</h2>
+        <p>{{ shop?.title || "The shop" }} has not answered any questions here so far. Ask yours, or write to the shop directly.</p>
+        <div class="k-official__missingacts">
+          <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }" class="k-btn k-btn--solid">Contact the shop</router-link>
+        </div>
+      </div>
 
       <v-pagination
+        v-if="pageCount > 1"
         v-model="page"
         :length="pageCount"
+        class="k-faq__pages"
         rounded
         @update:model-value="fetchFAQData()"
       />
-    </v-container>
-
-    <v-navigation-drawer v-model="drawer" absolute temporary>
-      <v-list density="compact" tile>
-        <v-list-item :to="{ name: 'ShopFAQ' }" exact prepend-icon="home">
-          <v-list-item-title
-            >{{ $t("global.faq.main_page") }}
-          </v-list-item-title>
-        </v-list-item>
-
-        <v-list-group>
-          <v-list-item
-            v-for="tag in tags"
-            :key="tag"
-            :to="{ name: 'ShopFAQ', params: { tag: tag } }"
-            exact
-            ripple
-          >
-            <v-list-item-title>{{ tag }}</v-list-item-title>
-          </v-list-item>
-        </v-list-group>
-      </v-list>
-    </v-navigation-drawer>
+    </div>
 
     <!-- =================== Dialog =================== -->
     <v-bottom-sheet
@@ -137,13 +115,14 @@
         </v-card-actions>
       </v-card>
     </v-bottom-sheet>
-  </v-card>
+  </div>
 </template>
 
 <script lang="ts">
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 import { throttle } from "lodash-es";
+import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import ULoadingProgress from "@selldone/components-vue/ui/loading/progress/ULoadingProgress.vue";
 
 export default {
@@ -200,6 +179,10 @@ export default {
     this.fetchFAQTags();
   },
   methods: {
+    /** Kalio: sign in to ask a question. */
+    signIn() {
+      EventBus.$emit("need-login", true);
+    },
     //――――――――――――――――――――――― FAQ Tags ―――――――――――――――――――――――
 
     fetchFAQTags() {

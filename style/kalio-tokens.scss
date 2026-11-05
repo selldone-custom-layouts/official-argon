@@ -58,6 +58,34 @@
   --k-shadow: 0 10px 28px -14px rgba(16, 35, 27, 0.32);
 }
 
+/* Selldone's own pieces that Kalio keeps (the account's returns, gift
+   cards and addresses, the payment window, form fields) colour themselves
+   with Vuetify's "primary", which comes from the shop's theme: molino's is
+   purple (112, 85, 126), so they showed purple buttons beside Kalio's green
+   ones. Kalio's green and deep green take those places (5 November 2026). */
+:root,
+.v-theme--light {
+  --v-theme-primary: 21, 91, 66 !important;
+  --v-theme-on-primary: 255, 255, 255 !important;
+  --v-theme-secondary: 14, 63, 46 !important;
+  --v-theme-on-secondary: 255, 255, 255 !important;
+}
+
+/* Headings break into even lines and product names never leave one word
+   alone ("Everything for the weekly / shop", "Whole Milk 1 / gal",
+   "Navel Oranges 4 / lb") (5 November 2026). */
+.v-application h1,
+.v-application h2,
+.v-application h3 {
+  text-wrap: balance;
+}
+
+.s--product-card,
+.k-pdp__title,
+.sticky-title {
+  text-wrap: pretty;
+}
+
 /* The app surface. */
 .v-application {
   font-family: var(--k-body);

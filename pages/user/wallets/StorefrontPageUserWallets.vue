@@ -25,33 +25,23 @@
 
       <u-loading-progress v-if="busy_fetch"></u-loading-progress>
 
-      <v-list-item
-        v-for="wallet in wallets"
-        :key="wallet.id"
-        variant="flat"
-        base-color="#000"
-        elevation="5"
-        rounded="lg"
-        lines="two"
-        prepend-icon="wallet"
-        class="my-2 max-widget-width mx-auto"
-      >
-        <template v-slot:title>
-          <u-price
-            :amount="wallet.balance"
-            :currency="wallet.currency"
-          ></u-price>
-        </template>
-        <template v-slot:subtitle>
-          <div class="mt-1">{{ $t("wallet_input.my_wallet_balance") }}</div>
-        </template>
-        <template v-slot:append>
-          <u-currency-icon
-            :currency="wallet.currency"
-            flag-only
-          ></u-currency-icon>
-        </template>
-      </v-list-item>
+      <!-- Kalio (5 November 2026): each wallet a card in the account's
+           style, not Selldone's black tile; an empty wallet says so. -->
+      <div v-if="wallets?.length" class="k-wallets">
+        <div v-for="wallet in wallets" :key="wallet.id" class="k-wallet">
+          <span class="k-wallet__ico"><v-icon size="22">account_balance_wallet</v-icon></span>
+          <span class="k-wallet__words">
+            <u-price :amount="wallet.balance" :currency="wallet.currency" class="k-wallet__sum"></u-price>
+            <small>{{ $t("wallet_input.my_wallet_balance") }}</small>
+          </span>
+          <u-currency-icon :currency="wallet.currency" flag-only></u-currency-icon>
+        </div>
+      </div>
+      <div v-else-if="!busy_fetch" class="k-board__empty k-wallets__empty">
+        <v-icon size="28">account_balance_wallet</v-icon>
+        <p>Your wallet is empty. Cashback from your orders and refunds land here, ready for your next basket.</p>
+        <router-link :to="{ path: '/' }" class="k-btn -main">Start shopping</router-link>
+      </div>
     </div>
   </div>
 </template>

@@ -808,6 +808,30 @@
   }
 }
 
+/* In a single sliding row (a seller's aisles) each card keeps a card's
+   width: on a phone one was 534 px wide in a 335 px row, cut at the edge
+   with the arrow over its words (5 November 2026). A touch screen slides
+   the row by hand, so the arrows go there. */
+.s-fade-scroll .s--products-listing-row > .s--category-card {
+  flex: 0 0 auto !important;
+  width: min(300px, 78vw) !important;
+  min-width: 0 !important; // Selldone sets "max-content" inline
+  max-width: min(300px, 78vw) !important;
+
+  .details > :not(.-title) {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+}
+
+@media (hover: none) {
+  .s-fade-scroll > .-arrows {
+    display: none !important;
+  }
+}
+
 /* Sub-aisle cards: a compact tile like the aisle chips, not Selldone's tall
    shadowed card. */
 .s--category-card {

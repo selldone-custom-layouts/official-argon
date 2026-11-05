@@ -15,7 +15,7 @@
 <template>
   <div>
     <v-container>
-      <h1 class="text-start text-h2 font-weight-black text-capitalize">
+      <h1 class="k-official__title">
         {{ $t("official_pages.terms") }}
       </h1>
       <u-loading-progress v-if="busy"></u-loading-progress>
@@ -30,6 +30,9 @@
           class="p-lg-5 p-md-4 p-3 article"
         />
       </div>
+
+      <!-- Kalio: the shop has not written this page yet -->
+      <kalio-official-missing v-if="missing" kind="terms" />
     </v-container>
   </div>
 </template>
@@ -38,14 +41,16 @@
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 import SArticleEditor from "@selldone/components-vue/article/SArticleEditor.vue";
+import KalioOfficialMissing from "../../../components/kalio/KalioOfficialMissing.vue";
 
 export default {
   name: "StorefrontPageOfficialTerms",
-  components: { SArticleEditor },
+  components: { SArticleEditor, KalioOfficialMissing },
   inject: ["$shop"],
   data: () => ({
     state: "editing",
     profile: null,
+    missing: false, // Kalio: no text for this page in the shop's profiles
     busy: false,
   }),
   watch: {},
@@ -60,11 +65,15 @@ export default {
       axios
         .get(window.XAPI.GET_SHOP_PROFILE(this.$shop.name, "terms"))
         .then(({ data }) => {
-          if (data.error) return NotificationService.showErrorAlert(null, data.error_msg);
+          // Kalio: a page the shop has not written is said on the page,
+          // not as an error.
+          if (data.error) return (this.missing = true);
           this.profile = data.profile;
+          this.missing = !String(data.profile?.body || "").replace(/<[^>]*>/g, "").trim();
         })
         .catch((error) => {
-          NotificationService.showLaravelError(error);
+          this.missing = true;
+          if (error?.response?.status !== 404) NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

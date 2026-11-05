@@ -167,7 +167,14 @@
 
     <!-- ▆▆▆▆▆▆▆▆ Aisle strip ▆▆▆▆▆▆▆▆ -->
     <nav v-if="!compact && aisleList.length" aria-label="Aisles" class="k-strip">
-      <div class="k-strip__row k-wrap">
+      <!-- (5 November 2026) A row longer than the window shows a "›" at
+           its end and turns the mouse wheel sideways: at 1024 px seven
+           aisles sat past the edge with only a fade to hint at them. -->
+      <div :class="{ '-more': strip_more, '-back': strip_back }" class="k-strip__frame k-wrap">
+      <button v-if="strip_back" aria-label="Earlier aisles" class="k-strip__nudge -back" tabindex="-1" type="button" @click="stripNudge(-1)">
+        <v-icon class="k-flip" size="20">chevron_left</v-icon>
+      </button>
+      <div ref="strip" class="k-strip__row" @scroll.passive="stripMeasure" @wheel="stripWheel">
         <router-link :to="dealsRoute" class="k-strip__link -deals">
           <v-icon size="18">local_offer</v-icon>
           Deals
@@ -181,6 +188,10 @@
         >
           {{ aisle.title || aisle.name }}
         </router-link>
+      </div>
+      <button v-if="strip_more" aria-label="More aisles" class="k-strip__nudge -on" tabindex="-1" type="button" @click="stripNudge(1)">
+        <v-icon class="k-flip" size="20">chevron_right</v-icon>
+      </button>
       </div>
     </nav>
 
@@ -322,6 +333,8 @@ export default {
       menu: false,
       phone_search: false,
       windowWidth: window.innerWidth,
+      strip_more: false,
+      strip_back: false,
     };
   },
 
@@ -391,8 +404,14 @@ export default {
   },
 
   mounted() {
-    aisles().then((list) => (this.aisleList = list));
-    this.onResize = () => (this.windowWidth = window.innerWidth);
+    aisles().then((list) => {
+      this.aisleList = list;
+      this.$nextTick(this.stripMeasure);
+    });
+    this.onResize = () => {
+      this.windowWidth = window.innerWidth;
+      this.stripMeasure();
+    };
     window.addEventListener("resize", this.onResize, { passive: true });
   },
 
@@ -406,6 +425,27 @@ export default {
     tint: tintFor,
     signIn() {
       EventBus.$emit("need-login", true);
+    },
+    /** Whether the aisle row runs past either edge. */
+    stripMeasure() {
+      const row = this.$refs.strip;
+      if (!row) return;
+      const left = Math.abs(row.scrollLeft);
+      this.strip_back = left > 4;
+      this.strip_more = left + row.clientWidth < row.scrollWidth - 4;
+    },
+    stripNudge(step) {
+      const row = this.$refs.strip;
+      if (!row) return;
+      const rtl = getComputedStyle(row).direction === "rtl";
+      row.scrollBy({ left: (rtl ? -step : step) * Math.round(row.clientWidth * 0.6), behavior: "smooth" });
+    },
+    /** A mouse wheel over the row moves it sideways. */
+    stripWheel(e) {
+      const row = this.$refs.strip;
+      if (!row || row.scrollWidth <= row.clientWidth || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      e.preventDefault();
+      row.scrollLeft += e.deltaY;
     },
   },
 };

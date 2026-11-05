@@ -260,6 +260,42 @@
       .discount-percent .v-icon {
         display: none;
       }
+
+      /* Selldone's magenta "Discount" over the chip: the coral "-20%" says
+         it alone (5 November 2026). */
+      .discount-text {
+        display: none;
+      }
+
+      /* The old price struck through whole: Selldone struck the dollars
+         only, and its raised cents sat under the line, so ".04" looked
+         underlined. */
+      .discount-value {
+        position: relative;
+        display: inline-flex;
+        align-items: baseline;
+
+        // one line across "$6.04": Selldone's price is boxes, which a
+        // text decoration does not cross
+        &::after {
+          content: "";
+          position: absolute;
+          top: 55%;
+          right: -2px;
+          left: -2px;
+          height: 1.5px;
+          border-radius: 1px;
+          background: currentColor;
+        }
+
+        .line-through {
+          text-decoration: none !important;
+        }
+
+        .small {
+          vertical-align: baseline !important;
+        }
+      }
     }
 
     .s--product-section-tax {
@@ -722,18 +758,24 @@
     min-width: 0;
   }
 
+  // the name on two lines at most, so a phone shows all of it
   .sticky-title {
+    display: -webkit-box;
+    overflow: hidden;
     font-size: 14.5px;
     font-weight: 600;
+    line-height: 1.25;
     color: var(--k-ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   .sticky-title-en {
+    overflow: hidden;
     font-size: 12.5px;
     color: var(--k-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .v-avatar {
@@ -752,11 +794,15 @@
     flex: 0 0 auto;
 
     .widget-buttons {
+      min-height: 0 !important; // Selldone sets 72px inline
       margin: 0 !important;
       padding: 0 !important;
     }
 
+    // Selldone's button keeps 220px at least: on a phone that left the
+    // name "Dairy…" (5 November 2026); here it is as wide as its words.
     .s--shop-buy-button {
+      min-width: 0 !important;
       min-height: 44px !important;
       height: 44px !important;
       padding: 0 18px !important;
@@ -942,6 +988,19 @@
     margin-bottom: 16px !important;
   }
 
+  /* (5 November 2026) Selldone's "Write first comment..." under the sign-in
+     prompt said the same thing again in grey capitals; a guest has the
+     prompt, a shopper reads it as a plain sentence. */
+  &:has(.k-reviews__guest) .s--product-section-comments .min-height-20vh .text-muted.text-center {
+    display: none;
+  }
+
+  .s--product-section-comments .min-height-20vh .text-muted.text-center {
+    text-align: start !important;
+    font-size: 15px !important;
+    font-weight: 400 !important;
+  }
+
   h1,
   h2,
   h3,
@@ -967,14 +1026,19 @@
   }
 }
 
-.k-pdp-spec .s--product-spec {
+// Selldone paints the spec table cold grey (#e5e5e5); here the warm well
+// the rest of the page uses (5 November 2026).
+.k-pdp-spec .s--product-spec,
+.s--product-spec.u--product-spec-table {
   border: 1px solid var(--k-line);
   border-radius: var(--k-radius);
+  background: var(--k-well) !important;
   overflow: hidden;
 }
 
 .k-pdp-aisles {
   margin-top: 56px;
+  margin-bottom: 64px; // clear of the footer band (it touched it, 5 Nov 2026)
 }
 
 /* The aisle index that closes the product page (KalioAisleIndex): a
@@ -1258,4 +1322,18 @@
       font-size: 15px;
     }
   }
+}
+
+
+/* "About this product" ends where its text ends: Selldone's article box
+   keeps a 64 px margin under it, which doubled the gap before Reviews
+   (176 px) (5 November 2026). */
+.k-pdp-block .master-article-container.my-16 {
+  margin-bottom: 0 !important;
+}
+
+/* A product block with nothing in it (the shipping block when the shop has
+   no shipping notes) kept its 64 px of margin as a hole in the page. */
+.k-pdp-block:empty {
+  display: none !important;
 }

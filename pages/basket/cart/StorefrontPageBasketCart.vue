@@ -590,7 +590,7 @@ export default {
    */
   computed: {
     receiver_info() {
-      return this.basket.receiver_info;
+      return this.basket?.receiver_info || null; // Kalio: no basket yet (a guest with nothing in it)
     },
     theme() {
       return this.$shop.theme;
@@ -628,12 +628,12 @@ export default {
     //-------------- Lottery Prize ---------------
     prize() {
       if (!this.basket) return null;
-      return this.basket.lottery;
+      return this.basket?.lottery;
     },
 
     //-------------- Discount Code ---------------
     discount_code() {
-      return this.basket.discount_code;
+      return this.basket?.discount_code;
     },
 
     basket() {
@@ -690,7 +690,7 @@ export default {
 
     //-------------- Coupon ---------------
     coupon() {
-      return this.basket.coupon;
+      return this.basket?.coupon;
     },
     discount_code_amount() {
       return this.bill ? this.bill.discount_code : 0;
@@ -738,7 +738,7 @@ export default {
 
     items() {
       if (!this.basket || !this.basket.items) return [];
-      return this.basket.items;
+      return this.basket?.items || [];
     },
 
     max_lead_time() {

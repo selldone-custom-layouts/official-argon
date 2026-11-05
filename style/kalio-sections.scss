@@ -1835,3 +1835,258 @@ $k-shelf-pic-phone: 150px;
     gap: 10px;
   }
 }
+
+/* ▆▆▆▆▆▆▆▆ A list that came back empty (5 November 2026) ▆▆▆▆▆▆▆▆
+   A search with no match, filters that leave nothing, an aisle not yet
+   stocked: said in words with a way on, where Selldone left a blank page
+   under "0 products". */
+.k-noresult {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  max-width: 560px;
+  margin: 24px auto 64px;
+  padding: 44px 24px;
+  border: 1px dashed var(--k-line-strong);
+  border-radius: var(--k-radius-lg);
+  background: var(--k-well);
+  font-family: var(--k-body);
+  text-align: center;
+
+  > .v-icon {
+    color: var(--k-green) !important;
+  }
+
+  h3 {
+    margin: 4px 0 0;
+    font-family: var(--k-display);
+    font-size: clamp(22px, 2.4vw, 28px);
+    font-weight: 600;
+    color: var(--k-ink);
+    overflow-wrap: anywhere;
+  }
+
+  p {
+    max-width: 400px;
+    margin: 0;
+    font-size: 15.5px;
+    color: var(--k-ink-2);
+  }
+
+  &__acts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ About us, Terms, Privacy, Contact (5 November 2026) ▆▆▆▆▆▆▆▆ */
+.k-official {
+  padding: 24px 0 72px;
+  font-family: var(--k-body);
+  text-align: start;
+
+  .v-container {
+    max-width: 880px;
+    margin: 0;
+    padding-inline: 0;
+  }
+
+  .master-article-container {
+    padding-inline: 0 !important;
+  }
+
+  .article {
+    padding: 0 !important;
+  }
+
+  &__crumbs {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 14.5px;
+    color: var(--k-muted);
+
+    a {
+      color: var(--k-green) !important;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    .v-icon {
+      color: var(--k-muted) !important;
+    }
+  }
+
+  &__title {
+    margin: 8px 0 22px;
+    font-family: var(--k-display);
+    font-size: clamp(32px, 4.4vw, 52px);
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--k-ink);
+  }
+
+  &__missing {
+    display: grid;
+    justify-items: start;
+    gap: 10px;
+    max-width: 620px;
+    padding: 32px;
+    border: 1px dashed var(--k-line-strong);
+    border-radius: var(--k-radius-lg);
+    background: var(--k-well);
+
+    > .v-icon {
+      color: var(--k-green) !important;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: var(--k-display);
+      font-size: clamp(22px, 2.4vw, 28px);
+      font-weight: 600;
+      color: var(--k-ink);
+    }
+
+    p {
+      max-width: 480px;
+      margin: 0;
+      font-size: 15.5px;
+      color: var(--k-ink-2);
+    }
+  }
+
+  &__missingacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  @media (max-width: 600px) {
+    padding-top: 16px;
+
+    &__missing {
+      padding: 24px 20px;
+    }
+  }
+}
+
+/* The questions page (KalioFaq look on Selldone's StorefrontPageFaq). */
+.k-faq {
+  &__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    margin-bottom: 18px;
+
+    .k-official__title {
+      margin-bottom: 6px;
+    }
+  }
+
+  &__lede {
+    max-width: 560px;
+    margin: 0;
+    font-size: 16px;
+    color: var(--k-ink-2);
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 20px;
+
+    a {
+      padding: 8px 16px;
+      border: 1px solid var(--k-line);
+      border-radius: var(--k-pill);
+      background: #fff;
+      color: var(--k-ink) !important;
+      font-size: 14.5px;
+      font-weight: 600;
+      text-decoration: none;
+
+      &.-on {
+        border-color: var(--k-green);
+        background: var(--k-green);
+        color: #fff !important;
+      }
+    }
+  }
+
+  &__list {
+    max-width: 880px;
+    border-top: 1px solid var(--k-line);
+  }
+
+  &__item {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--k-line);
+  }
+
+  &__q {
+    margin: 0 0 8px;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--k-ink);
+  }
+
+  &__a {
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--k-ink-2);
+  }
+
+  &__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    color: var(--k-green) !important;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  &__pages {
+    margin-top: 20px;
+  }
+}
+
+/* "Show 62 more" under a product grid (SProductsListing). */
+.k-loadmore {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 48px;
+
+  &__go {
+    height: 48px !important;
+    padding: 0 26px !important;
+    border: 1px solid var(--k-line-strong);
+    border-radius: var(--k-pill) !important;
+    background: #fff !important;
+    color: var(--k-ink) !important;
+    font-family: var(--k-body);
+    font-size: 15px !important;
+    font-weight: 700;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+
+    &:hover {
+      border-color: var(--k-green);
+      color: var(--k-green) !important;
+    }
+  }
+}

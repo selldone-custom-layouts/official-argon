@@ -44,7 +44,20 @@
         class="k-order__stepper"
       />
 
-      <div v-if="!basket" class="k-order__loading">
+      <!-- Kalio (5 November 2026): an order that cannot be opened says why
+           and where to go, where Selldone kept the loading dots and a
+           "Cart not found" toast. -->
+      <div v-if="!basket && failed" class="k-order__missing">
+        <v-icon size="30">{{ USER() ? "receipt_long" : "lock_outline" }}</v-icon>
+        <h1>We can’t open this order</h1>
+        <p v-if="USER()">It isn’t in your account. The link may be wrong, or the order belongs to someone else.</p>
+        <p v-else>If you placed it, sign in to see it, or open the link in your order email on the device you ordered from.</p>
+        <div class="k-order__missingacts">
+          <button v-if="!USER()" class="k-btn k-btn--solid" type="button" @click="signIn">Sign in</button>
+          <router-link :to="buildReturnRoute(history_list_page_name)" :class="USER() ? 'k-btn--solid' : 'k-btn--line'" class="k-btn">Your orders</router-link>
+        </div>
+      </div>
+      <div v-else-if="!basket" class="k-order__loading">
         <u-loading-ellipsis css-mode></u-loading-ellipsis>
       </div>
       <router-view
@@ -82,6 +95,7 @@ export default {
       basket: null,
 
       busy: false,
+      failed: false, // Kalio: the order could not be read
     };
   },
 
@@ -146,10 +160,20 @@ export default {
       this.basket = null; // Force re-render page!
       this.fetchOrderInfo();
     },
+    // Kalio: signed in from the "can't open" message (or known only now
+    // after a reload): try the order again.
+    "$store.getters.getUser"(user) {
+      if (user && this.failed) this.fetchOrderInfo();
+    },
+    "$store.getters.getBusyUser"(busy) {
+      if (!busy && !this.basket && !this.busy) this.fetchOrderInfo();
+    },
   },
 
   created() {
-    this.fetchOrderInfo();
+    // Kalio: after a reload the shopper is read first; asking for the order
+    // before that reads it as a guest and fails (see the watch above).
+    if (!this.$store.getters.getBusyUser) this.fetchOrderInfo();
   },
   mounted() {
     EventBus.$on("on-payment-completed", ({ order_type, order_id }) => {
@@ -162,8 +186,14 @@ export default {
   },
 
   methods: {
+    /** Kalio: sign in from the "can't open" message; the order is read
+     *  again once the shopper is known (watch USER). */
+    signIn() {
+      EventBus.$emit("need-login", true);
+    },
     fetchOrderInfo() {
       this.busy = true;
+      this.failed = false;
       const basket_id = this.$route.params.basket_id;
       const signature = this.$route.query.signature;
       const guest_code = !this.USER()
@@ -204,11 +234,12 @@ export default {
             if (this.basket.status === Basket.Status.Payed.code || this.basket.status === Basket.Status.COD.code)
               GtagEcommerce.MeasuringPurchasesBasket(this.basket);
           } else {
-            NotificationService.showErrorAlert(null, data.error_msg);
+            this.failed = true; // Kalio: said on the page, not in a toast
           }
         })
         .catch((error) => {
-          NotificationService.showLaravelError(error);
+          this.failed = true;
+          if (error?.response?.status && ![401, 403, 404].includes(error.response.status)) NotificationService.showLaravelError(error);
         })
         .finally(() => {
           this.busy = false;

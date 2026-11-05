@@ -1,0 +1,273 @@
+diff --git a/storefront/footer/navigarion/SFooterNavigation.vue b/storefront/footer/navigarion/SFooterNavigation.vue
+index 6eb04f5..c8a2fb2 100644
+--- a/storefront/footer/navigarion/SFooterNavigation.vue
++++ b/storefront/footer/navigarion/SFooterNavigation.vue
+@@ -30,52 +30,19 @@
+     <template v-if="!search_mode">
+       <!-- ------------------ Home ------------------ -->
+ 
++      <!-- Kalio (5 November 2026): Home is always a house that goes home.
++           Selldone's button turned into the last product's picture, a
++           folder or a shop and led back there, so "Home" changed from page
++           to page. -->
+       <v-btn
+-        :to="
+-          last_home_route
+-            ? last_home_route
+-            : in_product || in_category
+-              ? {
+-                  name: 'ShopPage',
+-                }
+-              : {
+-                  name: channel_entry
+-                    ? in_channel_entry_page
+-                      ? 'ShopPage'
+-                      : channel_entry_page_name
+-                    : getCustomHomePage()
+-                      ? !in_custom_home_page
+-                        ? getCustomHomePage()
+-                        : 'ShopPage'
+-                      : 'ShopPage',
+-                }
+-        "
++        :to="{ name: 'ShopPage' }"
+         class="zoomIn"
+         exact
+         min-width="60"
+         value="home"
+-        @click="
+-          last_home_route = null;
+-          last_product = null;
+-          last_cat = null;
+-        "
+         aria-label="Home"
+       >
+-        <v-avatar v-if="last_product" color="#eee" size="24">
+-          <img :src="getProductImage(last_product, 64)" alt="Product" />
+-        </v-avatar>
+-        <v-icon v-else-if="last_cat" size="24"> folder</v-icon>
+-        <v-icon v-else-if="last_home_route" size="24">store</v-icon>
+-
+-        <v-icon v-else-if="channel_entry" size="24"
+-          >{{ in_channel_entry_page ? "apps" : channel_entry_page_icon }}
+-        </v-icon>
+-
+-        <v-icon v-else size="24"
+-          >{{
+-            in_custom_home_page || in_product || in_category ? "apps" : "home"
+-          }}
+-        </v-icon>
++        <v-icon size="24">home</v-icon>
+       </v-btn>
+ 
+       <!-- ------------------ Search ------------------ -->
+@@ -296,7 +263,12 @@ export default {
+       )
+         return "notification";
+ 
+-      return "home";
++      // Kalio: the rest of the account and an order's page light their own
++      // tab; a page that is none of the five lights none (it lit "Home").
++      const path = this.$route.path || "";
++      if (path.startsWith("/user/orders") || path.startsWith("/orders/")) return "notification";
++      if (path === "/user" || path.startsWith("/user/")) return "profile";
++      return null;
+     },
+ 
+     in_custom_home_page() {
+diff --git a/storefront/product/section/price/SProductSectionPrice.vue b/storefront/product/section/price/SProductSectionPrice.vue
+index 579e8c9..1f5d878 100644
+--- a/storefront/product/section/price/SProductSectionPrice.vue
++++ b/storefront/product/section/price/SProductSectionPrice.vue
+@@ -110,7 +110,7 @@
+         {{ $t("product_info.discount") }}
+       </p>
+       <span class="discount-percent text-nowrap"
+-        >{{ discount_percent }} %
++        ><!-- Kalio: "-20%" as on every card, not "20 %" -->-{{ discount_percent }}%
+         <v-icon class="ms-1" color="white" size="small">insert_emoticon</v-icon>
+       </span>
+     </div>
+diff --git a/storefront/products/listing/SProductsListing.vue b/storefront/products/listing/SProductsListing.vue
+index 942cd61..04a0c36 100644
+--- a/storefront/products/listing/SProductsListing.vue
++++ b/storefront/products/listing/SProductsListing.vue
+@@ -261,19 +261,47 @@
+               </v-fade-transition>
+             </v-row>
+           </component>
++
++          <!-- Kalio (5 November 2026): nothing found said in words, with a
++               way on (Selldone left a blank page under "0 products"). -->
++          <div
++            v-else-if="kalio_loaded && !busy_fetch && !forceSingleLine"
++            class="k-noresult"
++          >
++            <v-icon size="30">{{ kalioEmpty.icon }}</v-icon>
++            <h3>{{ kalioEmpty.title }}</h3>
++            <p>{{ kalioEmpty.text }}</p>
++            <div class="k-noresult__acts">
++              <button
++                v-if="kalioEmpty.clear"
++                class="k-btn k-btn--line"
++                type="button"
++                @click="filter = null; fetchData(true)"
++              >
++                Clear filters
++              </button>
++              <router-link
++                :to="{ name: window.$storefront.routes.SHOP_PAGE, query: { sort: 'newest' } }"
++                class="k-btn k-btn--solid"
++              >
++                See all products
++              </router-link>
++            </div>
++          </div>
+         </v-container>
+ 
+-        <v-btn
+-          v-if="has_more"
+-          v-intersect="onIntersect"
+-          :loading="busy_fetch"
+-          class="m-3"
+-          color="blue"
+-          size="x-large"
+-          variant="text"
+-          @click="fetchData(false, true)"
+-          >{{ remains_count }} {{ $t("global.actions.more") }}
+-        </v-btn>
++        <!-- Kalio (5 November 2026): one centred "Show 62 more" pill under
++             the products, not a blue "62 More.." under the filter column. -->
++        <div v-if="has_more" class="k-loadmore">
++          <v-btn
++            v-intersect="onIntersect"
++            :loading="busy_fetch"
++            class="k-loadmore__go"
++            variant="flat"
++            @click="fetchData(false, true)"
++            >Show {{ remains_count }} more
++          </v-btn>
++        </div>
+ 
+         <s-category-filter
+           v-if="has_filter"
+@@ -364,6 +392,25 @@ import { Category, Product } from "@selldone/core-js/models";
+ import {ShopURLs} from "@selldone/core-js/helper";
+ import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+ 
++/** Kalio: a filter as the "filter" watcher writes it to the address (empty
++ *  parts and prices dropped), so the $route watcher can tell the list's own
++ *  writes from a link that changed the filter. */
++function kalioFilterQuery(obj: any): any {
++  const out: any = {};
++  Object.keys(obj || {}).forEach((k) => {
++    if (k === "prices") return;
++    if (Array.isArray(obj[k])) {
++      if (obj[k].length) out[k] = obj[k];
++    } else if (obj[k] && typeof obj[k] === "object") {
++      const r = kalioFilterQuery(obj[k]);
++      if (r && Object.keys(r).length) out[k] = r;
++    } else if (obj[k]) {
++      out[k] = obj[k];
++    }
++  });
++  return out;
++}
++
+ export default {
+   name: "SProductsListing",
+   mixins: [CurrencyMixin],
+@@ -545,6 +592,7 @@ export default {
+ 
+     products: [],
+     products_count: 0,
++    kalio_loaded: false, // Kalio: a first answer came (for the empty state)
+     sort: null /*Custom sorting*/, // "most_popular",
+     only_available: true,
+ 
+@@ -579,6 +627,16 @@ export default {
+   }),
+ 
+   computed: {
++    /** Kalio: what to say when the list comes back empty. */
++    kalioEmpty() {
++      const search = String(this.$route?.query?.search || "").trim();
++      const filtered = !!(this.filter && Object.keys(kalioFilterQuery(this.filter)).length);
++      if (search)
++        return { icon: "search_off", title: `Nothing matches “${search}”`, text: "Check the spelling, or try a shorter or more general word.", clear: filtered };
++      if (filtered)
++        return { icon: "filter_alt_off", title: "No products match these filters", text: "Take a filter or two off to see more of the aisle.", clear: true };
++      return { icon: "inventory_2", title: "Nothing here yet", text: "The sellers have not stocked this shelf yet. The rest of the shop is a tap away.", clear: false };
++    },
+     ShopURLs() {
+       return ShopURLs
+     },
+@@ -767,6 +825,27 @@ export default {
+   },
+   watch: {
+     $route(to, from) {
++      // Kalio (5 November 2026): Deals → "All products" stays on this page
++      // and only drops ?filter, so the list kept "Only discounted" on (80 of
++      // 160 products). When the address's filter is not the one this list
++      // wrote itself, follow the address.
++      if (
++        this.routeMode &&
++        to?.name === from?.name &&
++        (to.query?.filter || null) !== (from.query?.filter || null)
++      ) {
++        const want = to.query?.filter || null;
++        const mine = this.filter ? JSON.stringify(kalioFilterQuery(this.filter)) : null;
++        if (want !== mine && !(want === null && mine === "{}")) {
++          try {
++            this.filter = want ? JSON.parse(want) : null;
++          } catch (e) {
++            this.filter = null;
++          }
++          this.fetchData(true);
++          return;
++        }
++      }
+       //console.log(to,from)
+       if (
+         !this.routeMode ||
+@@ -1213,6 +1292,7 @@ export default {
+ 
+       const handleSuccessResponse = ({ products, total, folders, parent }) => {
+         this.products_count = total;
++        this.kalio_loaded = true;
+ 
+         if (more) {
+           products.forEach((product) => {
+diff --git a/system/pwa/version-check/SPwaVersionCheck.vue b/system/pwa/version-check/SPwaVersionCheck.vue
+index 1c8cfde..4d0a8b7 100644
+--- a/system/pwa/version-check/SPwaVersionCheck.vue
++++ b/system/pwa/version-check/SPwaVersionCheck.vue
+@@ -13,20 +13,21 @@
+   -->
+ 
+ <template>
++  <!-- Kalio (5 November 2026): the update notice in the shop's own
++       colours and words (Selldone's was a dark grey box with an all-caps
++       "UPDATE"); styles in kalio-shell.scss. -->
+   <v-snackbar
+     v-if="local_version"
+     v-model="new_version"
+     :timeout="60000"
+-    :vertical="$vuetify.display.smAndDown"
+-    multi-line
++    content-class="k-update"
+     @click="new_version = false"
+   >
+-    {{ $t("global.notification.new_pwa_version") }}
++    <span class="k-update__words"><v-icon size="20">auto_awesome</v-icon>A newer version of the shop is ready.</span>
+ 
+-    <v-btn :loading="busy" color="green" variant="text" @click.stop="refreshMe">
+-      <v-icon class="me-1">get_app</v-icon>
+-      {{ $t("global.actions.update") }}
+-    </v-btn>
++    <template v-slot:actions>
++      <v-btn :loading="busy" class="k-update__go" variant="flat" @click.stop="refreshMe">Refresh</v-btn>
++    </template>
+   </v-snackbar>
+ </template>
+ 

@@ -187,6 +187,11 @@
     object-fit: cover;
   }
 
+  // a guest: a person outline, white on the green (was an empty disc)
+  .v-icon {
+    color: #fff !important;
+  }
+
   &.-lg {
     width: 64px;
     height: 64px;
@@ -1898,4 +1903,135 @@
   .k-board__head {
     align-items: flex-start;
   }
+}
+
+/* ━━━━━━━━━━━━ Selldone's own sections in the account frame ━━━━━━━━━━━━
+   Returns, Saved, Wallet, Gift cards, Addresses, Reviews, Profile and the
+   other kinds of order keep Selldone's parts; dressed here like the rest
+   of the account (5 November 2026): sentence-case buttons on pills, the
+   sort switch in green rather than black, search fields and section heads
+   in Kalio's type. The colours come from the primary mapped in tokens. */
+.k-acct {
+  .widget-box {
+    font-family: var(--k-body);
+
+    .s--widget-header h2 {
+      font-family: var(--k-display);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+  }
+
+  .v-btn {
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+  }
+
+  .v-btn.bg-primary,
+  .widget-box .v-btn--variant-elevated:not(.v-btn--icon) {
+    border-radius: var(--k-pill) !important;
+    box-shadow: none !important;
+    font-weight: 700;
+  }
+
+  /* the ascending / descending switch beside "Sort by" */
+  .v-btn-toggle {
+    overflow: hidden;
+    border: 1px solid var(--k-line);
+    border-radius: var(--k-pill) !important;
+
+    .v-btn {
+      background: #fff !important;
+      color: var(--k-ink) !important;
+      box-shadow: none !important;
+    }
+
+    // Selldone's ".v-application .v-btn-toggle .v-btn.dark-flat" (black,
+    // loaded after Kalio's sheets) is matched one class higher
+    .v-btn.dark-flat,
+    .v-btn.v-btn--active,
+    .v-application & .v-btn.dark-flat {
+      background: var(--k-green) !important;
+      color: #fff !important;
+    }
+  }
+
+  .v-toolbar__extension > .v-btn.v-btn--variant-flat {
+    border: 1px solid var(--k-line);
+    border-radius: var(--k-pill) !important;
+  }
+
+  .v-data-iterator .v-field,
+  .widget-box .v-field--variant-solo,
+  .widget-box .v-field--variant-solo-filled {
+    border-radius: var(--k-pill) !important;
+    box-shadow: none !important;
+  }
+
+  /* profile: the name in Kalio's type, not shouted */
+  .text-uppercase {
+    text-transform: none !important;
+  }
+}
+
+/* The wallet page (StorefrontPageUserWallets, Kalio markup). */
+.k-wallets {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 12px;
+  margin-top: 18px;
+
+  &__empty {
+    margin-top: 18px;
+  }
+}
+
+.k-wallet {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--k-line);
+  border-radius: 20px;
+  background: #fff;
+
+  &__ico {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: var(--k-green-soft);
+
+    .v-icon {
+      color: var(--k-green) !important;
+    }
+  }
+
+  &__words {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+
+    small {
+      font-size: 13px;
+      color: var(--k-muted);
+    }
+  }
+
+  &__sum {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--k-ink);
+  }
+}
+
+/* Selldone's black for the chosen sort direction is an !important rule in
+   a cascade layer, which beats any unlayered rule: the green is painted as
+   a background image over it instead. */
+.v-application .k-acct .v-btn-toggle .v-btn.dark-flat,
+.v-application .k-acct .v-btn-toggle .v-btn.v-btn--active {
+  background-image: linear-gradient(var(--k-green), var(--k-green)) !important;
+  color: #fff !important;
 }

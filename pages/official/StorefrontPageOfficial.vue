@@ -12,28 +12,24 @@
   - Tread carefully, for you're treading on dreams.
   -->
 
+<!--
+  Kalio (5 November 2026): About us, Terms, Privacy and Contact in the
+  shop's own page frame: the trail "molino › Terms of use" and the page,
+  where Selldone put them in a floating card with a "Back" circle and its
+  own breadcrumb.
+-->
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-card class="s--shop-card mb-16 s--shadow-with-padding">
-    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ Top Shop Menu ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
+  <div class="k-official">
     <slot name="header"></slot>
-    <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
-
-    <v-toolbar color="transparent" flat>
-      <u-button-circle
-        :icon="$t('icons.arrow_back')"
-        :to="{ name: 'ShopPage' }"
-        :tooltip="$t('global.actions.back')"
-      />
-
-      <!-- ⬬⬬⬬⬬ Breadcrumbs ⬬⬬⬬⬬ -->
-      <u-breadcrumb :hierarchy-items="hierarchy_items" />
-
-      <v-spacer />
-    </v-toolbar>
-
-    <!-- ======================= Container ======================= -->
-    <router-view class="mt-3" />
-  </v-card>
+    <div class="k-wrap">
+      <nav aria-label="Breadcrumb" class="k-official__crumbs">
+        <router-link :to="{ name: 'ShopPage' }">{{ $shop?.title || "Home" }}</router-link>
+        <v-icon size="16">chevron_right</v-icon>
+        <span>{{ page_name }}</span>
+      </nav>
+      <router-view class="k-official__body" />
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -43,6 +39,7 @@ import { SBusinessProfileBreadcrumbsHelper } from "@selldone/components-vue/stor
 export default {
   name: "StorefrontPageOfficial",
   components: { UBreadcrumb },
+  inject: ["$shop"],
 
   props: {},
 

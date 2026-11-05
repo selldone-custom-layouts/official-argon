@@ -19,7 +19,8 @@
           <div class="k-acct__hi">
             <span aria-hidden="true" class="k-acct__ava -lg">
               <img v-if="avatar" :src="avatar" alt="" @error="avatar_failed = true" />
-              <template v-else>{{ initials }}</template>
+              <template v-else-if="initials">{{ initials }}</template>
+              <v-icon v-else size="26">person_outline</v-icon>
             </span>
             <div class="k-acct__words">
               <h1>{{ user ? `${hello}, ${firstName}` : "Your orders" }}</h1>
@@ -53,11 +54,12 @@
         <div class="k-acct__me">
           <span aria-hidden="true" class="k-acct__ava">
             <img v-if="avatar" :src="avatar" alt="" @error="avatar_failed = true" />
-            <template v-else>{{ initials }}</template>
+            <template v-else-if="initials">{{ initials }}</template>
+            <v-icon v-else size="22">person_outline</v-icon>
           </span>
           <div>
-            <b>{{ user ? user.name : "Your orders" }}</b>
-            <small>{{ user ? user.phone || user.email : "Kept on this device" }}</small>
+            <b>{{ user ? user.name : pending ? "One moment…" : "Shopping as a guest" }}</b>
+            <small>{{ user ? user.phone || user.email : "Orders placed on this device" }}</small>
           </div>
         </div>
         <nav aria-label="Your account" class="k-acct__nav">
@@ -161,6 +163,13 @@ export default {
       loadOrders(this);
       if (this.user) loadAddresses();
     },
+    "$route.fullPath"() {
+      this.showActive();
+    },
+  },
+
+  mounted() {
+    this.showActive();
   },
 
   created() {
@@ -169,6 +178,18 @@ export default {
   },
 
   methods: {
+    /** On a phone the sections are one row that scrolls sideways: bring the
+     *  open one into view (Wallet, Profile… were off the right edge). */
+    showActive() {
+      this.$nextTick(() => {
+        for (const nav of this.$el?.querySelectorAll?.(".k-acct__nav, .k-acct__tabs") || []) {
+          const on = nav.querySelector(".-on");
+          if (!on || nav.scrollWidth <= nav.clientWidth + 1) continue;
+          const delta = on.getBoundingClientRect().left - nav.getBoundingClientRect().left;
+          nav.scrollLeft = Math.max(0, nav.scrollLeft + delta - (nav.clientWidth - on.offsetWidth) / 2);
+        }
+      });
+    },
     isOn(item) {
       if (item.key === "orders") return this.$route.matched.some((m) => m.name === window.$storefront.routes.ORDERS_PAGE);
       return this.$route.name === item.route.name;
