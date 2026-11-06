@@ -3,7 +3,7 @@
   "deploy_path": "",
   "package": "kalio-market-hall",
   "name": "Molino Market Hall",
-  "version": "0.2.28",
+  "version": "0.2.29",
   "storefront": true,
   "backoffice": false,
   "description": "Grocery marketplace storefront: a deals banner, every aisle and rows of products, with the seller named on every card."
