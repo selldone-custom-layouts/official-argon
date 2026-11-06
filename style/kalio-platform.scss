@@ -671,9 +671,12 @@
     opacity: 1;
   }
 
+  /* Compare is for a mouse: on a touch screen it showed on every card as a
+     second round "+"-like mark beside the real one (the owner, 6 November
+     2026). The aisles already hid it; now every rail does too. */
   @media (hover: none) {
     .quick-buy .v-btn + .v-btn {
-      opacity: 1;
+      display: none !important;
     }
   }
 }
@@ -687,6 +690,25 @@
   right: 10px;
   top: calc(100cqw - 46px);
   z-index: 4;
+}
+
+/* A card's "1 in basket" never wraps: on the home rails' narrow cards
+   "in basket" broke into two lines and spilled out of the 36px pill (the
+   owner, 6 November 2026). Below 170px of card the pill keeps the number
+   alone, as the shelf's strip does on a phone. */
+.s--product-card .k-card-step__count {
+  overflow: hidden;
+  white-space: nowrap;
+
+  small {
+    white-space: nowrap;
+  }
+}
+
+@container (max-width: 169.98px) {
+  .s--product-card .k-card-step__count small {
+    display: none;
+  }
 }
 
 /* The card's own "+" steps aside while the stepper stands in for it. */

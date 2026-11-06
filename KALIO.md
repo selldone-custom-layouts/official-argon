@@ -27,7 +27,7 @@ pale tint of their own. The approved mockup is in
 | Seller offer cards — SSmartSelectVendor logic via `extends` | `components/kalio/product/KalioSellerOffers.vue` |
 | In the basket: quantity and "Checkout · total" on the product page (design C); a card's "+" adds straight away and becomes − n +; "Added to basket" notice | `components/kalio/product/KalioBasketLine.vue`, `KalioCardStep.vue`, `kalio-card-basket.ts`, `kalio-basket.ts`, `shell/KalioBasketToast.vue` |
 | Basket drawer (design C, 0.2.11): a receipt with the subtotal, savings and Checkout; compact rows with a stepper; three "Often added" | `components/kalio/shell/KalioBasketDrawer.vue` (styles in `kalio-shell.scss`, `.k-bdrawer`) |
-| Basket page (design C, 0.2.12): lines by seller; When · Where · Who cards; a receipt with every line of Selldone's bill, the discount code and Pay; on a phone a bar with the total and Pay | `pages/basket/cart/StorefrontPageBasketCart.vue` (Selldone's script kept), `components/kalio/checkout/KalioCartLines.vue`, `components/kalio/KalioOftenAdded.vue` (also in the drawer) |
+| Basket page (design C, 0.2.12): lines by seller; Delivery method · Where · Who cards; a receipt with every line of Selldone's bill, the discount code and Pay; on a phone a bar with the total and Pay | `pages/basket/cart/StorefrontPageBasketCart.vue` (Selldone's script kept), `components/kalio/checkout/KalioCartLines.vue`, `components/kalio/KalioOftenAdded.vue` (also in the drawer) |
 | Where: the address sheet (a light Mapbox map with a fixed pin, search, "Use my location", saved addresses, every address field) | `components/kalio/checkout/KalioAddressSheet.vue` |
 | When: shipping methods and pickup points as cards, any time or days and parts of the day, or a date | `pages/basket/cart/SCartShippingOptions.vue` (Selldone's script kept), in the basket page's When sheet |
 | Pay: Selldone's payment window restyled (heading, total on the stone ground, each way to pay as a card) | `style/kalio-checkout.scss` (`.s--storefront-master-payment-dialog`) |
@@ -330,6 +330,13 @@ Facts that shape the code:
   Seen, not changed: "DairyCove Whole Milk 1 gal" opens on its 1 quart size
   (shop data); Selldone's `UPaymentStripeSplit` warns that `$product` is
   not provided on the basket page (harmless).
+- **0.2.27 (6 November 2026), from the owner's phone screenshot of the home rails:** the
+  card's "1 in basket" broke into three lines and spilled out of the 36px pill (0.2.26 had
+  lowered it from 44px) — it never wraps now, and below 170px of card (a phone's rails) the
+  pill keeps the number alone (`@container`); compare is hidden on every touch screen (it
+  read as a second "+"); "Added to basket" keeps its title on one line and, on phones and
+  tablets, sits at the foot above the bottom bar instead of over the section being shopped
+  (above a tablet product page's floating buy bar while that shows).
 
 Market Hall, the first design, is tagged `market-hall-0.1.5`.
 
