@@ -38,6 +38,14 @@ The Layout reads everything from your shop. Nothing about molino is hard-coded. 
 - **Deals must be on each seller's offer.** A discount set only on the product row is not what the basket charges.
 - ⚠️ Creating or deleting a vendor offer makes Selldone **recompute the product's and its variants' prices** (lowest offer) and **clear the product discount**. Save your prices before bulk vendor changes and check them after.
 
+## Ratings and reviews
+
+- **What shows:** a product's average and its number of ratings appear on its cards and under its title. They show only once someone has rated it.
+- **Rating criteria:** set them in your shop's dashboard, e.g. Freshness, Taste, Packaging, Value. The Reviews block lists them with their averages under "How it rates".
+- **Who can rate:** only shoppers who bought the product. Any signed-in shopper can write one review per product. Buyers get a "Verified Buyer" badge and their own stars on their review.
+- **Replying:** answer reviews from the dashboard; your reply shows under the review.
+- **What Selldone doesn't offer:** a 5-to-1 star breakdown, "helpful" votes, review photos, and sorting the catalogue by rating. The Layout doesn't fake them.
+
 ## Filters (specs)
 
 The aisle page's filters come from **product specs** and the category's **filter list**.

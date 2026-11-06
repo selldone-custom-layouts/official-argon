@@ -39,6 +39,11 @@ Use it as the storefront of your own Selldone shop: groceries, a supermarket, a 
 - **Amazon-style cards:** "Add to basket" on every card turns into "− 1 in basket +" in place. "See options" appears for products with sizes, and "Out of stock" when nothing is left. The seller is named on every card.
 - **Shop pages:** a quiet aisle page with a compact head, filters built from product specs, one sort menu, and the normal grid on every device.
 - **Product page:** three columns: gallery, details and a sticky buy box with every seller's offer. The struck price and percentage follow the chosen seller.
+- **Ratings and reviews:**
+  - **Cards:** a quiet "★★★★☆ 4.2 (19)" line under the name.
+  - **Product page:** the score and the number of ratings under the title, which jump to the reviews.
+  - **Reviews:** a summary column (score, stars, the shop's rating criteria, a sign-in prompt or a buyer's own rating) beside the comments, with the buyer badge, each writer's stars and the shop's reply.
+  - Nothing shows until someone rates.
 - **Seller storefronts:** each vendor gets a page with their mark, their aisles and their offers.
 - **Basket and checkout:** a receipt-style basket drawer and basket page (lines by seller, delivery method, where, who). A map-first address sheet works on phones too: live suggestions, tap the pin, and two steps on small screens.
 - **Orders and account:** an order page with the receipt, delivery card, the trip and chat bubbles. The buyer account comes in two designs, picked at build time.
