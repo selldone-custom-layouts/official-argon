@@ -362,6 +362,13 @@ Facts that shape the code:
     with the address on top (Change, Back), Save scrolling to the field still missing.
     Below the map the fields had sat under the Save button, unseen.
   `kalio-design/review/cardcheck.cjs` checks all of it on a phone, tablet and computer.
+- **0.2.29 (6 November 2026):** the footer's "Basket" linked to `/basket/physical`; the basket
+  page looks the basket up by type and only `PHYSICAL` matches, so it showed "Basket is empty"
+  with products in it. Every basket link now passes `PHYSICAL` (found while taking the GitHub
+  screenshots; checked live). The repository now lives at
+  <https://github.com/selldone-custom-layouts/official-molino> (`origin`; `upstream` is
+  selldone/storefront, fetch-only), with the README, `selldone-layout.json`, screenshots from
+  the live shop in `docs/screenshots/` and the wiki's source in `docs/wiki/`.
 
 Market Hall, the first design, is tagged `market-hall-0.1.5`.
 
