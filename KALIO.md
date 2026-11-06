@@ -325,6 +325,8 @@ Facts that shape the code:
     lookup is Mapbox geocoding: streets, not landmarks — "Empire State
     Building" found Surat, India, or nothing), and says when nothing was
     found; the map follows its box's size (ResizeObserver).
+  **Live on molino** (uploaded 6 November 2026 as deploy 357, release
+  `01M6RTZKV257EPTGKQGTK9AYSB`; 0.2.25 was never uploaded, 0.2.26 carries it).
   Seen, not changed: "DairyCove Whole Milk 1 gal" opens on its 1 quart size
   (shop data); Selldone's `UPaymentStripeSplit` warns that `$product` is
   not provided on the basket page (harmless).
@@ -332,6 +334,15 @@ Facts that shape the code:
 Market Hall, the first design, is tagged `market-hall-0.1.5`.
 
 ## Release
+
+**Going live (from 6 November 2026, the owner's wish): after the upload is verified, pin the
+shop to it yourself** with the Selldone MCP connector: `selldone_current_connection` must say
+shop 15645, then `selldone_api_call` `api.shops.layout.set`, `confirm: true`, body
+`{"mode":"private","layout_id":23,"layout_version":"<exact version>"}` (never `latest`).
+Every domain inherits the shop default. Check `https://molino.selldone.shop/` (no query: a
+query shows the catalogue instead of the home) names the release in `window.sdShopLayout`.
+The CLI must be signed in (`~/.selldone-dev/.persist` not empty); `selldone login` is not a
+command — the owner signs in from the `selldone` menu and types the 2FA code.
 
 The official build and `selldone-cli` 1.0.16 do not pass the current upload
 endpoint. The steps below are what does. Never re-upload a version: a version
