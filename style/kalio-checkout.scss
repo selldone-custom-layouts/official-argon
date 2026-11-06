@@ -537,6 +537,11 @@
     gap: 10px;
     min-width: 0;
 
+    &.-wait {
+      color: var(--k-muted);
+      font-size: 14px;
+    }
+
     img {
       flex: none;
       border-radius: 50%;
@@ -633,14 +638,26 @@
         display: none !important;
       }
 
+      /* Each half keeps its words inside it: on a phone "Different
+         billing address" ran under "Same for billing" (Vuetify's button
+         content does not wrap; the owner, 6 November 2026). */
       .v-btn {
         flex: 1 1 0;
+        min-width: 0 !important;
         height: auto !important;
         min-height: 38px !important;
         margin: 0 !important;
         padding: 6px 12px !important;
+        overflow: hidden;
         white-space: normal;
         line-height: 1.2 !important;
+
+        .v-btn__content {
+          min-width: 0;
+          white-space: normal;
+          text-align: center;
+          overflow-wrap: break-word;
+        }
         border-radius: var(--k-pill) !important;
         background: transparent !important;
         box-shadow: none !important;
@@ -987,10 +1004,6 @@
       background: #fff;
       box-shadow: 0 -12px 30px -20px rgba(16, 35, 27, 0.35);
 
-      &.-up {
-        bottom: 64px;
-        padding-bottom: 12px;
-      }
 
       .k-cart__go {
         height: 50px;
@@ -1615,10 +1628,85 @@
       overflow: visible;
     }
 
+    /* The address sheet in two steps (6 November 2026): first the map,
+       as tall as the window allows, with the address under the pin below
+       it; then the details on their own, the found address on top with a
+       way back to the map. Below the map the fields sat under the Save
+       button, and a shopper did not know they were there. */
+    &__grid.-step-map {
+      grid-template-rows: clamp(260px, calc(100vh - 360px), 560px) auto;
+      overflow: hidden;
+
+      .k-addr__map {
+        height: 100%;
+      }
+
+      .k-addr__form {
+        display: none;
+      }
+    }
+
+    &__grid.-step-details {
+      grid-template-rows: auto;
+
+      .k-addr__map {
+        display: none;
+      }
+    }
+
+    &__peek {
+      padding: 12px 20px 2px;
+
+      .k-addr__book {
+        flex-wrap: nowrap;
+        margin-bottom: 10px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .k-addr__found {
+        margin: 0;
+      }
+    }
+
+    /* The reason Continue or Save did not go on, on its own line. */
     &__missing {
-      display: none;
+      flex: 1 0 100%;
+      order: -1;
+      margin: 0 0 2px;
     }
   }
+}
+
+/* A phone's sheet fills the window: the map takes what the head, the
+   address and the foot leave. */
+.v-dialog--fullscreen .k-addr__grid.-step-map {
+  flex: 1 1 auto;
+  min-height: 0;
+  grid-template-rows: minmax(240px, 1fr) auto;
+}
+
+@media (max-width: 760px) {
+  .k-sheet__foot:has(.k-addr__missing) {
+    flex-wrap: wrap;
+  }
+}
+
+.k-addr__found-edit {
+  flex: none;
+  height: 36px;
+  margin-inline-start: auto;
+  padding: 0 14px;
+  border: 1px solid var(--k-line);
+  border-radius: var(--k-pill);
+  background: #fff;
+  color: var(--k-green-deep) !important;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.k-sheet__go .v-icon {
+  margin-inline-start: -2px;
 }
 
 /* ▆▆▆▆▆▆▆▆ When: a package's way and time (SCartShippingOptions) ▆▆▆▆▆▆▆▆ */

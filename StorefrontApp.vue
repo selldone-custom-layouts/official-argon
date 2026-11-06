@@ -95,8 +95,8 @@
            the same event and Selldone's SShopLogin inside. -->
       <kalio-sign-in />
 
-      <!-- "Added to basket", in place of Selldone's green in-basket strip. -->
-      <kalio-basket-toast />
+      <!-- Kalio: no "Added to basket" notice (the owner, 6 November 2026):
+           the card's own "1 in basket" and the header's count say it. -->
 
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Notifications (Small bottom-Right) ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
       <u-notification-side />
@@ -116,7 +116,9 @@
       ></s-pwa-version-check>
 
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Bottom navigation bar ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
-      <s-footer-navigation v-if="isMobile"></s-footer-navigation>
+      <!-- Kalio: none (the owner, 6 November 2026). Under the browser's own
+           toolbar it was a second bar over the page; the header holds the
+           basket, the account and the menu. -->
 
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Popup ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
       <s-storefront-popup></s-storefront-popup>
@@ -176,19 +178,10 @@ export default {
     KalioSignIn: defineAsyncComponent(
       () => import("./components/kalio/shell/KalioSignIn.vue"),
     ),
-    KalioBasketToast: defineAsyncComponent(
-      () => import("./components/kalio/shell/KalioBasketToast.vue"),
-    ),
     SCookieConsent: defineAsyncComponent(
       () =>
         import(
           "@selldone/components-vue/storefront/cookie/consent/SCookieConsent.vue"
-        ),
-    ),
-    SFooterNavigation: defineAsyncComponent(
-      () =>
-        import(
-          "@selldone/components-vue/storefront/footer/navigarion/SFooterNavigation.vue"
         ),
     ),
     SStorefrontApplicationLogin: defineAsyncComponent(
@@ -321,6 +314,10 @@ export default {
     // --------------------------------------------------------------------------------
 
     has_comparison() {
+      // Kalio: not over the basket and checkout (the owner, 6 November
+      // 2026), nor on the comparison page itself.
+      const routes = window.$storefront.routes;
+      if ([routes.BASKET_PAGE, routes.COMPARISON_PAGE].includes(this.$route.name)) return false;
       return this.$route.matched.some((record) => record.meta.comparison);
     },
     // --------------------------------------------------------------------------------

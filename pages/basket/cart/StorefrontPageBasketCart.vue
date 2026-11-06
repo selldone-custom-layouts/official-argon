@@ -144,6 +144,11 @@
                   </span>
                 </div>
               </template>
+              <!-- Back from signing in (Google and the rest come back to this
+                   page), the account is still on its way: not "Sign in". -->
+              <p v-else-if="busy_user" class="k-cart__user -wait">
+                <v-progress-circular indeterminate size="18" width="2" />Checking your sign-in…
+              </p>
               <template v-else-if="has_guest_payment">
                 <p>
                   We send the receipt here.
@@ -371,7 +376,6 @@
          while the receipt's own button is out of view. -->
     <div
       v-if="basket?.items?.length && !intersect_payment_btn"
-      :class="{ '-up': bottom_nav_show }"
       class="k-cart__bar"
     >
       <span class="k-cart__bar-total">
@@ -618,10 +622,6 @@ export default {
 
     mass_unit() {
       return ShopOptionsHelper.GetMassUnit(this.$shop);
-    },
-
-    bottom_nav_show() {
-      return this.$store.getters.getBottomNavShow;
     },
 
     light_checkout() {
@@ -922,6 +922,9 @@ export default {
     // ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅ Checkout Flow ▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅▅
     user() {
       return this.USER();
+    },
+    busy_user() {
+      return this.$store.getters.getBusyUser;
     },
     has_guest_payment() {
       return ShopOptionsHelper.HasGuestPayment(this.$shop);

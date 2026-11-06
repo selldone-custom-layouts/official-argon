@@ -43,16 +43,21 @@
         </button>
       </div>
 
-      <div :class="{ '-nomap': noMap }" class="k-addr__grid">
+      <div
+        ref="grid"
+        :class="{ '-nomap': noMap, '-step-map': steps && step === 'map', '-step-details': steps && step === 'details' }"
+        class="k-addr__grid"
+      >
         <!-- The map, with the pin in the middle -->
         <div v-if="!noMap" class="k-addr__map">
           <div ref="canvas" class="k-addr__canvas"></div>
           <div class="k-addr__search">
             <v-icon size="20">search</v-icon>
             <input
-              v-model="query"
+              :value="query"
               aria-label="Search a street and number"
               autocomplete="off"
+              enterkeyhint="search"
               placeholder="Search a street and number"
               type="search"
               @input="onQuery"
@@ -100,14 +105,45 @@
           </span>
         </div>
 
+        <!-- Phone, first step: the address under the pin, under the map.
+             The details come next, on their own screen: below the map they
+             sat under the Save button, out of sight (the owner, 6 November
+             2026). -->
+        <div v-if="steps && step === 'map'" class="k-addr__peek">
+          <div v-if="book.length" class="k-addr__book">
+            <span class="k-addr__label">Saved</span>
+            <button
+              v-for="saved in book"
+              :key="saved.id"
+              :class="{ '-on': saved.address === form.address }"
+              class="k-addr__saved"
+              type="button"
+              @click="useSaved(saved)"
+            >
+              <v-icon size="16">bookmark_border</v-icon>{{ saved.title || saved.address }}
+            </button>
+          </div>
+          <div :class="{ '-empty': !form.address }" class="k-addr__found">
+            <span class="k-addr__found-ico">
+              <v-progress-circular v-if="busy_geo" indeterminate size="18" width="2" />
+              <v-icon v-else size="20">place</v-icon>
+            </span>
+            <span>
+              <b>{{ form.address || "No address yet" }}</b>
+              <small>{{ form.address ? "Where the pin is. Next, the details." : "Move the map so the pin is on the door, or search above." }}</small>
+            </span>
+          </div>
+        </div>
+
         <!-- The form -->
         <div class="k-addr__form">
           <div v-if="noMap" class="k-addr__search -inline">
             <v-icon size="20">search</v-icon>
             <input
-              v-model="query"
+              :value="query"
               aria-label="Search your address"
               autocomplete="off"
+              enterkeyhint="search"
               placeholder="Search your address"
               type="search"
               @input="onQuery"
@@ -145,7 +181,7 @@
             </div>
           </div>
 
-          <div v-if="book.length" class="k-addr__book">
+          <div v-if="book.length && !steps" class="k-addr__book">
             <span class="k-addr__label">Saved</span>
             <button
               v-for="saved in book"
@@ -166,11 +202,13 @@
             </span>
             <span>
               <b>{{ form.address || "No address yet" }}</b>
-              <small>{{ form.address ? "Where the pin is. You can edit the details below." : "Tap the map where it should go, or search above." }}</small>
+              <small v-if="steps">{{ form.address ? "Where the pin is. Fill in the rest below." : "Place the pin on the map first." }}</small>
+              <small v-else>{{ form.address ? "Where the pin is. You can edit the details below." : "Tap the map where it should go, or search above." }}</small>
             </span>
+            <button v-if="steps" class="k-addr__found-edit" type="button" @click="toMap">Change</button>
           </div>
 
-          <label class="k-addr__field -wide">
+          <label :class="{ '-error': tried && !form.address }" class="k-addr__field -wide">
             <span>Street address <em>*</em></span>
             <input v-model.trim="form.address" autocomplete="street-address" placeholder="Street and number" type="text" />
           </label>
@@ -224,11 +262,21 @@
       </div>
 
       <div class="k-sheet__foot">
-        <p v-if="tried && missing" class="k-addr__missing"><v-icon size="16">error_outline</v-icon>{{ missing }}</p>
-        <button class="k-sheet__ghost" type="button" @click="$emit('update:modelValue', false)">Cancel</button>
-        <button :disabled="busy" class="k-sheet__go" type="button" @click="save">
-          <v-progress-circular v-if="busy" indeterminate size="18" width="2" />{{ saveText }}
-        </button>
+        <template v-if="steps && step === 'map'">
+          <p v-if="pin_needed" class="k-addr__missing"><v-icon size="16">error_outline</v-icon>{{ pin_needed }}</p>
+          <button class="k-sheet__ghost" type="button" @click="$emit('update:modelValue', false)">Cancel</button>
+          <button class="k-sheet__go" type="button" @click="next">
+            Continue<v-icon size="20">arrow_forward</v-icon>
+          </button>
+        </template>
+        <template v-else>
+          <p v-if="tried && missing" class="k-addr__missing"><v-icon size="16">error_outline</v-icon>{{ missing }}</p>
+          <button v-if="steps" class="k-sheet__ghost" type="button" @click="toMap">Back</button>
+          <button v-else class="k-sheet__ghost" type="button" @click="$emit('update:modelValue', false)">Cancel</button>
+          <button :disabled="busy" class="k-sheet__go" type="button" @click="save">
+            <v-progress-circular v-if="busy" indeterminate size="18" width="2" />{{ saveText }}
+          </button>
+        </template>
       </div>
     </div>
   </v-dialog>
@@ -301,12 +349,20 @@ export default {
       busy_locate: false,
       /* The words that found nothing, said under the search box. */
       no_match: null,
+      /* Phone: the map first, then the details (steps). */
+      step: "map",
+      pin_needed: null,
     };
   },
 
   computed: {
     phone() {
       return this.$vuetify.display.xs;
+    },
+    /* Up to 760px the map and the form stack (kalio-checkout.scss); there
+       they come one after the other. */
+    steps() {
+      return !this.noMap && this.$vuetify.display.width <= 760;
     },
     countryList() {
       if (this.countries?.length) {
@@ -367,6 +423,9 @@ export default {
       this.query = "";
       this.results = [];
       this.no_match = null;
+      this.pin_needed = null;
+      /* An address already pinned opens on its details; a new one on the map. */
+      this.step = this.location && this.form.address ? "details" : "map";
       this.book = [];
       if (this.USER() && this.savedList) this.loadBook();
       if (!this.noMap) this.$nextTick(() => setTimeout(this.mountMap, 60));
@@ -459,14 +518,20 @@ export default {
       }, 450);
     },
 
-    onQuery() {
+    /* Suggestions as the shopper types. The input's own value, not
+       v-model: an Android keyboard holds the word being typed in
+       composition, and v-model waits for it to end, so nothing was looked
+       up until the keyboard's search key (the owner, 6 November 2026). */
+    onQuery(event) {
+      if (event?.target) this.query = event.target.value;
       clearTimeout(this.searchTimer);
       this.no_match = null;
-      if (!this.query || this.query.length < 4) {
+      const text = (this.query || "").trim();
+      if (text.length < 3) {
         this.results = [];
         return;
       }
-      this.searchTimer = setTimeout(this.search, 600);
+      this.searchTimer = setTimeout(this.search, 350);
     },
 
     /* Streets and places as the shopper types (Selldone's autocomplete). */
@@ -485,6 +550,7 @@ export default {
           },
         })
         .then(({ data }) => {
+          if (asked !== this.query) return; // a later search is on its way
           this.results = (data && !data.error && data.list) || [];
           this.no_match = this.results.length ? null : asked;
         })
@@ -496,8 +562,12 @@ export default {
       return [item.city, item.state, item.postal, item.country].filter(Boolean).join(", ");
     },
 
+    /* The keyboard's search key: the first street listed, or the search
+       now when none is listed yet. */
     pickFirst() {
-      if (this.results.length) this.pickResult(this.results[0]);
+      if (this.results.length) return this.pickResult(this.results[0]);
+      clearTimeout(this.searchTimer);
+      if ((this.query || "").trim().length >= 2) this.search();
     },
 
     pickResult(item) {
@@ -574,9 +644,49 @@ export default {
       if (saved.location?.lat) this.goTo(saved.location, true);
     },
 
+    /* Phone, the map step's Continue: the spot under the pin, then the
+       details. Zoomed out, the map comes in first (a district is not a
+       door). */
+    next() {
+      this.pin_needed = null;
+      if (this.map && this.zoomed_out) {
+        this.pinHere();
+        this.pin_needed = "Zoom in so the pin is on the door.";
+        return;
+      }
+      if (this.map) {
+        const c = this.map.getCenter();
+        const away = !this.location || Math.abs(c.lat - this.location.lat) > 1e-6 || Math.abs(c.lng - this.location.lng) > 1e-6;
+        if (away) this.pinHere();
+      }
+      if (!this.location) {
+        this.pin_needed = "Place the pin on the map.";
+        return;
+      }
+      this.step = "details";
+      this.$nextTick(() => {
+        if (this.$refs.grid) this.$refs.grid.scrollTop = 0;
+      });
+    },
+
+    toMap() {
+      this.step = "map";
+      this.pin_needed = null;
+      this.$nextTick(() => this.map?.resize());
+    },
+
     save() {
       this.tried = true;
-      if (this.missing) return;
+      if (this.missing) {
+        if (this.steps && !this.location) return this.toMap();
+        /* The first field to fill, in view (on a phone it can be below). */
+        this.$nextTick(() => {
+          const field = this.$refs.grid?.querySelector(".k-addr__field.-error input");
+          field?.scrollIntoView({ behavior: "smooth", block: "center" });
+          field?.focus({ preventScroll: true });
+        });
+        return;
+      }
       const before = this.receiverInfo || {};
       const { title, ...fields } = this.form; // a name only in the address book
       this.$emit("save", {

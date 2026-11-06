@@ -25,7 +25,7 @@ pale tint of their own. The approved mockup is in
 | Product page: breadcrumb, highlights, sections, aisle index | `pages/product/StorefrontPageProduct.vue`, `components/kalio/KalioAisleIndex.vue` |
 | Product overview (packshot panel, buy column) — Selldone's SProductOverview logic via `extends`, Kalio markup | `components/kalio/product/KalioProductOverview.vue` |
 | Seller offer cards — SSmartSelectVendor logic via `extends` | `components/kalio/product/KalioSellerOffers.vue` |
-| In the basket: quantity and "Checkout · total" on the product page (design C); a card's "+" adds straight away and becomes − n +; "Added to basket" notice | `components/kalio/product/KalioBasketLine.vue`, `KalioCardStep.vue`, `kalio-card-basket.ts`, `kalio-basket.ts`, `shell/KalioBasketToast.vue` |
+| In the basket: quantity and "Checkout · total" on the product page (design C); a card's "Add to basket" adds straight away and becomes − n in basket + (0.2.28; "See options" for sizes) | `components/kalio/product/KalioBasketLine.vue`, `KalioCardStep.vue`, `kalio-card-basket.ts`, `kalio-basket.ts` |
 | Basket drawer (design C, 0.2.11): a receipt with the subtotal, savings and Checkout; compact rows with a stepper; three "Often added" | `components/kalio/shell/KalioBasketDrawer.vue` (styles in `kalio-shell.scss`, `.k-bdrawer`) |
 | Basket page (design C, 0.2.12): lines by seller; Delivery method · Where · Who cards; a receipt with every line of Selldone's bill, the discount code and Pay; on a phone a bar with the total and Pay | `pages/basket/cart/StorefrontPageBasketCart.vue` (Selldone's script kept), `components/kalio/checkout/KalioCartLines.vue`, `components/kalio/KalioOftenAdded.vue` (also in the drawer) |
 | Where: the address sheet (a light Mapbox map with a fixed pin, search, "Use my location", saved addresses, every address field) | `components/kalio/checkout/KalioAddressSheet.vue` |
@@ -337,6 +337,31 @@ Facts that shape the code:
   read as a second "+"); "Added to basket" keeps its title on one line and, on phones and
   tablets, sits at the foot above the bottom bar instead of over the section being shopped
   (above a tablet product page's floating buy bar while that shows).
+- **0.2.28 (6 November 2026), from the owner's nine phone screenshots:**
+  - **Cards, after Amazon's grocery cards:** "Add to basket" across every card's foot,
+    and once tapped the same place reads "− 1 in basket +" (the number alone where the
+    pill is under 140px); a product with sizes says "See options" and opens the
+    quick-buy sheet, whose "This one comes in sizes" hint is gone; out of stock says so.
+    `KalioCardStep` (`card`) draws it, inside Selldone's card through
+    `kalio-card-basket.ts`, or under a rail's unit and sellers (`KalioRail`). The round
+    "+" on the packshot is hidden; a listing row stretches its cards so the feet line up.
+  - **No "Added to basket" notice** (`KalioBasketToast` and its event are gone) and **no
+    phone bottom bar** (`SFooterNavigation` is not mounted): the phone header has the
+    account beside the basket; the basket's pay bar, the product page's buy bar, the
+    chat button and the update notice sit at the foot.
+  - **Compare badge** in the shop's deep green with a leaf ring (was the theme's purple
+    and pink), not on the basket/checkout or the comparison page, above the product
+    page's buy bar on a phone.
+  - **Checkout:** the billing toggle's words wrap inside their halves ("Different billing
+    address" ran under "Same for billing"); "Who" says "Checking your sign-in…" while
+    the account is still loading instead of "Sign in".
+  - **Address sheet:** suggestions while typing — the input's own value, since v-model
+    waits for an Android keyboard's composition to end, so nothing was looked up until
+    the search key (3 letters, 350 ms); up to 760px two steps — the map as tall as the
+    window with the address under the pin and Continue, then the details on their own
+    with the address on top (Change, Back), Save scrolling to the field still missing.
+    Below the map the fields had sat under the Save button, unseen.
+  `kalio-design/review/cardcheck.cjs` checks all of it on a phone, tablet and computer.
 
 Market Hall, the first design, is tagged `market-hall-0.1.5`.
 

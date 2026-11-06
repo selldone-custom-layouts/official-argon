@@ -87,6 +87,16 @@
         />
         <p v-if="product.unit" class="k-rail__unit">per {{ product.unit }}</p>
         <kalio-seller-line :sellers="sellersOf.get(product.id) || []" />
+        <!-- The card's foot, under the unit and the sellers: "Add to
+             basket", "See options", or "− n in basket +". -->
+        <kalio-card-step
+          :addable="() => !!product.quantity"
+          :adder="() => quickBuy(product)"
+          :product="product"
+          :sold-out="() => !product.quantity"
+          card
+          class="k-rail__foot"
+        />
       </div>
     </div>
 
@@ -98,6 +108,7 @@
 <script>
 import SShopProductCard from "@selldone/components-vue/storefront/product/card/SShopProductCard.vue";
 import KalioSellerLine from "./KalioSellerLine.vue";
+import KalioCardStep from "./KalioCardStep.vue";
 import KalioQuickBuy from "./KalioQuickBuy.vue";
 import { aisleIndex, offers, tintFor } from "./kalio-catalog";
 import { quickAdd } from "./kalio-basket";
@@ -122,7 +133,7 @@ function spreadByAisle(products) {
 
 export default {
   name: "KalioRail",
-  components: { SShopProductCard, KalioSellerLine, KalioQuickBuy },
+  components: { SShopProductCard, KalioSellerLine, KalioQuickBuy, KalioCardStep },
 
   props: {
     title: { type: String, required: true },

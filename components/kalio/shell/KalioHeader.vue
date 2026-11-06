@@ -126,6 +126,19 @@
             Sign in
           </button>
 
+          <!-- Phone: the account beside the basket. The bottom bar that
+               held it is gone (6 November 2026); orders and the rest are
+               in the menu. -->
+          <template v-if="compact">
+            <router-link v-if="user" :to="profileRoute" aria-label="My account" class="k-header__icon -me">
+              <img v-if="user.id && !avatar_failed" :src="getUserAvatar(user.id)" alt="" height="30" width="30" @error="avatar_failed = true" />
+              <v-icon v-else size="24">person_outline</v-icon>
+            </router-link>
+            <button v-else-if="!busyUser" aria-label="Sign in" class="k-header__icon -me" type="button" @click="signIn">
+              <v-icon size="24">person_outline</v-icon>
+            </button>
+          </template>
+
           <button
             :aria-label="`Basket, ${itemsCount} items`"
             class="k-header__basket"
@@ -335,6 +348,7 @@ export default {
       windowWidth: window.innerWidth,
       strip_more: false,
       strip_back: false,
+      avatar_failed: false,
     };
   },
 

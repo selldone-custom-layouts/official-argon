@@ -4,7 +4,7 @@
    Kalio owns outright. This file re-skins Selldone's own storefront
    components: the header and search, the category menu, the product card,
    the listing and its filter column, the product page and quick-buy sheet,
-   the basket and checkout, the footer and the phone's bottom bar.
+   the basket and checkout and the footer.
 
    Two rules hold throughout:
 
@@ -681,39 +681,174 @@
   }
 }
 
-/* A card in the basket: KalioCardStep laid over the picture's foot, where
-   the "+" was (kalio-card-basket.ts). The picture box is the card's width
-   square (100cqw). */
+/* ▆▆▆▆▆▆▆▆ A card's foot: Add to basket ▆▆▆▆▆▆▆▆
+
+   After Amazon's grocery cards, which the owner pointed to (6 November
+   2026): "Add to basket" across the foot of every card, and once tapped
+   the same place reads "− 1 in basket +"; a product with sizes says "See
+   options". It replaces the round "+" on the packshot, which on a phone
+   was small to hit and, for a sized product, opened a sheet without saying
+   why. KalioCardStep (card) draws it: at the foot of Selldone's card
+   through kalio-card-basket.ts, or under a rail's unit and sellers. */
 .s--product-card .k-card-step-host {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  top: calc(100cqw - 46px);
-  z-index: 4;
+  position: relative;
+  order: 2;
+  margin-top: 10px;
 }
 
-/* A card's "1 in basket" never wraps: on the home rails' narrow cards
-   "in basket" broke into two lines and spilled out of the 36px pill (the
-   owner, 6 November 2026). Below 170px of card the pill keeps the number
-   alone, as the shelf's strip does on a phone. */
-.s--product-card .k-card-step__count {
-  overflow: hidden;
-  white-space: nowrap;
+.s--product-card .quick-buy .v-btn:first-child {
+  display: none !important;
+}
 
-  small {
-    white-space: nowrap;
+/* A rail's cell: the card, its unit and sellers, then the foot, level
+   across the rail. */
+.k-rail__cell {
+  display: flex;
+  flex-direction: column;
+
+  > :nth-last-child(2) {
+    margin-bottom: 10px;
   }
 }
 
-@container (max-width: 169.98px) {
-  .s--product-card .k-card-step__count small {
+.k-rail__foot {
+  align-self: stretch;
+  margin-top: auto;
+}
+
+/* The foot is its own size container: the words follow the pill's width
+   (a deals-board card insets it, a dense grid narrows it). */
+.k-card-foot {
+  container-type: inline-size;
+}
+
+.k-card-add,
+.k-card-step.-card {
+  width: 100%;
+  height: 38px;
+  border-radius: var(--k-pill);
+  font-family: var(--k-body);
+}
+
+.k-card-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 0 12px;
+  border: 1.5px solid var(--k-green);
+  background: var(--k-green);
+  /* !important: Selldone's base reset [type=button] { color: inherit }
+     loads after this sheet. */
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 140ms ease, border-color 140ms ease;
+
+  .v-icon {
+    margin-inline-start: -4px;
+  }
+
+  .-short {
+    display: none;
+  }
+
+  &:hover {
+    border-color: var(--k-green-deep);
+    background: var(--k-green-deep);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--k-green-deep);
+    outline-offset: 2px;
+  }
+
+  /* A product with sizes: the sheet to pick one. */
+  &.-options {
+    border-color: var(--k-line);
+    background: #fff;
+    color: var(--k-green-deep) !important;
+
+    &:hover {
+      border-color: var(--k-green);
+      background: var(--k-green-soft);
+    }
+  }
+
+  &.-none {
+    border-color: var(--k-well);
+    background: var(--k-well);
+    color: var(--k-muted) !important;
+    font-weight: 600;
+    cursor: default;
+  }
+}
+
+/* In the basket: the same pill, outlined, with the count between − and +. */
+.k-card-step.-card {
+  grid-template-columns: 32px minmax(0, 1fr) 32px;
+  border: 1.5px solid var(--k-green);
+  background: var(--k-green-soft);
+  color: var(--k-green-deep);
+  box-shadow: none;
+
+  button {
+    width: 32px;
+    height: 35px;
+    color: var(--k-green-deep) !important;
+
+    &:hover:not(:disabled) {
+      background: rgba(59, 170, 92, 0.16);
+    }
+  }
+
+  .k-card-step__count {
+    overflow: hidden;
+    font-size: 14px;
+    white-space: nowrap;
+
+    small {
+      display: inline;
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0.85;
+    }
+  }
+}
+
+/* Narrow feet (a phone's rails are about 150px, a deals-board card's
+   120px): the words shorten before they would crowd the pill. */
+@container (max-width: 149.98px) {
+  .k-card-add {
+    padding: 0 8px;
+    font-size: 13.5px;
+
+    .v-icon {
+      display: none;
+    }
+  }
+}
+
+@container (max-width: 139.98px) {
+  .k-card-step.-card .k-card-step__count small {
     display: none;
   }
 }
 
-/* The card's own "+" steps aside while the stepper stands in for it. */
-.s--product-card .card-wrap:has(.k-card-step) .quick-buy .v-btn:first-child {
-  visibility: hidden;
+@container (max-width: 99.98px) {
+  .k-card-add {
+    .-long {
+      display: none;
+    }
+
+    .-short {
+      display: inline;
+    }
+  }
 }
 
 .k-card-step {
@@ -986,7 +1121,14 @@
 .s--products-listing-row {
   row-gap: 22px;
 
+  /* Every card in a row as tall as the tallest, so the "Add to basket"
+     feet line up (a two-line name or a struck price made one 2px taller). */
+  &:has(> .s--product-card) {
+    align-items: stretch !important;
+  }
+
   > .s--product-card {
+    height: auto !important; /* a set height (100%) is not stretched */
     padding: 8px !important;
   }
 
@@ -1540,29 +1682,6 @@
     }
   }
 
-  /* "This one comes in sizes": a row of its own under the bar's link and X. */
-  &__hint {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-basis: 100%;
-    order: 3;
-    margin: 2px 0 0;
-    padding: 9px 12px;
-    border-radius: 12px;
-    background: var(--k-green-soft);
-    color: var(--k-green-deep);
-    font-family: var(--k-body);
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.35;
-
-    .v-icon {
-      flex: none;
-      color: inherit !important;
-    }
-  }
-
   &__body.v-card-text {
     padding: 0 28px 32px !important;
   }
@@ -1754,80 +1873,49 @@
   }
 }
 
-/* ▆▆▆▆▆▆▆▆ Phone bottom bar ▆▆▆▆▆▆▆▆
+/* ▆▆▆▆▆▆▆▆ Compare (SComparisonButton) ▆▆▆▆▆▆▆▆
 
-   Selldone floats a rounded bar with grey icon tiles. Kalio's is a white bar
-   on a hairline, the current tab in deep green. */
-.v-bottom-navigation {
-  background: var(--k-paper) !important;
-  color: var(--k-ink) !important;
-  border: 1px solid var(--k-line) !important;
-  border-radius: var(--k-radius-lg) !important;
-  box-shadow: 0 12px 30px -12px rgba(16, 35, 27, 0.3) !important;
+   The round "Compare" badge at the window's foot, once a product is in the
+   compare list. Selldone painted it in the theme's deep purple with a pink
+   ring; here it is the shop's deep green with a leaf-green ring (the owner,
+   6 November 2026). It no longer shows on the basket and checkout
+   (StorefrontApp.vue). The phone's bottom bar is gone, so it sits at the
+   foot; on a product page it stands above the floating buy bar. Selldone
+   draws an 84px circle at 0.7 scale: `bottom` is set for the drawn one. */
+.s--storefront-products-comparison-circle-progress {
+  bottom: calc(2px + env(safe-area-inset-bottom)) !important;
+  left: 0 !important;
+  background-color: var(--k-green-deep) !important;
+  color: #fff !important;
+  box-shadow: 0 14px 28px -14px rgba(14, 63, 46, 0.75);
+  font-family: var(--k-body);
 
-  .v-btn {
-    color: var(--k-muted) !important;
-    background: transparent !important;
-    text-transform: none !important;
-    letter-spacing: 0 !important;
-    font-family: var(--k-body);
+  stop:first-child {
+    stop-color: #a6e3bb;
   }
 
-  .v-btn--active,
-  .v-btn--selected {
-    color: var(--k-green) !important;
+  stop:last-child {
+    stop-color: #3baa5c;
   }
 
-  .v-btn--active .v-icon,
-  .v-btn--selected .v-icon {
-    color: var(--k-green) !important;
+  /* The ring's track under the progress. */
+  circle:first-of-type {
+    stroke: rgba(255, 255, 255, 0.16);
   }
 
-  .v-avatar,
-  .v-sheet {
-    background: var(--k-wash) !important;
-  }
-
-  .v-badge__badge {
-    background: var(--k-coral) !important;
+  .v-icon {
     color: #fff !important;
   }
 
-  /* Each tab says what it is, under its icon: the words are the buttons'
-     own labels. The bell opens the orders, so it says so. Vuetify keeps
-     ::after as an invisible absolute layer; here it is the label. */
-  .v-btn[aria-label]::after {
-    content: attr(aria-label);
-    position: static !important;
-    grid-area: append;
-    display: block;
-    width: auto !important;
-    height: auto !important;
-    margin-top: 4px;
-    border: 0 !important;
-    border-radius: 0 !important;
-    background: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-    color: inherit;
-    font-size: 11px;
+  p {
+    font-size: 11px !important;
     font-weight: 600;
-    line-height: 1;
-    pointer-events: none;
+    letter-spacing: 0;
   }
+}
 
-  /* One height for every icon row, so the labels line up (the basket's
-     icon sits in a badge wrapper of its own height). */
-  .v-btn .v-btn__content {
-    height: 26px;
-    align-items: center;
-  }
-
-  .v-btn[aria-label="Notifications"]::after {
-    content: "Orders";
-  }
-
-  .v-btn[aria-label="Profile"]::after {
-    content: "Account";
+@media (max-width: 960px) {
+  body:has(.sticky-buy-widget:not(.-hide)) .s--storefront-products-comparison-circle-progress {
+    bottom: calc(78px + env(safe-area-inset-bottom)) !important;
   }
 }

@@ -170,7 +170,7 @@
       <!-- Storefront chat box. -->
       <s-contacts-popup
         v-if="show_support_chat && has_support"
-        :bottom="isMobile ? 96 : 12"
+        :bottom="12"
         class="zoomIn"
       ></s-contacts-popup>
     </template>

@@ -810,12 +810,12 @@
     }
   }
 
-  /* Below a laptop it is a bar across the page, docked on the bottom bar,
+  /* Below a laptop it is a bar across the page at the foot of the window,
      not a card floating over the right half of the price. */
   @media (max-width: 960px) {
     left: 12px !important;
     right: 12px !important;
-    bottom: calc(90px + env(safe-area-inset-bottom)) !important;
+    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
     width: auto !important;
     max-width: none !important;
     border-radius: var(--k-radius) !important;

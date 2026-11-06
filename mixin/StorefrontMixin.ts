@@ -763,11 +763,6 @@ const StorefrontMixin = defineComponent({
       const product_id = product.id;
       const variant_id = variant ? variant.id : null;
       const vendor_product_id = vendor_product ? vendor_product.id : null; // 🟣 Marketplace 🟣
-      // Kalio: how many were in the basket before, for the "Added to basket" notice.
-      const count_before =
-        this.getBasket(product.type || ProductType.PHYSICAL.code)?.items?.find(
-          (item) => item.product_id === product_id && (variant_id ? item.variant_id === variant_id : true),
-        )?.count || 0;
       const subscription_price_id = subscription_price
         ? subscription_price.id
         : null; // 🎗️ Subscription
@@ -786,9 +781,6 @@ const StorefrontMixin = defineComponent({
             this.setBasket(basket);
             this.setBasketBill(basket, bill);
             if (callbackSuccess) callbackSuccess(basket);
-            // Kalio: a product newly in the basket is announced (KalioBasketToast).
-            if (!error && count_before === 0 && count > 0)
-              EventBus.$emit("kalio:basket-added", { product, variant, vendor_product, count, type: basket.type });
           }
 
           // There is an error in adding item to basket, but the correct basket with bill returned from backend.

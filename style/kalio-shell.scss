@@ -64,6 +64,20 @@ $k-header-strip: 46px;
     &:hover {
       background: var(--k-wash);
     }
+
+    /* The phone's account, beside the basket. */
+    &.-me {
+      overflow: hidden;
+      color: var(--k-ink) !important;
+
+      img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 0 0 1px var(--k-line);
+      }
+    }
   }
 
   &__aisles {
@@ -1105,8 +1119,7 @@ $k-header-strip: 46px;
     }
 
     &__main {
-      /* Clear of the phone's bottom bar. */
-      padding-bottom: 110px;
+      padding-bottom: calc(24px + env(safe-area-inset-bottom));
     }
   }
 }
@@ -1779,25 +1792,13 @@ $k-filter-gap: 36px;
   }
 }
 
-/* The page card (z-index 0) would keep the sheet under the sticky header,
-   and the phone bottom bar sits above everything; both step aside while the
-   sheet is open. */
+/* The page card (z-index 0) would keep the sheet under the sticky header;
+   it steps aside while the sheet is open. */
 @media (max-width: 959.98px) {
   .s--shop-card:has(.s--storefront-products-filter-menu.v-navigation-drawer--active) {
     z-index: auto !important;
   }
 
-  body:has(.s--storefront-products-filter-menu.v-navigation-drawer--active) .v-bottom-navigation {
-    display: none !important;
-  }
-
-  /* Any open sheet or window (the address sheet, the time sheet, the
-     payment window) covers the whole screen; the bar would sit on its
-     buttons. */
-  body:has(.v-overlay--active.v-dialog) .v-bottom-navigation,
-  body:has(.v-overlay--active.v-bottom-sheet) .v-bottom-navigation {
-    display: none !important;
-  }
 }
 
 /* ▆▆▆▆▆▆▆▆ Sign in ▆▆▆▆▆▆▆▆
@@ -2267,154 +2268,8 @@ $k-filter-gap: 36px;
   }
 }
 
-/* ▆▆▆▆▆▆▆▆ "Added to basket" (KalioBasketToast) ▆▆▆▆▆▆▆▆ */
-
-.k-toast {
-  position: fixed;
-  top: 134px; /* under the header and its aisle strip */
-  right: max(16px, calc((100vw - var(--k-maxw)) / 2 + var(--k-gutter)));
-  z-index: 2200;
-  display: grid;
-  grid-template-columns: 52px minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: 12px;
-  width: min(400px, calc(100vw - 32px));
-  padding: 12px 10px 12px 14px;
-  border-radius: 20px;
-  background: var(--k-card);
-  box-shadow: 0 24px 60px -24px rgba(16, 35, 27, 0.45), 0 0 0 1px var(--k-line-soft);
-  font-family: var(--k-body);
-  text-align: start;
-
-  &__pic {
-    width: 52px;
-    height: 52px;
-    padding: 4px;
-    border-radius: 12px;
-    background: var(--k-well);
-    object-fit: contain;
-    mix-blend-mode: multiply;
-  }
-
-  &__copy {
-    min-width: 0;
-  }
-
-  &__title {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin: 0;
-    font-size: 14.5px;
-    font-weight: 700;
-    white-space: nowrap; /* "Added to / basket" on a phone */
-    color: var(--k-ink);
-  }
-
-  &__tick {
-    display: grid;
-    place-items: center;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--k-green);
-
-    .v-icon {
-      color: #fff !important;
-    }
-  }
-
-  &__line {
-    margin: 2px 0 0;
-    overflow: hidden;
-    font-size: 13px;
-    color: var(--k-muted);
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  &__go {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--k-green) !important;
-    text-decoration: none;
-    white-space: nowrap;
-
-    &:hover {
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
-  }
-
-  &__close {
-    display: grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    color: var(--k-muted) !important;
-    cursor: pointer;
-
-    &:hover {
-      background: var(--k-wash);
-    }
-  }
-
-  /* Phones and tablets: at the foot, just above the bottom bar and its
-     basket, where the thumb is — under the header it covered the section
-     the shopper was adding from (the owner, 6 November 2026). */
-  @media (max-width: 959.98px) {
-    top: auto;
-    right: 12px;
-    bottom: calc(92px + env(safe-area-inset-bottom));
-    left: 12px;
-    width: auto;
-    max-width: 480px;
-    margin-inline: auto;
-    grid-template-columns: 44px minmax(0, 1fr) auto auto;
-    gap: 10px;
-    padding: 10px 8px 10px 10px;
-
-    &__pic {
-      width: 44px;
-      height: 44px;
-    }
-
-    &__title {
-      font-size: 14px;
-    }
-
-    &__go {
-      font-size: 13.5px;
-    }
-  }
-}
-
-/* A tablet's product page floats its buy bar 86px up (Selldone's
-   SProductSectionBuyButton): while it shows, the notice stands above it. */
-@media (min-width: 460.02px) and (max-width: 959.98px) {
-  body:has(.sticky-buy-widget:not(.-hide)) .k-toast {
-    bottom: calc(176px + env(safe-area-inset-bottom));
-  }
-}
-
-.k-toast-enter-active,
-.k-toast-leave-active {
-  transition: opacity 200ms ease, transform 200ms ease;
-}
-
-.k-toast-enter-from,
-.k-toast-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
-
-  @media (max-width: 959.98px) {
-    transform: translateY(8px);
-  }
-}
-
 /* The "newer version" notice (SPwaVersionCheck, 5 November 2026): a
-   deep-green card with a white Refresh pill, above the phone's bottom bar. */
+   deep-green card with a white Refresh pill. */
 .v-snackbar__wrapper.k-update,
 .k-update.v-snackbar__wrapper {
   min-width: 0 !important;
@@ -2455,6 +2310,6 @@ $k-filter-gap: 36px;
 
 @media (max-width: 960px) {
   .v-snackbar:has(.k-update) {
-    padding-bottom: calc(92px + env(safe-area-inset-bottom)) !important;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
   }
 }
