@@ -469,6 +469,30 @@
     display: none;
   }
 
+  /* The rating line (design A of the reviews options, 7 November 2026):
+     KalioCardRating, "★★★★☆ 4.2 (19)", takes the column's whole width.
+     Selldone's own stars (the bare div) and "4.2 ● 19 reviews" (cut to
+     "19 rev…" in 5/12 of a card) are hidden; colour swatches (.p-1) stay. */
+  .card__info .sec--rate-variants {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+    container-type: inline-size;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    padding: 0 !important;
+
+    > div:not([class]),
+    > .single-line:not(.p-1) {
+      display: none !important;
+    }
+  }
+
+  .card__info .sec--rate-variants:not(:has(.k-card-rate, .p-1)) {
+    display: none !important;
+  }
+
   .card__info .v-col-7,
   .card__info .sec--price {
     flex: 0 0 100% !important;
@@ -1917,5 +1941,43 @@
 @media (max-width: 960px) {
   body:has(.sticky-buy-widget:not(.-hide)) .s--storefront-products-comparison-circle-progress {
     bottom: calc(78px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* ── A card's rating line (KalioCardRating, 7 November 2026) ── */
+.k-card-rate {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  margin-top: 5px;
+  font-family: var(--k-body);
+  font-size: 13px;
+  line-height: 1;
+  color: var(--k-muted);
+  white-space: nowrap;
+
+  b {
+    color: var(--k-ink-2);
+    font-weight: 600;
+  }
+}
+
+/* A phone's rail cards are ~140px wide: smaller stars, and below that the
+   count goes (the score and stars stay). */
+@container (max-width: 160px) {
+  .k-card-rate {
+    gap: 4px;
+    font-size: 12.5px;
+  }
+
+  .k-card-rate .k-stars {
+    --k-star: 12px;
+  }
+}
+
+@container (max-width: 112px) {
+  .k-card-rate__n {
+    display: none;
   }
 }

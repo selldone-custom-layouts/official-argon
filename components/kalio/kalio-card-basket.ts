@@ -21,6 +21,24 @@
 import { h, render } from "vue";
 import SShopProductCard from "@selldone/components-vue/storefront/product/card/SShopProductCard.vue";
 import KalioCardStep from "./KalioCardStep.vue";
+import KalioCardRating from "./KalioCardRating.vue";
+
+/* The rating line (7 November 2026) goes into the card's own rating column
+   (.sec--rate-variants), last, after Selldone's stars and swatches; the
+   stars and "● 19 reviews" are hidden there and the colour swatches stay.
+   Every card gets it, a rail's too. */
+function renderRating(vm: any) {
+  const col = vm.$el?.querySelector?.(".sec--rate-variants");
+  if (!col || !vm.product) return;
+  if (!vm._kalioRateHost || !vm._kalioRateHost.isConnected) {
+    vm._kalioRateHost = document.createElement("div");
+    vm._kalioRateHost.className = "k-card-rate-host";
+    col.appendChild(vm._kalioRateHost);
+  }
+  const vnode = h(KalioCardRating, { product: vm.product });
+  vnode.appContext = vm.$.appContext;
+  render(vnode, vm._kalioRateHost);
+}
 
 const card: any = SShopProductCard;
 
@@ -36,12 +54,20 @@ if (!card.__kalioStep) {
         product(this: any) {
           this.kalioStepRender();
         },
+        "product.rate"(this: any) {
+          renderRating(this);
+        },
+        "product.rate_count"(this: any) {
+          renderRating(this);
+        },
       },
       beforeUnmount(this: any) {
         if (this._kalioStepHost) render(null, this._kalioStepHost);
+        if (this._kalioRateHost) render(null, this._kalioRateHost);
       },
       methods: {
         kalioStepRender(this: any) {
+          renderRating(this);
           const box = this.$el?.querySelector?.(".card-wrap");
           if (!box || !this.product) return;
           if (this.$el.closest?.(".k-rail__cell")) return; // the rail draws the foot

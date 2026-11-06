@@ -131,14 +131,9 @@
       <div :style="{ order: getOrder('comments') }">
         <section aria-labelledby="k-reviews" class="k-pdp-block k-reviews">
           <h2 id="k-reviews" class="k-pdp-block__title">Reviews</h2>
-          <!-- A guest gets Kalio's own prompt; the sign-in it opens is the
-               app's standard one (the need-login event). Selldone's inline
-               sign-in card inside the comments is hidden in kalio-product.scss. -->
-          <div v-if="!$store.getters.getUser" class="k-reviews__guest">
-            <p>Bought this? Sign in to rate it and share what you think.</p>
-            <button class="k-btn k-btn--solid" type="button" @click="askToSignIn">Sign in to review</button>
-          </div>
-          <s-product-comments></s-product-comments>
+          <!-- Design A (7 November 2026): a summary column beside the
+               reviews. A guest's sign-in prompt is in the summary. -->
+          <kalio-reviews></kalio-reviews>
         </section>
       </div>
       <!-- ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ More from this aisle (related products) ⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬⬬ -->
@@ -180,7 +175,7 @@ import SProductShipping from "@selldone/components-vue/storefront/product/shippi
 import SProductWarranty from "@selldone/components-vue/storefront/product/warranty/SProductWarranty.vue";
 import SProductGuide from "@selldone/components-vue/storefront/product/guide/SProductGuide.vue";
 import SProductFilesList from "@selldone/components-vue/storefront/product/file/list/SProductFilesList.vue";
-import SProductComments from "@selldone/components-vue/storefront/product/comments/SProductComments.vue";
+import KalioReviews from "../../components/kalio/product/KalioReviews.vue";
 import SProductSubscriptionMembership from "@selldone/components-vue/storefront/product/subscription/membership/SProductSubscriptionMembership.vue";
 import SProductOffers from "@selldone/components-vue/storefront/product/offers/SProductOffers.vue";
 import SProductCrossSells from "@selldone/components-vue/storefront/product/cross-sells/SProductCrossSells.vue";
@@ -211,7 +206,7 @@ export default {
     SProductCrossSells,
     SProductOffers,
     SProductSubscriptionMembership,
-    SProductComments,
+    KalioReviews,
     SProductFilesList,
     SProductGuide,
     SProductWarranty,

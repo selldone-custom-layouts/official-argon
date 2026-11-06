@@ -156,9 +156,30 @@
   &__rating {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-top: 10px;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    margin-top: 12px;
+    font-size: 15px;
+
+    .k-stars {
+      --k-star: 19px;
+    }
+
+    b {
+      font-weight: 700;
+      color: var(--k-ink);
+    }
+  }
+
+  &__rating-link {
+    color: var(--k-green);
     font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(21, 91, 66, 0.3);
+
+    &:hover {
+      border-bottom-color: var(--k-green);
+    }
   }
 
   &__warn {
@@ -942,65 +963,12 @@
   }
 }
 
-/* Reviews: Selldone's rating summary and comment list in Kalio's type with
-   pill buttons. A guest sees Kalio's sign-in prompt instead of Selldone's
-   inline sign-in card (the card holding .log-form); the prompt opens the
-   app's standard sign-in, so nothing is lost. */
+/* Reviews (design A of the reviews options, 7 November 2026; KalioReviews):
+   a summary column — the score, the stars, how many rated it, the shop's
+   criteria, and the sign-in prompt or a buyer's own rating — beside
+   Selldone's comments, restyled as a quiet list: name, date, the buyer
+   badge, the writer's stars, the text and the shop's reply. */
 .k-reviews {
-  .v-card:has(> .log-form) {
-    display: none !important;
-  }
-
-  &__guest {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px 24px;
-    padding: 22px 24px;
-    border-radius: 22px;
-    background: var(--k-wash);
-
-    p {
-      margin: 0;
-      font-size: 16px;
-      color: var(--k-ink-2);
-    }
-  }
-
-  .text-uppercase {
-    text-transform: none !important;
-    letter-spacing: 0 !important;
-  }
-
-  .s--product-section-comments {
-    margin-top: 12px;
-  }
-
-  /* Selldone reserves a third of the screen for the comment list even when
-     it holds one line ("Write first comment"). */
-  .s-expand-view,
-  .min-height-20vh {
-    min-height: 0 !important;
-  }
-
-  .s--product-section-comments .mb-16 {
-    margin-bottom: 16px !important;
-  }
-
-  /* (5 November 2026) Selldone's "Write first comment..." under the sign-in
-     prompt said the same thing again in grey capitals; a guest has the
-     prompt, a shopper reads it as a plain sentence. */
-  &:has(.k-reviews__guest) .s--product-section-comments .min-height-20vh .text-muted.text-center {
-    display: none;
-  }
-
-  .s--product-section-comments .min-height-20vh .text-muted.text-center {
-    text-align: start !important;
-    font-size: 15px !important;
-    font-weight: 400 !important;
-  }
-
   h1,
   h2,
   h3,
@@ -1019,10 +987,409 @@
     letter-spacing: 0 !important;
   }
 
-  .v-card {
-    border: 1px solid var(--k-line) !important;
-    border-radius: var(--k-radius) !important;
-    box-shadow: none !important;
+  .text-uppercase {
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+  }
+}
+
+.k-rv {
+  display: grid;
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+  margin-top: 20px;
+
+  @media (max-width: 959px) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  /* ── the summary column ── */
+  &__sum {
+    position: sticky;
+    top: 20px;
+    padding: 24px;
+    border-radius: 24px;
+    background: var(--k-wash);
+
+    @media (max-width: 959px) {
+      position: static;
+    }
+
+    .k-stars {
+      --k-star: 22px;
+      margin-top: 8px;
+    }
+  }
+
+  &__big {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+
+    b {
+      font-family: var(--k-display);
+      font-size: 56px;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: var(--k-green-deep);
+    }
+
+    span {
+      font-size: 16px;
+      color: var(--k-muted);
+    }
+  }
+
+  &__count {
+    margin: 8px 0 0;
+    font-size: 14px;
+    color: var(--k-muted);
+  }
+
+  &__none,
+  &__note {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--k-ink-2);
+  }
+
+  &__note {
+    margin-top: 18px;
+    color: var(--k-muted);
+    font-size: 14px;
+  }
+
+  /* the h3 also gets the display face from .k-reviews; this is a label */
+  & &__h {
+    margin: 22px 0 10px;
+    font-family: var(--k-body) !important;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--k-muted) !important;
+  }
+
+  &__crit {
+    display: grid;
+    gap: 10px;
+
+    > div {
+      display: grid;
+      grid-template-columns: minmax(0, 96px) minmax(0, 1fr) 30px;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+
+    span:first-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--k-ink-2);
+    }
+
+    b {
+      font-size: 13.5px;
+      text-align: end;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &__track {
+    height: 8px;
+    border-radius: 99px;
+    background: #ebe6db;
+    overflow: hidden;
+
+    i {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--k-green);
+    }
+  }
+
+  &__guest {
+    display: grid;
+    gap: 12px;
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--k-line);
+
+    p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--k-ink-2);
+    }
+
+    .k-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  &.-rated &__sum > .k-rv__guest:first-child,
+  &:not(.-rated) &__guest {
+    margin-top: 18px;
+  }
+
+  /* A buyer's own rating: Selldone's input rows, and its summary of the
+     product (stars and bars, already shown above) hidden. */
+  &__rate {
+    .s--shop-product-rating-view {
+      position: relative;
+    }
+
+    .s--shop-product-rating-view .justify-center {
+      display: none !important;
+    }
+
+    .v-btn {
+      border-radius: var(--k-pill) !important;
+    }
+
+    .v-btn--variant-elevated {
+      background: var(--k-green) !important;
+      color: #fff !important;
+      box-shadow: none !important;
+    }
+
+    p.small {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: var(--k-muted);
+      opacity: 1 !important;
+    }
+  }
+
+  /* ── the reviews ── */
+  &__list {
+    min-width: 0;
+
+    /* Selldone's list keeps a fifth of the screen for an empty list. */
+    .min-height-20vh {
+      min-height: 0 !important;
+    }
+
+    > div > .mx-auto {
+      padding: 0 !important;
+    }
+
+    /* Selldone's empty list says "Write first comment..." in grey capitals,
+       also to a guest, who cannot write until signing in (the prompt is in
+       the summary column): a plain "No reviews yet." instead. */
+    .text-subtitle-2.text-muted.text-center {
+      padding: 4px 0 18px;
+      text-align: start !important;
+      font-size: 0 !important;
+      font-weight: 400 !important;
+      color: var(--k-muted) !important;
+
+      &::after {
+        content: "No reviews yet.";
+        font-size: 15px;
+      }
+    }
+
+    /* The writing box. */
+    .comment-form {
+      margin-bottom: 8px;
+      border: 1px solid var(--k-line);
+      border-radius: 18px;
+      background: var(--k-paper);
+    }
+
+    .comment-placeholder > div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 18px !important;
+      font-weight: 600;
+      color: var(--k-green-deep);
+      cursor: pointer;
+
+      .v-icon {
+        color: var(--k-green);
+      }
+    }
+
+    .comment-form .pa-5 {
+      padding: 14px 18px !important;
+    }
+
+    .widget-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+
+      .v-btn {
+        height: 42px !important;
+        font-size: 15px !important;
+        font-weight: 700 !important;
+      }
+
+      .v-btn.bg-primary,
+      .v-btn[class*="primary"] {
+        background: var(--k-green) !important;
+        color: #fff !important;
+      }
+    }
+
+    /* The guest's slot (the prompt is in the summary) keeps no space. */
+    > div > .mx-auto > .mb-16 {
+      display: none;
+    }
+
+    /* Each review: a row on the page, not a floating card. */
+    .comment-item {
+      margin: 0 !important;
+      padding: 18px 0 !important;
+      border: 0;
+      border-radius: 0;
+      background: none;
+      box-shadow: none !important;
+    }
+
+    /* Each comment sits in its own wrapper, so the rule goes between
+       wrappers. */
+    :has(> .comment-item) + :has(> .comment-item) > .comment-item {
+      border-top: 1px solid var(--k-line);
+    }
+
+    [class*="mb-6"] > .comment-item,
+    .mb-6 {
+      margin-bottom: 0 !important;
+    }
+
+    .comment-item > .v-row {
+      flex-wrap: nowrap;
+      margin-bottom: 4px !important;
+    }
+
+    .comment-item .v-avatar {
+      width: 36px !important;
+      height: 36px !important;
+      flex: none;
+    }
+
+    .comment-author-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+
+      b {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 4px 8px;
+        font-size: 15px;
+        color: var(--k-ink);
+      }
+
+      time {
+        font-size: 13px;
+        color: var(--k-muted);
+      }
+    }
+
+    /* "Verified buyer" in Kalio's green, as words. */
+    .comment-author-info .v-chip {
+      height: auto !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: none !important;
+      color: var(--k-green) !important;
+      font-size: 12.5px !important;
+      font-weight: 600;
+
+      .v-chip__underlay,
+      .v-chip__overlay {
+        display: none;
+      }
+
+      .v-icon {
+        font-size: 14px !important;
+        margin-inline-end: 3px !important;
+      }
+    }
+
+    /* The writer's own ratings: their stars stay, at the start of the
+       review; the per-criterion bars are folded away. */
+    .comment-body > .v-row {
+      margin: 6px 0 0 !important;
+
+      /* Vuetify's v-col with breakpoints has no plain .v-col class. */
+      > [class*="v-col"] {
+        flex: 0 0 auto !important;
+        max-width: none !important;
+        width: auto !important;
+        padding: 0 !important;
+        justify-content: flex-start !important;
+      }
+
+      > [class*="v-col"]:first-child {
+        display: none !important;
+      }
+
+      .v-rating__item .v-icon {
+        color: var(--k-amber) !important;
+      }
+
+      .v-rating__item .v-btn {
+        width: 18px !important;
+        height: 18px !important;
+      }
+
+      .v-rating__item .v-icon {
+        font-size: 18px !important;
+      }
+    }
+
+    .comment-body p.typo-body {
+      margin: 8px 0 0 !important;
+      font-size: 15px;
+      line-height: 1.55;
+      text-align: start !important;
+      color: var(--k-ink-2);
+    }
+
+    /* The shop's reply. */
+    .comment-body .v-sheet {
+      margin-top: 12px !important;
+      padding: 12px 14px !important;
+      border-radius: 14px !important;
+      background: var(--k-green-soft) !important;
+      font-size: 14px;
+      color: var(--k-ink-2);
+
+      > b {
+        font-size: 13px;
+        color: var(--k-green-deep);
+      }
+
+      .v-avatar {
+        width: 22px !important;
+        height: 22px !important;
+        background: transparent !important;
+      }
+
+      .v-icon {
+        color: var(--k-green) !important;
+      }
+
+      p.typo-body {
+        margin-top: 4px !important;
+        font-size: 14px;
+      }
+    }
   }
 }
 

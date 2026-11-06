@@ -43,6 +43,10 @@
   --k-well: #f5f4f0;
   --k-line-soft: #efece5;
 
+  /* Ratings (design A, 7 November 2026): amber stars on a warm grey. */
+  --k-amber: #c9771e;
+  --k-star-off: #ddd6c8;
+
   /* Type */
   --k-display: "Fraunces", Georgia, "Times New Roman", serif;
   --k-body: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -298,4 +302,22 @@ s:has(> .u--price) {
   .v-application *::after {
     scroll-behavior: auto !important;
   }
+}
+
+/* ── Stars (design A of the reviews options, 7 November 2026) ──
+   One element draws five stars filled to the score: a mask of a star tile
+   repeated five times over an amber-then-grey gradient that stops at
+   score × 20%. <span class="k-stars" style="--k-rate: 4.2"></span>;
+   --k-star sets the size. No icon font, no half-star glyphs. */
+.k-stars {
+  --k-star: 15px;
+  --k-rate: 0;
+  display: inline-block;
+  flex: none;
+  width: calc(var(--k-star) * 5);
+  height: var(--k-star);
+  vertical-align: -2px;
+  background: linear-gradient(90deg, var(--k-amber) calc(var(--k-rate) * 20%), var(--k-star-off) 0);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-1 -1 26 26'%3E%3Cpath d='M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z'/%3E%3C/svg%3E") left center / var(--k-star) var(--k-star) repeat-x;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-1 -1 26 26'%3E%3Cpath d='M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z'/%3E%3C/svg%3E") left center / var(--k-star) var(--k-star) repeat-x;
 }

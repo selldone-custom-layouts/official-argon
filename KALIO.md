@@ -369,6 +369,32 @@ Facts that shape the code:
   <https://github.com/selldone-custom-layouts/official-molino> (`origin`; `upstream` is
   selldone/storefront, fetch-only), with the README, `selldone-layout.json`, screenshots from
   the live shop in `docs/screenshots/` and the wiki's source in `docs/wiki/`.
+- **0.2.30 (7 November 2026): ratings and reviews, design A** of three
+  (`../kalio-design/reviews-options/`). molino has no reviews, so they had never been drawn;
+  with ratings, Selldone's yellow stars appeared on every card ("4.2 ● 19 rev…", cut off) and
+  the Reviews block was Selldone's ("/ 5", blue criteria bars, the purple "People love it!").
+  - **Cards:** `KalioCardRating`, "★★★★☆ 4.2 (19)" on one line under the name, laid into the
+    card's rating column by `kalio-card-basket.ts` (rails too); Selldone's stars and
+    "● 19 reviews" are hidden, colour swatches stay. Below 160px of card (a phone's rails)
+    the stars shrink, below 112px the count goes. Nothing shows until someone has rated.
+  - **Stars** are one element, `.k-stars` in `kalio-tokens.scss`: a star mask repeated five
+    times over an amber gradient that stops at score × 20% (`--k-rate`, `--k-star`).
+  - **Under the product title:** stars, the score and "1,240 ratings", which scrolls to
+    Reviews.
+  - **Reviews** (`KalioReviews`, replacing SProductComments): a summary column — the score,
+    stars, how many rated, "How it rates" (the shop's criteria; `ratings[].value / count`),
+    the guest's sign-in prompt or, for a buyer (`$product.bought`), Selldone's own rating
+    input — beside Selldone's comments (SArticleComments) restyled as rows: name, date,
+    "Verified Buyer", the writer's own stars, the text, the shop's reply. An empty list
+    reads "No reviews yet.".
+  - **What Selldone has, and what it doesn't:** a product's average and count, the shop's
+    criteria with averages, and comments (name, date, text, shop's reply, buyer flag and the
+    writer's criteria scores). No 5-to-1 breakdown, no "helpful" votes, no review photos and
+    no sort by rating (the product list sorts by visits, likes, newest, best selling and
+    price), so none is drawn. "Customer reviews" in the sort menu needs Selldone first.
+  - Checked with sample ratings and comments answered by the test browser only
+    (`../kalio-design/review/reviewscheck.cjs`; `--nofill` for the shop as it is, `--dist`
+    for a local build on the live shop): phone, tablet, computer.
 
 Market Hall, the first design, is tagged `market-hall-0.1.5`.
 

@@ -42,17 +42,14 @@
 
         <p v-if="$product.title_en" class="k-pdp__sub">{{ $product.title_en?.limitWords(limit_title_en) }}</p>
 
+        <!-- Design A of the reviews options (7 November 2026): the stars,
+             the score and how many rated it, which leads to the reviews. -->
         <div v-if="$product.rate_count && $product.rate" class="k-pdp__rating">
-          <v-rating
-            :model-value="$product.rate"
-            active-color="#c9771e"
-            color="#d6d0c2"
-            density="compact"
-            half-increments
-            readonly
-            size="small"
-          />
-          <span>{{ numeralFormat($product.rate, "0.0") }}</span>
+          <span :style="{ '--k-rate': $product.rate }" class="k-stars"></span>
+          <b>{{ numeralFormat($product.rate, "0.0") }}</b>
+          <a class="k-pdp__rating-link" href="#k-reviews" @click.prevent="toReviews">
+            {{ numeralFormat($product.rate_count, "0,0") }} {{ $product.rate_count === 1 ? "rating" : "ratings" }}
+          </a>
         </div>
 
         <p v-if="!has_original_warranty" class="k-pdp__warn">
@@ -234,6 +231,9 @@ export default {
   },
 
   methods: {
+    toReviews() {
+      document.getElementById("k-reviews")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    },
     /* SProductOverview reaches the basket through its buy button, which is
        not on the page while the product is in the basket (KalioBasketLine
        stands in for it). */
