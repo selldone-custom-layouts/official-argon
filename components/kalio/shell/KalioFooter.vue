@@ -92,7 +92,7 @@
             <router-link :to="{ name: window.$storefront.routes.USER_FAVORITES_PAGE }">Saved</router-link>
           </template>
           <button v-else class="k-footer__textbtn" type="button" @click="signIn">Sign in</button>
-          <router-link :to="{ name: window.$storefront.routes.BASKET_PAGE, params: { type: 'physical' } }">Basket</router-link>
+          <router-link :to="{ name: window.$storefront.routes.BASKET_PAGE, params: { type: 'PHYSICAL' } }">Basket</router-link>
         </nav>
       </div>
 
