@@ -16,7 +16,7 @@
   Kalio — the basket page (design C, drawn on 4 November 2026 in
   ../kalio-design/basket-page-options/ and basket-flow-options/).
 
-  The lines by seller, the shopper's details in three small cards (When,
+  The lines by seller, the shopper's details in three small cards (Delivery method,
   Where, Who) and "Often added" on the left; on the right a receipt: the
   total large, what the shopper saves, every line of the bill Selldone
   works out, the discount code, and Pay. On a phone the receipt follows
@@ -86,9 +86,11 @@
 
           <p class="k-eyebrow k-cart__label">Your details</p>
           <div :class="`-n${detail_cards}`" class="k-cart__details">
-            <!-- When -->
+            <!-- Delivery method (and when): "When · Truck" read as nonsense
+                 to the owner (6 November 2026); the method is the heading's
+                 subject, the time its chip. -->
             <section v-if="show_when" class="k-cart__detail">
-              <h3><span class="k-cart__ico"><v-icon size="18">schedule</v-icon></span>When</h3>
+              <h3><span class="k-cart__ico"><v-icon size="18">local_shipping</v-icon></span>Delivery method</h3>
               <p>{{ when_text }}</p>
               <div class="k-cart__chips">
                 <span v-if="when_chip" class="k-cart__chip -on">{{ when_chip }}</span>
@@ -396,8 +398,8 @@
       <div class="k-sheet">
         <div class="k-sheet__head">
           <div>
-            <h2>When do you want it?</h2>
-            <p>How it reaches you, and a day and a part of it.</p>
+            <h2>How should it reach you?</h2>
+            <p>The delivery method, and a day and time if you want one.</p>
           </div>
           <button aria-label="Close" class="k-sheet__x" type="button" @click="delivery_sheet = false">
             <v-icon>close</v-icon>
@@ -961,7 +963,7 @@ export default {
       for (const option of this.vendor_shipping_options || []) out.push(...(option.transportations || []));
       return out;
     },
-    /** The When card shows when there is something to choose: a shipping
+    /** The Delivery method card shows when there is something to choose: a shipping
      *  method, a pickup point, or a delivery service. */
     show_when() {
       if (!this.has_delivery || this.isService || !this.bill) return false;
@@ -985,12 +987,13 @@ export default {
       if (info.custom && info.time_spans?.length && info.time_spans.length < (this.transportation_now?.time_spans?.length || 99)) {
         parts.push(info.time_spans.map((span) => (TimeSpans[span] ? this.$t(TimeSpans[span].name) : span)).join(", "));
       }
-      if (!parts.length && this.transportation_now) parts.push(this.transportationName(this.transportation_now));
+      if (!parts.length && this.transportation_now && this.transportation_now.type !== ShopTransportations.Pickup.code)
+        parts.push("Any time");
       return parts.join(" · ");
     },
     when_text() {
       const t = this.transportation_now;
-      if (!t) return "Choose how it reaches you, and when.";
+      if (!t) return "Choose how it reaches you.";
       const name = this.transportationName(t);
       if (t.type === ShopTransportations.Pickup.code) {
         const place = this.receiver_info?.title || this.receiver_info?.name || this.receiver_info?.address;

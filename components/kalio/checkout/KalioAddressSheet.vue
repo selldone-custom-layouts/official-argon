@@ -51,15 +51,18 @@
             <v-icon size="20">search</v-icon>
             <input
               v-model="query"
-              aria-label="Search a street or a place"
+              aria-label="Search a street and number"
               autocomplete="off"
-              placeholder="Search a street or a place"
+              placeholder="Search a street and number"
               type="search"
               @input="onQuery"
               @keydown.enter.prevent="pickFirst"
             />
             <v-progress-circular v-if="busy_search" indeterminate size="16" width="2" />
           </div>
+          <p v-if="no_match" class="k-addr__results -none" role="status">
+            No street found for “{{ no_match }}”. Try the street and number, or move the map to the spot.
+          </p>
           <ul v-if="results.length" class="k-addr__results" role="listbox">
             <li v-for="(item, i) in results" :key="i">
               <button type="button" @click="pickResult(item)">
@@ -111,6 +114,9 @@
               @keydown.enter.prevent="pickFirst"
             />
           </div>
+          <p v-if="noMap && no_match" class="k-addr__results -inline -none" role="status">
+            No street found for “{{ no_match }}”. Try the street and number.
+          </p>
           <ul v-if="noMap && results.length" class="k-addr__results -inline" role="listbox">
             <li v-for="(item, i) in results" :key="i">
               <button type="button" @click="pickResult(item)">
@@ -293,6 +299,8 @@ export default {
       zoomed_out: false,
       busy_search: false,
       busy_locate: false,
+      /* The words that found nothing, said under the search box. */
+      no_match: null,
     };
   },
 
@@ -330,6 +338,7 @@ export default {
   beforeUnmount() {
     clearTimeout(this.geoTimer);
     clearTimeout(this.searchTimer);
+    this.sizeWatch?.disconnect();
     if (this.map) this.map.remove();
     this.map = null;
   },
@@ -357,6 +366,7 @@ export default {
       this.tried = false;
       this.query = "";
       this.results = [];
+      this.no_match = null;
       this.book = [];
       if (this.USER() && this.savedList) this.loadBook();
       if (!this.noMap) this.$nextTick(() => setTimeout(this.mountMap, 60));
@@ -414,6 +424,14 @@ export default {
         if (!e.keepText) this.lookUp(c);
       });
       this.map.on("load", () => (this.zoomed_out = this.map.getZoom() < ZOOM_ADDRESS));
+      /* The sheet grows into place (its opening animation, a phone turned
+         sideways): the map follows its box, or it draws in a corner or not
+         at all. */
+      this.sizeWatch?.disconnect();
+      if ("ResizeObserver" in window) {
+        this.sizeWatch = new ResizeObserver(() => this.map?.resize());
+        this.sizeWatch.observe(el);
+      }
       if (!at && !this.location) this.locate(true);
     },
 
@@ -443,6 +461,7 @@ export default {
 
     onQuery() {
       clearTimeout(this.searchTimer);
+      this.no_match = null;
       if (!this.query || this.query.length < 4) {
         this.results = [];
         return;
@@ -453,6 +472,7 @@ export default {
     /* Streets and places as the shopper types (Selldone's autocomplete). */
     search() {
       const c = this.map?.getCenter?.();
+      const asked = this.query;
       this.busy_search = true;
       window.axios
         .get(window.ADDRESS_API.GET_AUTOCOMPLETE(), {
@@ -466,6 +486,7 @@ export default {
         })
         .then(({ data }) => {
           this.results = (data && !data.error && data.list) || [];
+          this.no_match = this.results.length ? null : asked;
         })
         .catch(() => (this.results = []))
         .finally(() => (this.busy_search = false));
@@ -491,6 +512,7 @@ export default {
       if (lat && lng) this.goTo({ lat, lng }, true);
       this.results = [];
       this.query = "";
+      this.no_match = null;
     },
 
     /* The pin itself: the address under it, now (zooming in first when the

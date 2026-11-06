@@ -1293,6 +1293,14 @@
       box-shadow: none;
     }
 
+    /* Nothing found: said in the same place the results would be. */
+    &.-none {
+      padding: 12px 14px;
+      font-size: 13.5px;
+      line-height: 1.45;
+      color: var(--k-ink-2);
+    }
+
     button {
       display: flex;
       align-items: flex-start;

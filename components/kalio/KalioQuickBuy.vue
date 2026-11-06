@@ -27,6 +27,10 @@
         <button aria-label="Close" class="k-quickbuy__close" type="button" @click="$emit('update:modelValue', false)">
           <v-icon>close</v-icon>
         </button>
+        <!-- Why the "+" opened a sheet rather than adding (6 November 2026). -->
+        <p v-if="sizes" class="k-quickbuy__hint">
+          <v-icon size="18">straighten</v-icon>This one comes in sizes. Pick a size, then add it to your basket.
+        </p>
       </div>
       <v-card-text class="k-quickbuy__body thin-scroll">
         <s-product-overview-loading v-if="busy && !full" />
@@ -38,6 +42,7 @@
 
 <script>
 import { computed } from "vue";
+import { hasSizes } from "./kalio-basket";
 import KalioProductOverview from "./product/KalioProductOverview.vue";
 import SProductOverviewLoading from "@selldone/components-vue/storefront/product/overview/loading/SProductOverviewLoading.vue";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
@@ -69,6 +74,10 @@ export default {
   },
 
   computed: {
+    /* Only a product with sizes opens the sheet from a "+" (quickAdd). */
+    sizes() {
+      return !!this.full && hasSizes(this.full);
+    },
     productRoute() {
       return { name: window.$storefront.routes.PRODUCT_PAGE, params: { product_id: this.product.id } };
     },

@@ -307,6 +307,27 @@ Facts that shape the code:
   list, phone optional, Save waits on the page), replacing Selldone's
   "New Address Name" dialog and full-screen map. `kalio-design/review/
   addresscheck.cjs` runs the whole flow with every write caught.
+- **0.2.26 (6 November 2026): a shopper's pass on phone, tablet and
+  computer** (`kalio-design/review/buyer2.cjs`: seven products, three of
+  each, from the shelf and three aisles, in a real guest basket; the map
+  dragged with a finger, tapped, zoomed, searched, located; the address
+  saved; `/buy/` blocked). Fixed:
+  - the cards' "+" is drawn at 28px (was 44px, "too big" for the owner)
+    with an invisible 44px ring that still takes the tap; the in-basket
+    stepper on a card is 36px tall (was 44px);
+  - the quick-buy sheet (only products with sizes open it) says so ("This
+    one comes in sizes…") and its X is a round grey button, not a bare
+    glyph;
+  - the basket's "When · Truck." card is "Delivery method": the method
+    and its cost as the line, the time ("Any time", a day…) as the chip;
+    its sheet asks "How should it reach you?";
+  - the map's search box says "Search a street and number" (Selldone's
+    lookup is Mapbox geocoding: streets, not landmarks — "Empire State
+    Building" found Surat, India, or nothing), and says when nothing was
+    found; the map follows its box's size (ResizeObserver).
+  Seen, not changed: "DairyCove Whole Milk 1 gal" opens on its 1 quart size
+  (shop data); Selldone's `UPaymentStripeSplit` warns that `$product` is
+  not provided on the basket page (harmless).
 
 Market Hall, the first design, is tagged `market-hall-0.1.5`.
 
