@@ -66,6 +66,7 @@ Walio started as Tario 1.0.0 in blue. On 7 November 2026 the owner gave Walio th
 
 ## Releases
 
+- **1.1.6 (7 November 2026):** the catalogue's and aisles' cards (Selldone's product card, restyled) and the product page's match box get the same big product as the home's cards in 1.1.5: about 84% of the box instead of 53–55%.
 - **1.1.5 (7 November 2026):** Best saving today is a row of equal cards like every other row (six to a computer screen, scrolling sideways, up to twelve deals, the biggest saving first), as the big grocers show deals. The large first card left an empty band under the four beside it, filled a whole tablet screen, and its "Today's best" flag sat over the card's own saving tag (the owner asked whether it was standard). Every card's product now fills about 84% of its grey box instead of 55%: all 160 photos frame the pack at 70%, so the photo is drawn at 120% of the box.
 - **1.1.4 (7 November 2026):** the home's two deal tiles show their products big enough to read: each pack sits in its own white card (84 x 112 on a computer; a row of three under the words on tablets and phones), cropped to the pack instead of the photo's white margin, and from a resized photo instead of the 128 px thumbnail (the owner: "the products can't be seen at all"). The journal shows the four articles' own photos (Molino 0.2.33).
 - **1.1.3 (7 November 2026):** the browser tab of the first page reads "Walio" too (the server writes the shop's own title, "molino", into the first page's head; kalio-brand.ts now renames it as the shop is read).
