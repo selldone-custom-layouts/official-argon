@@ -14,7 +14,7 @@
         <em>Shop {{ name }}'s deals<v-icon size="20">chevron_right</v-icon></em>
       </span>
       <span aria-hidden="true" class="w-sdeal__packs">
-        <img v-for="p in deals.slice(0, 3)" :key="p.id" :src="image(p)" alt="" />
+        <img v-for="p in deals.slice(0, 3)" :key="p.id" :src="full(p)" :srcset="srcset(p)" alt="" sizes="170px" @error="dropSrcset" />
       </span>
     </router-link>
     <walio-row
@@ -35,7 +35,7 @@
 <script>
 import WalioRow from "../WalioRow.vue";
 import { DEALS_FILTER, listProducts } from "../walio-home";
-import { aisleRoute, aisles, countProducts, featured, offers, percentOff, productImage } from "../../kalio/kalio-catalog";
+import { aisleRoute, aisles, countProducts, dropSrcset, featured, offers, percentOff, productImage, productSrcset } from "../../kalio/kalio-catalog";
 
 export default {
   name: "WalioSellerMain",
@@ -79,6 +79,13 @@ export default {
 
   methods: {
     aisleRoute,
+    dropSrcset,
+    srcset(p) {
+      return productSrcset(p);
+    },
+    full(p) {
+      return productImage(p);
+    },
     image(p) {
       return productImage(p, true);
     },

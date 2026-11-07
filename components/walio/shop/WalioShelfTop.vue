@@ -28,7 +28,7 @@
         </div>
       </div>
       <div aria-hidden="true" class="w-banner__packs">
-        <img v-for="(p, i) in packs" :key="p.id" :class="'-p' + i" :src="image(p)" alt="" />
+        <img v-for="(p, i) in packs" :key="p.id" :class="'-p' + i" :src="image(p, false)" :srcset="srcset(p)" alt="" sizes="130px" @error="dropSrcset" />
       </div>
     </section>
 
@@ -44,7 +44,7 @@
         </router-link>
       </div>
       <router-link v-if="search && top" :to="productTo(top)" class="w-match">
-        <span class="w-match__im"><img :src="image(top, false)" alt="" /></span>
+        <span class="w-match__im"><img :src="image(top, false)" :srcset="srcset(top)" alt="" sizes="(max-width: 760px) 96px, 200px" @error="dropSrcset" /></span>
         <span class="w-match__tx">
           <small>Top match</small>
           <b>{{ top.title }}</b>
@@ -61,7 +61,7 @@
 
 <script>
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
-import { aisleImage, aisleIndex, priceOf, productImage, tintFor } from "../../kalio/kalio-catalog";
+import { aisleImage, aisleIndex, dropSrcset, priceOf, productImage, productSrcset, tintFor } from "../../kalio/kalio-catalog";
 
 export default {
   name: "WalioShelfTop",
@@ -141,6 +141,10 @@ export default {
   },
 
   methods: {
+    dropSrcset,
+    srcset(p) {
+      return productSrcset(p);
+    },
     image(p, thumb = true) {
       return productImage(p, thumb);
     },

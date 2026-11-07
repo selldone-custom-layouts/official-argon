@@ -66,5 +66,6 @@ Walio started as Tario 1.0.0 in blue. On 7 November 2026 the owner gave Walio th
 
 ## Releases
 
+- **1.1.1 (7 November 2026):** a tester's feedback, as in Molino 0.2.31: product photos at the size they are shown (Selldone's 128 thumbnail and 256–768 from the kalio Worker's `/img` resizer, the full photo as fallback), a "☐ Compare / ☑ Comparing" pill on cards and a "⇄ Compare n" pill at the foot instead of rings that looked like loading, no sound when signing in, "Saved" everywhere instead of Favorites and Wishlist, and states that do not rely on colour alone (focus ring, underlined hover, a ticked chosen size).
 - **1.1.0 (7 November 2026):** every page from the mockups Tario did not take (the Bs, product A); see "Every page".
 - **1.0.0 (7 November 2026):** the first Walio.
