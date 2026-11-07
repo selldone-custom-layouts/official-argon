@@ -96,7 +96,7 @@ $k-header-strip: 46px;
     transition: background-color 140ms ease;
 
     &:hover {
-      background: #dcebe2;
+      background: #f6dede;
     }
   }
 
@@ -390,7 +390,7 @@ $k-header-strip: 46px;
   border: 1px solid var(--k-line);
   border-radius: var(--k-radius-lg);
   background: var(--k-card);
-  box-shadow: 0 24px 50px -24px rgba(16, 35, 27, 0.35);
+  box-shadow: 0 24px 50px -24px rgba(20, 20, 20, 0.35);
   font-family: var(--k-body);
   text-align: start;
 
@@ -973,7 +973,7 @@ $k-header-strip: 46px;
       height: 12px;
       margin-top: 1px;
       border-radius: 12px 0 12px 0;
-      background: #9fd36b;
+      background: #ff8a8a;
     }
   }
 
@@ -1014,7 +1014,7 @@ $k-header-strip: 46px;
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #b7d6c4;
+    color: #f5c4c4;
   }
 
   &__col {
@@ -1043,7 +1043,7 @@ $k-header-strip: 46px;
     }
 
     .-more {
-      color: #b7d6c4 !important;
+      color: #f5c4c4 !important;
       font-weight: 600;
     }
   }
@@ -1596,7 +1596,7 @@ $k-filter-gap: 36px;
   .v-slider-thumb__surface {
     background: #fff !important;
     border: 2px solid var(--k-ink);
-    box-shadow: 0 4px 10px -4px rgba(16, 35, 27, 0.45) !important;
+    box-shadow: 0 4px 10px -4px rgba(20, 20, 20, 0.45) !important;
 
     &::before,
     &::after {
@@ -1810,7 +1810,7 @@ $k-filter-gap: 36px;
    phone the card rises from the bottom and the green half is a header. */
 
 .k-signin-overlay > .v-overlay__scrim {
-  background: #0d2219;
+  background: #1a1a1a;
   opacity: 0.58;
 }
 
@@ -1862,7 +1862,7 @@ $k-filter-gap: 36px;
     height: 11px;
     margin-top: 1px;
     border-radius: 11px 0 11px 0;
-    background: #9fd36b;
+    background: #ff8a8a;
   }
 }
 
@@ -1898,7 +1898,7 @@ $k-filter-gap: 36px;
     height: 36px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.1);
-    color: #9fdab5;
+    color: #ffd0d0;
   }
 }
 
@@ -2276,7 +2276,7 @@ $k-filter-gap: 36px;
   max-width: min(520px, calc(100vw - 24px)) !important;
   border-radius: var(--k-radius) !important;
   background: var(--k-green-deep) !important;
-  box-shadow: 0 18px 40px -18px rgba(16, 35, 27, 0.6) !important;
+  box-shadow: 0 18px 40px -18px rgba(20, 20, 20, 0.6) !important;
   color: #fff !important;
   font-family: var(--k-body);
 
@@ -2291,7 +2291,7 @@ $k-filter-gap: 36px;
     gap: 10px;
 
     .v-icon {
-      color: #b9e3c9 !important;
+      color: #ffd6d6 !important;
     }
   }
 

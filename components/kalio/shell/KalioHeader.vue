@@ -75,7 +75,7 @@
             :dark="false"
             :negative-qr-margin="false"
             :title="$t('layout_shop.search_title', { shop_name: shopTitle })"
-            color="#10231b"
+            color="#1f1f1f"
             flat
             no-qr
             persistent-placeholder
@@ -88,7 +88,7 @@
         <v-spacer v-else></v-spacer>
 
         <nav aria-label="Your account" class="k-header__acts">
-          <s-language-selector v-if="!compact" class="k-header__lang" icon-color="#10231b" icon-only></s-language-selector>
+          <s-language-selector v-if="!compact" class="k-header__lang" icon-color="#1f1f1f" icon-only></s-language-selector>
           <u-currency-selector
             v-if="!compact && $shop.currencies && $shop.currencies.length > 1"
             :shop="$shop"
@@ -96,7 +96,7 @@
             dense
             hide-details
             icon
-            icon-color="#10231b"
+            icon-color="#1f1f1f"
             icon-only
             single-line
             small
@@ -162,7 +162,7 @@
           :expand-input="true"
           :negative-qr-margin="false"
           :title="$t('layout_shop.search_title', { shop_name: shopTitle })"
-          color="#10231b"
+          color="#1f1f1f"
           flat
           no-qr
           persistent-placeholder

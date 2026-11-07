@@ -11,8 +11,7 @@
 
 const FONTS_HREF =
   "https://fonts.googleapis.com/css2" +
-  "?family=DM+Sans:opsz,wght@9..40,400..700" +
-  "&family=Fraunces:opsz,wght@9..144,500..700" +
+  "?family=Inter:wght@400..800" +
   "&display=swap";
 
 function addLink(attrs: Record<string, string>) {

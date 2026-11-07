@@ -1,10 +1,10 @@
 {
   "deploy_server": "https://layouts.selldone.com",
   "deploy_path": "",
-  "package": "kalio-market-hall",
-  "name": "Molino Market Hall",
-  "version": "0.2.30",
+  "package": "tario-market",
+  "name": "Tario Market",
+  "version": "1.0.0",
   "storefront": true,
   "backoffice": false,
-  "description": "Grocery marketplace storefront: a deals banner, every aisle and rows of products, with the seller named on every card."
+  "description": "A bright red, big-box style storefront for a grocery marketplace: a deals hero, round category shelf, rows with Add to cart, and a step-by-step checkout."
 }

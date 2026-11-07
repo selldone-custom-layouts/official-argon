@@ -91,7 +91,7 @@
             >
               <path d="M22 55S3 34 3 21a19 19 0 0 1 38 0c0 13-19 34-19 34z" fill="#0e3f2e" />
               <circle cx="22" cy="21" fill="#fff" r="8" />
-              <circle cx="22" cy="21" fill="#3baa5c" r="3.6" />
+              <circle cx="22" cy="21" fill="#ff6b6b" r="3.6" />
             </svg>
           </div>
           <button :disabled="busy_locate" class="k-addr__locate" type="button" @click="locate">

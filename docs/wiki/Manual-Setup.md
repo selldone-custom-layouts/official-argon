@@ -4,7 +4,7 @@ Set the Layout up on your shop yourself. Follow these steps in order, or let an 
 
 ## 1. Get your own copy
 
-Fork **selldone-custom-layouts/official-molino** on GitHub, then clone your fork with its submodules:
+Fork **selldone-custom-layouts/official-tario** on GitHub, then clone your fork with its submodules:
 
 ```bash
 git clone --recurse-submodules https://github.com/<you>/<your-repo>.git
@@ -54,8 +54,8 @@ In `manifest.json`:
 
 ```json
 {
-  "package": "mybrand-market-hall",
-  "name": "Mybrand Market Hall",
+  "package": "mybrand-market",
+  "name": "Mybrand Market",
   "version": "1.0.0",
   "storefront": true,
   "backoffice": false,

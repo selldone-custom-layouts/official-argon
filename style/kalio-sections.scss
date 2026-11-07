@@ -96,7 +96,7 @@
     min-width: 0;
 
     .k-eyebrow {
-      color: #9fdab5;
+      color: #ffd0d0;
     }
   }
 
@@ -399,7 +399,7 @@
 
   &:hover &__ring {
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px -12px rgba(16, 35, 27, 0.45);
+    box-shadow: 0 10px 20px -12px rgba(20, 20, 20, 0.45);
   }
 
   &.-skeleton {
@@ -712,7 +712,7 @@ a.k-by:hover {
       margin-bottom: -26px;
       object-fit: cover;
       mix-blend-mode: multiply;
-      filter: drop-shadow(0 12px 12px rgba(16, 35, 27, 0.16));
+      filter: drop-shadow(0 12px 12px rgba(20, 20, 20, 0.16));
       transition: transform 220ms ease;
     }
   }
@@ -1195,7 +1195,7 @@ $k-shelf-pic-phone: 150px;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    background: rgba(14, 63, 46, 0.08);
+    background: rgba(163, 0, 0, 0.08);
     /* !important: Selldone's [type=button] { color: inherit } loads later. */
     color: var(--k-green-deep) !important;
     font-family: var(--k-body);
@@ -1209,15 +1209,15 @@ $k-shelf-pic-phone: 150px;
     }
 
     &:hover {
-      background: rgba(14, 63, 46, 0.15);
+      background: rgba(163, 0, 0, 0.15);
     }
   }
 
   &__tag.-offer button.k-shelf__strip {
-    background: rgba(14, 63, 46, 0.1);
+    background: rgba(163, 0, 0, 0.1);
 
     &:hover {
-      background: rgba(14, 63, 46, 0.18);
+      background: rgba(163, 0, 0, 0.18);
     }
   }
 
@@ -1648,7 +1648,7 @@ $k-shelf-pic-phone: 150px;
     border: 1px solid var(--k-line);
     background: #fff;
     color: var(--k-ink) !important;
-    box-shadow: 0 4px 12px -6px rgba(16, 35, 27, 0.3);
+    box-shadow: 0 4px 12px -6px rgba(20, 20, 20, 0.3);
     cursor: pointer;
 
     &.-back {
@@ -1753,7 +1753,7 @@ $k-shelf-pic-phone: 150px;
   }
 
   &:hover {
-    background: color-mix(in oklab, var(--k-tint) 85%, #3d5a48);
+    background: color-mix(in oklab, var(--k-tint) 85%, #4a4a4a);
   }
 
   &.-on {

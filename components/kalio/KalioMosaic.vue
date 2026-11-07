@@ -77,7 +77,7 @@ const SELLER_GROUND = "#fbe6d8";
 
 /* The lead tile's ground is its aisle's tint taken a step deeper, so the
    largest tile holds its own against the white page. */
-const deepen = (tint) => `color-mix(in oklab, ${tint} 88%, #3d5a48)`;
+const deepen = (tint) => `color-mix(in oklab, ${tint} 88%, #4a4a4a)`;
 
 export default {
   name: "KalioMosaic",

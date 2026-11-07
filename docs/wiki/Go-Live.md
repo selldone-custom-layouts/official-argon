@@ -17,6 +17,17 @@ An uploaded version changes nothing until it is **attached** to your shop.
 
 Pin the **exact** version, never `latest`, so an unverified upload never goes live. Read `api.shops.layout.options` before and after.
 
+## Two Layouts on one shop (how Tario runs)
+
+A shop can show a different Layout on one of its domains. Tario lives only on `tario.selldone.shop`, while the shop's default (and every other domain) stays on another Layout:
+
+```json
+api.shops.domains.layout.set   path { "domain_key": "<the domain's id>" }
+body { "mode": "private", "layout_id": <tario's id>, "layout_version": "1.0.0" }
+```
+
+Then **don't** pin the shop default when you release this Layout: that would move every other address too. Check both addresses' `window.sdShopLayout` after a release.
+
 ## 2. Make every domain inherit it
 
 A custom domain **keeps its own Layout selection**. It can stay on an old version while the shop moves on.

@@ -60,6 +60,8 @@
       <div v-if="basket && basket.items && basket.items.length" class="k-cart__grid">
         <!-- ▆▆▆▆▆▆▆▆ Left: lines, details, often added ▆▆▆▆▆▆▆▆ -->
         <div class="k-cart__main">
+          <!-- Tario: the checkout reads as numbered steps. -->
+          <h2 class="t-step"><span>1</span>Review your items</h2>
           <kalio-cart-lines :basket="basket" />
 
           <s-storefront-coupons-list
@@ -84,7 +86,7 @@
             @update:model-value="selectLottery"
           ></s-storefront-lottery-prizes-list>
 
-          <p class="k-eyebrow k-cart__label">Your details</p>
+          <h2 class="t-step"><span>2</span>Delivery &amp; contact</h2>
           <div :class="`-n${detail_cards}`" class="k-cart__details">
             <!-- Delivery method (and when): "When · Truck" read as nonsense
                  to the owner (6 November 2026); the method is the heading's
@@ -198,7 +200,7 @@
         <aside class="k-cart__side">
           <div :class="{ '-busy': busy_bill || refreshing_price }" class="k-cart__receipt">
             <u-loading-progress v-if="busy_save"></u-loading-progress>
-            <p class="k-eyebrow">Total · {{ units }} {{ units === 1 ? "item" : "items" }}</p>
+            <h2 class="t-step -summary"><span>3</span>Order summary <small>· {{ units }} {{ units === 1 ? "item" : "items" }}</small></h2>
             <div class="k-cart__top">
               <p class="k-cart__total">
                 <u-loading-ellipsis v-if="busy_bill" css-mode light></u-loading-ellipsis>

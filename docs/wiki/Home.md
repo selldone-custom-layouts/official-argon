@@ -1,8 +1,8 @@
-# Molino Market Hall
+# Tario Market
 
-![Molino Market Hall on desktop and phone](https://raw.githubusercontent.com/selldone-custom-layouts/official-molino/main/docs/screenshots/cover.jpg)
+![Tario Market on desktop and phone](https://raw.githubusercontent.com/selldone-custom-layouts/official-tario/main/docs/screenshots/cover.jpg)
 
-**Molino Market Hall** is a custom storefront **Layout** for Selldone shops: a multi-vendor grocery marketplace in the spirit of Amazon Fresh. It is the storefront of the live shop **[molino.selldone.shop](https://molino.selldone.shop)**. It is built on the official [selldone/storefront](https://github.com/selldone/storefront), so Selldone's basket, checkout, payments, vendor offers and orders keep working underneath a completely new design.
+**Tario Market** is a custom storefront **Layout** for Selldone shops: a multi-vendor grocery marketplace dressed like a bright red big-box store, with a red aisle bar, white cards and a checkout in numbered steps. It runs on **[tario.selldone.shop](https://tario.selldone.shop)**, a second address of the shop molino, whose main address carries [Molino Market Hall](https://github.com/selldone-custom-layouts/official-molino): one shop, one Layout per domain (see [Go Live](Go-Live)). It is built on the official [selldone/storefront](https://github.com/selldone/storefront), so Selldone's basket, checkout, payments, vendor offers and orders keep working underneath a completely new design.
 
 ## Start here
 
@@ -37,8 +37,8 @@
 
 ## Links
 
-- Live shop: <https://molino.selldone.shop>
-- Repository: <https://github.com/selldone-custom-layouts/official-molino>
-- Design notes and release log: [`KALIO.md`](https://github.com/selldone-custom-layouts/official-molino/blob/main/KALIO.md)
+- Live shop: <https://tario.selldone.shop>
+- Repository: <https://github.com/selldone-custom-layouts/official-tario>
+- Design notes and release log: [`KALIO.md`](https://github.com/selldone-custom-layouts/official-tario/blob/main/KALIO.md)
 - All official custom Layouts: <https://github.com/selldone-custom-layouts>
 - Selldone: <https://selldone.com>

@@ -1,9 +1,9 @@
 {
-  "name": "Molino Market Hall",
+  "name": "Tario Market",
   "shop": "molino",
-  "kind": "Grocery marketplace",
-  "summary": "A multi-vendor grocery storefront in the spirit of Amazon Fresh: a deals banner, every aisle, rows of products with the seller on every card, an Amazon-style Add to basket, a map-first checkout and a buyer account.",
-  "live": "https://molino.selldone.shop",
+  "kind": "Grocery marketplace · big-box red",
+  "summary": "The molino grocery marketplace dressed like a big-box store: a red aisle bar, a red deals hero, white cards with red Add to basket that turns into − n +, reviews, and a checkout laid out as numbered steps.",
+  "live": "https://tario.selldone.shop",
   "cover": "docs/screenshots/cover.jpg",
   "screenshots": [
     "docs/screenshots/desktop-home.jpg",
@@ -15,8 +15,14 @@
     "docs/screenshots/phone-product.jpg",
     "docs/screenshots/phone-basket.jpg"
   ],
-  "tags": ["grocery", "marketplace", "multi-vendor", "food"],
-  "package": "kalio-market-hall",
+  "tags": [
+    "grocery",
+    "marketplace",
+    "multi-vendor",
+    "big-box",
+    "red"
+  ],
+  "package": "tario-market",
   "base": "selldone/storefront",
   "status": "live"
 }
