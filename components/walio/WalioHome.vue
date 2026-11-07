@@ -34,7 +34,9 @@
             <em>Shop deals</em>
           </span>
           <span aria-hidden="true" class="w-hero__packs">
-            <img v-for="p in dealList.slice(0, 3)" :key="p.id" :src="image(p)" alt="" />
+            <span v-for="p in dealList.slice(0, 3)" :key="p.id" class="w-hero__pack">
+              <img :src="image(p)" :srcset="srcset(p)" alt="" sizes="(max-width: 1100px) 150px, 100px" @error="dropSrcset" />
+            </span>
           </span>
         </router-link>
         <router-link :to="newest" class="w-hero__tile -new">
@@ -44,7 +46,9 @@
             <em>See what's new</em>
           </span>
           <span aria-hidden="true" class="w-hero__packs">
-            <img v-for="p in newList.slice(0, 3)" :key="p.id" :src="image(p)" alt="" />
+            <span v-for="p in newList.slice(0, 3)" :key="p.id" class="w-hero__pack">
+              <img :src="image(p)" :srcset="srcset(p)" alt="" sizes="(max-width: 1100px) 150px, 100px" @error="dropSrcset" />
+            </span>
           </span>
         </router-link>
       </div>
@@ -188,6 +192,8 @@ import {
   percentOff,
   priceOf,
   productImage,
+  productSrcset,
+  dropSrcset,
   sellerRoute,
   tintFor,
   vendorImage,
@@ -270,6 +276,10 @@ export default {
     image(p) {
       return productImage(p, true);
     },
+    srcset(p) {
+      return productSrcset(p);
+    },
+    dropSrcset,
     vendorImage(v) {
       return vendorImage(v, true);
     },

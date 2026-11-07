@@ -671,9 +671,10 @@ a:hover > .t-photo .t-photo__pack.-p1 {
 
     > span:first-child {
       display: grid;
+      flex: 1;
       align-content: start;
       gap: 6px;
-      max-width: 60%;
+      min-width: 0;
     }
 
     small {
@@ -685,7 +686,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
 
     b {
       font-family: var(--k-display);
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
       line-height: 1.1;
     }
@@ -719,20 +720,32 @@ a:hover > .t-photo .t-photo__pack.-p1 {
 
   &__packs {
     display: flex;
+    flex: none;
     align-items: flex-end;
-    gap: 6px;
-
-    img {
-      width: 58px;
-      height: 74px;
-      object-fit: contain;
-    }
+    gap: 8px;
   }
 
-  .-deals .w-hero__packs img {
-    padding: 4px;
-    border-radius: 8px;
+  /* A product photo is a 1000 px square with the pack standing in its
+     middle 70 %. Each card crops that margin, so the pack fills it: about
+     100 px tall instead of 40 (7 November 2026, the owner: "the products
+     can't be seen at all"). The photo comes resized (srcset), not the
+     128 px thumbnail. */
+  &__pack {
+    display: block;
+    width: 84px;
+    height: 112px;
+    overflow: hidden;
+    border-radius: 10px;
     background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.1);
+    }
   }
 
   @media (max-width: $t-tablet) {
@@ -741,6 +754,23 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     &__side {
       grid-template-rows: none;
       grid-template-columns: 1fr 1fr;
+    }
+
+    /* Narrower tiles: the words above, the three packs in a row below. */
+    &__tile {
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    &__packs {
+      align-items: stretch;
+    }
+
+    &__pack {
+      flex: 1;
+      width: auto;
+      max-width: 150px;
+      height: 124px;
     }
   }
 
