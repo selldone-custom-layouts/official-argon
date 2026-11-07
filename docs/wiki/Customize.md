@@ -24,6 +24,11 @@ Change the tokens and the whole site follows: buttons, badges, the compare badge
 | Buyer account | `components/kalio/account/`, `pages/user/`, `style/kalio-account.scss` |
 | Content pages | `components/kalio/pages/`, `style/kalio-pages.scss` |
 | Skin for Selldone's own components | `style/kalio-platform.scss` |
+| Home (design B) | `components/walio/WalioHome.vue`, `WalioRow.vue`, `WalioCard.vue`, `WalioPhoto.vue`, `walio-home.ts`; styles in `style/walio-home.scss` |
+| Aisle, search, seller pages (filter column, banner, seller card) | `pages/products/StorefrontPageProducts.vue`, `components/walio/shop/`; styles in `style/walio-pages.scss` |
+| Product page (design A) | `components/walio/product/WalioProductOverview.vue`, `pages/product/StorefrontPageProduct.vue` |
+| Cart window under the cart button | `components/walio/WalioMiniCart.vue`, `components/kalio/shell/KalioHeader.vue` |
+| Lifestyle photos | `assets/walio/` |
 
 [`KALIO.md`](https://github.com/selldone-custom-layouts/official-walio/blob/main/KALIO.md) explains every part, the reason behind each decision, and each workaround.
 

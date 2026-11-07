@@ -2,7 +2,7 @@
 
 ![Walio Market on desktop and phone](https://raw.githubusercontent.com/selldone-custom-layouts/official-walio/main/docs/screenshots/cover.jpg)
 
-**Walio Market** is a custom storefront **Layout** for Selldone shops: a multi-vendor grocery marketplace dressed as a blue everyday-low-price superstore, with a blue header, a yellow basket, green savings and a checkout in numbered steps. It runs on **[walio.selldone.shop](https://walio.selldone.shop)**, a second address of the shop molino, whose main address carries [Molino Market Hall](https://github.com/selldone-custom-layouts/official-molino): one shop, one Layout per domain (see [Go Live](Go-Live)). It is built on the official [selldone/storefront](https://github.com/selldone/storefront), so Selldone's basket, checkout, payments, vendor offers and orders keep working underneath a completely new design.
+**Walio Market** is a custom storefront **Layout** for Selldone shops: a multi-vendor grocery marketplace dressed as a blue superstore: a blue header with a yellow cart that opens a small cart window, a split hero with deal tiles, best savings, category tiles and shop-the-idea lists, aisles with a banner and a filter column, a classic product page, a stepped checkout and seller pages as a shop in the shop. It runs on **[walio.selldone.shop](https://walio.selldone.shop)**, a second address of the shop molino, whose main address carries [Molino Market Hall](https://github.com/selldone-custom-layouts/official-molino): one shop, one Layout per domain (see [Go Live](Go-Live)). It is built on the official [selldone/storefront](https://github.com/selldone/storefront), so Selldone's basket, checkout, payments, vendor offers and orders keep working underneath a completely new design.
 
 ## Start here
 
@@ -26,11 +26,11 @@
 ## What you get
 
 - **Home:** a deals banner, two rows of aisles, a row of best sellers for every aisle, an aisle mosaic, seller cards and a market shelf.
-- **Cards:** "Add to basket" turns into "− n in basket +" in place, "See options" for products with sizes, and the seller is named on every card.
+- **Cards:** "Add to cart" turns into "− n in cart +" in place, "Choose options" for products with sizes, savings in green, and the seller is named on every card.
 - **Shop pages:** a compact aisle head, quiet filters built from product specs, one sort menu.
 - **Product page:** gallery, details and a sticky buy box with every seller's offer.
 - **Seller storefronts.**
-- **Basket and checkout:** a receipt-style basket drawer and page, a map-first address sheet and delivery choices.
+- **Cart and checkout:** a cart window under the cart button (a drawer on phones), a checkout with Cart ✓ — Delivery — Contact — Review & pay over numbered steps, a map-first address sheet and delivery choices.
 - **Orders:** the receipt, delivery, the trip and chat.
 - **Buyer account:** in two designs.
 - **Content pages:** journal, article, About, Terms and Privacy.
