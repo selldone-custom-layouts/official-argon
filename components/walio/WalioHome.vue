@@ -4,7 +4,7 @@
 
   A split hero (a photo with the shop's line, and two stacked tiles: the
   week's deals and what is new, each with three packshots), "Best saving
-  today" (the biggest saving large, four more beside it), the aisles as
+  today" (a row of equal cards, the biggest saving first), the aisles as
   coloured tiles, "Top picks", "Shop the idea" (a photo beside a short list
   from the breakfast aisle with one Add all), how the order reaches you,
   "Trending in" the fresh aisle, and the sellers. Everything is read from
@@ -54,22 +54,11 @@
       </div>
     </section>
 
-    <!-- ▆▆▆▆ Best saving today ▆▆▆▆ -->
-    <section v-if="dealList.length" class="t-sec k-wrap">
-      <header class="t-sec__head">
-        <h2 class="t-sec__title">Best saving today</h2>
-        <router-link :to="deals" class="t-sec__more">See all<v-icon size="20">chevron_right</v-icon></router-link>
-      </header>
-      <div class="w-best">
-        <div class="w-best__top">
-          <span class="w-best__flag">−{{ percent(dealList[0]) }}% · Today's best</span>
-          <walio-card :product="dealList[0]" :sellers="sellersOf.get(dealList[0].id) || []" @quick-buy="quickBuy" />
-        </div>
-        <div v-for="p in dealList.slice(1, 5)" :key="p.id" class="w-best__it">
-          <walio-card :product="p" :sellers="sellersOf.get(p.id) || []" @quick-buy="quickBuy" />
-        </div>
-      </div>
-    </section>
+    <!-- ▆▆▆▆ Best saving today ▆▆▆▆
+         A row of equal cards, the biggest saving first, as the big grocers
+         show their deals (since 1.1.5; one large card beside four small
+         ones left a gap under them and filled a tablet's screen). -->
+    <walio-row :items="deals_ready ? dealList : null" :more-to="deals" title="Best saving today" />
 
     <!-- ▆▆▆▆ Shop by category ▆▆▆▆ -->
     <section v-if="aisleList.length" class="t-sec k-wrap">
@@ -176,7 +165,6 @@
 </template>
 
 <script>
-import WalioCard from "./WalioCard.vue";
 import WalioRow from "./WalioRow.vue";
 import WalioPhoto from "./WalioPhoto.vue";
 import KalioQuickBuy from "../kalio/KalioQuickBuy.vue";
@@ -204,7 +192,7 @@ import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin
 
 export default {
   name: "WalioHome",
-  components: { WalioCard, WalioRow, WalioPhoto, KalioQuickBuy },
+  components: { WalioRow, WalioPhoto, KalioQuickBuy },
   mixins: [CurrencyMixin],
   inject: ["$shop"],
 
@@ -213,8 +201,8 @@ export default {
       aisleList: [],
       sellerList: [],
       dealList: [],
+      deals_ready: false,
       newList: [],
-      sellersOf: new Map(),
       shelfOf: new Map(),
       idea: { aisle: null, items: [], eyebrow: "", title: "" },
       sheet: false,
@@ -256,15 +244,17 @@ export default {
       this.readIdea();
     });
     vendors().then((list) => (this.sellerList = list.filter((v) => v && v.name)));
-    offers().then(({ sellersOf, shelfOf }) => {
-      this.sellersOf = sellersOf;
+    offers().then(({ shelfOf }) => {
       this.shelfOf = shelfOf;
     });
     /* The biggest savings first: Selldone sorts deals by sales, so the
        saving is ranked here. */
-    listProducts(null, 40, { filter: DEALS_FILTER, sort: "bestselling" }).then((list) => {
-      this.dealList = list.filter((p) => this.percent(p) > 0).sort((a, b) => this.percent(b) - this.percent(a)).slice(0, 5);
-    });
+    listProducts(null, 40, { filter: DEALS_FILTER, sort: "bestselling" })
+      .then((list) => {
+        this.dealList = list.filter((p) => this.percent(p) > 0).sort((a, b) => this.percent(b) - this.percent(a)).slice(0, 12);
+      })
+      .catch(() => (this.dealList = []))
+      .finally(() => (this.deals_ready = true));
     listProducts(null, 6, { sort: "newest" }).then((list) => (this.newList = list.filter((p) => p.icon)));
   },
 
@@ -294,12 +284,6 @@ export default {
     },
     productRoute(p) {
       return { name: window.$storefront.routes.PRODUCT_PAGE, params: { product_id: p.id } };
-    },
-    quickBuy(product) {
-      quickAdd(this, product, (picked) => {
-        this.picked = picked;
-        this.sheet = true;
-      });
     },
     /* A breakfast table from the breakfast aisle (else the first aisle):
        four products without sizes, so "Add all" is one tap. */

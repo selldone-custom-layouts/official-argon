@@ -92,6 +92,10 @@ export default {
     vendor: { type: [Number, String], default: null },
     /** A product to leave out (the one the page is about). */
     exclude: { type: [Number, String], default: null },
+    /** Products the caller has already read (the home's deals, ranked by
+        saving): shown as given, nothing is fetched. null while the caller
+        is still reading them; leave it out to have the row fetch. */
+    items: { type: Array, default: undefined },
   },
 
   emits: ["loaded"],
@@ -109,9 +113,17 @@ export default {
     };
   },
 
+  watch: {
+    items() {
+      this.take();
+    },
+  },
+
   mounted() {
     offers().then(({ sellersOf }) => (this.sellersOf = sellersOf));
-    if (this.lazy && "IntersectionObserver" in window) {
+    if (this.items !== undefined) {
+      this.take();
+    } else if (this.lazy && "IntersectionObserver" in window) {
       this.observer = new IntersectionObserver(
         (entries) => {
           if (entries.some((entry) => entry.isIntersecting)) {
@@ -132,6 +144,12 @@ export default {
   },
 
   methods: {
+    take() {
+      this.busy = this.items === null;
+      this.products = (this.items || []).slice(0, this.limit);
+      if (!this.busy) this.$nextTick(this.measure);
+    },
+
     fetch() {
       this.busy = true;
       const options = { products_only: true, sort: this.sort, available: true };

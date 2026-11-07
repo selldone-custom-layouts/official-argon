@@ -318,16 +318,21 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     border-radius: 10px;
     background: var(--k-well);
 
+    /* Every product photo is a square with the pack's longest side at 70%,
+       centred (all 160 measured, 7 November 2026). Drawn at 120% of the
+       well, the pack fills about 84% of it, as on the big grocers' cards;
+       at 78% it filled only 55%. */
     img {
-      width: 78%;
-      height: 78%;
+      width: 100%;
+      height: 100%;
       object-fit: contain;
       mix-blend-mode: multiply;
+      transform: scale(1.2);
       transition: transform 220ms ease;
     }
 
     &:hover img {
-      transform: scale(1.04);
+      transform: scale(1.25);
     }
   }
 
@@ -795,49 +800,6 @@ a:hover > .t-photo .t-photo__pack.-p1 {
 
     &__tile b {
       font-size: 20px;
-    }
-  }
-}
-
-.w-best {
-  display: grid;
-  grid-template-columns: minmax(0, 1.6fr) repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  align-items: stretch;
-
-  &__top {
-    position: relative;
-    padding: 14px;
-    border: 2px solid var(--k-green);
-    border-radius: 14px;
-  }
-
-  &__flag {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    z-index: 2;
-    padding: 4px 10px;
-    border-radius: 6px;
-    background: var(--k-leaf);
-    color: var(--k-ink);
-    font-size: 13px;
-    font-weight: 800;
-  }
-
-  @media (max-width: $t-tablet) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-
-    &__top {
-      grid-column: span 3;
-    }
-  }
-
-  @media (max-width: $t-phone) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    &__top {
-      grid-column: span 2;
     }
   }
 }
