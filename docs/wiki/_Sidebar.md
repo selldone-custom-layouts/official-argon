@@ -1,4 +1,4 @@
-**[Tario Market](Home)**
+**[Walio Market](Home)**
 
 - [Install with AI](Install-with-AI)
 - [Manual Setup](Manual-Setup)
@@ -10,6 +10,6 @@
 
 ---
 
-- [Live shop](https://tario.selldone.shop)
-- [Repository](https://github.com/selldone-custom-layouts/official-tario)
+- [Live shop](https://walio.selldone.shop)
+- [Repository](https://github.com/selldone-custom-layouts/official-walio)
 - [All custom Layouts](https://github.com/selldone-custom-layouts)

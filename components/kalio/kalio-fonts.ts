@@ -11,7 +11,7 @@
 
 const FONTS_HREF =
   "https://fonts.googleapis.com/css2" +
-  "?family=Inter:wght@400..800" +
+  "?family=Nunito+Sans:opsz,wght@6..12,400..900" +
   "&display=swap";
 
 function addLink(attrs: Record<string, string>) {

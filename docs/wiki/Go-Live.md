@@ -19,7 +19,7 @@ Pin the **exact** version, never `latest`, so an unverified upload never goes li
 
 ## Two Layouts on one shop (how Tario runs)
 
-A shop can show a different Layout on one of its domains. Tario lives only on `tario.selldone.shop`, while the shop's default (and every other domain) stays on another Layout:
+A shop can show a different Layout on one of its domains. Tario lives only on `walio.selldone.shop`, while the shop's default (and every other domain) stays on another Layout:
 
 ```json
 api.shops.domains.layout.set   path { "domain_key": "<the domain's id>" }

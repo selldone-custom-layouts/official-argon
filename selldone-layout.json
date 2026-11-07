@@ -1,9 +1,9 @@
 {
-  "name": "Tario Market",
+  "name": "Walio Market",
   "shop": "molino",
-  "kind": "Grocery marketplace · big-box red",
-  "summary": "The molino grocery marketplace dressed like a big-box store: a red aisle bar, a red deals hero, white cards with red Add to basket that turns into − n +, reviews, and a checkout laid out as numbered steps.",
-  "live": "https://tario.selldone.shop",
+  "kind": "Grocery marketplace · blue superstore",
+  "summary": "The molino grocery marketplace dressed as an everyday-low-price superstore: a blue header with a white search and a yellow basket, savings in green, Add to basket that turns into − n +, reviews, and a checkout in numbered steps.",
+  "live": "https://walio.selldone.shop",
   "cover": "docs/screenshots/cover.jpg",
   "screenshots": [
     "docs/screenshots/desktop-home.jpg",
@@ -19,10 +19,10 @@
     "grocery",
     "marketplace",
     "multi-vendor",
-    "big-box",
-    "red"
+    "superstore",
+    "blue"
   ],
-  "package": "tario-market",
+  "package": "walio-market",
   "base": "selldone/storefront",
   "status": "live"
 }

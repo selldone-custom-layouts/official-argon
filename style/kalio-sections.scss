@@ -96,7 +96,7 @@
     min-width: 0;
 
     .k-eyebrow {
-      color: #ffd0d0;
+      color: #cfe4ff;
     }
   }
 
@@ -1195,7 +1195,7 @@ $k-shelf-pic-phone: 150px;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    background: rgba(163, 0, 0, 0.08);
+    background: rgba(0, 79, 154, 0.08);
     /* !important: Selldone's [type=button] { color: inherit } loads later. */
     color: var(--k-green-deep) !important;
     font-family: var(--k-body);
@@ -1209,15 +1209,15 @@ $k-shelf-pic-phone: 150px;
     }
 
     &:hover {
-      background: rgba(163, 0, 0, 0.15);
+      background: rgba(0, 79, 154, 0.15);
     }
   }
 
   &__tag.-offer button.k-shelf__strip {
-    background: rgba(163, 0, 0, 0.1);
+    background: rgba(0, 79, 154, 0.1);
 
     &:hover {
-      background: rgba(163, 0, 0, 0.18);
+      background: rgba(0, 79, 154, 0.18);
     }
   }
 

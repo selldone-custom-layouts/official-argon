@@ -25,7 +25,7 @@ Change the tokens and the whole site follows: buttons, badges, the compare badge
 | Content pages | `components/kalio/pages/`, `style/kalio-pages.scss` |
 | Skin for Selldone's own components | `style/kalio-platform.scss` |
 
-[`KALIO.md`](https://github.com/selldone-custom-layouts/official-tario/blob/main/KALIO.md) explains every part, the reason behind each decision, and each workaround.
+[`KALIO.md`](https://github.com/selldone-custom-layouts/official-walio/blob/main/KALIO.md) explains every part, the reason behind each decision, and each workaround.
 
 ## Rules that keep it working
 

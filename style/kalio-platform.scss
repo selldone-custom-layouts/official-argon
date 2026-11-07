@@ -883,7 +883,7 @@
   border-radius: var(--k-pill);
   background: var(--k-green-deep);
   color: #fff;
-  box-shadow: 0 8px 18px -8px rgba(163, 0, 0, 0.6);
+  box-shadow: 0 8px 18px -8px rgba(0, 79, 154, 0.6);
   font-family: var(--k-body);
   text-align: center;
   cursor: default;
@@ -1782,9 +1782,9 @@
    gives it Kalio's deep green, with the checkout button in white. */
 .receipt-container {
   --color-bg-1: var(--k-green-deep) !important;
-  --color-bg-2: #3a0000 !important;
+  --color-bg-2: #00264d !important;
   border-radius: var(--k-radius-lg) !important;
-  box-shadow: 0 22px 44px -20px rgba(163, 0, 0, 0.55) !important;
+  box-shadow: 0 22px 44px -20px rgba(0, 79, 154, 0.55) !important;
   font-family: var(--k-body);
 
   .data-row,
@@ -1911,15 +1911,15 @@
   left: 0 !important;
   background-color: var(--k-green-deep) !important;
   color: #fff !important;
-  box-shadow: 0 14px 28px -14px rgba(163, 0, 0, 0.75);
+  box-shadow: 0 14px 28px -14px rgba(0, 79, 154, 0.75);
   font-family: var(--k-body);
 
   stop:first-child {
-    stop-color: #ffc9c9;
+    stop-color: #ffe08a;
   }
 
   stop:last-child {
-    stop-color: #ff6b6b;
+    stop-color: #ffc220;
   }
 
   /* The ring's track under the progress. */

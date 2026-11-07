@@ -1,0 +1,292 @@
+/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Walio — the blue superstore dress ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+
+   Walio (7 November 2026) is the same storefront as Molino Market Hall and
+   Tario — every page and every behaviour the owner asked for (Add to basket
+   that turns into − n +, the two-step map address sheet, no pop-ups, the
+   receipt, the reviews, the checkout in numbered steps) — dressed as an
+   everyday-low-price superstore: a solid blue header with a white search
+   and a yellow basket, a white aisle bar, savings in green, rounded Nunito
+   Sans, white cards on light wells and a deep navy footer.
+   Loaded last (storefront.scss), so it only overrides. */
+
+$walio-blue: #0071dc;
+$walio-blue-deep: #004f9a;
+$walio-navy: #041e42;
+$walio-spark: #ffc220;
+
+h1,
+h2,
+h3 {
+  letter-spacing: -0.01em;
+}
+
+/* ── Header: solid blue, white words, a white search, a yellow basket ── */
+.k-header {
+  background: $walio-blue !important;
+  box-shadow: none !important;
+
+  &__bar {
+    border-bottom: 0 !important;
+  }
+
+  &__brand {
+    align-items: center !important;
+    gap: 8px !important;
+    color: #fff !important;
+    font-family: var(--k-display) !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.03em !important;
+
+    /* the spark: a yellow round mark before the name */
+    i {
+      order: -1;
+      width: 14px !important;
+      height: 14px !important;
+      margin-top: 0 !important;
+      border-radius: 50% !important;
+      background: $walio-spark !important;
+      box-shadow: 0 0 0 3px rgba(255, 194, 32, 0.28);
+    }
+  }
+
+  &__icon {
+    color: #fff !important;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.14) !important;
+    }
+
+    .v-icon {
+      color: #fff !important;
+    }
+  }
+
+  &__aisles {
+    background: rgba(255, 255, 255, 0.14) !important;
+    color: #fff !important;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.24) !important;
+    }
+
+    .v-icon {
+      color: #fff !important;
+    }
+  }
+
+  &__search {
+    .v-field {
+      background: #fff !important;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+    }
+
+    .v-field__outline {
+      display: none;
+    }
+  }
+
+  &__search-pill {
+    background: #fff !important;
+  }
+
+  &__link {
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.45) !important;
+    background: transparent !important;
+
+    .v-icon {
+      color: #fff !important;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.14) !important;
+    }
+  }
+
+  &__lang {
+    color: #fff !important;
+  }
+
+  /* The basket: spark yellow with dark words. */
+  &__basket {
+    background: $walio-spark !important;
+    color: $walio-navy !important;
+
+    .v-icon,
+    span,
+    b {
+      color: $walio-navy !important;
+    }
+
+    &:hover {
+      background: #ffcf4d !important;
+    }
+  }
+}
+
+/* The aisle bar under the blue: white, dark words, blue underline. */
+.k-strip {
+  background: #fff !important;
+  box-shadow: 0 1px 0 var(--k-line);
+
+  &__link {
+    color: var(--k-ink-2) !important;
+
+    &:hover,
+    &.-on {
+      color: $walio-blue !important;
+    }
+
+    &.-deals {
+      color: $walio-blue !important;
+      font-weight: 800 !important;
+
+      &::after {
+        background: $walio-blue !important;
+      }
+    }
+  }
+}
+
+/* ── Hero: the deals counter on deep blue, the headline's saving in yellow ── */
+.k-hero,
+.k-front {
+  em,
+  .-accent,
+  .k-hero__accent {
+    color: $walio-spark !important;
+  }
+}
+
+/* ── Product pictures: one light well (aisle rings and mosaic keep theirs) ── */
+.k-rail__cell,
+.k-seller-cards li,
+[style*="--k-tint"]:has(.s--product-card) {
+  --k-tint: var(--k-well) !important;
+}
+
+.k-pdp,
+.k-pdp [style*="--k-tint"] {
+  --k-tint: var(--k-well) !important;
+}
+
+/* ── Footer: deep navy, white words, spark-yellow headings ── */
+.k-footer__main {
+  background: $walio-navy !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.k-footer__head {
+  color: $walio-spark !important;
+}
+
+.k-footer__col a:hover,
+.k-footer__col .-on {
+  color: #fff !important;
+}
+
+.k-footer__mark {
+  align-items: center !important;
+  gap: 8px !important;
+  color: #fff !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.03em !important;
+
+  i {
+    order: -1;
+    margin-top: 0 !important;
+    border-radius: 50% !important;
+    background: $walio-spark !important;
+  }
+}
+
+/* ── Checkout: numbered steps, a white summary, a blue pill to pay ── */
+.t-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 26px 0 14px;
+  font-family: var(--k-display);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  color: var(--k-ink);
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  > span {
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: $walio-blue;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0;
+  }
+
+  small {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--k-muted);
+  }
+
+  &.-summary {
+    margin: 0 0 12px;
+    font-size: 19px;
+
+    > span {
+      background: $walio-spark;
+      color: $walio-navy;
+    }
+  }
+}
+
+.k-cart__receipt {
+  background: #fff !important;
+  border: 1px solid var(--k-line) !important;
+  box-shadow: 0 10px 30px -22px rgba(4, 30, 66, 0.4) !important;
+}
+
+.k-cart__detail {
+  border-color: var(--k-line) !important;
+  background: #fff !important;
+}
+
+.k-cart__go {
+  border-radius: var(--k-pill) !important;
+  background: $walio-blue !important;
+
+  &:hover {
+    background: $walio-blue-deep !important;
+  }
+
+  &.-off {
+    background: #d9dbdd !important;
+    color: #46474a !important;
+
+    .v-icon,
+    .u--price {
+      color: #46474a !important;
+    }
+  }
+}
+
+/* Headings in the superstore's heavy weight. */
+.v-application h1,
+.v-application h2,
+.k-pdp__title,
+.k-cart__title {
+  font-weight: 800 !important;
+}
+
+/* What is still missing before paying reads as a caution, not a saving. */
+.k-cart__need,
+.k-cart__need .v-icon {
+  color: #b35900 !important;
+}
