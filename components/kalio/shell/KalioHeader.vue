@@ -29,8 +29,8 @@
           <v-icon size="24">menu</v-icon>
         </button>
 
-        <router-link :to="homeRoute" class="k-header__brand" :aria-label="`${shopTitle} home`">
-          {{ shopTitle }}<i aria-hidden="true"></i>
+        <router-link :to="homeRoute" class="k-header__brand -logo" :aria-label="`${shopTitle} home`">
+          <img :src="BRAND.mark" alt="" class="k-brand-mark" height="34" width="34" />{{ shopTitle }}
         </router-link>
 
         <v-menu
@@ -276,7 +276,7 @@
         temporary
       >
         <div class="k-drawer__head">
-          <router-link :to="homeRoute" class="k-header__brand" @click="menu = false">{{ shopTitle }}<i aria-hidden="true"></i></router-link>
+          <router-link :to="homeRoute" class="k-header__brand -logo" @click="menu = false"><img :src="BRAND.mark" alt="" class="k-brand-mark" height="30" width="30" />{{ shopTitle }}</router-link>
           <button aria-label="Close" class="k-header__icon" type="button" @click="menu = false">
             <v-icon>close</v-icon>
           </button>
@@ -321,6 +321,7 @@
 </template>
 
 <script>
+import { BRAND } from "../kalio-brand";
 import { defineAsyncComponent } from "vue";
 import SStorefrontSearchBox from "@selldone/components-vue/storefront/search/SStorefrontSearchBox.vue";
 import SLanguageSelector from "@selldone/components-vue/storefront/language/selector/SLanguageSelector.vue";
@@ -354,6 +355,7 @@ export default {
 
   data() {
     return {
+      BRAND,
       aisleList: [],
       aisles_open: false,
       basket: false,
