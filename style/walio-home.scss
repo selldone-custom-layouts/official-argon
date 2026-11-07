@@ -1,0 +1,1119 @@
+/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Walio — the superstore home (design B) ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+
+   The owner chose to give Walio the B mockups of Tario's pages
+   (kalio-design/tario-options/index.html, 7 November 2026). The section,
+   row and card styles below are shared with Tario (its t- classes, from
+   Tario 1.2.1's tario-home.scss) and take Walio's blue from the tokens;
+   the w- classes are Walio's own home. Loaded after walio-skin.scss. */
+
+$t-phone: 760px;
+$t-tablet: 1100px;
+
+/* ▆▆▆▆▆▆▆▆ Sections ▆▆▆▆▆▆▆▆ */
+
+/* The shop card's own 64px under the home. */
+.s--shop-card:has(> div > .t-home),
+.s--shop-card:has(.t-home) {
+  padding-bottom: 0 !important;
+}
+
+.t-home {
+  padding-bottom: 8px;
+  font-family: var(--k-body);
+  text-align: start;
+
+  &__end {
+    display: flex;
+    justify-content: center;
+    margin-top: 48px;
+  }
+}
+
+.t-sec {
+  margin-top: 44px;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--k-display);
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--k-ink);
+  }
+
+  &__tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+  }
+
+  &__more {
+    display: inline-flex;
+    align-items: center;
+    color: var(--k-green) !important;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+
+  @media (max-width: $t-phone) {
+    margin-top: 34px;
+
+    &__title {
+      font-size: 21px;
+    }
+  }
+}
+
+.t-arrow {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--k-ink) !important;
+  cursor: pointer;
+
+  &.-small {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--k-line);
+
+    &:hover:not(:disabled) {
+      border-color: var(--k-ink);
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+  }
+
+  &.-hero {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    transform: translateY(-50%);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+
+    &.-back {
+      inset-inline-start: 14px;
+    }
+
+    &.-next {
+      inset-inline-end: 14px;
+    }
+  }
+
+  @media (hover: none), (max-width: $t-phone) {
+    &.-small,
+    &.-hero {
+      display: none;
+    }
+  }
+
+  /* A tablet's hero turns by swipe and dots; the arrows sat over the text. */
+  @media (max-width: $t-tablet) {
+    &.-hero {
+      display: none;
+    }
+  }
+}
+
+.t-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 46px;
+  padding: 0 22px;
+  border-radius: 8px;
+  font-family: var(--k-body);
+  font-size: 15.5px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 140ms ease, border-color 140ms ease;
+
+  &.-outline {
+    border: 1.5px solid var(--k-line-strong);
+    background: #fff;
+    color: var(--k-ink) !important;
+
+    &:hover {
+      border-color: var(--k-ink);
+    }
+  }
+}
+
+
+/* ▆▆▆▆▆▆▆▆ A photo, or the aisle's still life ▆▆▆▆▆▆▆▆ */
+
+.t-photo {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  background: var(--t-ground, #f3f3f3);
+
+  &__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 400ms ease;
+  }
+
+  &__pack {
+    position: absolute;
+    z-index: 0;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    transition: transform 400ms ease;
+
+    &.-p1 {
+      z-index: 1;
+    }
+  }
+
+  &.-busy,
+  .-busy & {
+    background: linear-gradient(100deg, #eee 30%, #f6f6f6 50%, #eee 70%) 0 0 / 300% 100%;
+    animation: t-shimmer 1.4s linear infinite;
+  }
+
+  /* The hero: one large pack in the middle, three around it. */
+  &.-wide .t-photo__pack {
+    &.-p1 { left: 28%; top: 12%; width: 44%; height: 74%; }
+    &.-p2 { left: 5%; bottom: 8%; width: 28%; height: 50%; }
+    &.-p3 { right: 5%; top: 8%; width: 27%; height: 46%; }
+    &.-p4 { right: 9%; bottom: 6%; width: 24%; height: 40%; }
+  }
+
+  /* A promo tile: the packs in the upper two thirds, over the caption. */
+  &.-tile .t-photo__pack {
+    &.-p1 { left: 31%; top: 6%; width: 38%; height: 58%; }
+    &.-p2 { left: 6%; top: 16%; width: 27%; height: 44%; }
+    &.-p3 { right: 6%; top: 16%; width: 27%; height: 44%; }
+  }
+
+  &.-square .t-photo__pack {
+    &.-p1 { left: 22%; top: 6%; width: 56%; height: 54%; }
+    &.-p2 { left: 4%; top: 30%; width: 34%; height: 34%; }
+    &.-p3 { right: 4%; top: 30%; width: 34%; height: 34%; }
+  }
+
+  &.-tall .t-photo__pack {
+    &.-p1 { left: 16%; top: 6%; width: 68%; height: 40%; }
+    &.-p2 { left: 5%; top: 42%; width: 42%; height: 26%; }
+    &.-p3 { right: 5%; top: 42%; width: 42%; height: 26%; }
+  }
+}
+
+a:hover > .t-photo .t-photo__img,
+a:hover > .t-photo .t-photo__pack.-p1 {
+  transform: scale(1.03);
+}
+
+@keyframes t-shimmer {
+  to {
+    background-position: -300% 0;
+  }
+}
+
+
+/* ▆▆▆▆▆▆▆▆ Rows of cards ▆▆▆▆▆▆▆▆ */
+
+.t-row__track {
+  display: grid;
+  grid-auto-columns: calc((100% - 5 * 16px) / 6);
+  grid-auto-flow: column;
+  gap: 16px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (max-width: $t-tablet) {
+    grid-auto-columns: calc((100% - 3 * 16px) / 4);
+  }
+
+  @media (max-width: $t-phone) {
+    grid-auto-columns: 44%;
+    gap: 12px;
+  }
+}
+
+.t-row__cell {
+  display: flex;
+  min-width: 0;
+  scroll-snap-align: start;
+
+  &.-skeleton {
+    flex-direction: column;
+    gap: 10px;
+
+    i,
+    b {
+      display: block;
+      border-radius: 10px;
+      background: linear-gradient(100deg, #f1f1f1 30%, #f8f8f8 50%, #f1f1f1 70%) 0 0 / 300% 100%;
+      animation: t-shimmer 1.4s linear infinite;
+    }
+
+    i {
+      aspect-ratio: 1;
+    }
+
+    b {
+      height: 14px;
+      width: 80%;
+      border-radius: 4px;
+
+      &.-short {
+        width: 50%;
+      }
+    }
+  }
+}
+
+/* ▆▆▆▆▆▆▆▆ The card ▆▆▆▆▆▆▆▆ */
+
+.t-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  font-family: var(--k-body);
+
+  &__pic {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    background: var(--k-well);
+
+    img {
+      width: 78%;
+      height: 78%;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+      transition: transform 220ms ease;
+    }
+
+    &:hover img {
+      transform: scale(1.04);
+    }
+  }
+
+  &__tag {
+    position: absolute;
+    top: 8px;
+    inset-inline-start: 8px;
+    padding: 3px 7px;
+    border-radius: 4px;
+    background: var(--k-green);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  &__price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 7px;
+    margin-top: 10px;
+  }
+
+  &__now {
+    color: var(--k-ink) !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+  }
+
+  &.-sale &__now {
+    color: var(--k-green) !important;
+  }
+
+  &__was {
+    color: var(--k-muted);
+    font-size: 13px;
+    text-decoration: none;
+
+    .u--price {
+      color: var(--k-muted) !important;
+      font-size: 13px !important;
+      font-weight: 400 !important;
+    }
+  }
+
+  &__sale {
+    color: var(--k-green);
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  &__name {
+    display: -webkit-box;
+    min-height: 2.7em;
+    margin-top: 4px;
+    overflow: hidden;
+    color: var(--k-ink) !important;
+    font-size: 14.5px;
+    line-height: 1.35;
+    text-decoration: none;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  }
+
+  &__rate {
+    margin-top: 4px;
+  }
+
+  &__unit {
+    margin: 2px 0 0;
+    color: var(--k-muted);
+    font-size: 12.5px;
+  }
+
+  &__by {
+    margin-top: 3px;
+  }
+
+  &__foot {
+    margin-top: auto;
+    padding-top: 10px;
+  }
+
+  .k-card-add,
+  .k-card-step.-card {
+    height: 40px;
+  }
+
+  .k-card-add {
+    font-size: 14.5px;
+  }
+}
+
+/* The big-box foot on every card in Tario (the home's, the catalogue's,
+   an aisle's): a red, square-cornered "Add to cart" with no "+", "Choose
+   options" in grey outline, and "− n in cart +" on white. */
+.k-card-add,
+.k-card-step.-card {
+  border-radius: 8px !important;
+}
+
+.k-card-add {
+  .v-icon {
+    display: none;
+  }
+
+  &.-options {
+    border-color: #cfcfcf !important;
+    color: var(--k-ink) !important;
+
+    &:hover {
+      border-color: var(--k-ink) !important;
+      background: #fff !important;
+    }
+  }
+}
+
+.k-card-step.-card {
+  background: #fff !important;
+
+  button {
+    color: var(--k-green) !important;
+
+    &:hover:not(:disabled) {
+      background: var(--k-green-soft) !important;
+    }
+  }
+
+  .k-card-step__count {
+    color: var(--k-ink);
+  }
+}
+
+
+/* ▆▆▆▆▆▆▆▆ Shop our sellers ▆▆▆▆▆▆▆▆ */
+
+.t-sellers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+
+  @media (max-width: $t-phone) {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+.t-seller {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--k-line);
+  border-radius: 14px;
+  color: var(--k-ink) !important;
+  text-decoration: none;
+  transition: border-color 140ms ease;
+
+  &:hover {
+    border-color: var(--k-ink-2);
+  }
+
+  &__mark {
+    display: grid;
+    place-items: center;
+    flex: none;
+    overflow: hidden;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--k-wash);
+    color: var(--k-green);
+    font-size: 22px;
+    font-weight: 800;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__text {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+
+    b {
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    span {
+      display: -webkit-box;
+      overflow: hidden;
+      color: var(--k-muted);
+      font-size: 14px;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    u {
+      color: var(--k-green);
+      font-size: 14px;
+      font-weight: 700;
+      text-underline-offset: 3px;
+    }
+  }
+
+  &__pics {
+    display: flex;
+    flex: none;
+    gap: 8px;
+    margin-inline-start: auto;
+
+    img {
+      width: 56px;
+      height: 56px;
+      padding: 6px;
+      border-radius: 10px;
+      background: var(--k-well);
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+  }
+
+  @media (max-width: $t-tablet) {
+    &__pics img:nth-child(n + 3) {
+      display: none;
+    }
+  }
+
+  @media (max-width: $t-phone) {
+    padding: 14px;
+    gap: 12px;
+
+    &__pics img:nth-child(n + 2) {
+      display: none;
+    }
+  }
+}
+
+
+/* ▆▆▆▆▆▆▆▆ Walio's home (design B) ▆▆▆▆▆▆▆▆ */
+
+.w-home {
+  padding-top: 18px;
+}
+
+.w-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: 14px;
+
+  &__main {
+    position: relative;
+    display: block;
+    min-height: 360px;
+    border-radius: 14px;
+    overflow: hidden;
+    color: #fff !important;
+    text-decoration: none;
+
+    .t-photo {
+      position: absolute;
+      inset: 0;
+      height: 100%;
+      border-radius: 0;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(0, 32, 70, 0.72) 0%, rgba(0, 32, 70, 0.35) 55%, rgba(0, 32, 70, 0) 80%);
+    }
+  }
+
+  &__text {
+    position: absolute;
+    left: 28px;
+    bottom: 28px;
+    z-index: 1;
+    display: grid;
+    gap: 8px;
+    max-width: 440px;
+
+    b {
+      font-family: var(--k-display);
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+
+    small {
+      font-size: 15.5px;
+      opacity: 0.92;
+    }
+  }
+
+  &__go {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    width: max-content;
+    margin-top: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--k-green);
+    font-weight: 800;
+    font-size: 15px;
+  }
+
+  &__side {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 14px;
+  }
+
+  &__tile {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 20px;
+    border-radius: 14px;
+    overflow: hidden;
+    color: var(--k-ink) !important;
+    text-decoration: none;
+
+    > span:first-child {
+      display: grid;
+      align-content: start;
+      gap: 6px;
+      max-width: 60%;
+    }
+
+    small {
+      font-size: 12.5px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    b {
+      font-family: var(--k-display);
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    em {
+      align-self: end;
+      margin-top: auto;
+      font-style: normal;
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    &.-deals {
+      background: var(--k-green);
+      color: #fff !important;
+
+      small {
+        color: var(--k-leaf);
+      }
+    }
+
+    &.-new {
+      background: #fff4d6;
+
+      small {
+        color: var(--k-green);
+      }
+    }
+  }
+
+  &__packs {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+
+    img {
+      width: 58px;
+      height: 74px;
+      object-fit: contain;
+    }
+  }
+
+  .-deals .w-hero__packs img {
+    padding: 4px;
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  @media (max-width: $t-tablet) {
+    grid-template-columns: minmax(0, 1fr);
+
+    &__side {
+      grid-template-rows: none;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: $t-phone) {
+    &__main {
+      min-height: 300px;
+    }
+
+    &__text {
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+
+      b {
+        font-size: 28px;
+      }
+    }
+
+    &__side {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    &__tile b {
+      font-size: 20px;
+    }
+  }
+}
+
+.w-best {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+
+  &__top {
+    position: relative;
+    padding: 14px;
+    border: 2px solid var(--k-green);
+    border-radius: 14px;
+  }
+
+  &__flag {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--k-leaf);
+    color: var(--k-ink);
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  @media (max-width: $t-tablet) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    &__top {
+      grid-column: span 3;
+    }
+  }
+
+  @media (max-width: $t-phone) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    &__top {
+      grid-column: span 2;
+    }
+  }
+}
+
+.w-cats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+
+  @media (max-width: $t-phone) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
+.w-cat {
+  position: relative;
+  display: grid;
+  align-content: end;
+  min-height: 150px;
+  padding: 14px;
+  border-radius: 12px;
+  overflow: hidden;
+  color: var(--k-ink) !important;
+  text-decoration: none;
+
+  img {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 46%;
+    height: 62%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    transition: transform 200ms ease;
+  }
+
+  b {
+    position: relative;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  small {
+    position: relative;
+    color: var(--k-green);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+}
+
+.w-idea {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  border: 1px solid var(--k-line);
+  border-radius: 14px;
+  overflow: hidden;
+
+  &__photo {
+    min-height: 360px;
+    border-radius: 0 !important;
+  }
+
+  &__list {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    padding: 22px;
+
+    h3 {
+      margin: 0;
+      font-family: var(--k-display);
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    p {
+      margin: 0 0 6px;
+      color: var(--k-muted);
+    }
+  }
+
+  &__eyebrow {
+    color: var(--k-green);
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--k-wash);
+    color: var(--k-ink) !important;
+    font-size: 14.5px;
+    font-weight: 700;
+    text-decoration: none;
+
+    img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+
+    b {
+      font-size: 18px;
+    }
+  }
+
+  @media (max-width: $t-phone) {
+    grid-template-columns: minmax(0, 1fr);
+
+    &__photo {
+      min-height: 200px;
+    }
+
+    &__list {
+      padding: 16px;
+    }
+  }
+}
+
+.w-ways {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  border-radius: 14px;
+  overflow: hidden;
+
+  &__photo {
+    min-height: 300px;
+    border-radius: 0 !important;
+  }
+
+  &__panel {
+    padding: 28px;
+    background: var(--k-green);
+    color: #fff;
+
+    h2 {
+      margin: 0 0 16px;
+      font-family: var(--k-display);
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    ul {
+      display: grid;
+      gap: 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    li > span:last-child {
+      display: grid;
+    }
+
+    small {
+      opacity: 0.88;
+    }
+  }
+
+  &__ic {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--k-leaf);
+    color: var(--k-ink);
+  }
+
+  @media (max-width: $t-phone) {
+    grid-template-columns: minmax(0, 1fr);
+
+    &__photo {
+      min-height: 180px;
+    }
+
+    &__panel {
+      padding: 20px;
+
+      h2 {
+        font-size: 22px;
+      }
+    }
+  }
+}
+
+.w-sellers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+
+  @media (max-width: $t-phone) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.w-seller {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--k-line);
+  border-radius: 14px;
+  color: var(--k-ink) !important;
+  text-decoration: none;
+
+  &:hover {
+    border-color: var(--k-green);
+  }
+
+  &__mark {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--k-wash);
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__who {
+    display: grid;
+    min-width: 0;
+
+    b {
+      font-size: 17px;
+    }
+
+    small {
+      color: var(--k-muted);
+    }
+
+    em {
+      color: var(--k-green);
+      font-style: normal;
+      font-weight: 800;
+      text-decoration: underline;
+    }
+  }
+
+  &__packs {
+    display: flex;
+    gap: 6px;
+    margin-inline-start: auto;
+
+    img {
+      width: 44px;
+      height: 44px;
+      padding: 4px;
+      border-radius: 8px;
+      background: var(--k-wash);
+      object-fit: contain;
+    }
+
+    @media (max-width: $t-phone) {
+      display: none;
+    }
+  }
+}
+
+.t-btn.-main {
+  border: 0;
+  background: var(--k-green);
+  color: #fff !important;
+
+  &:hover {
+    background: var(--k-green-deep);
+  }
+}
+
+/* The home ends at its last section, not 64px of card padding later. */
+.s--shop-card:has(.t-home) {
+  padding-bottom: 0 !important;
+}

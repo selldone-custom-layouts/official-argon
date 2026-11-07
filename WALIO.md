@@ -40,6 +40,31 @@ Tario's checkout in numbered steps is kept too. [`KALIO.md`](KALIO.md) explains 
 - After a release, check all three addresses' `window.sdShopLayout` "saved" blocks.
 - The shop's name and logo come from its data, so the header says "molino".
 
+## Every page (1.1.0)
+
+Walio started as Tario 1.0.0 in blue. On 7 November 2026 the owner gave Walio the mockups Tario did not take (`kalio-design/tario-options/index.html`: every **B**, and product page **A**, since Tario took product B). The home is in `components/walio/WalioHome.vue`; the rest in `components/walio/shop/`, `components/walio/product/`, `WalioMiniCart.vue` and the pages; styles in `style/walio-home.scss` and `style/walio-pages.scss` (loaded after `walio-skin.scss`). Rows, cards, photos and the filter helpers are shared with Tario (`WalioRow`, `WalioCard`, `WalioPhoto`, `walio-home.ts`, `walio-filters.ts`; their CSS keeps Tario's `t-` classes).
+
+| Page | Design |
+| --- | --- |
+| Home | B: a split hero (photo + Deals and New tiles), Best saving today (the biggest saving large), category tiles, Top picks, Shop the idea (a photo beside four products from the breakfast aisle, Add all), Pickup or delivery panel, Trending in the fresh aisle, the sellers |
+| Aisle, search, Deals, All products | B: a banner on the aisle's tint (facts and packshots), a filter column beside the grid (On sale only, price with quick ranges, sizes as buttons, ticks), Sort by; a phone gets a Filters / Sort bar; a search shows its top match |
+| Seller | B: the seller's card in the column (numbers, the seller's aisles as a menu), a blue deals banner, a row per aisle, then everything |
+| Product | A: thumbnails under the picture, Shop all &lt;brand&gt;, "How do you want it?" tiles, the sellers as cards, free rules under Add to cart, "About this item" in tabs (Details, Specifications, Shipping &amp; returns), reviews, More in &lt;aisle&gt; |
+| Cart drawer | B: a small window under the cart button (a phone keeps the drawer) |
+| Checkout | B: Cart ✓ — Delivery — Contact — Review &amp; pay over the numbered step cards |
+| Sign-in | B: the sign-in as a whole page |
+| Account, Orders | B: the account's "home" design (greeting, tabs, overview; orders as a table), built with `scripts/release.sh <v> home` |
+| About | B: the story beside three photos, How an order works (from the shop's sellers and delivery methods), values, contact |
+| Terms, Privacy | B: four summary cards and folding sections (the shop's own page keeps its contents column) |
+| Journal | B: the list with a side column (Molino's) |
+| Article | B: the text with the shopping list in a side column |
+| Order | B: the receipt as paper beside the order |
+| 404 | B: a blue panel with a large 404 and a photo, then today's deals |
+
+- **Photos:** Tario's eleven lifestyle photos, as `assets/walio/walio-*.jpg`.
+- **Words:** "cart" everywhere ("Add to cart", "Cart", "Your cart is empty").
+
 ## Releases
 
+- **1.1.0 (7 November 2026):** every page from the mockups Tario did not take (the Bs, product A); see "Every page".
 - **1.0.0 (7 November 2026):** the first Walio.

@@ -42,20 +42,15 @@ Selldone's own basket, checkout, payments, vendor offers and orders keep working
 
 ## Highlights
 
-- **Header:** solid blue, with the shop's wordmark and a yellow round mark, an Aisles menu, a white search pill, Saved, Sign in and a **yellow Basket**. Below it, a white aisle bar with blue Deals.
-- **Home:**
-  - a deep-blue deals hero whose saving is in yellow, with a rail of today's best savings;
-  - "Shop by aisle" as round pictures;
-  - a row of best sellers for every aisle;
-  - an aisle mosaic, seller cards and a market shelf.
-- **Cards:** prices in heavy type (green when on offer, with the regular price struck) and gold stars once rated. A blue **Add to basket** turns into "− 1 in basket +" in place; products with sizes say "See options".
-- **Product page:**
-  - a gallery, details and a sticky buy box with every seller's offer;
-  - reviews in a summary column beside the comments.
-- **Checkout as steps:**
-  - **1 Review your items**;
-  - **2 Delivery & contact**: delivery method, a map-first address sheet, the email;
-  - **3 Order summary**: every line of Selldone's bill and a blue pill that leads to whatever is missing before it pays.
+- **Header:** solid blue, with the shop's wordmark and a yellow round mark, an Aisles menu, a white search pill, Saved, Sign in and a **yellow Cart** that opens a small window with the cart's lines, the subtotal, the saving and View cart / Check out (a phone keeps the side drawer). Below it, a white aisle bar with blue Deals.
+- **Home:** a split hero (a photo with the shop's line, a blue Deals tile with the week's best saving and a New tile), **Best saving today** (the biggest saving large), the aisles as coloured tiles, Top picks, **Shop the idea** (four breakfast products beside a photo, with Add all to cart), Pickup or delivery from the shop's own methods, Trending in the fresh aisle, and the sellers.
+- **Aisle, search, Deals, All products:** a banner on the aisle's tint with its numbers and packshots, a **filter column** beside the grid (On sale only, price with quick ranges, sizes as buttons, the aisle's own filters as ticks), and Sort by; a phone gets a Filters / Sort bar. A search shows its top match first.
+- **Seller pages:** a shop in the shop: the seller's card with their aisles as a menu, a blue deals banner, a row per aisle, then everything they sell.
+- **Cards:** prices in heavy type (green when on offer, with the regular price), the seller, and a blue **Add to cart** that turns into "− 1 in cart +" in place; products with sizes say "Choose options".
+- **Product page:** "Shop all &lt;brand&gt;", the price, the sizes, **How do you want it?** (Pickup / Delivery / Shipping with what each costs), the sellers as cards, Add to cart with the shop's free rules under it, and "About this item" in tabs.
+- **Checkout:** Cart ✓ — Delivery — Contact — Review & pay over numbered steps: review your items by seller, delivery and contact (a map-first address sheet), and an order summary that leads to whatever is missing.
+- **Account:** a greeting with tabs and an overview; orders as a table. **Sign-in** is a whole page.
+- **Pages:** About as a magazine (How an order works), Terms and Privacy as cards and folding sections, a journal with a side column, articles with a shopping column, and a blue 404.
 - **Everywhere:** no pop-ups and no phone bottom bar.
 
 ## Use it on your shop

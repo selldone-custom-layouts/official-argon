@@ -324,7 +324,7 @@ export default {
       if (this.is_fullscreen) {
         return 0;
       } else {
-        return "20vh";
+        return "24px"; // Walio: Selldone's 20vh left a blank band above the footer
       }
     },
 

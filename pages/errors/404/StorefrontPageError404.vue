@@ -12,35 +12,48 @@
   - Tread carefully, for you're treading on dreams.
   -->
 <template>
-  <!-- Kalio: a wrong turn in the market hall. Same platform data (the shop
-       title, the home route); Selldone's gradient tile and black bar
-       become an aisle sign with the way back. -->
-  <section class="k-404">
-    <p class="k-eyebrow">Page not found · 404</p>
-    <h1 class="k-404__title">This aisle doesn't exist.</h1>
-    <p class="k-404__lede">
-      The link may be out of date, or the address may have a typo.
-    </p>
-    <div class="k-404__acts">
-      <router-link :to="{ path: '/' }" class="k-btn k-btn--solid">
-        Back to {{ shop ? shop.title : $t("global.commons.home") }}
-      </router-link>
-    </div>
-  </section>
+  <!-- Walio 1.1.0 (404 design B): the home's split panel — a blue side with
+       a large 404 and the way back, a photo beside it — then today's deals. -->
+  <div class="w-404">
+    <section class="w-404__panel k-wrap">
+      <div class="w-404__l">
+        <span class="w-404__big">404</span>
+        <h1>We couldn't find that page</h1>
+        <p>It may have moved. Everything else is right where you left it — your cart included.</p>
+        <div class="w-404__acts">
+          <router-link :to="{ path: '/' }" class="w-404__btn -solid">Back to the home page</router-link>
+          <router-link :to="catalogue" class="w-404__btn -ghost">Browse every product</router-link>
+        </div>
+      </div>
+      <div :style="pic ? { backgroundImage: `url(${pic})` } : null" aria-hidden="true" class="w-404__r"></div>
+    </section>
+    <walio-row :filter="{ only_has_discount: true }" :limit="12" :more-to="deals" title="Today's top deals" />
+  </div>
 </template>
+
 <script lang="ts">
 import { defineComponent } from "vue";
+import WalioRow from "../../../components/walio/WalioRow.vue";
+import { photo } from "../../../components/walio/walio-home";
+import { catalogueRoute, dealsRoute } from "../../../components/kalio/kalio-catalog";
 
 export default defineComponent({
   name: "StorefrontPageError404",
-
-
+  components: { WalioRow },
   computed: {
     shop() {
       return this.getShop();
     },
+    pic() {
+      return photo("walio-hero-2-new");
+    },
+    deals() {
+      return dealsRoute();
+    },
+    catalogue() {
+      return catalogueRoute();
+    },
   },
 });
 </script>
-
 <style scoped lang="scss"></style>

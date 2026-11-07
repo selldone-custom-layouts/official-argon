@@ -24,65 +24,66 @@
   timeline (marked as examples) and a signature.
 -->
 <template>
-  <div class="k-story">
-    <aside class="k-story__side">
-      <div class="k-story__pic">
-        <img v-for="product in packs" :key="product.id" :src="picture(product)" alt="" />
+  <!-- Walio 1.1.0 (About design B, "the magazine"): the story beside three
+       photos, how an order works in four steps, what the shop stands for,
+       and how to reach it. The text is the shop's own About profile
+       (Selldone dashboard › Shop › Profile) when it has one; until then a
+       sample, marked as such. The steps are read from the shop: its
+       sellers and its delivery methods. -->
+  <div class="w-mag k-wrap">
+    <section class="w-mag__ed">
+      <div>
+        <p class="w-mag__eyebrow">About {{ shopTitle }}</p>
+        <h1>{{ missing || busy ? (sellers.length > 1 ? "Small grocers, one cart." : "One shop, one cart.") : `About ${shopTitle}` }}</h1>
+        <div v-if="busy" aria-hidden="true" class="k-legal__loading"><span></span><span></span><span></span></div>
+        <template v-else-if="missing">
+          <kalio-sample-note>This text is general copy written to show the page. It is not {{ shopTitle }}'s real story.</kalio-sample-note>
+          <p class="w-mag__lead">{{ sample.lead }}</p>
+          <p>{{ sample.text[0].replace("the basket", "the cart") }}</p>
+          <p class="w-mag__sign">{{ sample.sign }}</p>
+        </template>
+        <div v-else class="k-prose" v-html="profile.body"></div>
       </div>
-      <dl class="k-story__facts">
-        <template v-if="sellers.length">
-          <dt>{{ sellers.length === 1 ? "Seller" : "Sellers" }}</dt>
-          <dd>{{ sellers.map((it) => it.name).join(" · ") }}</dd>
-        </template>
-        <template v-if="aisleList.length">
-          <dt>Aisles</dt>
-          <dd>{{ aisleLine }}</dd>
-        </template>
-        <template v-if="productCount">
-          <dt>Products</dt>
-          <dd>About {{ productCount }}, in one basket</dd>
-        </template>
-        <dt>Contact</dt>
-        <dd>
-          <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }">Contact the shop</router-link>
-        </dd>
-      </dl>
-    </aside>
-
-    <div class="k-story__main">
-      <p class="k-eyebrow">A note from {{ shopTitle }}</p>
-      <h1 class="k-story__title">{{ missing || busy ? sample.title : `About ${shopTitle}` }}</h1>
-
-      <div v-if="busy" aria-hidden="true" class="k-legal__loading"><span></span><span></span><span></span></div>
-
-      <template v-else-if="missing">
-        <kalio-sample-note>
-          This letter is general text written to show the page. It is not {{ shopTitle }}'s real story; the timeline is an example.
-        </kalio-sample-note>
-        <p class="k-story__lead">{{ sample.lead }}</p>
-        <div class="k-prose">
-          <p v-for="text in sample.text" :key="text">{{ text }}</p>
-        </div>
-        <div class="k-story__values">
-          <div v-for="(value, i) in sample.values" :key="value.title">
-            <h2><em>{{ String(i + 1).padStart(2, "0") }}</em>{{ value.title }}</h2>
-            <p>{{ value.text }}</p>
-          </div>
-        </div>
-        <ol class="k-story__time">
-          <li v-for="step in sample.timeline" :key="step.when"><b>{{ step.when }}</b><span>{{ step.text }}</span></li>
-        </ol>
-        <p class="k-story__sign">{{ sample.sign }}</p>
-      </template>
-
-      <!-- The shop's own page, as written in its dashboard. -->
-      <div v-else class="k-story__real k-prose" v-html="profile.body"></div>
-
-      <div v-if="!busy" class="k-story__acts">
-        <router-link :to="catalogueRoute" class="k-btn k-btn--solid">Start shopping</router-link>
-        <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }" class="k-btn k-btn--line">Contact the shop</router-link>
+      <div aria-hidden="true" class="w-mag__photos">
+        <span v-for="ph in photos" :key="ph" :style="{ backgroundImage: `url(${ph})` }"></span>
       </div>
-    </div>
+    </section>
+
+    <section class="t-sec">
+      <header class="t-sec__head"><h2 class="t-sec__title">How an order works</h2></header>
+      <ol class="w-mag__how">
+        <li v-for="(st, i) in how" :key="st.t">
+          <i>{{ i + 1 }}</i>
+          <b>{{ st.t }}</b>
+          <p>{{ st.p }}</p>
+        </li>
+      </ol>
+    </section>
+
+    <section v-if="missing" class="t-sec">
+      <div class="w-mag__vals">
+        <div v-for="(value, i) in sample.values" :key="value.title">
+          <v-icon size="26">{{ ICONS[i] || "check_circle" }}</v-icon>
+          <b>{{ value.title }}</b>
+          <p>{{ value.text }}</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="t-sec w-mag__contact">
+      <div>
+        <p class="w-mag__eyebrow">Contact us</p>
+        <h2>Still need us?</h2>
+        <p>
+          For an order, the fastest way is the message thread on the order page: it goes straight to the seller who
+          packed it. For anything else, write to us.
+        </p>
+      </div>
+      <div class="w-mag__acts">
+        <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }" class="t-btn -main">Write to us</router-link>
+        <router-link :to="catalogueRoute" class="t-btn -line">Start shopping</router-link>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -90,6 +91,7 @@
 import KalioSampleNote from "@app-storefront/components/kalio/pages/KalioSampleNote.vue";
 import { aboutSample, plainText } from "@app-storefront/components/kalio/pages/kalio-sample-pages";
 import { aisles, catalogueRoute, countProducts, productImage, vendors } from "@app-storefront/components/kalio/kalio-catalog";
+import { photo, waysOf } from "@app-storefront/components/walio/walio-home";
 
 export default {
   name: "StorefrontPageOfficialAboutUs",
@@ -104,11 +106,26 @@ export default {
     sellers: [],
     aisleList: [],
     productCount: null,
+    ICONS: ["sell", "storefront", "eco", "chat_bubble_outline"],
   }),
 
   computed: {
     shopTitle() {
       return this.$shop?.title || "This shop";
+    },
+    photos() {
+      return ["walio-finds-produce", "walio-tile-bakery", "walio-finds-coffee"].map(photo).filter(Boolean);
+    },
+    /* The four steps, in the shop's own terms. */
+    how() {
+      const ways = waysOf(this.$shop).map((w) => w.word.toLowerCase());
+      const many = this.sellers.length > 1;
+      return [
+        { t: many ? "Pick from any seller" : "Pick from every aisle", p: many ? "Every aisle shows each seller's own products and prices." : "Every aisle, every price, in one place." },
+        { t: "One checkout", p: many ? "One cart, one payment, however many sellers you shop." : "One cart and one payment." },
+        { t: many ? "Each seller packs" : "We pack it", p: many ? "Your order is split into a package per seller." : "Your order is packed as soon as it is placed." },
+        { t: "Delivered your way", p: ways.length ? `${ways.join(", ").replace(/, ([^,]*)$/, " or $1")}, as you choose at checkout.` : "As you choose at checkout." },
+      ].map((st) => ({ ...st, p: st.p.charAt(0).toUpperCase() + st.p.slice(1) }));
     },
     sample() {
       return aboutSample(this.shopTitle);

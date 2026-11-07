@@ -139,14 +139,26 @@
             </button>
           </template>
 
+          <!-- Walio 1.1.0 (drawer design B): on a computer the cart opens as a
+               small window under the button; a phone keeps the side drawer. -->
+          <v-menu v-if="!compact" v-model="mini" :close-on-content-click="false" location="bottom end" offset="10">
+            <template v-slot:activator="{ props }">
+              <button :aria-label="`Cart, ${itemsCount} items`" class="k-header__basket" type="button" v-bind="props">
+                <v-icon size="20">shopping_cart</v-icon>
+                <span>Cart</span>
+                <em v-if="itemsCount">{{ itemsCount }}</em>
+              </button>
+            </template>
+            <walio-mini-cart @close="mini = false" />
+          </v-menu>
           <button
-            :aria-label="`Basket, ${itemsCount} items`"
+            v-else
+            :aria-label="`Cart, ${itemsCount} items`"
             class="k-header__basket"
             type="button"
             @click="basket = true"
           >
-            <v-icon size="20">shopping_bag</v-icon>
-            <span v-if="!compact">Basket</span>
+            <v-icon size="20">shopping_cart</v-icon>
             <em v-if="itemsCount">{{ itemsCount }}</em>
           </button>
         </nav>
@@ -219,7 +231,7 @@
       >
         <div class="k-drawer__head">
           <p class="k-drawer__title">
-            Your basket<small v-if="basketUnits">{{ basketUnits }} {{ basketUnits === 1 ? "item" : "items" }}</small>
+            Your cart<small v-if="basketUnits">{{ basketUnits }} {{ basketUnits === 1 ? "item" : "items" }}</small>
           </p>
           <button aria-label="Close" class="k-header__icon" type="button" @click="basket = false">
             <v-icon>close</v-icon>
@@ -229,7 +241,7 @@
              nowhere to go; Kalio's offers the way back to the shelves. -->
         <div v-if="!itemsCount" class="k-drawer__empty">
           <span aria-hidden="true" class="k-drawer__empty-mark"><v-icon size="30">shopping_bag</v-icon></span>
-          <p class="k-drawer__empty-title">Your basket is empty</p>
+          <p class="k-drawer__empty-title">Your cart is empty</p>
           <p class="k-drawer__empty-text">Pick something from the aisles and it will wait for you here.</p>
           <div class="k-drawer__empty-ctas">
             <router-link :to="dealsRoute" class="k-btn k-btn--solid" @click="basket = false">Shop today’s deals</router-link>
@@ -317,10 +329,12 @@ import KalioBasketDrawer from "./KalioBasketDrawer.vue";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import { aisleImage, aisleRoute, aisles, catalogueRoute, dealsRoute, tintFor } from "../kalio-catalog";
 import { basketView } from "../kalio-basket";
+import WalioMiniCart from "../../walio/WalioMiniCart.vue";
 
 export default {
   name: "KalioHeader",
   components: {
+    WalioMiniCart,
     SStorefrontSearchBox,
     SLanguageSelector,
     UCurrencySelector,
@@ -343,6 +357,7 @@ export default {
       aisleList: [],
       aisles_open: false,
       basket: false,
+      mini: false,
       menu: false,
       phone_search: false,
       windowWidth: window.innerWidth,
@@ -413,6 +428,7 @@ export default {
     $route() {
       this.menu = false;
       this.basket = false;
+      this.mini = false;
       this.phone_search = false;
     },
   },

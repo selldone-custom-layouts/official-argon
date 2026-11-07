@@ -37,12 +37,23 @@
       </nav>
 
       <div class="k-cart__head">
-        <h1 class="k-cart__title">Your basket</h1>
+        <h1 class="k-cart__title">Checkout</h1>
         <span v-if="seller_count > 1" class="k-cart__one">
-          <v-icon size="18">storefront</v-icon>{{ seller_count }} sellers, one basket and one checkout.
+          <v-icon size="18">storefront</v-icon>{{ seller_count }} sellers, one cart and one checkout.
         </span>
         <s-shop-share-order-button v-if="basket?.items?.length" :basket="basket" class="k-cart__share" />
       </div>
+
+      <!-- Walio 1.1.0 (checkout design B): where the shopper is, as steps.
+           Each step is done when Selldone has what it needs: the items, an
+           address (or nothing to deliver), a way to send the receipt. -->
+      <ol v-if="basket?.items?.length" aria-label="Checkout steps" class="w-stepper">
+        <li v-for="(st, i) in steps" :key="st.key" :class="st.state" class="w-stepper__s">
+          <span v-if="i" aria-hidden="true" class="w-stepper__ln"></span>
+          <i aria-hidden="true"><v-icon v-if="st.state === '-done'" size="16">check</v-icon><template v-else>{{ i + 1 }}</template></i>
+          <span>{{ st.label }}</span>
+        </li>
+      </ol>
 
       <nav v-if="filtered_types.length > 1" aria-label="Baskets" class="k-cart__types">
         <button
@@ -689,7 +700,7 @@ export default {
     },
 
     raw_items_price() {
-      return this.bill.items_price;
+      return this.bill ? this.bill.items_price : 0;
     },
 
     //-------------- Coupon ---------------
@@ -1005,6 +1016,19 @@ export default {
         return place ? `Pickup from ${place}.` : `${name}.`;
       }
       return this.shipping_cost === 0 ? `${name}, free.` : `${name}.`;
+    },
+    /* Walio: the four steps over the checkout. */
+    steps() {
+      const delivery = !this.has_delivery || this.isService || (this.is_valid_location && !this.error_message_payment);
+      const contact = !!this.user || (this.has_guest_payment && !!this.guest_email && this.guest_email_ok);
+      const list = [
+        { key: "cart", label: "Cart", done: true },
+        { key: "delivery", label: "Delivery", done: delivery },
+        { key: "contact", label: "Contact", done: contact },
+        { key: "pay", label: "Review & pay", done: false },
+      ];
+      const now = list.findIndex((s) => !s.done);
+      return list.map((s, i) => ({ ...s, state: s.done ? "-done" : i === now ? "-now" : "" }));
     },
     detail_cards() {
       return (this.show_when ? 1 : 0) + (this.has_delivery ? 1 : 0) + 1;

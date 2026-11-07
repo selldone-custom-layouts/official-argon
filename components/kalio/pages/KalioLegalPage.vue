@@ -34,15 +34,17 @@
         }}
       </kalio-sample-note>
 
-      <section v-if="missing" class="k-legal__short">
-        <h2>The short version</h2>
-        <ul>
-          <li v-for="line in sample.short" :key="line"><v-icon size="18">check</v-icon>{{ line }}</li>
-        </ul>
+      <!-- Walio 1.1.0 (Terms and Privacy design B): the short version as four
+           cards, and the sections as folding rows. -->
+      <section v-if="missing" aria-label="The short version" class="w-cards4">
+        <div v-for="(line, i) in sample.short.slice(0, 4)" :key="line">
+          <v-icon size="26">{{ ["storefront", "payments", "assignment_return", "chat_bubble_outline"][i] }}</v-icon>
+          <p>{{ line }}</p>
+        </div>
       </section>
 
-      <div :class="{ '-solo': !toc.length }" class="k-legal__cols">
-        <nav v-if="toc.length" aria-label="On this page" class="k-legal__toc">
+      <div :class="{ '-solo': !toc.length || missing }" class="k-legal__cols">
+        <nav v-if="toc.length && !missing" aria-label="On this page" class="k-legal__toc">
           <p>On this page</p>
           <a
             v-for="entry in toc"
@@ -58,10 +60,18 @@
 
         <div ref="text" class="k-legal__text k-prose">
           <template v-if="missing">
-            <section v-for="(section, i) in sample.sections" :id="`k-legal-${i + 1}`" :key="section.title" class="k-legal__sec">
-              <h2><span>{{ i + 1 }}.</span>{{ section.title }}</h2>
-              <p v-for="text in section.text" :key="text">{{ text }}</p>
-            </section>
+            <details
+              v-for="(section, i) in sample.sections"
+              :id="`k-legal-${i + 1}`"
+              :key="section.title"
+              :open="i === 0"
+              class="w-acc"
+            >
+              <summary><span class="w-acc__n">{{ i + 1 }}</span>{{ section.title }}<v-icon aria-hidden="true">expand_more</v-icon></summary>
+              <div class="w-acc__in">
+                <p v-for="text in section.text" :key="text">{{ text }}</p>
+              </div>
+            </details>
           </template>
 
           <!-- The shop's own page, as written in its dashboard. -->

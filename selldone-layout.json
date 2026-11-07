@@ -2,7 +2,7 @@
   "name": "Walio Market",
   "shop": "molino",
   "kind": "Grocery marketplace · blue superstore",
-  "summary": "The molino grocery marketplace dressed as an everyday-low-price superstore: a blue header with a white search and a yellow basket, savings in green, Add to basket that turns into − n +, reviews, and a checkout in numbered steps.",
+  "summary": "The molino grocery marketplace as a blue superstore: a split hero with deal tiles, best savings, category tiles and shop-the-idea lists, aisles with a banner and a filter column, a classic product page with delivery choices, a cart window under the cart button, a stepped checkout, and seller pages as a shop in the shop.",
   "live": "https://walio.selldone.shop",
   "cover": "docs/screenshots/cover.jpg",
   "screenshots": [
