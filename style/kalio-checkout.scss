@@ -54,8 +54,8 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: #fff;
-    color: var(--k-green) !important;
+    background: var(--k-card);
+    color: var(--k-green-t) !important;
     box-shadow: 0 4px 10px -4px rgba(20, 20, 20, 0.35);
     transition: background 0.15s, color 0.15s;
 
@@ -98,7 +98,7 @@
     padding: 4px 20px;
     border: 1px solid var(--k-line);
     border-radius: 22px;
-    background: #fff;
+    background: var(--k-card);
   }
 
   &__head {
@@ -120,7 +120,7 @@
       display: grid;
       place-items: center;
       background: var(--k-green-soft);
-      color: var(--k-green);
+      color: var(--k-green-t);
     }
   }
 
@@ -206,11 +206,11 @@
   }
 
   &__offer {
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
   }
 
   &__short {
-    color: var(--k-coral) !important;
+    color: var(--k-coral-t) !important;
   }
 
   &__qty {
@@ -220,7 +220,7 @@
     height: 34px;
     border: 1px solid var(--k-line);
     border-radius: var(--k-pill);
-    background: #fff;
+    background: var(--k-card);
     text-align: center;
 
     button {
@@ -228,7 +228,7 @@
       place-items: center;
       height: 32px;
       border-radius: var(--k-pill);
-      color: var(--k-green-deep) !important;
+      color: var(--k-green-deep-t) !important;
 
       &:hover:not(:disabled) {
         background: var(--k-wash);
@@ -315,7 +315,7 @@
     color: var(--k-ink-2, #3a3a3a);
 
     .v-icon {
-      color: var(--k-green);
+      color: var(--k-green-t);
     }
   }
 
@@ -349,9 +349,9 @@
       }
 
       &.-on {
-        border-color: var(--k-green);
+        border-color: var(--k-green-t);
         background: var(--k-green-soft);
-        color: var(--k-green-deep) !important;
+        color: var(--k-green-deep-t) !important;
       }
     }
   }
@@ -378,7 +378,7 @@
     padding: 0 6px !important;
     background: transparent !important;
     box-shadow: none !important;
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
     font-size: 14px !important;
     font-weight: 700 !important;
     letter-spacing: 0 !important;
@@ -421,7 +421,7 @@
     padding: 18px;
     border: 1px solid var(--k-line);
     border-radius: 20px;
-    background: #fff;
+    background: var(--k-card);
 
     h3 {
       display: flex;
@@ -453,7 +453,7 @@
     height: 32px;
     border-radius: 10px;
     background: var(--k-green-soft);
-    color: var(--k-green);
+    color: var(--k-green-t);
   }
 
   &__chips {
@@ -469,16 +469,16 @@
     padding: 0 13px;
     border: 1px solid var(--k-line);
     border-radius: var(--k-pill);
-    background: #fff;
+    background: var(--k-card);
     font-size: 13.5px;
     font-weight: 600;
     color: var(--k-ink) !important;
 
     &.-on {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
       background: var(--k-green-soft);
-      box-shadow: inset 0 0 0 1px var(--k-green);
-      color: var(--k-green-deep) !important;
+      box-shadow: inset 0 0 0 1px var(--k-green-t);
+      color: var(--k-green-deep-t) !important;
     }
   }
 
@@ -491,13 +491,13 @@
     padding: 0 16px;
     border: 1px dashed #cfc8b8;
     border-radius: 14px;
-    background: var(--k-well);
-    color: var(--k-green-deep) !important;
+    background: var(--k-card);
+    color: var(--k-green-deep-t) !important;
     font-size: 14px;
     font-weight: 600;
 
     &:hover {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
     }
   }
 
@@ -517,7 +517,7 @@
 
   &__link {
     padding: 0;
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
     font-size: 14px;
     font-weight: 700;
 
@@ -569,19 +569,19 @@
     padding: 0 14px;
     border: 1px solid var(--k-line);
     border-radius: 14px;
-    background: #fff;
+    background: var(--k-card);
     font: inherit;
     font-size: 14.5px;
     color: var(--k-ink);
     outline: none;
 
     &:focus {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
       box-shadow: 0 0 0 3px var(--k-green-soft);
     }
 
     &.-error {
-      border-color: var(--k-coral);
+      border-color: var(--k-coral-t);
     }
   }
 
@@ -591,7 +591,7 @@
     gap: 6px;
     margin: 0;
     font-size: 13.5px;
-    color: var(--k-coral);
+    color: var(--k-coral-t);
 
     &.-center {
       justify-content: center;
@@ -668,9 +668,9 @@
         text-transform: none !important;
 
         &.bg-primary {
-          background: #fff !important;
+          background: var(--k-card) !important;
           box-shadow: 0 1px 4px rgba(20, 20, 20, 0.15) !important;
-          color: var(--k-green-deep) !important;
+          color: var(--k-green-deep-t) !important;
         }
       }
     }
@@ -720,7 +720,7 @@
     position: relative;
     padding: 24px 24px 22px;
     border-radius: 26px;
-    background: var(--k-well);
+    background: var(--k-card);
   }
 
   &__top {
@@ -764,7 +764,7 @@
     padding: 7px 12px;
     border-radius: var(--k-pill);
     background: var(--k-coral-soft);
-    color: var(--k-coral);
+    color: var(--k-coral-t);
     font-size: 13.5px;
     font-weight: 700;
     white-space: nowrap;
@@ -800,11 +800,11 @@
 
     &.-save,
     &.-save > span:last-child {
-      color: var(--k-coral);
+      color: var(--k-coral-t);
     }
 
     &.-free > span:last-child {
-      color: var(--k-green);
+      color: var(--k-green-t);
     }
   }
 
@@ -833,7 +833,7 @@
       padding: 0 14px !important;
       border: 1px solid var(--k-line);
       border-radius: 14px !important;
-      background: #fff !important;
+      background: var(--k-card) !important;
       box-shadow: none !important;
       color: var(--k-ink) !important;
       font-size: 14.5px !important;
@@ -844,7 +844,7 @@
       .v-icon {
         margin: 0 8px 0 0 !important;
         font-size: 16px !important;
-        color: var(--k-green);
+        color: var(--k-green-t);
       }
     }
 
@@ -856,7 +856,7 @@
 
       .v-field {
         border-radius: 14px !important;
-        background: #fff !important;
+        background: var(--k-card) !important;
       }
     }
 
@@ -1001,7 +1001,7 @@
       gap: 14px;
       padding: 12px 16px calc(14px + env(safe-area-inset-bottom));
       border-top: 1px solid var(--k-line);
-      background: #fff;
+      background: var(--k-card);
       box-shadow: 0 -12px 30px -20px rgba(20, 20, 20, 0.35);
 
 
@@ -1099,7 +1099,7 @@
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 48px);
-  background: #fff;
+  background: var(--k-card);
   font-family: var(--k-body);
   color: var(--k-ink);
   text-align: start;
@@ -1158,7 +1158,7 @@
     gap: 12px;
     padding: 14px 28px 22px;
     border-top: 1px solid var(--k-line-soft);
-    background: #fff;
+    background: var(--k-card);
   }
 
   &__go {
@@ -1188,7 +1188,7 @@
     height: 54px;
     padding: 0 20px;
     border-radius: var(--k-pill);
-    color: var(--k-green-deep) !important;
+    color: var(--k-green-deep-t) !important;
     font-weight: 700;
   }
 
@@ -1261,9 +1261,9 @@
     height: 50px;
     padding: 0 16px;
     border-radius: var(--k-pill);
-    background: #fff;
+    background: var(--k-card);
     box-shadow: 0 10px 24px -14px rgba(20, 20, 20, 0.45);
-    color: var(--k-green);
+    color: var(--k-green-t);
 
     input {
       flex: 1;
@@ -1296,7 +1296,7 @@
     overflow: auto;
     list-style: none;
     border-radius: 18px;
-    background: #fff;
+    background: var(--k-card);
     box-shadow: 0 18px 40px -20px rgba(20, 20, 20, 0.5);
 
     &.-inline {
@@ -1330,7 +1330,7 @@
 
       .v-icon {
         margin-top: 2px;
-        color: var(--k-green);
+        color: var(--k-green-t);
       }
 
       b {
@@ -1405,9 +1405,9 @@
     height: 44px;
     padding: 0 16px;
     border-radius: var(--k-pill);
-    background: #fff;
+    background: var(--k-card);
     box-shadow: 0 10px 24px -14px rgba(20, 20, 20, 0.45);
-    color: var(--k-green-deep) !important;
+    color: var(--k-green-deep-t) !important;
     font-size: 14px;
     font-weight: 700;
   }
@@ -1419,7 +1419,7 @@
     z-index: 2;
     display: grid;
     border-radius: 14px;
-    background: #fff;
+    background: var(--k-card);
     box-shadow: 0 10px 24px -14px rgba(20, 20, 20, 0.45);
     overflow: hidden;
 
@@ -1492,9 +1492,9 @@
     color: var(--k-ink) !important;
 
     &.-on {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
       background: var(--k-green-soft);
-      color: var(--k-green-deep) !important;
+      color: var(--k-green-deep-t) !important;
     }
   }
 
@@ -1518,7 +1518,7 @@
     }
 
     &.-empty {
-      background: var(--k-well);
+      background: var(--k-card);
     }
   }
 
@@ -1529,8 +1529,8 @@
     width: 38px;
     height: 38px;
     border-radius: 12px;
-    background: #fff;
-    color: var(--k-green);
+    background: var(--k-card);
+    color: var(--k-green-t);
   }
 
   &__two {
@@ -1552,7 +1552,7 @@
 
       em {
         font-style: normal;
-        color: var(--k-coral);
+        color: var(--k-coral-t);
       }
     }
 
@@ -1564,14 +1564,14 @@
       padding: 0 14px;
       border: 1px solid var(--k-line);
       border-radius: 14px;
-      background: #fff;
+      background: var(--k-card);
       font: inherit;
       font-size: 15px;
       color: var(--k-ink);
       outline: none;
 
       &:focus {
-        border-color: var(--k-green);
+        border-color: var(--k-green-t);
         box-shadow: 0 0 0 3px var(--k-green-soft);
       }
     }
@@ -1588,7 +1588,7 @@
     }
 
     &.-error input {
-      border-color: var(--k-coral);
+      border-color: var(--k-coral-t);
     }
   }
 
@@ -1598,7 +1598,7 @@
     gap: 6px;
     margin: 0 auto 0 0;
     font-size: 13.5px;
-    color: var(--k-coral);
+    color: var(--k-coral-t);
   }
 
   .mapboxgl-ctrl-attrib {
@@ -1699,8 +1699,8 @@
   padding: 0 14px;
   border: 1px solid var(--k-line);
   border-radius: var(--k-pill);
-  background: #fff;
-  color: var(--k-green-deep) !important;
+  background: var(--k-card);
+  color: var(--k-green-deep-t) !important;
   font-size: 13.5px;
   font-weight: 700;
 }
@@ -1744,7 +1744,7 @@
     color: var(--k-ink);
 
     &.-free {
-      color: var(--k-green);
+      color: var(--k-green-t);
     }
   }
 
@@ -1776,13 +1776,13 @@
     padding: 14px 16px;
     border: 1px solid var(--k-line);
     border-radius: 18px;
-    background: #fff;
+    background: var(--k-card);
     text-align: start;
     color: var(--k-ink) !important;
 
     &.-on {
-      border-color: var(--k-green);
-      box-shadow: inset 0 0 0 1px var(--k-green);
+      border-color: var(--k-green-t);
+      box-shadow: inset 0 0 0 1px var(--k-green-t);
     }
   }
 
@@ -1795,7 +1795,7 @@
     border-radius: 50%;
 
     .-on > & {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
 
       &::after {
         content: "";
@@ -1817,7 +1817,7 @@
     &.-pickup {
       display: grid;
       place-items: center;
-      color: var(--k-green);
+      color: var(--k-green-t);
     }
   }
 
@@ -1838,7 +1838,7 @@
   &__free {
     font-size: 14px;
     font-weight: 700;
-    color: var(--k-green);
+    color: var(--k-green-t);
     white-space: nowrap;
   }
 
@@ -1856,7 +1856,7 @@
     padding: 12px 14px;
     border: 1px solid var(--k-line);
     border-radius: 16px;
-    background: #fff;
+    background: var(--k-card);
     text-align: start;
     color: var(--k-ink) !important;
 
@@ -1870,9 +1870,9 @@
     }
 
     &.-on {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
       background: var(--k-green-soft);
-      box-shadow: inset 0 0 0 1px var(--k-green);
+      box-shadow: inset 0 0 0 1px var(--k-green-t);
     }
   }
 
@@ -1887,16 +1887,16 @@
     padding: 0 14px;
     border: 1px solid var(--k-line);
     border-radius: var(--k-pill);
-    background: #fff;
+    background: var(--k-card);
     font-size: 14px;
     font-weight: 600;
     color: var(--k-ink) !important;
 
     &.-on {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
       background: var(--k-green-soft);
-      box-shadow: inset 0 0 0 1px var(--k-green);
-      color: var(--k-green-deep) !important;
+      box-shadow: inset 0 0 0 1px var(--k-green-t);
+      color: var(--k-green-deep-t) !important;
     }
 
     &:disabled {
@@ -1918,7 +1918,7 @@
     padding: 12px 34px 12px 14px;
     border: 1px solid var(--k-line);
     border-radius: 16px;
-    background: #fff;
+    background: var(--k-card);
     text-align: start;
     color: var(--k-ink) !important;
 
@@ -1933,9 +1933,9 @@
     }
 
     &.-on {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
       background: var(--k-green-soft);
-      box-shadow: inset 0 0 0 1px var(--k-green);
+      box-shadow: inset 0 0 0 1px var(--k-green-t);
     }
 
     &:disabled {
@@ -1947,7 +1947,7 @@
     position: absolute;
     top: 8px;
     right: 8px;
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
   }
 
   &__date {
@@ -1995,7 +1995,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
   .v-toolbar {
     height: auto !important;
     padding: 20px 16px 4px 28px;
-    background: #fff !important;
+    background: var(--k-card) !important;
   }
 
   .v-toolbar__content {
@@ -2040,7 +2040,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     margin-top: 6px;
     padding: 16px 20px;
     border-radius: 22px;
-    background: var(--k-well);
+    background: var(--k-card);
 
     > small {
       font-size: 12px;
@@ -2105,14 +2105,14 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     margin: 0 !important;
     border: 1px solid var(--k-line) !important;
     border-radius: 18px !important;
-    background: #fff !important;
+    background: var(--k-card) !important;
     box-shadow: none !important;
     transform: none !important;
     overflow: hidden;
 
     &:hover {
-      border-color: var(--k-green) !important;
-      box-shadow: inset 0 0 0 1px var(--k-green) !important;
+      border-color: var(--k-green-t) !important;
+      box-shadow: inset 0 0 0 1px var(--k-green-t) !important;
 
       .left-side {
         width: var(--left-side-w) !important;
@@ -2174,7 +2174,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     }
 
     .arrow {
-      color: var(--k-green) !important;
+      color: var(--k-green-t) !important;
     }
 
     &.pen {
@@ -2293,7 +2293,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
   }
 
   &__sub a {
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
     font-weight: 700;
   }
 
@@ -2312,9 +2312,9 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     padding: 0 18px !important;
     border: 1px solid #d8e6f5;
     border-radius: var(--k-pill) !important;
-    background: #fff !important;
+    background: var(--k-card) !important;
     box-shadow: none !important;
-    color: var(--k-green-deep) !important;
+    color: var(--k-green-deep-t) !important;
     font-size: 14.5px !important;
     font-weight: 700 !important;
     letter-spacing: 0 !important;
@@ -2374,12 +2374,12 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       height: 27px;
       border: 2px solid var(--k-line);
       border-radius: 50%;
-      background: #fff;
+      background: var(--k-card);
       font-style: normal;
     }
 
     &.-done > i {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
       background: var(--k-green);
 
       .v-icon {
@@ -2388,7 +2388,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     }
 
     &.-now > i {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
       box-shadow: 0 0 0 5px var(--k-green-soft);
 
       &::after {
@@ -2449,7 +2449,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       padding: 20px !important;
       border: 1px solid var(--k-line) !important;
       border-radius: 22px !important;
-      background: #fff !important;
+      background: var(--k-card) !important;
       box-shadow: none !important;
     }
 
@@ -2461,7 +2461,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       color: var(--k-ink);
 
       .v-icon {
-        color: var(--k-green) !important;
+        color: var(--k-green-t) !important;
       }
     }
 
@@ -2475,9 +2475,9 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       height: 48px !important;
       border: 1px solid var(--k-line) !important;
       border-radius: var(--k-pill) !important;
-      background: #fff !important;
+      background: var(--k-card) !important;
       box-shadow: none !important;
-      color: var(--k-green-deep) !important;
+      color: var(--k-green-deep-t) !important;
       font-weight: 700 !important;
       letter-spacing: 0 !important;
       text-transform: none !important;
@@ -2509,7 +2509,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     margin: 0;
     padding: 12px 14px;
     border-radius: 14px;
-    background: #fff;
+    background: var(--k-card);
     font-size: 14px;
     color: var(--k-ink-2, #3a3a3a);
 
@@ -2530,12 +2530,12 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     height: 50px;
     border: 1px solid var(--k-line);
     border-radius: var(--k-pill);
-    color: var(--k-green-deep) !important;
+    color: var(--k-green-deep-t) !important;
     font-weight: 700;
     text-decoration: none;
 
     &:hover {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
     }
   }
 
@@ -2630,7 +2630,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
   padding: 22px 24px 24px;
   border: 1px solid var(--k-line);
   border-radius: 24px;
-  background: #fff;
+  background: var(--k-card);
   font-family: var(--k-body);
   color: var(--k-ink);
   text-align: start;
@@ -2653,12 +2653,12 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     background: var(--k-green-soft);
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--k-green-t) !important;
     }
 
     &.-shop {
       border: 1px solid var(--k-line);
-      background: #fff;
+      background: var(--k-card);
 
       img {
         width: 100%;
@@ -2760,7 +2760,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     color: var(--k-ink-2);
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--k-green-t) !important;
     }
   }
 
@@ -2860,7 +2860,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     padding: 0;
     border: 0;
     background: none;
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
     font: inherit;
     font-size: 14.5px;
     font-weight: 700;
@@ -2946,9 +2946,9 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       cursor: pointer;
 
       &.-on {
-        background: #fff;
+        background: var(--k-card);
         box-shadow: 0 1px 4px rgba(20, 20, 20, 0.15);
-        color: var(--k-green-deep) !important;
+        color: var(--k-green-deep-t) !important;
       }
     }
   }
@@ -2968,14 +2968,14 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       padding: 0 14px;
       border: 1px solid var(--k-line-strong);
       border-radius: 14px;
-      background: #fff;
+      background: var(--k-card);
       color: var(--k-ink);
       font: inherit;
       font-size: 15px;
       outline: none;
 
       &:focus {
-        border-color: var(--k-green);
+        border-color: var(--k-green-t);
         box-shadow: 0 0 0 3px var(--k-green-soft);
       }
     }
@@ -2992,7 +2992,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     padding: 0 18px;
     border: 1px solid var(--k-line);
     border-radius: var(--k-pill);
-    background: #fff;
+    background: var(--k-card);
     color: var(--k-ink-2) !important;
     font: inherit;
     font-size: 15px;
@@ -3072,7 +3072,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     background: var(--k-green-soft);
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--k-green-t) !important;
     }
 
     .-ok > & {
@@ -3270,7 +3270,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       font-size: 11px;
       font-style: normal;
       font-weight: 700;
-      color: var(--k-green);
+      color: var(--k-green-t);
     }
   }
 
@@ -3334,7 +3334,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
 
     &.-ask {
       background: var(--k-coral-soft);
-      color: var(--k-coral) !important;
+      color: var(--k-coral-t) !important;
     }
 
     @media (pointer: coarse) {
@@ -3367,15 +3367,15 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     padding: 0 14px;
     border: 1px solid var(--k-line-strong);
     border-radius: var(--k-pill);
-    background: #fff;
-    color: var(--k-green-deep) !important;
+    background: var(--k-card);
+    color: var(--k-green-deep-t) !important;
     font: inherit;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
 
     &:hover {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
     }
   }
 
@@ -3387,11 +3387,11 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     padding: 6px 6px 6px 18px;
     border: 1px solid var(--k-line-strong);
     border-radius: 26px;
-    background: #fff;
+    background: var(--k-card);
     transition: border-color 0.15s, box-shadow 0.15s;
 
     &:focus-within {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
       box-shadow: 0 0 0 3px var(--k-green-soft);
     }
   }
@@ -3470,7 +3470,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
   margin-top: 16px;
   padding: 14px;
   border-radius: 18px;
-  background: #fff;
+  background: var(--k-card);
 
   &__head {
     display: flex;
@@ -3495,7 +3495,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     }
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--k-green-t) !important;
     }
 
     .-wait & {
@@ -3510,7 +3510,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       background: var(--k-coral-soft);
 
       .v-icon {
-        color: var(--k-coral) !important;
+        color: var(--k-coral-t) !important;
       }
     }
   }
@@ -3596,7 +3596,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     height: 40px;
     border: 0;
     background: none;
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
     font: inherit;
     font-size: 14.5px;
     font-weight: 700;
@@ -3624,7 +3624,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     color: var(--k-ink-2);
 
     .v-icon {
-      color: var(--k-green) !important;
+      color: var(--k-green-t) !important;
     }
   }
 }
@@ -3696,12 +3696,12 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
   padding: 44px 24px;
   border: 1px dashed var(--k-line-strong);
   border-radius: var(--k-radius-lg);
-  background: var(--k-well);
+  background: var(--k-card);
   font-family: var(--k-body);
   text-align: center;
 
   > .v-icon {
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
   }
 
   h1 {

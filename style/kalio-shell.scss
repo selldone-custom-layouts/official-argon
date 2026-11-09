@@ -39,7 +39,7 @@ $k-header-strip: 46px;
     line-height: 1;
     letter-spacing: -0.02em;
     text-transform: lowercase;
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
     text-decoration: none;
 
     i {
@@ -89,7 +89,7 @@ $k-header-strip: 46px;
     padding: 0 12px 0 14px;
     border-radius: var(--k-pill);
     background: var(--k-green-soft);
-    color: var(--k-green);
+    color: var(--k-green-t);
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
@@ -129,7 +129,7 @@ $k-header-strip: 46px;
     }
 
     .v-field--focused .v-field__outline {
-      color: var(--k-green) !important;
+      color: var(--k-green-t) !important;
     }
 
     &.-below {
@@ -154,7 +154,7 @@ $k-header-strip: 46px;
     cursor: text;
 
     .v-icon {
-      color: var(--k-green);
+      color: var(--k-green-t);
     }
   }
 
@@ -223,8 +223,8 @@ $k-header-strip: 46px;
       height: 22px;
       padding: 0 6px;
       border-radius: var(--k-pill);
-      background: #fff;
-      color: var(--k-green);
+      background: var(--k-card);
+      color: var(--k-green-t);
       font-style: normal;
       font-size: 12.5px;
       font-weight: 700;
@@ -303,7 +303,7 @@ $k-header-strip: 46px;
 
     &:hover,
     &.-on {
-      color: var(--k-green) !important;
+      color: var(--k-green-t) !important;
 
       &::after {
         transform: scaleX(1);
@@ -315,7 +315,7 @@ $k-header-strip: 46px;
     }
 
     &.-deals {
-      color: var(--k-coral) !important;
+      color: var(--k-coral-t) !important;
       font-weight: 600;
 
       &::after {
@@ -362,7 +362,7 @@ $k-header-strip: 46px;
   height: 32px;
   border: 1px solid var(--k-line);
   border-radius: 50%;
-  background: #fff;
+  background: var(--k-card);
   box-shadow: var(--k-shadow);
   transform: translateY(-50%);
 
@@ -379,7 +379,7 @@ $k-header-strip: 46px;
   }
 
   &:hover {
-    border-color: var(--k-green);
+    border-color: var(--k-green-t);
   }
 }
 
@@ -413,7 +413,7 @@ $k-header-strip: 46px;
 
     &:hover {
       background: var(--k-wash);
-      color: var(--k-green) !important;
+      color: var(--k-green-t) !important;
     }
   }
 
@@ -488,7 +488,7 @@ $k-header-strip: 46px;
     height: 76px;
     border-radius: 50%;
     background: var(--k-green-soft);
-    color: var(--k-green);
+    color: var(--k-green-t);
   }
 
   &__empty-title {
@@ -556,15 +556,15 @@ $k-header-strip: 46px;
     }
 
     .v-icon {
-      color: var(--k-green);
+      color: var(--k-green-t);
     }
 
     &.-deals {
-      color: var(--k-coral) !important;
+      color: var(--k-coral-t) !important;
       font-weight: 600;
 
       .v-icon {
-        color: var(--k-coral);
+        color: var(--k-coral-t);
       }
     }
   }
@@ -681,7 +681,7 @@ $k-header-strip: 46px;
     padding: 6px 11px;
     border-radius: var(--k-pill);
     background: var(--k-coral-soft);
-    color: var(--k-coral);
+    color: var(--k-coral-t);
     font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
@@ -781,7 +781,7 @@ $k-header-strip: 46px;
     height: 30px;
     border: 1px solid var(--k-line);
     border-radius: var(--k-pill);
-    background: #fff;
+    background: var(--k-card);
     text-align: center;
 
     button {
@@ -789,7 +789,7 @@ $k-header-strip: 46px;
       place-items: center;
       height: 28px;
       border-radius: var(--k-pill);
-      color: var(--k-green-deep) !important;
+      color: var(--k-green-deep-t) !important;
 
       &:hover:not(:disabled) {
         background: var(--k-wash);
@@ -887,7 +887,7 @@ $k-header-strip: 46px;
       font-weight: 600;
       line-height: 1;
       letter-spacing: -0.02em;
-      color: var(--k-green-deep);
+      color: var(--k-green-deep-t);
       font-variant-numeric: lining-nums;
     }
 
@@ -1181,9 +1181,9 @@ $k-header-strip: 46px;
       }
 
       &.v-btn--active {
-        border-color: var(--k-green) !important;
+        border-color: var(--k-green-t) !important;
         background: var(--k-green-soft) !important;
-        color: var(--k-green) !important;
+        color: var(--k-green-t) !important;
       }
     }
 
@@ -1610,7 +1610,7 @@ $k-filter-gap: 36px;
     font-size: 12px;
 
     &::before {
-      color: var(--k-green-deep) !important;
+      color: var(--k-green-deep-t) !important;
     }
   }
 
@@ -1841,7 +1841,7 @@ $k-filter-gap: 36px;
   background:
     radial-gradient(360px 260px at 0% 110%, rgba(59, 170, 92, 0.32), transparent 70%),
     radial-gradient(300px 220px at 110% -10%, rgba(255, 255, 255, 0.08), transparent 70%),
-    var(--k-green-deep);
+    var(--k-green-deep-t);
 }
 
 .k-signin__mark {
@@ -1914,7 +1914,7 @@ $k-filter-gap: 36px;
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    border: 3px solid var(--k-green-deep);
+    border: 3px solid var(--k-green-deep-t);
     background: var(--k-tint, #fff);
     overflow: hidden;
 
@@ -1987,7 +1987,7 @@ $k-filter-gap: 36px;
     margin: 0 !important;
 
     .v-btn {
-      color: var(--k-green) !important;
+      color: var(--k-green-t) !important;
       text-transform: none !important;
       letter-spacing: 0 !important;
     }
@@ -2027,7 +2027,7 @@ $k-filter-gap: 36px;
     transition: border-color 140ms ease, background-color 140ms ease;
 
     &:hover {
-      border-color: var(--k-green) !important;
+      border-color: var(--k-green-t) !important;
       background: #fbfaf5 !important;
     }
 
@@ -2061,7 +2061,7 @@ $k-filter-gap: 36px;
       }
 
       .v-icon {
-        color: var(--k-green) !important;
+        color: var(--k-green-t) !important;
       }
     }
 
@@ -2088,7 +2088,7 @@ $k-filter-gap: 36px;
   color: var(--k-muted);
 
   a {
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
     font-weight: 600;
     text-decoration: underline;
     text-underline-offset: 2px;
@@ -2196,7 +2196,7 @@ $k-filter-gap: 36px;
     letter-spacing: -0.01em;
 
     .v-icon {
-      color: var(--k-green);
+      color: var(--k-green-t);
     }
   }
 
@@ -2221,7 +2221,7 @@ $k-filter-gap: 36px;
   }
 
   .v-field--focused .v-field__outline {
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
   }
 
   .text-h4 {
@@ -2300,8 +2300,8 @@ $k-filter-gap: 36px;
     margin-inline-end: 6px;
     padding: 0 18px !important;
     border-radius: var(--k-pill) !important;
-    background: #fff !important;
-    color: var(--k-green-deep) !important;
+    background: var(--k-card) !important;
+    color: var(--k-green-deep-t) !important;
     font-weight: 700;
     letter-spacing: 0 !important;
     text-transform: none !important;

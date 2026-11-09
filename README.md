@@ -34,7 +34,8 @@
 - one blue (`#0a4bd8`) for every button, flat, with white words;
 - yellow (`#ffd91a`) only as an accent: deal flags, the Deal of the Day, the logo's dot, "Deals";
 - sale red for "Save $X", navy for the deal strip and the footer;
-- Archivo type and Material Symbols Rounded icons.
+- Archivo type and Material Symbols Rounded icons;
+- a **Theme** row in the footer: five colour palettes (Besti blue, Violet, Emerald, Copper, Magenta) and Light / Dark; one click changes the whole site at once, Selldone's own parts too, and the choice stays in the browser.
 
 It runs on **[besti.selldone.shop](https://besti.selldone.shop)**, one address of the Selldone shop Digini. Selldone lets each domain of a shop carry its own Layout.
 

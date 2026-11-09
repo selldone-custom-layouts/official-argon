@@ -1,0 +1,165 @@
+/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Besti — themes: colour palettes and light / dark ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+
+   The owner's rule of 9 November 2026: a "Theme" row in the footer, colour
+   palettes and Light / Dark; one click changes the whole site at once. Every
+   colour Besti paints comes from these tokens (besti.scss and besti-pages.scss
+   read them through their $variables), Kalio's tokens follow them
+   (kalio-tokens.scss), and Vuetify's primary and its light / dark theme are
+   set with them (besti-theme.ts), so Selldone's own parts follow too.
+
+   <html data-bp="<palette>" data-bm="light|dark">, set by besti-theme.ts
+   before the app mounts, from the shopper's choice in localStorage.
+
+   Every palette keeps white button words at 4.5:1 or more on its primary and
+   on its hover shade, yellow "Deals" at 4.5:1 on the department bar, its
+   primary at 4.5:1 as words on white, and its dark-mode accent at 4.5:1 on
+   the dark page, card and wells (measured, 9 November 2026). */
+
+$palettes: (
+  blue: (primary: #0a4bd8, deep: #0838a8, tint: #e8efff, tint-dark: #18294f, text-dark: #8fb0ff, navy: #071634, navy2: #0e2350),
+  violet: (primary: #6d28d9, deep: #5b21b6, tint: #f1ebfe, tint-dark: #2a1a4d, text-dark: #c4a8ff, navy: #1c0f3a, navy2: #2a1856),
+  emerald: (primary: #03694c, deep: #04543d, tint: #e3f6ee, tint-dark: #0f3a2e, text-dark: #5fd3a5, navy: #062a20, navy2: #0b3d2f),
+  copper: (primary: #9a4207, deep: #7c3506, tint: #fdf0e3, tint-dark: #3d2410, text-dark: #f5b36b, navy: #2a1607, navy2: #3d220d),
+  magenta: (primary: #a21caf, deep: #86198f, tint: #fbe9fc, tint-dark: #3d1342, text-dark: #f0a6f7, navy: #2a0b2e, navy2: #3d1243),
+);
+
+@function rgb-list($c) {
+  @return "#{red($c)}, #{green($c)}, #{blue($c)}";
+}
+
+:root {
+  --b-max: 1440px;
+  --b-pad: 24px;
+
+  /* The palette (Besti blue until besti-theme.ts sets data-bp). */
+  --b-blue: #0a4bd8; /* buttons, the department bar */
+  --b-blue-d: #0838a8; /* hover */
+  --b-blue-l: #e8efff; /* a light wash */
+  --b-blue-t: #0a4bd8; /* the accent as words, rings and lines */
+  --b-blue-rgb: 10, 75, 216;
+  --b-navy: #071634; /* the deal strip, the footer */
+  --b-navy-2: #0e2350;
+  --b-brand-ink: var(--b-navy); /* the wordmark, brand names, the 404's digits */
+
+  /* Fixed accents */
+  --b-yellow: #ffd91a;
+  --b-yellow-l: #fff6c2;
+  --b-red: #c4122f; /* a saving's badge */
+  --b-red-t: #c4122f; /* a saving as words */
+  --b-green: #0f7b3e;
+  --b-green-t: #0f7b3e;
+  --b-warn-t: #a14a00;
+
+  /* Grounds, lines and words */
+  --b-bg: #ffffff;
+  --b-surface: #ffffff;
+  --b-page: #f0f2f5;
+  --b-line: #e1e5eb;
+  --b-line-2: #c3cad6;
+  --b-hover-line: #b9c3d3;
+  --b-deco: #8a93a3; /* separators and empty stars: 3:1 on the ground */
+  --b-ink: #0f1729;
+  --b-ink-2: #1c2638;
+  --b-muted: #5a6474;
+  --b-soft: #8a93a3;
+  --b-off-bg: #e7eaef;
+  --b-off-ink: #4f5a6b;
+  --b-photo: #ffffff; /* a packshot's tile: white in both modes */
+  --b-sw-edge: rgba(15, 23, 41, 0.34); /* a swatch disc's edge */
+  --b-pop-shadow: rgba(7, 22, 52, 0.35);
+
+  color-scheme: light;
+}
+
+@media (max-width: 899px) {
+  :root {
+    --b-pad: 16px;
+  }
+}
+
+@each $id, $p in $palettes {
+  html[data-bp="#{$id}"] {
+    --b-blue: #{map-get($p, primary)};
+    --b-blue-d: #{map-get($p, deep)};
+    --b-blue-l: #{map-get($p, tint)};
+    --b-blue-t: #{map-get($p, primary)};
+    --b-blue-rgb: #{rgb-list(map-get($p, primary))};
+    --b-navy: #{map-get($p, navy)};
+    --b-navy-2: #{map-get($p, navy2)};
+  }
+
+  html[data-bp="#{$id}"][data-bm="dark"] {
+    --b-blue-l: #{map-get($p, tint-dark)};
+    --b-blue-t: #{map-get($p, text-dark)};
+  }
+}
+
+/* Dark: Vuetify's dark theme (besti-theme.ts) and these grounds and words.
+   A packshot keeps its white tile, so its white edge never shows. */
+html[data-bm="dark"] {
+  color-scheme: dark;
+
+  --b-bg: #0c111b;
+  --b-surface: #151c2b;
+  --b-page: #1c2536;
+  --b-line: #2b3549;
+  --b-line-2: #3d4961;
+  --b-hover-line: #55627c;
+  --b-deco: #75819a;
+  --b-ink: #e8ecf3;
+  --b-ink-2: #d3d9e4;
+  --b-brand-ink: var(--b-ink);
+  --b-muted: #a6b0c2;
+  --b-soft: #8d98ac;
+  --b-off-bg: #2b3549;
+  --b-off-ink: #b3bccc;
+  --b-red-t: #ff8193;
+  --b-green-t: #4fd18b;
+  --b-warn-t: #ffb366;
+  --b-yellow-l: #3a3312;
+  --b-sw-edge: rgba(255, 255, 255, 0.55);
+  --b-pop-shadow: rgba(0, 0, 0, 0.6);
+
+  /* Kalio's own tokens that are not read from Besti's */
+  --k-green-deep-t: var(--b-blue-t);
+  --k-line-soft: #222b3d;
+  --k-coral-soft: #3a1820;
+  --k-star-off: #75819a;
+  --k-shadow: 0 10px 28px -14px rgba(0, 0, 0, 0.7);
+
+  /* Vuetify's dark theme on Besti's grounds */
+  .v-theme--dark,
+  & {
+    --v-theme-background: 12, 17, 27 !important;
+    --v-theme-on-background: 232, 236, 243 !important;
+    --v-theme-surface: 21, 28, 43 !important;
+    --v-theme-on-surface: 232, 236, 243 !important;
+    --v-theme-surface-variant: 43, 53, 73 !important;
+    --v-theme-on-surface-variant: 232, 236, 243 !important;
+  }
+}
+
+/* The page's own ground under the app (overscroll, the moment before the app
+   draws) follows the mode too; Selldone's grey body rule loads later. */
+html[data-bm] body,
+html[data-bm] {
+  background: var(--b-bg) !important;
+}
+
+/* Dark: brand marks drawn in black (Apple's sign-in mark) turn white. */
+html[data-bm="dark"] img[src*="apple-b"] {
+  filter: invert(1);
+}
+
+/* Dark: Selldone's own white rows (Vuetify's .bg-white, e.g. the billing
+   Business / Personal choice) take the card's ground; photo tiles keep white. */
+html[data-bm="dark"] .bg-white:not(:has(> img, > .v-img)) {
+  background-color: var(--b-surface) !important;
+  color: var(--b-ink) !important;
+}
+
+/* A picture's caption in a product's or article's text: Selldone's #ccc on
+   white read 1.6:1; the muted ink reads in both modes. */
+.v-application figure figcaption {
+  color: var(--b-muted) !important;
+}

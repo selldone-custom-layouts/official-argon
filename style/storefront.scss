@@ -17,6 +17,7 @@
  */
 
 @use "../pages/product/product";
+@use "besti-theme"; // Besti 1.0.9: the theme tokens (palettes, light / dark) everything reads
 @use "kalio-tokens"; // Kalio: tokens, type and shared pieces
 @use "kalio-platform"; // Kalio: skin for Selldone's own components
 @use "kalio-sections"; // Kalio: the sections Kalio owns outright

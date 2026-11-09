@@ -42,8 +42,10 @@ import { PageHyper } from "@selldone/page-builder/PageHyperService.ts";
 import {SetupPageBuilder} from "@selldone/page-builder/page-builder.ts";
 import {SetupService} from "@selldone/core-js/server";
 import {Shop} from "@selldone/core-js/models";
+import { bootTheme } from "./components/besti/besti-theme"; // Besti 1.0.9: the shopper's palette and light / dark
 
 const vuetify = VuetifyInstance(i18n);
+bootTheme(vuetify); // before the app mounts: the first paint already wears the saved theme
 
 //█████████████████████████████████████████████████████████████
 //―――――――――――――― Global Types ―――――――――――――――

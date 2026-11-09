@@ -8,51 +8,37 @@
    navy #071634 for the deal strip and the footer. Archivo; Material Symbols
    Rounded for Besti's own icons. Loaded last (storefront.scss). */
 
-$blue: #0a4bd8;
-$blue-d: #0838a8;
-$blue-l: #e8efff;
-$navy: #071634;
-$navy-2: #0e2350;
-$yellow: #ffd91a;
-$yellow-l: #fff6c2;
-$red: #c4122f;
-$green: #0f7b3e;
-$page: #f0f2f5;
-$line: #e1e5eb;
-$ink: #0f1729;
-$muted: #5a6474;
-$soft: #8a93a3;
-
-:root {
-  --b-blue: #{$blue};
-  --b-blue-d: #{$blue-d};
-  --b-blue-l: #{$blue-l};
-  --b-navy: #{$navy};
-  --b-yellow: #{$yellow};
-  --b-red: #{$red};
-  --b-line: #{$line};
-  --b-ink: #{$ink};
-  --b-muted: #{$muted};
-  --b-max: 1440px;
-  --b-pad: 24px;
-}
-
-@media (max-width: 899px) {
-  :root {
-    --b-pad: 16px;
-  }
-}
+$blue: var(--b-blue);
+$blue-d: var(--b-blue-d);
+$blue-l: var(--b-blue-l);
+$blue-t: var(--b-blue-t);
+$navy: var(--b-navy);
+$navy-2: var(--b-navy-2);
+$yellow: var(--b-yellow);
+$yellow-l: var(--b-yellow-l);
+$red: var(--b-red);
+$red-t: var(--b-red-t);
+$green: var(--b-green);
+$green-t: var(--b-green-t);
+$page: var(--b-page);
+$line: var(--b-line);
+$ink: var(--b-ink);
+$muted: var(--b-muted);
+$soft: var(--b-soft);
+$bg: var(--b-bg);
+$surface: var(--b-surface);
+$photo: var(--b-photo);
 
 /* ── Base ── */
 .v-application,
 .s--shop {
-  background: #fff !important;
+  background: $bg !important;
   color: $ink;
   font-family: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 body {
-  background: #fff !important;
+  background: $bg !important;
 }
 
 .b-wrap {
@@ -153,9 +139,9 @@ body {
   }
 
   &.-line {
-    background: #fff;
-    color: $blue !important;
-    box-shadow: inset 0 0 0 1.5px $blue !important;
+    background: $surface;
+    color: $blue-t !important;
+    box-shadow: inset 0 0 0 1.5px $blue-t !important;
 
     &:hover {
       background: $blue-l;
@@ -172,8 +158,8 @@ body {
 
   &.-off,
   &:disabled {
-    background: #e7eaef;
-    color: #4f5a6b !important;
+    background: var(--b-off-bg);
+    color: var(--b-off-ink) !important;
     cursor: default;
   }
 }
@@ -185,7 +171,7 @@ body {
   border: 0;
   background: none;
   padding: 0;
-  color: $blue !important;
+  color: $blue-t !important;
   font: 700 14px "Archivo", system-ui, sans-serif;
   cursor: pointer;
 
@@ -202,7 +188,7 @@ body {
   border: 0;
   background: none;
   padding: 4px 0;
-  color: $blue !important;
+  color: $blue-t !important;
   font: 700 14px "Archivo", system-ui, sans-serif;
   white-space: nowrap;
   cursor: pointer;
@@ -221,7 +207,7 @@ body {
   height: 36px;
   border: 0;
   border-radius: 50%;
-  background: #fff;
+  background: $surface;
   box-shadow: inset 0 0 0 1px $line;
   /* !important: Selldone's [type=button] { color: inherit } loads after and
      left the chevrons a faint 87% black. Full ink, a heavier, bigger glyph. */
@@ -236,8 +222,8 @@ body {
   }
 
   &:hover {
-    color: $blue !important;
-    box-shadow: inset 0 0 0 1.5px $blue;
+    color: $blue-t !important;
+    box-shadow: inset 0 0 0 1.5px $blue-t;
   }
 }
 
@@ -281,7 +267,7 @@ body {
 .b-logo {
   display: inline-flex;
   align-items: baseline;
-  color: $navy !important;
+  color: var(--b-brand-ink) !important;
   font: 800 34px/1 "Archivo", system-ui, sans-serif;
   letter-spacing: -0.05em;
   padding-top: 4px;
@@ -312,7 +298,7 @@ body {
 .b-header {
   position: relative;
   z-index: 20;
-  background: #fff;
+  background: $surface;
   font-family: "Archivo", system-ui, sans-serif;
 }
 
@@ -409,9 +395,9 @@ body {
   max-width: 820px;
   display: flex;
   height: 46px;
-  border: 2px solid $blue;
+  border: 2px solid $blue-t;
   border-radius: 8px;
-  background: #fff;
+  background: $surface;
 
   &__scope {
     position: relative;
@@ -435,7 +421,7 @@ body {
     }
 
     &:hover {
-      color: $blue;
+      color: $blue-t;
     }
   }
 
@@ -499,7 +485,7 @@ body {
   padding: 6px;
   border: 1px solid $line;
   border-radius: 10px;
-  background: #fff;
+  background: $surface;
   box-shadow: 0 16px 40px -16px rgba(7, 22, 52, 0.35);
 
   a,
@@ -520,7 +506,7 @@ body {
     &:hover,
     &.-on {
       background: $blue-l;
-      color: $blue !important;
+      color: $blue-t !important;
     }
   }
 
@@ -559,7 +545,7 @@ body {
     margin-top: 4px;
     border-top: 1px solid $line !important;
     border-radius: 0 0 6px 6px !important;
-    color: $blue !important;
+    color: $blue-t !important;
   }
 }
 
@@ -589,7 +575,7 @@ body {
   }
 
   &:hover {
-    color: $blue !important;
+    color: $blue-t !important;
     background: $blue-l;
   }
 
@@ -726,7 +712,7 @@ body {
   padding: 8px;
   border: 1px solid $line;
   border-radius: 0 0 10px 10px;
-  background: #fff;
+  background: $surface;
   box-shadow: 0 16px 36px -18px rgba(7, 22, 52, 0.4);
 
   a {
@@ -737,7 +723,7 @@ body {
 
     &:hover {
       background: $blue-l;
-      color: $blue !important;
+      color: $blue-t !important;
     }
   }
 
@@ -753,7 +739,7 @@ body {
   right: 0;
   top: 100%;
   z-index: 30;
-  background: #fff;
+  background: $surface;
   color: $ink;
   border-bottom: 1px solid $line;
   box-shadow: 0 24px 40px -28px rgba(7, 22, 52, 0.45);
@@ -800,7 +786,7 @@ body {
       background: $blue-l;
 
       b {
-        color: $blue;
+        color: $blue-t;
       }
     }
   }
@@ -839,12 +825,12 @@ body {
       font-size: 14.5px;
 
       .ms {
-        color: $blue;
+        color: $blue-t;
       }
 
       &:hover {
         background: $blue-l;
-        color: $blue !important;
+        color: $blue-t !important;
       }
     }
   }
@@ -988,7 +974,7 @@ body {
   padding: 12px 12px 14px;
   border: 1px solid $line;
   border-radius: 10px;
-  background: #fff;
+  background: $surface;
   color: $ink;
   font-family: "Archivo", system-ui, sans-serif;
   text-align: start;
@@ -996,7 +982,7 @@ body {
   transition: border-color 0.15s;
 
   &:hover {
-    border-color: #b9c3d3;
+    border-color: var(--b-hover-line);
   }
 
   &__img {
@@ -1005,7 +991,7 @@ body {
     aspect-ratio: 1;
     border-radius: 6px;
     overflow: hidden;
-    background: #fff;
+    background: $surface;
 
     img {
       width: 100%;
@@ -1036,7 +1022,7 @@ body {
   }
 
   a.b-card__t:hover {
-    color: $blue !important;
+    color: $blue-t !important;
   }
 
   &__rate {
@@ -1143,7 +1129,7 @@ body {
 
 .b-brand {
   display: block;
-  color: $blue;
+  color: $blue-t;
   font-size: 12.5px;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -1201,11 +1187,11 @@ body {
     inset: 4px;
     border-radius: 50%;
     background: var(--sw, #fff);
-    box-shadow: inset 0 0 0 1px rgba(15, 23, 41, 0.34);
+    box-shadow: inset 0 0 0 1px var(--b-sw-edge);
   }
 
   &.-on {
-    box-shadow: inset 0 0 0 2px $blue;
+    box-shadow: inset 0 0 0 2px $blue-t;
   }
 
   &.-out::before {
@@ -1404,7 +1390,7 @@ body {
   cursor: pointer;
 
   &:hover {
-    color: $blue;
+    color: $blue-t;
   }
 }
 
@@ -1415,7 +1401,7 @@ body {
     width: 17px;
     height: 17px;
     border-radius: 4px;
-    box-shadow: inset 0 0 0 1.5px #a3abb8;
+    box-shadow: inset 0 0 0 1.5px var(--b-line-2);
 
     .ms {
       font-size: 14px;
@@ -1425,7 +1411,7 @@ body {
   }
 
   &.-on {
-    color: $blue;
+    color: $blue-t;
 
     i {
       background: $blue;
@@ -1444,7 +1430,7 @@ body {
   }
 
   &.-on {
-    color: $red;
+    color: $red-t;
   }
 }
 
@@ -1510,7 +1496,7 @@ body {
   }
 
   &.-collage {
-    background: #fff;
+    background: $surface;
   }
 
   &__pack {
@@ -1595,10 +1581,10 @@ body {
     max-width: calc(100% - 64px);
     padding: 24px 24px 20px;
     border-radius: 10px;
-    background: #fff;
+    background: $surface;
 
     small {
-      color: $blue;
+      color: $blue-t;
       font-size: 12px;
       font-weight: 800;
       letter-spacing: 0.08em;
@@ -1753,7 +1739,7 @@ body {
   }
 
   &:hover b {
-    color: $blue;
+    color: $blue-t;
   }
 
   &.-all {
@@ -1762,16 +1748,16 @@ body {
 
       .ms {
         font-size: 52px;
-        color: $blue;
+        color: $blue-t;
       }
     }
 
     b {
-      color: $blue;
+      color: $blue-t;
     }
 
     &:hover > span {
-      background: #d6e2ff;
+      background: var(--b-blue-l);
     }
   }
 }
@@ -1848,7 +1834,7 @@ body {
     letter-spacing: -0.02em;
 
     &:hover {
-      color: $blue !important;
+      color: $blue-t !important;
     }
   }
 
@@ -1931,7 +1917,7 @@ body {
     object-fit: contain;
     border: 1px solid $line;
     border-radius: 8px;
-    background: #fff;
+    background: $surface;
   }
 
   > span {
@@ -1968,7 +1954,7 @@ body {
   }
 
   &:hover b {
-    color: $blue;
+    color: $blue-t;
   }
 
   &.-box {
@@ -2002,7 +1988,7 @@ body {
     padding: 0 14px;
     border: 0;
     border-radius: 17px;
-    background: #fff;
+    background: $surface;
     box-shadow: inset 0 0 0 1px $line;
     color: $ink;
     font: 700 13.5px "Archivo", sans-serif;
@@ -2010,8 +1996,8 @@ body {
     cursor: pointer;
 
     &:hover {
-      color: $blue;
-      box-shadow: inset 0 0 0 1.5px $blue;
+      color: $blue-t;
+      box-shadow: inset 0 0 0 1.5px $blue-t;
     }
 
     &.-on {
@@ -2066,7 +2052,7 @@ body {
     flex-direction: column;
     padding: 8px 12px;
     border-radius: 8px;
-    background: #fff;
+    background: $surface;
     color: $ink;
   }
 
@@ -2076,7 +2062,7 @@ body {
   }
 
   small {
-    color: $red;
+    color: $red-t;
     font-size: 12.5px;
     font-weight: 700;
   }
@@ -2100,11 +2086,11 @@ body {
   }
 
   &:hover b {
-    color: $blue;
+    color: $blue-t;
   }
 
   .b-photo.-collage {
-    background: #fff;
+    background: $surface;
   }
 }
 
@@ -2265,7 +2251,7 @@ body {
     margin: 0 -1px -1px 0;
     border-right: 1px solid $line;
     border-bottom: 1px solid $line;
-    color: $navy !important;
+    color: var(--b-brand-ink) !important;
     font-size: 19px;
     font-weight: 800;
     letter-spacing: -0.02em;
@@ -2275,7 +2261,7 @@ body {
 
     &:hover {
       background: $blue-l;
-      color: $blue !important;
+      color: $blue-t !important;
     }
   }
 }
@@ -2337,7 +2323,7 @@ body {
   }
 
   &:hover h3 {
-    color: $blue;
+    color: $blue-t;
   }
 }
 
@@ -2357,7 +2343,7 @@ body {
     height: 64px;
     border-radius: 50%;
     background: $blue-l;
-    color: $blue;
+    color: $blue-t;
 
     .ms {
       font-size: 30px;
@@ -2465,7 +2451,7 @@ body {
       grid-row: auto;
       display: flex;
       flex-direction: column;
-      background: #fff;
+      background: $surface;
       border: 1px solid $line;
 
       &.-skeleton {
@@ -2804,7 +2790,7 @@ body {
       padding: 0 14px;
       border: 0;
       border-radius: 6px;
-      background: #fff;
+      background: $surface;
       color: $ink;
       font: 500 15px "Archivo", sans-serif;
       outline: 0;
@@ -2883,6 +2869,27 @@ body {
       color: inherit !important;
       font-size: 14px !important;
     }
+  }
+
+  /* The Theme row: a swatch per palette and a Light / Dark switch. The
+     swatch draws its colour as a disc inside its own box and the chosen
+     one a white ring on its own edge (inset): nothing reaches outside. */
+  &__theme {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  &__theme-t {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 
   &__legal {
@@ -3056,5 +3063,82 @@ body {
     position: static;
     display: flex;
     flex-direction: column;
+  }
+}
+
+/* ── The footer's Theme row (Besti 1.0.9) ── */
+.b-themes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.b-tsw {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none !important;
+  box-shadow: none;
+  cursor: pointer;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background: var(--sw);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+  }
+
+  &.-on {
+    box-shadow: inset 0 0 0 2px #fff;
+  }
+
+  &:focus-visible {
+    outline: 0 !important; /* the focus ring is inside the swatch too */
+    box-shadow: inset 0 0 0 2px $yellow;
+  }
+}
+
+.b-modes {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: #fff !important; /* Vuetify's [type=button] { color: inherit } loads after */
+    font: 700 13px "Archivo", sans-serif;
+    cursor: pointer;
+
+    .ms {
+      font-size: 18px;
+      color: inherit !important;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    &.-on {
+      background: #fff;
+      color: var(--b-navy) !important;
+    }
+
+    &:focus-visible {
+      outline: 0 !important;
+      box-shadow: inset 0 0 0 2px $yellow;
+    }
   }
 }

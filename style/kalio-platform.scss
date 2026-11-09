@@ -54,7 +54,7 @@
   .v-breadcrumbs-item a,
   .link-dash,
   .v-icon {
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
   }
 
   .v-breadcrumbs-item--disabled,
@@ -109,7 +109,7 @@
     line-height: 1 !important;
     letter-spacing: -0.02em;
     text-transform: lowercase;
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
     text-decoration: none;
 
     &::after {
@@ -142,7 +142,7 @@
     transition: border-color 140ms ease;
 
     &:hover {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
     }
 
     > .v-btn {
@@ -177,7 +177,7 @@
   /* The basket: its badge is the teal one, which is how it is told apart. */
   .circle-button-selldone:has(.v-badge__badge.bg-teal) {
     background: var(--k-green);
-    border-color: var(--k-green);
+    border-color: var(--k-green-t);
 
     &:hover {
       background: var(--k-green-deep);
@@ -192,8 +192,8 @@
     }
 
     .v-badge__badge {
-      background: #fff !important;
-      color: var(--k-green) !important;
+      background: var(--k-card) !important;
+      color: var(--k-green-t) !important;
     }
   }
 
@@ -253,7 +253,7 @@
   }
 
   .v-field--focused .v-field__outline {
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
   }
 
   @media only screen and (max-width: 1280px) {
@@ -287,7 +287,7 @@
 
   .v-tab--selected,
   .v-btn--active {
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
   }
 
   .v-tab__slider {
@@ -312,7 +312,7 @@
 
   a:hover,
   .v-list-item:hover .v-list-item-title {
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
   }
 }
 
@@ -546,7 +546,7 @@
   /* On a discounted product the live price is the sale price, in coral. */
   .main-price-label:has(.discount-percent) > p:not(.dis-val),
   .main-price-label:has(.discount-percent) > p:not(.dis-val) * {
-    color: var(--k-coral) !important;
+    color: var(--k-coral-t) !important;
   }
 
   .dis-val {
@@ -623,7 +623,7 @@
       min-width: 0 !important;
       border-radius: 50% !important;
       background: var(--k-card) !important;
-      color: var(--k-green) !important;
+      color: var(--k-green-t) !important;
       box-shadow: 0 6px 16px -6px rgba(20, 20, 20, 0.38) !important;
       text-transform: none !important;
       letter-spacing: 0 !important;
@@ -759,7 +759,7 @@
   justify-content: center;
   gap: 4px;
   padding: 0 12px;
-  border: 1.5px solid var(--k-green);
+  border: 1.5px solid var(--k-green-t);
   background: var(--k-green);
   /* !important: Selldone's base reset [type=button] { color: inherit }
      loads after this sheet. */
@@ -781,23 +781,23 @@
   }
 
   &:hover {
-    border-color: var(--k-green-deep);
+    border-color: var(--k-green-deep-t);
     background: var(--k-green-deep);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--k-green-deep);
+    outline: 2px solid var(--k-green-deep-t);
     outline-offset: 2px;
   }
 
   /* A product with sizes: the sheet to pick one. */
   &.-options {
     border-color: var(--k-line);
-    background: #fff;
-    color: var(--k-green-deep) !important;
+    background: var(--k-card);
+    color: var(--k-green-deep-t) !important;
 
     &:hover {
-      border-color: var(--k-green);
+      border-color: var(--k-green-t);
       background: var(--k-green-soft);
     }
   }
@@ -814,15 +814,15 @@
 /* In the basket: the same pill, outlined, with the count between − and +. */
 .k-card-step.-card {
   grid-template-columns: 32px minmax(0, 1fr) 32px;
-  border: 1.5px solid var(--k-green);
+  border: 1.5px solid var(--k-green-t);
   background: var(--k-green-soft);
-  color: var(--k-green-deep);
+  color: var(--k-green-deep-t);
   box-shadow: none;
 
   button {
     width: 32px;
     height: 35px;
-    color: var(--k-green-deep) !important;
+    color: var(--k-green-deep-t) !important;
 
     &:hover:not(:disabled) {
       background: rgba(59, 170, 92, 0.16);
@@ -1030,8 +1030,8 @@
     letter-spacing: 0 !important;
 
     &:hover {
-      border-color: var(--k-green) !important;
-      color: var(--k-green) !important;
+      border-color: var(--k-green-t) !important;
+      color: var(--k-green-t) !important;
     }
   }
 }
@@ -1080,7 +1080,7 @@
   }
 
   &:hover .folder-card {
-    border-color: var(--k-green) !important;
+    border-color: var(--k-green-t) !important;
   }
 
   .-image-box {
@@ -1279,8 +1279,8 @@
   .discount-percent {
     padding: 3px 8px !important;
     border-radius: 7px !important;
-    background: #fff !important;
-    color: var(--k-coral) !important;
+    background: var(--k-card) !important;
+    color: var(--k-coral-t) !important;
     font-size: 12px !important;
   }
 
@@ -1347,7 +1347,7 @@
 
   .v-breadcrumbs-item,
   a {
-    color: var(--k-green);
+    color: var(--k-green-t);
   }
 
   /* Compare, wishlist and share: quiet outlined pills. */
@@ -1411,7 +1411,7 @@
   }
 
   &:has(.discount-percent) .price-value {
-    color: var(--k-coral) !important;
+    color: var(--k-coral-t) !important;
   }
 
   del,
@@ -1424,7 +1424,7 @@
 
 .discount-percent {
   background: var(--k-coral-soft) !important;
-  color: var(--k-coral) !important;
+  color: var(--k-coral-t) !important;
   font-family: var(--k-body) !important;
   font-weight: 700 !important;
   border-radius: var(--k-pill) !important;
@@ -1455,7 +1455,7 @@
     transition: border-color 140ms ease, background-color 140ms ease;
 
     &:hover {
-      border-color: var(--k-green) !important;
+      border-color: var(--k-green-t) !important;
     }
   }
 
@@ -1463,24 +1463,24 @@
   .var-sel.-selected,
   .var-sel.active,
   .var-sel[class*="selected"] {
-    border-color: var(--k-green) !important;
+    border-color: var(--k-green-t) !important;
     background: var(--k-green-soft) !important;
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
   }
 }
 
 .s--product-variants {
   .v-chip--selected,
   .v-btn--active {
-    border-color: var(--k-green) !important;
+    border-color: var(--k-green-t) !important;
     background: var(--k-green-soft) !important;
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
   }
 }
 
 .s--shop-product-section-box-badges .v-chip {
   background: var(--k-green-soft) !important;
-  color: var(--k-green) !important;
+  color: var(--k-green-t) !important;
 }
 
 /* Sections under the overview: hairline-ruled bands on white, headings in
@@ -1797,8 +1797,8 @@
   .v-btn--variant-flat {
     border-radius: var(--k-pill) !important;
     min-height: 52px !important;
-    background-color: #fff !important;
-    color: var(--k-green-deep) !important;
+    background-color: var(--k-card) !important;
+    color: var(--k-green-deep-t) !important;
     box-shadow: none !important;
     text-transform: none !important;
     letter-spacing: 0 !important;
@@ -1883,7 +1883,7 @@
 
   a:hover,
   .v-btn:hover {
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
   }
 
   .v-divider {
@@ -1957,8 +1957,8 @@
   height: 30px;
   padding: 0 8px;
   border-radius: 999px;
-  background: #fff;
-  color: var(--k-green-deep);
+  background: var(--k-card);
+  color: var(--k-green-deep-t);
   font-size: 14px;
   font-weight: 800;
 }
@@ -2142,7 +2142,7 @@ button.k-compare-fab.s--storefront-products-comparison-circle-progress {
     }
 
     &.-on {
-      color: var(--k-green) !important;
+      color: var(--k-green-t) !important;
       font-weight: 800 !important;
     }
   }

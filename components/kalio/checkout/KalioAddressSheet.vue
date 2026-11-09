@@ -89,7 +89,7 @@
               @click="pinHere"
               @keydown.enter="pinHere"
             >
-              <path d="M22 55S3 34 3 21a19 19 0 0 1 38 0c0 13-19 34-19 34z" fill="#0a4bd8" />
+              <path d="M22 55S3 34 3 21a19 19 0 0 1 38 0c0 13-19 34-19 34z" style="fill: var(--b-blue, #0a4bd8)" />
               <circle cx="22" cy="21" fill="#fff" r="8" />
               <circle cx="22" cy="21" fill="#ffd91a" r="3.6" />
             </svg>

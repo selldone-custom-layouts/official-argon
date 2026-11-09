@@ -7,18 +7,26 @@
    bordered tiles, one blue for every button, yellow only as an accent,
    red for a saving. Loaded after besti.scss. */
 
-$blue: #0a4bd8;
-$blue-d: #0838a8;
-$blue-l: #e8efff;
-$navy: #071634;
-$yellow: #ffd91a;
-$yellow-l: #fff6c2;
-$red: #c4122f;
-$green: #0f7b3e;
-$page: #f0f2f5;
-$line: #e1e5eb;
-$ink: #0f1729;
-$muted: #5a6474;
+$blue: var(--b-blue);
+$blue-d: var(--b-blue-d);
+$blue-l: var(--b-blue-l);
+$blue-t: var(--b-blue-t);
+$navy: var(--b-navy);
+$navy-2: var(--b-navy-2);
+$yellow: var(--b-yellow);
+$yellow-l: var(--b-yellow-l);
+$red: var(--b-red);
+$red-t: var(--b-red-t);
+$green: var(--b-green);
+$green-t: var(--b-green-t);
+$page: var(--b-page);
+$line: var(--b-line);
+$ink: var(--b-ink);
+$muted: var(--b-muted);
+$soft: var(--b-soft);
+$bg: var(--b-bg);
+$surface: var(--b-surface);
+$photo: var(--b-photo);
 
 /* ── Shared bits ── */
 .b-crumbs {
@@ -34,13 +42,13 @@ $muted: #5a6474;
     color: $muted !important;
 
     &:hover {
-      color: $blue !important;
+      color: $blue-t !important;
     }
   }
 
   .ms {
     font-size: 16px;
-    color: #9aa3b2;
+    color: var(--b-soft);
   }
 
   [aria-current="page"],
@@ -66,7 +74,7 @@ $muted: #5a6474;
   padding: 0 14px;
   border: 0;
   border-radius: 17px;
-  background: #fff;
+  background: $surface;
   box-shadow: inset 0 0 0 1px $line;
   color: $ink !important;
   font: 700 13.5px "Archivo", sans-serif;
@@ -74,8 +82,8 @@ $muted: #5a6474;
   cursor: pointer;
 
   &:hover {
-    color: $blue !important;
-    box-shadow: inset 0 0 0 1.5px $blue;
+    color: $blue-t !important;
+    box-shadow: inset 0 0 0 1.5px $blue-t;
   }
 
   &.-on {
@@ -83,10 +91,10 @@ $muted: #5a6474;
     padding: 0 8px 0 12px;
     background: $blue-l;
     box-shadow: none;
-    color: $blue !important;
+    color: $blue-t !important;
 
     .v-icon {
-      color: $blue;
+      color: $blue-t;
     }
   }
 }
@@ -202,7 +210,7 @@ $muted: #5a6474;
     min-width: 0;
 
     small {
-      color: $blue;
+      color: $blue-t;
       font-size: 12px;
       font-weight: 800;
       letter-spacing: 0.08em;
@@ -218,7 +226,7 @@ $muted: #5a6474;
       display: inline-flex;
       align-items: center;
       font-style: normal;
-      color: $blue;
+      color: $blue-t;
       font-weight: 700;
     }
   }
@@ -235,7 +243,7 @@ $muted: #5a6474;
   }
 
   &:hover {
-    border-color: #b9c3d3;
+    border-color: var(--b-hover-line);
   }
 
   @media (max-width: 600px) {
@@ -256,7 +264,7 @@ $muted: #5a6474;
   padding: 16px 16px 4px;
   border: 1px solid $line;
   border-radius: 10px;
-  background: #fff;
+  background: $surface;
   font-family: "Archivo", sans-serif;
 
   &__hd {
@@ -269,7 +277,7 @@ $muted: #5a6474;
   }
 
   &__clear {
-    color: $blue !important;
+    color: $blue-t !important;
     font-weight: 700 !important;
   }
 
@@ -301,12 +309,12 @@ $muted: #5a6474;
     font-size: 14px;
 
     &:hover {
-      color: $blue !important;
+      color: $blue-t !important;
     }
 
     &.-on {
       background: $blue-l;
-      color: $blue !important;
+      color: $blue-t !important;
       font-weight: 700;
     }
   }
@@ -319,13 +327,13 @@ $muted: #5a6474;
     padding: 4px 8px;
     border: 0;
     background: none;
-    color: $blue;
+    color: $blue-t;
     font: 700 13.5px "Archivo", sans-serif;
     text-align: start;
     cursor: pointer;
 
     .v-icon {
-      color: $blue;
+      color: $blue-t;
     }
   }
 }
@@ -346,7 +354,7 @@ $muted: #5a6474;
     padding: 0 8px;
     border: 1px solid $line;
     border-radius: 6px;
-    background: #fff;
+    background: $surface;
 
     span {
       color: $muted;
@@ -364,7 +372,7 @@ $muted: #5a6474;
     }
 
     &:focus-within {
-      border-color: $blue;
+      border-color: $blue-t;
     }
   }
 
@@ -399,11 +407,11 @@ $muted: #5a6474;
       inset: 4px;
       border-radius: 50%;
       background: var(--sw, #fff);
-      box-shadow: inset 0 0 0 1px rgba(15, 23, 41, 0.34);
+      box-shadow: inset 0 0 0 1px var(--b-sw-edge);
     }
 
     &.-on {
-      box-shadow: inset 0 0 0 2px $blue;
+      box-shadow: inset 0 0 0 2px $blue-t;
     }
   }
 }
@@ -421,7 +429,7 @@ $muted: #5a6474;
   }
 
   input:checked + .t-check__box {
-    border-color: $blue !important;
+    border-color: $blue-t !important;
     background: $blue !important;
   }
 }
@@ -458,7 +466,7 @@ $muted: #5a6474;
   white-space: nowrap;
 
   &:hover {
-    border-color: $blue !important;
+    border-color: $blue-t !important;
   }
 }
 
@@ -469,7 +477,7 @@ $muted: #5a6474;
 
   &__opt.-on,
   &__opt:hover {
-    color: $blue !important;
+    color: $blue-t !important;
     background: $blue-l !important;
   }
 }
@@ -480,7 +488,7 @@ $muted: #5a6474;
 
 .t-keep__list a:hover {
   background: $blue-l !important;
-  color: $blue !important;
+  color: $blue-t !important;
 }
 
 /* The listing grid: Besti's cards, five to a row on a computer. Selldone's
@@ -566,7 +574,7 @@ $muted: #5a6474;
 .b-product {
   font-family: "Archivo", system-ui, sans-serif;
   text-align: start;
-  background: #fff;
+  background: $surface;
 }
 
 .v-application:has(.b-pdp:not(.-quick)),
@@ -587,11 +595,11 @@ $muted: #5a6474;
     padding: 12px;
     border: 1px solid $line;
     border-radius: 10px;
-    background: #fff;
+    background: $surface;
     min-width: 0;
 
     .s--product-images {
-      background: #fff !important;
+      background: $surface !important;
     }
 
     /* The picture takes the card's width and the thumbnails are one row
@@ -653,7 +661,7 @@ $muted: #5a6474;
         transform: none !important;
         border: 1px solid $line !important;
         border-radius: 8px !important;
-        background: #fff !important;
+        background: $surface !important;
       }
     }
   }
@@ -683,7 +691,7 @@ $muted: #5a6474;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: $blue !important;
+    color: $blue-t !important;
     font-weight: 600;
 
     b {
@@ -705,7 +713,7 @@ $muted: #5a6474;
     align-items: center;
     gap: 6px;
     margin: 10px 0 0;
-    color: #a14a00;
+    color: var(--b-warn-t, #a14a00);
     font-size: 13.5px;
   }
 
@@ -739,7 +747,7 @@ $muted: #5a6474;
     dt,
     dd {
       padding: 8px 0;
-      border-bottom: 1px solid #eef0f3;
+      border-bottom: 1px solid var(--b-line);
     }
 
     dt {
@@ -772,7 +780,7 @@ $muted: #5a6474;
     }
 
     a {
-      color: $blue !important;
+      color: $blue-t !important;
       font-weight: 700;
     }
   }
@@ -822,7 +830,7 @@ $muted: #5a6474;
   padding: 8px 8px 10px;
   border: 1px solid $line;
   border-radius: 8px;
-  background: #fff;
+  background: $surface;
   color: $ink;
   font: 600 12.5px "Archivo", sans-serif;
   cursor: pointer;
@@ -848,7 +856,7 @@ $muted: #5a6474;
       height: 12px;
       flex: none;
       border-radius: 50%;
-      box-shadow: inset 0 0 0 1px rgba(15, 23, 41, 0.2);
+      box-shadow: inset 0 0 0 1px var(--b-sw-edge);
     }
   }
 
@@ -858,18 +866,18 @@ $muted: #5a6474;
     font-weight: 700;
 
     &.-out {
-      color: $red;
+      color: $red-t;
     }
   }
 
   &:hover {
-    border-color: $blue;
+    border-color: $blue-t;
   }
 
   &.-on {
-    border-color: $blue;
-    box-shadow: inset 0 0 0 1px $blue;
-    background: #f6f9ff;
+    border-color: $blue-t;
+    box-shadow: inset 0 0 0 1px $blue-t;
+    background: var(--b-blue-l);
   }
 
   &.-out {
@@ -884,7 +892,7 @@ $muted: #5a6474;
   padding: 18px;
   border: 1px solid $line;
   border-radius: 10px;
-  background: #fff;
+  background: $surface;
 
   .b-price {
     margin-top: 0;
@@ -896,8 +904,8 @@ $muted: #5a6474;
     gap: 8px;
     margin: 4px 0 2px;
     padding: 10px 0;
-    border-top: 1px solid #eef0f3;
-    border-bottom: 1px solid #eef0f3;
+    border-top: 1px solid var(--b-line);
+    border-bottom: 1px solid var(--b-line);
     list-style: none;
     font-size: 13.5px;
 
@@ -912,20 +920,20 @@ $muted: #5a6474;
       }
 
       &.-ok {
-        color: $green;
+        color: $green-t;
         font-weight: 700;
 
         .ms {
-          color: $green;
+          color: $green-t;
         }
       }
 
       &.-no {
-        color: $red;
+        color: $red-t;
         font-weight: 700;
 
         .ms {
-          color: $red;
+          color: $red-t;
         }
       }
     }
@@ -985,7 +993,7 @@ $muted: #5a6474;
     display: flex;
     align-items: center;
     gap: 6px;
-    color: $red;
+    color: $red-t;
     font-size: 13px;
     font-weight: 700;
 
@@ -1046,7 +1054,7 @@ $muted: #5a6474;
   font-family: "Archivo", sans-serif;
 
   &__cap {
-    color: $green !important;
+    color: $green-t !important;
     font-weight: 700 !important;
 
     i {
@@ -1059,7 +1067,7 @@ $muted: #5a6474;
     border-radius: 6px !important;
 
     button:hover {
-      color: $blue !important;
+      color: $blue-t !important;
       background: $blue-l !important;
     }
   }
@@ -1098,7 +1106,7 @@ $muted: #5a6474;
 
     &:hover {
       background: $blue-l;
-      color: $blue !important;
+      color: $blue-t !important;
     }
   }
 }
@@ -1141,7 +1149,7 @@ $muted: #5a6474;
   th,
   td {
     padding: 10px 14px;
-    border-top: 1px solid #eef0f3;
+    border-top: 1px solid var(--b-line);
     text-align: start;
     vertical-align: top;
   }
@@ -1189,7 +1197,7 @@ $muted: #5a6474;
     font-size: 14px;
 
     .ms {
-      color: $blue;
+      color: $blue-t;
     }
   }
 }
@@ -1279,7 +1287,7 @@ $muted: #5a6474;
     height: 18px;
     margin-top: 1px;
     border-radius: 4px;
-    box-shadow: inset 0 0 0 1.5px #a3abb8;
+    box-shadow: inset 0 0 0 1.5px var(--b-line-2);
 
     .ms {
       font-size: 14px;
@@ -1448,13 +1456,13 @@ $muted: #5a6474;
   }
 
   &__big {
-    color: $navy;
+    color: var(--b-brand-ink);
     font: 900 132px/1 "Archivo", sans-serif;
     letter-spacing: -0.06em;
 
     em {
       font-style: normal;
-      color: $blue;
+      color: $blue-t;
     }
   }
 
@@ -1550,7 +1558,7 @@ $muted: #5a6474;
 
 /* ━━━━━━━━━━━━━━━━━━━━━ Sign in ━━━━━━━━━━━━━━━━━━━━━ */
 .k-signin__brand {
-  background: #071634 !important;
+  background: var(--b-navy) !important;
 
   .b-logo {
     font-size: 40px;
@@ -1624,7 +1632,7 @@ $muted: #5a6474;
 
   &__err {
     margin: 12px 0 0;
-    color: $red;
+    color: $red-t;
     font-weight: 700;
   }
 
@@ -1670,11 +1678,11 @@ $muted: #5a6474;
     height: 42px;
     border-radius: 50%;
     background: $blue-l;
-    color: $blue;
+    color: $blue-t;
   }
 
   &__more {
-    color: $blue;
+    color: $blue-t;
     font-weight: 700;
     font-size: 14px;
   }
@@ -1717,17 +1725,17 @@ $muted: #5a6474;
     width: 100%;
     min-height: 44px;
     padding: 10px 12px;
-    border: 1px solid #c3cad6;
+    border: 1px solid var(--b-line-2);
     border-radius: 6px;
-    background: #fff;
+    background: $surface;
     color: $ink;
     font: 500 15px "Archivo", sans-serif;
     outline: 0;
     appearance: auto;
 
     &:focus {
-      border-color: $blue;
-      box-shadow: 0 0 0 1px $blue;
+      border-color: $blue-t;
+      box-shadow: 0 0 0 1px $blue-t;
     }
   }
 
@@ -1736,14 +1744,14 @@ $muted: #5a6474;
   }
 
   small {
-    color: $red;
+    color: $red-t;
     font-weight: 600;
     font-size: 12.5px;
   }
 
   &.-bad input,
   &.-bad textarea {
-    border-color: $red;
+    border-color: $red-t;
   }
 
   &.-wide {
@@ -1758,7 +1766,7 @@ $muted: #5a6474;
   padding: 44px 24px;
   border: 1px solid $line;
   border-radius: 12px;
-  background: #fff;
+  background: $surface;
 
   .b-btn {
     width: min(280px, 100%);
@@ -1776,12 +1784,12 @@ $muted: #5a6474;
   &__receipt {
     border: 1px solid $line !important;
     border-radius: 10px !important;
-    background: #fff !important;
+    background: $surface !important;
   }
 
   &__save,
   &__save * {
-    color: $red !important;
+    color: $red-t !important;
   }
 
   &__go {
@@ -1804,7 +1812,7 @@ $muted: #5a6474;
   font-family: "Archivo", sans-serif;
 
   .k-quickbuy__bar .k-more {
-    color: $blue !important;
+    color: $blue-t !important;
   }
 
   .k-quickbuy__close {
@@ -1849,8 +1857,8 @@ $muted: #5a6474;
   }
 
   &.-none {
-    background: #e7eaef !important;
-    color: #4f5a6b !important;
+    background: var(--b-off-bg) !important;
+    color: var(--b-off-ink) !important;
   }
 }
 
@@ -1873,6 +1881,7 @@ $muted: #5a6474;
   /* A differing row has no fill: the yellow looked poor and its top seemed
      cut under the sticky picks. The dot and the bolder values say it. */
   --c-diff-bg: transparent;
+  --c-ok-t: var(--k-coral-t);
 }
 
 /* A pick's 1px edge is drawn inside its own box: the strip's sideways
@@ -1900,7 +1909,7 @@ $muted: #5a6474;
 /* Selldone's option tiles: the chosen one's ring on its own edge, inside
    its box (Kalio drew it 2px outside, with a corner tick past the edge). */
 .v-application .s-product-variants__options .var-sel.selected {
-  box-shadow: inset 0 0 0 2px $blue !important;
+  box-shadow: inset 0 0 0 2px $blue-t !important;
 
   &:not(.not)::after {
     content: none !important;
@@ -1926,7 +1935,7 @@ $muted: #5a6474;
 /* Banners are never blue when every button is (the Digini lesson): the
    guides' head is navy, its count yellow. */
 .k-journal__hero {
-  background: #071634 !important;
+  background: var(--b-navy) !important;
   border-radius: 12px !important;
 
   .k-journal__eyebrow {
@@ -1949,7 +1958,7 @@ $muted: #5a6474;
   font-size: 13px;
 
   a {
-    color: #5a6474 !important;
+    color: var(--b-muted) !important;
   }
 }
 
@@ -1959,7 +1968,7 @@ $muted: #5a6474;
   padding: 28px 24px !important;
   border: 1px solid $line;
   border-radius: 12px;
-  background: #fff;
+  background: $surface;
 }
 
 .k-btn {
@@ -1979,7 +1988,7 @@ $muted: #5a6474;
   padding: 20px !important;
   border: 1px solid $line !important;
   border-radius: 10px !important;
-  background: #fff !important;
+  background: $surface !important;
 }
 
 .b-reviews .k-rv__none {
@@ -2028,8 +2037,8 @@ $muted: #5a6474;
     &.selected {
       transform: none !important;
       border-color: $line !important;
-      background: #f6f9ff !important;
-      box-shadow: inset 0 0 0 2px $blue !important;
+      background: var(--b-blue-l) !important;
+      box-shadow: inset 0 0 0 2px $blue-t !important;
       color: $ink !important;
 
       &::after {

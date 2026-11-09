@@ -60,7 +60,7 @@ $t-tablet: 1100px;
   &__more {
     display: inline-flex;
     align-items: center;
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
     font-size: 15px;
     font-weight: 700;
     text-decoration: none;
@@ -85,7 +85,7 @@ $t-tablet: 1100px;
   display: inline-grid;
   place-items: center;
   border-radius: 50%;
-  background: #fff;
+  background: var(--k-card);
   color: var(--k-ink) !important;
   cursor: pointer;
 
@@ -154,7 +154,7 @@ $t-tablet: 1100px;
 
   &.-outline {
     border: 1.5px solid var(--k-line-strong);
-    background: #fff;
+    background: var(--k-card);
     color: var(--k-ink) !important;
 
     &:hover {
@@ -364,7 +364,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
   }
 
   &.-sale &__now {
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
   }
 
   &__was {
@@ -380,7 +380,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
   }
 
   &__sale {
-    color: var(--k-green);
+    color: var(--k-green-t);
     font-size: 12.5px;
     font-style: normal;
     font-weight: 700;
@@ -452,16 +452,16 @@ a:hover > .t-photo .t-photo__pack.-p1 {
 
     &:hover {
       border-color: var(--k-ink) !important;
-      background: #fff !important;
+      background: var(--k-card) !important;
     }
   }
 }
 
 .k-card-step.-card {
-  background: #fff !important;
+  background: var(--k-card) !important;
 
   button {
-    color: var(--k-green) !important;
+    color: var(--k-green-t) !important;
 
     &:hover:not(:disabled) {
       background: var(--k-green-soft) !important;
@@ -512,7 +512,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     height: 56px;
     border-radius: 50%;
     background: var(--k-wash);
-    color: var(--k-green);
+    color: var(--k-green-t);
     font-size: 22px;
     font-weight: 800;
 
@@ -543,7 +543,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     }
 
     u {
-      color: var(--k-green);
+      color: var(--k-green-t);
       font-size: 14px;
       font-weight: 700;
       text-underline-offset: 3px;
@@ -650,8 +650,8 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     margin-top: 8px;
     padding: 10px 18px;
     border-radius: 999px;
-    background: #fff;
-    color: var(--k-green);
+    background: var(--k-card);
+    color: var(--k-green-t);
     font-weight: 800;
     font-size: 15px;
   }
@@ -718,7 +718,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
       background: #fff4d6;
 
       small {
-        color: var(--k-green);
+        color: var(--k-green-t);
       }
     }
   }
@@ -741,7 +741,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     height: 112px;
     overflow: hidden;
     border-radius: 10px;
-    background: #fff;
+    background: var(--k-card);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 
     img {
@@ -845,7 +845,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
 
   small {
     position: relative;
-    color: var(--k-green);
+    color: var(--k-green-t);
     font-weight: 700;
     font-size: 13px;
   }
@@ -887,7 +887,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
   }
 
   &__eyebrow {
-    color: var(--k-green);
+    color: var(--k-green-t);
     font-size: 12.5px;
     font-weight: 800;
     letter-spacing: 0.12em;
@@ -1035,7 +1035,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
   text-decoration: none;
 
   &:hover {
-    border-color: var(--k-green);
+    border-color: var(--k-green-t);
   }
 
   &__mark {
@@ -1068,7 +1068,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     }
 
     em {
-      color: var(--k-green);
+      color: var(--k-green-t);
       font-style: normal;
       font-weight: 800;
       text-decoration: underline;

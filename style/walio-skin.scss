@@ -9,9 +9,9 @@
    Sans, white cards on light wells and a deep navy footer.
    Loaded last (storefront.scss), so it only overrides. */
 
-$walio-blue: #0a4bd8;
-$walio-blue-deep: #0838a8;
-$walio-navy: #071634;
+$walio-blue: var(--b-blue);
+$walio-blue-deep: var(--b-blue-d);
+$walio-navy: var(--b-navy);
 $walio-spark: #ffd91a;
 
 h1,
@@ -76,7 +76,7 @@ h3 {
 
   &__search {
     .v-field {
-      background: #fff !important;
+      background: var(--k-card) !important;
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
     }
 
@@ -86,7 +86,7 @@ h3 {
   }
 
   &__search-pill {
-    background: #fff !important;
+    background: var(--k-card) !important;
   }
 
   &__link {
@@ -126,7 +126,7 @@ h3 {
 
 /* The aisle bar under the blue: white, dark words, blue underline. */
 .k-strip {
-  background: #fff !important;
+  background: var(--k-card) !important;
   box-shadow: 0 1px 0 var(--k-line);
 
   &__link {
@@ -134,11 +134,11 @@ h3 {
 
     &:hover,
     &.-on {
-      color: $walio-blue !important;
+      color: var(--b-blue-t) !important;
     }
 
     &.-deals {
-      color: $walio-blue !important;
+      color: var(--b-blue-t) !important;
       font-weight: 800 !important;
 
       &::after {
@@ -248,14 +248,14 @@ h3 {
 }
 
 .k-cart__receipt {
-  background: #fff !important;
+  background: var(--k-card) !important;
   border: 1px solid var(--k-line) !important;
   box-shadow: 0 10px 30px -22px rgba(7, 22, 52, 0.4) !important;
 }
 
 .k-cart__detail {
   border-color: var(--k-line) !important;
-  background: #fff !important;
+  background: var(--k-card) !important;
 }
 
 .k-cart__go {
@@ -288,5 +288,5 @@ h3 {
 /* What is still missing before paying reads as a caution, not a saving. */
 .k-cart__need,
 .k-cart__need .v-icon {
-  color: #b35900 !important;
+  color: var(--b-warn-t, #b35900) !important;
 }

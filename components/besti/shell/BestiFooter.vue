@@ -5,8 +5,11 @@
   then navy columns: the white wordmark with the shop's description and its
   social links, Departments (live), Your orders, About (the merchant's own
   footer menu when there is one, else the standard pages) and Policies; and
-  a legal row with a small "made with selldone" and Selldone's cookie
-  settings. A shop with custom footer code keeps Selldone's footer.
+  a "Theme" row (Besti 1.0.9, the owner's rule: colour palettes and Light /
+  Dark; a click changes the whole site at once, kept in this browser,
+  besti-theme.ts); a legal row with a small "made with selldone" and
+  Selldone's cookie settings. A shop with custom footer code keeps
+  Selldone's footer.
 -->
 <template>
   <footer class="b-footer">
@@ -58,6 +61,32 @@
       </nav>
     </div>
 
+    <div class="b-wrap b-footer__theme">
+      <span id="b-theme-label" class="b-footer__theme-t">Theme</span>
+      <div aria-labelledby="b-theme-label" class="b-themes" role="group">
+        <button
+          v-for="p in palettes"
+          :key="p.id"
+          :aria-label="p.name"
+          :aria-pressed="theme.palette === p.id ? 'true' : 'false'"
+          :class="{ '-on': theme.palette === p.id }"
+          :style="{ '--sw': p.primary }"
+          :title="p.name"
+          class="b-tsw"
+          type="button"
+          @click="setPalette(p.id)"
+        ></button>
+      </div>
+      <div aria-label="Light or dark" class="b-modes" role="group">
+        <button :aria-pressed="theme.mode === 'light' ? 'true' : 'false'" :class="{ '-on': theme.mode === 'light' }" type="button" @click="setMode('light')">
+          <span class="ms">light_mode</span>Light
+        </button>
+        <button :aria-pressed="theme.mode === 'dark' ? 'true' : 'false'" :class="{ '-on': theme.mode === 'dark' }" type="button" @click="setMode('dark')">
+          <span class="ms">dark_mode</span>Dark
+        </button>
+      </div>
+    </div>
+
     <div class="b-wrap b-footer__legal">
       <span>© {{ year }} {{ shopTitle }}</span>
       <router-link :to="{ name: r.SHOP_PROFILE_PAGE_TERMS }">Terms</router-link>
@@ -80,13 +109,14 @@ import SFooterSectionGdpr from "@selldone/components-vue/storefront/footer/secti
 import SFooterSectionSelldone from "@selldone/components-vue/storefront/footer/section/selldone/SFooterSectionSelldone.vue";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import { aisleRoute, aisles, catalogueRoute } from "../../kalio/kalio-catalog";
+import { PALETTES, setMode, setPalette, theme } from "../besti-theme";
 
 export default {
   name: "BestiFooter",
   components: { BestiLogo, SStorefrontSocialButtons, SLanguageSelector, UCurrencySelector, SFooterSectionGdpr, SFooterSectionSelldone },
   inject: ["$shop"],
 
-  data: () => ({ cats: [], email: "", busy: false, sent: false, error: null, year: new Date().getFullYear() }),
+  data: () => ({ cats: [], email: "", busy: false, sent: false, error: null, year: new Date().getFullYear(), theme, palettes: PALETTES }),
 
   computed: {
     r() {
@@ -137,6 +167,8 @@ export default {
   },
 
   methods: {
+    setPalette,
+    setMode,
     catTo: aisleRoute,
     signIn() {
       EventBus.$emit("need-login", true);
