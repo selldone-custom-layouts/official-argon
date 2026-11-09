@@ -69,6 +69,9 @@ export function cartWords(): void {
     buy_button: { quantity_in_basket: "In your cart", add_to_basket: "Add to cart" },
     share_order: { address_included: "Share cart items + address", address_excluded: "Share only cart items" },
     product_section_incentivise: { have_in_their_bag: "<b>{in_carts}</b> others have this in their carts!" },
+    /* Selldone's countdown (the product page's deal clock) reads "Day",
+       "Hour": Besti's clocks say days, hrs, min, sec everywhere. */
+    global: { count_down: { days: "days", hours: "hrs", minutes: "min", seconds: "sec" } },
   });
   wordsMerged = true;
 }

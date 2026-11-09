@@ -1,9 +1,9 @@
 <!--
   Besti — the header (Home B "Department store").
 
-  1. A navy strip with today's deal: its name, price and old price, "Next
-     deal in" counting to local midnight (the shop's discounts carry no end
-     date, so the clock never says "Ends in"), and "Shop the deal".
+  1. A navy strip with today's deal: its name, price and old price, "Ends
+     in" counting to the deal's own end date (no end date, no clock), and
+     "Shop the deal".
   2. A white bar: the ink wordmark, a search with a department scope and a
      blue search button (suggestions while typing), Track order, Saved, Sign
      in (or the account), and a blue cart pill with the count and the total.
@@ -23,10 +23,10 @@
     <div v-if="dotd" class="b-strip">
       <span class="b-strip__deal">
         <span class="ms fill">bolt</span><b>Deal of the Day</b>
-        <em class="b-strip__t">{{ dotd.title }}, {{ money(price(dotd).now) }}<s v-if="price(dotd).was">{{ money(price(dotd).was) }}</s></em>
+        <em class="b-strip__t">{{ dotd.title }}, {{ money(dotdMoney.now) }}<s v-if="dotdMoney.was">{{ money(dotdMoney.was) }}</s></em>
         <b v-if="dotdOff" class="b-strip__pct">{{ dotdOff }}% off</b>
       </span>
-      <span class="b-strip__clock">Next deal in <b>{{ clock.h }}:{{ clock.m }}:{{ clock.s }}</b></span>
+      <besti-deal-clock :end="dotdEnd" mode="strip" />
       <router-link :to="productTo(dotd)" class="b-strip__go">Shop the deal<span class="ms">chevron_right</span></router-link>
     </div>
 
@@ -193,14 +193,15 @@
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import BestiLogo from "../BestiLogo.vue";
+import BestiDealClock from "../BestiDealClock.vue";
 import KalioBasketDrawer from "../../kalio/shell/KalioBasketDrawer.vue";
 import { aisleRoute, aisles, catalogueRoute, dealsRoute } from "../../kalio/kalio-catalog";
 import { basketView } from "../../kalio/kalio-basket";
-import { brandRoute, brandsOf, catalogue, clock, dealOfTheDay, moneyOf, moneyText, percentOff, startClock } from "../besti";
+import { brandRoute, brandsOf, catalogue, dealEnd, dealOfTheDay, leadVariant, moneyOf, moneyText, percentOff } from "../besti";
 
 export default {
   name: "BestiHeader",
-  components: { BestiLogo, KalioBasketDrawer },
+  components: { BestiLogo, BestiDealClock, KalioBasketDrawer },
   mixins: [CurrencyMixin],
   inject: ["$shop"],
 
@@ -213,7 +214,6 @@ export default {
   data: () => ({
     cats: [],
     products: [],
-    clock,
     q: "",
     scope: null,
     hits: [],
@@ -275,8 +275,22 @@ export default {
     dotd() {
       return dealOfTheDay(this.$shop, this.products);
     },
+    /* The colour the Deal of the Day shows first: its price, saving and end
+       are that colour's when it has its own pricing. */
+    dotdVariant() {
+      return leadVariant(this.dotd);
+    },
+    dotdMoney() {
+      return moneyOf(this.$shop, this.dotd, this.dotdVariant, this.currency);
+    },
     dotdOff() {
-      return this.dotd ? percentOff(this.$shop, this.dotd) : 0;
+      if (!this.dotd) return 0;
+      const m = this.dotdMoney;
+      if (this.dotdVariant && m.was) return Math.round((m.save / m.was) * 100);
+      return percentOff(this.$shop, this.dotd);
+    },
+    dotdEnd() {
+      return dealEnd(this.dotd, this.dotdVariant);
     },
     brands() {
       return brandsOf(this.products);
@@ -333,7 +347,6 @@ export default {
   mounted() {
     aisles().then((list) => (this.cats = list));
     catalogue().then((list) => (this.products = list));
-    startClock();
     this.onResize = () => (this.windowWidth = window.innerWidth);
     window.addEventListener("resize", this.onResize, { passive: true });
     /* Any part of the page can open the cart (the footer's Cart link). */

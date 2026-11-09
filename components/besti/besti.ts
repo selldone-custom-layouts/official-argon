@@ -313,6 +313,15 @@ export function variantDimension(variants: any[]): { key: string; word: string }
   return { key: keys[0], word: word[keys[0]] };
 }
 
+/** The colour a product shows first (the first in stock), as the cards and
+ *  the Deal of the Day pick it; null when its choice is not a colour. */
+export function leadVariant(product: any): any | null {
+  const list = (product?.product_variants || []).filter((v: any) => v && v.enable !== false);
+  if (variantDimension(list)?.key !== "color") return null;
+  const v = list.find((x: any) => x.quantity > 0) || list[0];
+  return v && v.id ? v : null;
+}
+
 /** A colour's name for people ("Indigo"), from the nearest of a short list. */
 const NAMES: [string, number, number, number][] = [
   ["Black", 0, 0, 0], ["White", 255, 255, 255], ["Gray", 128, 128, 128], ["Silver", 192, 192, 192],
@@ -355,25 +364,52 @@ export function moneyText(amount: number, currency: string, whole = false): stri
   }
 }
 
-/* ━━━━━━━━━━━━ Countdown to local midnight ━━━━━━━━━━━━
-   The shop's discounts have no end date, so the clock never says "Ends in":
-   the Deal of the Day changes at midnight, and the clock counts to it. */
-export const clock = reactive({ h: "00", m: "00", s: "00" });
+/* ━━━━━━━━━━━━ Deal timers: the deal's own end ━━━━━━━━━━━━
+   Every clock counts to the discount's own end date by Selldone's rule
+   (PriceHelper.HasDiscountCountDownMode / GetEndOfDiscountDate: the chosen
+   variant's dates when it has its own pricing, else the product's). A deal
+   without an end date shows no clock. One shared ticker for the whole page
+   (`tick.now`, once a second), never one interval per card. */
+export const tick = reactive({ now: Date.now() });
 let ticking = false;
-function tick() {
-  const now = new Date();
-  const end = new Date(now);
-  end.setHours(24, 0, 0, 0);
-  const left = Math.max(0, Math.floor((end.getTime() - now.getTime()) / 1000));
-  clock.h = String(Math.floor(left / 3600)).padStart(2, "0");
-  clock.m = String(Math.floor((left % 3600) / 60)).padStart(2, "0");
-  clock.s = String(left % 60).padStart(2, "0");
-}
 export function startClock(): void {
   if (ticking || typeof window === "undefined") return;
   ticking = true;
-  tick();
-  window.setInterval(tick, 1000);
+  tick.now = Date.now();
+  window.setInterval(() => (tick.now = Date.now()), 1000);
+}
+
+/** When this deal ends (a Date), or null: no end date, or not on now. */
+export function dealEnd(product: any, variant: any = null): Date | null {
+  if (!product) return null;
+  try {
+    if (!PriceHelper.HasDiscountCountDownMode(product, variant)) return null;
+    const end = PriceHelper.GetEndOfDiscountDate(product, variant);
+    return end && !isNaN(end.getTime()) ? end : null;
+  } catch {
+    return null;
+  }
+}
+
+export interface TimeLeft {
+  d: number;
+  h: string;
+  m: string;
+  s: string;
+  /** "364d 23:15:07", or "23:15:07" under a day. */
+  text: string;
+}
+
+/** What is left until `end` at `now`; null once it has passed. */
+export function timeLeft(end: Date | null, now: number): TimeLeft | null {
+  if (!end) return null;
+  const left = Math.floor((end.getTime() - now) / 1000);
+  if (left <= 0) return null;
+  const d = Math.floor(left / 86400);
+  const h = String(Math.floor((left % 86400) / 3600)).padStart(2, "0");
+  const m = String(Math.floor((left % 3600) / 60)).padStart(2, "0");
+  const sec = String(left % 60).padStart(2, "0");
+  return { d, h, m, s: sec, text: `${d ? d + "d " : ""}${h}:${m}:${sec}` };
 }
 
 /** A brand's products: the catalogue with Selldone's own brand filter. */

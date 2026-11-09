@@ -1,22 +1,19 @@
 <!--
   Besti — the Deal of the Day, wide.
 
-  A yellow block with the saving in percent and "Next deal in" over the
-  hours, minutes and seconds to local midnight (the shop's discounts have no
-  end date, so it never says "Ends in": the deal of the day changes at
-  midnight), the product big, its colours, the price, Add to cart and
-  Compare, and "More top deals" beside it. The deal is one of the shop's
-  biggest savings, a different one each day (besti.ts dealOfTheDay).
+  A yellow block with the saving in percent and "Ends in" over the days,
+  hours, minutes and seconds left on this deal (its own end date, the picked
+  colour's when that colour has its own pricing; no end date, no clock), the
+  product big, its colours, the price, Add to cart and Compare, and "More top
+  deals" beside it. The deal is one of the shop's biggest savings, a
+  different one each day (besti.ts dealOfTheDay).
 -->
 <template>
   <section aria-label="Deal of the Day" class="b-dotd">
     <div class="b-dotd__badge">
       <small>Deal of the Day</small>
       <b v-if="off > 0">{{ off }}% off</b>
-      <em>Next deal in</em>
-      <div aria-live="off" class="b-count">
-        <span><b>{{ clock.h }}</b>hrs</span><span><b>{{ clock.m }}</b>min</span><span><b>{{ clock.s }}</b>sec</span>
-      </div>
+      <besti-deal-clock :end="dealEndsAt" mode="blocks" />
     </div>
     <router-link :to="productTo" class="b-dotd__img">
       <img :alt="product.title" :src="picture" :srcset="srcset" sizes="(max-width: 900px) 40vw, 320px" @error="dropSrcset" />
@@ -72,16 +69,17 @@
 <script>
 import BuyMixin from "./besti-buy";
 import { dropSrcset, productSrcset } from "../kalio/kalio-catalog";
-import { clock, moneyOf, startClock } from "./besti";
+import BestiDealClock from "./BestiDealClock.vue";
+import { moneyOf } from "./besti";
 
 export default {
   name: "BestiDealOfDay",
+  components: { BestiDealClock },
   mixins: [BuyMixin],
   props: {
     product: { type: Object, required: true },
     more: { type: Array, default: () => [] },
   },
-  data: () => ({ clock }),
   computed: {
     picture() {
       return this.pictureIcon ? window.CDN.GET_SHOP_IMAGE_PATH(this.pictureIcon, null) : null;
@@ -89,9 +87,6 @@ export default {
     srcset() {
       return productSrcset(this.product, this.variant?.image || null);
     },
-  },
-  mounted() {
-    startClock();
   },
   methods: {
     dropSrcset,

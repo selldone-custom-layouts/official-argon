@@ -14,7 +14,7 @@
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { percentOff } from "../kalio/kalio-catalog";
 import { addVariant, basketLine, hasSizes, pendingLine, pendingLineFor, quickAdd, settling, shownCount, stepTo } from "../kalio/kalio-basket";
-import { catalogueById, colourName, moneyOf, moneyText, saved, swatchBg, toggleSaved, variantDimension } from "./besti";
+import { catalogueById, colourName, dealEnd, moneyOf, moneyText, saved, swatchBg, toggleSaved, variantDimension } from "./besti";
 
 declare const window: any;
 
@@ -60,6 +60,11 @@ export default {
     },
     money(this: any) {
       return moneyOf(this.shop, this.product, this.variant, this.currency);
+    },
+    /** When this deal ends (the picked colour's dates when it has its own
+        pricing), for BestiDealClock; null without an end date. */
+    dealEndsAt(this: any): Date | null {
+      return dealEnd(this.product, this.variant);
     },
     off(this: any): number {
       if (this.variant && this.money.was) return Math.round((this.money.save / this.money.was) * 100);

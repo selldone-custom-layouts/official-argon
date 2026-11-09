@@ -390,9 +390,9 @@ $muted: #5a6474;
     box-shadow: inset 0 0 0 1px rgba(15, 23, 41, 0.22);
     cursor: pointer;
 
+    /* Shadows, not outline + offset: centred at any screen scaling. */
     &.-on {
-      outline: 2px solid $blue;
-      outline-offset: 2px;
+      box-shadow: inset 0 0 0 1px rgba(15, 23, 41, 0.34), 0 0 0 2px #fff, 0 0 0 4px $blue;
     }
   }
 }
@@ -860,6 +860,69 @@ $muted: #5a6474;
           color: $red;
         }
       }
+    }
+  }
+
+  /* The deal's end on Selldone's countdown (UCountDown), drawn as Besti's
+     navy blocks: white numbers, the label above in sale red. */
+  &__deal {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    padding: 10px 12px 12px;
+    border-radius: 8px;
+    background: $page;
+
+    .vuejs-countdown {
+      display: flex;
+      gap: 6px;
+      margin: 0;
+      list-style: none;
+
+      li {
+        flex: 1 1 0;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 !important;
+        padding: 5px 0 4px;
+        border-radius: 6px;
+        background: $navy;
+        color: #fff;
+
+        &::after {
+          content: none !important;
+        }
+      }
+
+      .digit {
+        color: #fff;
+        font: 800 18px/1.15 "Archivo", system-ui, sans-serif !important;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .text {
+        color: #fff;
+        opacity: 0.85;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  &__dealt {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: $red;
+    font-size: 13px;
+    font-weight: 700;
+
+    .ms {
+      font-size: 18px;
     }
   }
 
@@ -1736,6 +1799,9 @@ $muted: #5a6474;
 
 .k-cmp {
   font-family: "Archivo", sans-serif;
+  /* Words on the navy share card are white (the owner's rule for every
+     blue or navy surface); its head stays the yellow accent. */
+  --c-share-ink: #fff;
 }
 
 /* A struck price on its own line keeps its line to its own width. */
@@ -1828,4 +1894,58 @@ $muted: #5a6474;
   text-align: center;
   line-height: 1.25;
   overflow: visible;
+}
+
+/* Selldone's own picker (only for a product with two kinds of choice): a
+   colour without its own photo carries its name, and Selldone draws it as a
+   64px circle the name runs out of ("Navy Blue / Cyan / Aqua"). Here it is
+   a rounded tile that shares the row (76-112px), as tall as its name needs
+   (three lines at most), with no Selldone scale or corner tick when
+   chosen. */
+.b-pdp__choice.-selldone {
+  .s-product-variants__options {
+    align-items: stretch;
+  }
+
+  .s-product-variants__options .var-sel.-color {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 76px !important;
+    max-width: 112px !important;
+    height: auto !important;
+    min-height: 64px !important;
+    padding: 8px 6px !important;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 5px;
+    border-radius: 8px !important;
+    transform: none !important;
+
+    &.selected {
+      transform: none !important;
+      border-color: $blue !important;
+      background: #f6f9ff !important;
+      box-shadow: inset 0 0 0 1px $blue !important;
+      color: $ink !important;
+
+      &::after {
+        content: none !important;
+      }
+    }
+
+    .s-product-variants__color-name {
+      display: -webkit-box !important;
+      max-width: 100%;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      text-align: center;
+      font-size: 11.5px !important;
+      line-height: 1.25;
+      color: $ink !important;
+    }
+  }
 }

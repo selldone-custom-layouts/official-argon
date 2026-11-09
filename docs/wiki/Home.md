@@ -27,11 +27,11 @@ It runs on **[besti.selldone.shop](https://besti.selldone.shop)**, one address o
 
 ## What you get
 
-- **Header:** a navy Deal of the Day strip with "Next deal in" counting to midnight; the wordmark, a search with a department scope and suggestions, Track order, Saved, Sign in and a blue cart pill with the count and total; a blue department bar ("All departments" opens a mega menu on click), Deals in yellow, New arrivals and Brands.
+- **Header:** a navy Deal of the Day strip with "Ends in 364d 23:15:07", counting to the deal's own end date; the wordmark, a search with a department scope and suggestions, Track order, Saved, Sign in and a blue cart pill with the count and total; a blue department bar ("All departments" opens a mega menu on click), Deals in yellow, New arrivals and Brands.
 - **Home:** photo hero, Shop by department (two even rows, never a hole), Deal of the Day, Top deals by category, Everyday essentials, Best sellers (from the `best-seller` tag), a wide photo banner, New arrivals, Shop by brand, a row for every other tag ("<Tag> Items"), Recently viewed and the four newest guides.
-- **Cards:** bordered tiles with a yellow "% off" flag, colour swatches that pick the colour, a red "Save $X", "Was $Y", "Add to cart" that turns into "− n +" in place, "Choose capacity" for a quick-buy sheet, Compare and Save.
+- **Cards:** bordered tiles with a yellow "% off" flag, colour swatches that pick the colour, a red "Save $X", "Was $Y", the deal's countdown ("Ends in 364d 23:15:07"), "Add to cart" that turns into "− n +" in place, "Choose capacity" for a quick-buy sheet, Compare and Save.
 - **Shop pages:** a short head, filters built from the products' own specs (departments, price slider, On sale only, brand, colour, spec keys), Sort by, five cards to a row; the Deals page with the Deal of the Day.
-- **Product page:** gallery, details with colour or capacity tiles and key specs, a sticky buy box; Specifications in the shop's groups, Reviews, Frequently bought together, Related products, More in the department.
+- **Product page:** gallery, details with colour or capacity tiles and key specs, a sticky buy box with the deal's countdown; Specifications in the shop's groups, Reviews, Frequently bought together, Related products, More in the department.
 - **Compare:** the picks pinned on top, the specs side by side with differences marked.
 - **Cart and checkout:** a receipt-first drawer, a stepped checkout with a map-first address sheet, delivery choices and the payment window.
 - **Orders and account:** the receipt, delivery, the trip and messages; the account as a desk with a side menu.

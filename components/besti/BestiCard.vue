@@ -4,7 +4,8 @@
   A bordered white tile: the photo on white with a small yellow "% off" flag,
   the colour swatches (a tap picks that colour: its photo, price and stock)
   or the capacity chips, a two-line name, the price with a red "Save $X",
-  "Was $Y", a blue "Add to cart" that turns into "− n +" in place, and
+  "Was $Y", the deal's own countdown ("Ends in 364d 23:15:07", only when
+  the deal has an end date), a blue "Add to cart" that turns into "− n +" in place, and
   Compare and Save at the foot. A product whose choice is not a colour
   (capacity, size, pack) says "Choose capacity" and opens the quick-buy
   sheet, which has its own X. Nothing pops up. (besti-buy.ts)
@@ -66,6 +67,8 @@
       <div class="b-was">
         <template v-if="money.was">Was <s><u-price :amount="money.was" :currency="currency" /></s></template>
       </div>
+      <!-- The deal's clock; its line is kept on every card so a row stays level. -->
+      <div class="b-card__cd"><besti-deal-clock :end="dealEndsAt" mode="line" /></div>
 
       <div class="b-card__buy" @click.prevent.stop>
         <div v-if="shown > 0" :class="{ '-busy': busy }" aria-label="Quantity in cart" class="b-step" role="group">
@@ -98,10 +101,12 @@
 
 <script>
 import BuyMixin from "./besti-buy";
+import BestiDealClock from "./BestiDealClock.vue";
 import { dropSrcset, productSrcset } from "../kalio/kalio-catalog";
 
 export default {
   name: "BestiCard",
+  components: { BestiDealClock },
   mixins: [BuyMixin],
 
   props: {

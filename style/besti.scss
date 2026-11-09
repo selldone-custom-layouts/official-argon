@@ -223,14 +223,27 @@ body {
   border-radius: 50%;
   background: #fff;
   box-shadow: inset 0 0 0 1px $line;
-  color: $ink;
+  /* !important: Selldone's [type=button] { color: inherit } loads after and
+     left the chevrons a faint 87% black. Full ink, a heavier, bigger glyph. */
+  color: $ink !important;
   cursor: pointer;
   flex: none;
 
+  .ms {
+    color: inherit !important;
+    opacity: 1;
+    font-variation-settings: "FILL" 0, "GRAD" 0, "opsz" 24, "wght" 600;
+  }
+
   &:hover {
-    color: $blue;
+    color: $blue !important;
     box-shadow: inset 0 0 0 1.5px $blue;
   }
+}
+
+.b-round .ms,
+.b-arrow .ms {
+  font-size: 24px;
 }
 
 .b-x {
@@ -462,7 +475,7 @@ body {
     border: 0;
     border-radius: 0 5px 5px 0;
     background: $blue;
-    color: #fff;
+    color: #fff !important; /* Selldone's [type=button] { color: inherit } loads after */
     display: grid;
     place-items: center;
     cursor: pointer;
@@ -597,10 +610,15 @@ body {
   border: 0;
   border-radius: 8px;
   background: $blue;
-  color: #fff;
+  color: #fff !important; /* Selldone's [type=button] { color: inherit } loads after */
   font: 800 15px "Archivo", sans-serif;
   white-space: nowrap;
   cursor: pointer;
+
+  .ms,
+  .b-cartpill__t {
+    color: #fff !important;
+  }
 
   .ms {
     font-size: 24px;
@@ -1167,9 +1185,11 @@ body {
   flex: none;
   cursor: pointer;
 
+  /* The ring is drawn with shadows, not outline + offset: an outline on a
+     circle can sit a device pixel off centre at 125% or 150% screen
+     scaling. The stronger inset edge keeps a white swatch a white disc. */
   &.-on {
-    outline: 2px solid $blue;
-    outline-offset: 2px;
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 41, 0.34), 0 0 0 2px #fff, 0 0 0 4px $blue;
   }
 
   &.-out {
@@ -1232,6 +1252,55 @@ body {
   font-size: 12px;
   font-weight: 800;
   white-space: nowrap;
+}
+
+/* The deal's clock on a card: one quiet line whose height every card keeps,
+   so the cards of a row stay level whether they have a deal or not. Under
+   150px of card it drops "Ends in" and keeps the icon and the time. */
+.b-card__cd {
+  height: 17px;
+  margin-top: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.b-cd {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  max-width: 100%;
+  color: $muted;
+  font-size: 12px;
+  line-height: 17px;
+
+  .ms {
+    font-size: 14px;
+  }
+
+  b {
+    font-weight: 600;
+    color: $ink;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@container (max-width: 150px) {
+  .b-cd__w {
+    display: none;
+  }
+}
+
+/* The Deal of the Day's "Ends in" and its blocks (BestiDealClock blocks). */
+.b-cd-blocks {
+  display: flex;
+  flex-direction: column;
+
+  em {
+    margin-bottom: 6px;
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 700;
+  }
 }
 
 .b-was {
@@ -1694,7 +1763,7 @@ body {
 /* deal of the day, wide */
 .b-dotd {
   display: grid;
-  grid-template-columns: 210px 1.1fr 1.3fr 1fr;
+  grid-template-columns: 250px 1.1fr 1.3fr 1fr;
   align-items: center;
   gap: 28px;
   margin-top: 44px;
@@ -1715,7 +1784,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 24px;
+    padding: 24px 20px;
     background: $yellow;
     color: $navy;
 
@@ -1811,7 +1880,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 50px;
+    flex: 0 1 48px;
+    min-width: 0;
     padding: 6px 0 5px;
     border-radius: 8px;
     background: $navy;
@@ -2307,7 +2377,7 @@ body {
   }
 
   .b-dotd {
-    grid-template-columns: 180px 1fr 1.3fr;
+    grid-template-columns: 230px 1fr 1.3fr;
 
     &__more {
       display: none;
@@ -2497,10 +2567,20 @@ body {
     }
   }
 
-  .b-count {
+  .b-cd-blocks {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
     margin-left: auto;
 
+    em {
+      margin: 0;
+    }
+  }
+
+  .b-count {
     span {
+      flex: none;
       width: 44px;
     }
 

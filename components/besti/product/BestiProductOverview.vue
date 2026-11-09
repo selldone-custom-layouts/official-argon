@@ -117,6 +117,12 @@
             <span v-if="money.save > 0" class="b-save">Save {{ moneyWhole(money.save) }}</span>
           </div>
           <div class="b-was"><template v-if="money.was">Was <s><u-price :amount="money.was" :currency="currency" /></s></template></div>
+          <!-- The deal's own end (the chosen variant's when it has its own
+               pricing), on Selldone's countdown; no end date, no clock. -->
+          <div v-if="dealEndsAt" class="b-buybox__deal">
+            <span class="b-buybox__dealt"><span class="ms">schedule</span>Deal ends in</span>
+            <u-count-down :end="dealEndsAt" />
+          </div>
         </template>
         <s-product-section-tax></s-product-section-tax>
 
@@ -199,13 +205,15 @@
 
 <script>
 import KalioProductOverview from "../../kalio/product/KalioProductOverview.vue";
+import UCountDown from "@selldone/components-vue/ui/count-down/UCountDown.vue";
 import { waysOf } from "../../walio/walio-home";
-import { brandRoute, colourName, moneyOf, moneyText, saved, swatchBg, toggleSaved, variantDimension } from "../besti";
+import { brandRoute, colourName, dealEnd, moneyOf, moneyText, saved, swatchBg, toggleSaved, variantDimension } from "../besti";
 import { specRows } from "./besti-spec";
 
 export default {
   name: "BestiProductOverview",
   extends: KalioProductOverview,
+  components: { UCountDown },
 
   data() {
     return { compact: false };
@@ -258,6 +266,9 @@ export default {
     },
     money() {
       return moneyOf(this.shop, this.$product, this.current_variant, this.currency);
+    },
+    dealEndsAt() {
+      return dealEnd(this.$product, this.current_variant);
     },
     stock() {
       if (this.current_variant) return this.current_variant.quantity || 0;
