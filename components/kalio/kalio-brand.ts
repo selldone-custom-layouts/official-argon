@@ -28,6 +28,7 @@ export function applyBrand(shop: any): void {
     shop.title = BRAND.name;
   }
   brandIcon();
+  cartWords();
 }
 
 /** The first page keeps the head the server wrote ("… | molino"); later pages
@@ -52,4 +53,22 @@ export function brandIcon(): void {
       if (rel === "icon") link.type = "image/svg+xml";
     }
   }
+}
+
+/* ━━━━━━━━━━━━ One word for the cart ━━━━━━━━━━━━
+   Besti says "cart" everywhere. Selldone's own English strings that still
+   say "basket" (its buy button, the share-order dialog, the "others have
+   this" line) are set to "cart" here, in English only, once. */
+let wordsMerged = false;
+export function cartWords(): void {
+  if (wordsMerged || typeof window === "undefined") return;
+  const i18n = (window as any).$i18n_global;
+  const locale = i18n?.locale?.value ?? i18n?.locale;
+  if (!i18n?.mergeLocaleMessage || !String(locale).startsWith("en")) return;
+  i18n.mergeLocaleMessage(locale, {
+    buy_button: { quantity_in_basket: "In your cart", add_to_basket: "Add to cart" },
+    share_order: { address_included: "Share cart items + address", address_excluded: "Share only cart items" },
+    product_section_incentivise: { have_in_their_bag: "<b>{in_carts}</b> others have this in their carts!" },
+  });
+  wordsMerged = true;
 }
