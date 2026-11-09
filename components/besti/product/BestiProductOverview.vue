@@ -20,7 +20,9 @@
   <div :class="{ '-quick': quickBuyMode }" class="b-pdp">
     <!-- ▆▆▆▆ 1. Gallery ▆▆▆▆ -->
     <section v-if="showCover" aria-label="Product images" class="b-pdp__media">
-      <s-shop-product-slide-show :current-variant="current_variant" :vertical="!compact && !quickBuyMode" />
+      <!-- The thumbnails in one row under the picture, never a side column
+           (it grew far longer than the picture with many photos). -->
+      <s-shop-product-slide-show :current-variant="current_variant" :vertical="false" />
     </section>
 
     <!-- ▆▆▆▆ 2. What it is ▆▆▆▆ -->

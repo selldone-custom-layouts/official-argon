@@ -28,7 +28,7 @@
           :aria-checked="i === pick ? 'true' : 'false'"
           :aria-label="colourName(v.color)"
           :class="{ '-on': i === pick, '-out': v.quantity === 0 }"
-          :style="{ background: swatchBg(v.color) }"
+          :style="{ '--sw': swatchBg(v.color) }"
           :title="colourName(v.color)"
           class="b-sw"
           role="radio"

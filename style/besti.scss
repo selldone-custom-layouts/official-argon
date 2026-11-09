@@ -1153,11 +1153,12 @@ body {
 .b-swrow {
   display: flex;
   align-items: center;
-  gap: 7px;
-  height: 22px;
+  gap: 0;
+  height: 24px;
   margin: 8px 0 4px;
 
   em {
+    margin-left: 4px;
     font-style: normal;
     font-size: 12px;
     font-weight: 600;
@@ -1165,34 +1166,49 @@ body {
   }
 
   &.-big {
-    height: 30px;
-    gap: 9px;
+    height: 32px;
+    gap: 2px;
 
     .b-sw {
-      width: 24px;
-      height: 24px;
+      width: 32px;
+      height: 32px;
     }
   }
 }
 
+/* A colour swatch (the owner's standing rule of 9 November 2026: a ring is
+   drawn inside the element's own box, never outside it). A 24px button
+   draws its colour as a disc 4px inside its edge (::before, colour from
+   --sw), and the chosen one a 2px blue ring on its own edge (an inset
+   shadow), with the 2px gap between them. Nothing reaches past the
+   button, so no row, card, rail or scroller can cut it, at any screen
+   scaling. The inset edge keeps a white swatch a white disc. */
 .b-sw {
-  width: 16px;
-  height: 16px;
+  position: relative;
+  width: 24px;
+  height: 24px;
   padding: 0;
   border: 0;
   border-radius: 50%;
-  box-shadow: inset 0 0 0 1px rgba(15, 23, 41, 0.2);
+  background: none !important;
+  box-shadow: none;
   flex: none;
   cursor: pointer;
 
-  /* The ring is drawn with shadows, not outline + offset: an outline on a
-     circle can sit a device pixel off centre at 125% or 150% screen
-     scaling. The stronger inset edge keeps a white swatch a white disc. */
-  &.-on {
-    box-shadow: inset 0 0 0 1px rgba(15, 23, 41, 0.34), 0 0 0 2px #fff, 0 0 0 4px $blue;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: var(--sw, #fff);
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 41, 0.34);
   }
 
-  &.-out {
+  &.-on {
+    box-shadow: inset 0 0 0 2px $blue;
+  }
+
+  &.-out::before {
     opacity: 0.45;
   }
 }
