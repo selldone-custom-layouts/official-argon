@@ -1678,3 +1678,59 @@ $muted: #5a6474;
     border-radius: 50% !important;
   }
 }
+
+/* the phone's tools row holds only the chips that are on; empty, it goes */
+@media (max-width: 960px) {
+  .b-tools:not(:has(.b-chip)) {
+    display: none !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Compare in Besti's dress ━━━━━━━━━━━━━━━━━━━━━ */
+.k-cmp__per {
+  display: none !important; /* a price per kg or per unit means nothing for electronics */
+}
+
+.k-card-add,
+.k-card-add.-options {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 38px !important;
+  border: 0 !important;
+  border-radius: 6px !important;
+  background: $blue !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  font: 700 13.5px "Archivo", sans-serif !important;
+
+  .v-icon {
+    color: #fff !important;
+  }
+
+  &:hover {
+    background: $blue-d !important;
+  }
+
+  &.-none {
+    background: #e7eaef !important;
+    color: #4f5a6b !important;
+  }
+}
+
+.k-card-step.-card {
+  border-radius: 6px !important;
+  background: $blue !important;
+  color: #fff !important;
+
+  button,
+  .v-icon {
+    color: #fff !important;
+  }
+}
+
+.k-cmp {
+  font-family: "Archivo", sans-serif;
+}

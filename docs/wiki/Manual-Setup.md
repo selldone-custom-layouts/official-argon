@@ -4,7 +4,7 @@ Set the Layout up on your shop yourself. Follow these steps in order, or let an 
 
 ## 1. Get your own copy
 
-Fork **selldone-custom-layouts/official-walio** on GitHub, then clone your fork with its submodules:
+Fork **selldone-custom-layouts/official-besti** on GitHub, then clone your fork with its submodules:
 
 ```bash
 git clone --recurse-submodules https://github.com/<you>/<your-repo>.git
@@ -46,7 +46,7 @@ VITE_APP_DEV_SERVER_PORT=9123
 npm run serve
 ```
 
-Open <http://localhost:9123>. Check the home, an aisle, a product page, the basket and the account against your shop. If a section looks empty, see [Shop Requirements](Shop-Requirements).
+Open <http://localhost:9131>. Check the home, a department, a product page, the cart and the account against your shop. If a section looks empty, see [Shop Requirements](Shop-Requirements).
 
 ## 5. Give the Layout your identity
 
@@ -79,7 +79,7 @@ git fetch upstream main --tags --prune
 git merge --no-ff upstream/main
 ```
 
-Resolve conflicts by keeping Molino's templates and Selldone's logic. Then re-apply the patches if the submodules changed:
+Resolve conflicts by keeping Besti's templates and Selldone's logic. Then re-apply the patches if the submodules changed:
 
 ```bash
 git -C modules/components apply ../../patches/modules-components.kalio.patch

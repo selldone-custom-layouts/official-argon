@@ -2900,3 +2900,38 @@ body {
     }
   }
 }
+
+/* ── Tablet portrait (600–899): three cards to a row, flatter photo tiles ── */
+@media (min-width: 600px) and (max-width: 899px) {
+  .b-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    > :nth-child(n + 7) {
+      display: none;
+    }
+  }
+
+  .b-rail__track {
+    grid-auto-columns: calc((100% - 2 * 12px) / 3.3);
+  }
+
+  .b-hero__side {
+    aspect-ratio: 16 / 10;
+  }
+
+  .b-bento {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    > .b-card:nth-child(n + 5) {
+      display: none;
+    }
+  }
+
+  .b-mo {
+    aspect-ratio: 4 / 3;
+  }
+
+  .b-mo.-m0 {
+    aspect-ratio: 16 / 9;
+  }
+}

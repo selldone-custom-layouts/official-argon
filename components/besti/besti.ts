@@ -198,7 +198,7 @@ export function dealsOf(shop: any, list: any[]): any[] {
 
 /** Today's deal: one of the biggest savings, a different one each day. */
 export function dealOfTheDay(shop: any, list: any[]): any | null {
-  const deals = dealsOf(shop, list).slice(0, 7);
+  const deals = dealsOf(shop, list).slice(0, 3);
   if (!deals.length) return null;
   const day = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
   return deals[day % deals.length];

@@ -1,61 +1,45 @@
 # Customize
 
-The design lives in Molino's own components and style sheets. Selldone's commerce logic underneath stays untouched.
+Besti's design lives in its own components and style sheets. Selldone's commerce logic underneath (cart, bill, checkout, variants, orders) stays untouched.
 
-## Colours, type and spacing
+## The name, in one line
 
-- **Tokens:** `style/kalio-tokens.scss` holds the brand green (`--k-green`, `--k-green-deep`, `--k-green-lift`), the coral used for savings, ink, the stone "well" behind photos, radii and shadows.
-- **Vuetify's primary colour** is set to the brand green in the same file (`--v-theme-primary`, `--v-theme-secondary`), so Selldone's own parts (gift cards, addresses, the payment window) don't show the theme's purple.
-- **Typefaces:** Fraunces for headings and DM Sans for text, loaded in `components/kalio/kalio-fonts.ts` (from the app, not `index.html`).
+`components/kalio/kalio-brand.ts`: `BRAND.name = "Besti"`. The wordmark (`components/besti/BestiLogo.vue`) draws it in lower case with a yellow square for every "i" dot; the page titles, footer and messages follow. Set it to `null` to use your shop's own title. The tab icon is `assets/brand/besti-mark.svg`.
 
-Change the tokens and the whole site follows: buttons, badges, the compare badge, checkout and account.
+## Colours and type
 
-## Where each part is
-
-| Part | Files |
+| What | Where |
 | --- | --- |
-| Home sections | `components/kalio/KalioHome.vue`, `KalioHero.vue`, `KalioAisleRibbon.vue`, `KalioRail.vue`, `KalioMosaic.vue`, `KalioSellerCards.vue`, `KalioShelf.vue` |
-| Card foot ("Add to basket" ↔ "− n +") | `components/kalio/KalioCardStep.vue`, `kalio-card-basket.ts`, `kalio-basket.ts` |
-| Header, footer, drawers, sign-in | `components/kalio/shell/`, `style/kalio-shell.scss` |
-| Shop pages (aisle, catalogue, seller) | `pages/products/StorefrontPageProducts.vue`, `KalioShelfHead.vue`, `KalioAisleHeader.vue`, `KalioSellerHero.vue` |
-| Product page | `pages/product/StorefrontPageProduct.vue`, `components/kalio/product/`, `style/kalio-product.scss` |
-| Basket, address sheet, delivery, payment window | `pages/basket/cart/`, `components/kalio/checkout/`, `style/kalio-checkout.scss` |
+| Blue for every button, yellow accent, sale red, navy, Archivo | `style/besti.scss` (top), `style/kalio-tokens.scss` (`--k-green` is the action colour, `--k-coral` the saving) |
+| Fonts (Archivo, Material Symbols Rounded) | `components/kalio/kalio-fonts.ts` |
+| Vuetify's primary (Selldone's own parts) | `style/kalio-tokens.scss`, `--v-theme-primary` |
+
+## The photos
+
+The department photos are `assets/besti/<shape>-<category slug>.webp`, where shape is `wide` (16:9, a quiet left third for words: hero slides, the wide banner), `portrait` (4:5: the hero's side tiles, About) or `square` (Everyday essentials). The slug is the category's `name` in Selldone. A category without a photo gets a collage of its own products, so the Layout is complete with no photos at all. Keep the total file count of a release under about 360.
+
+## Where things are
+
+| Area | Files |
+| --- | --- |
+| Header (deal strip, search, cart pill, department bar, mega menu) | `components/besti/shell/BestiHeader.vue` |
+| Footer (newsletter band, columns, legal row) | `components/besti/shell/BestiFooter.vue` |
+| Home | `components/besti/BestiHome.vue`, `BestiDealOfDay.vue`, `BestiRail.vue`, `BestiPhoto.vue`, `besti.ts` |
+| Product card (everywhere, also inside Selldone's catalogue grid) | `components/besti/BestiCard.vue`, `besti-buy.ts`, `components/kalio/kalio-card-basket.ts` |
+| Shop, category, search, deals (filters, sort, top) | `pages/products/StorefrontPageProducts.vue`, `components/walio/shop/` |
+| Product page | `pages/product/StorefrontPageProduct.vue`, `components/besti/product/` |
+| Quick-buy sheet | `components/kalio/KalioQuickBuy.vue` (Besti's overview inside) |
+| Compare | `components/kalio/compare/`, `style/kalio-compare.scss` |
+| Cart drawer, cart page, address sheet, payment window | `components/kalio/shell/KalioBasketDrawer.vue`, `pages/basket/cart/`, `components/kalio/checkout/`, `style/kalio-checkout.scss` |
 | Order page | `pages/basket/order/`, `components/kalio/order/` |
-| Buyer account | `components/kalio/account/`, `pages/user/`, `style/kalio-account.scss` |
-| Content pages | `components/kalio/pages/`, `style/kalio-pages.scss` |
-| Skin for Selldone's own components | `style/kalio-platform.scss` |
-| Home (design B) | `components/walio/WalioHome.vue`, `WalioRow.vue`, `WalioCard.vue`, `WalioPhoto.vue`, `walio-home.ts`; styles in `style/walio-home.scss` |
-| Aisle, search, seller pages (filter column, banner, seller card) | `pages/products/StorefrontPageProducts.vue`, `components/walio/shop/`; styles in `style/walio-pages.scss` |
-| Product page (design A) | `components/walio/product/WalioProductOverview.vue`, `pages/product/StorefrontPageProduct.vue` |
-| Cart window under the cart button | `components/walio/WalioMiniCart.vue`, `components/kalio/shell/KalioHeader.vue` |
-| Lifestyle photos | `assets/walio/` |
+| Account ("desk") | `components/kalio/account/`, `style/kalio-account.scss` |
+| Content pages, 404 | `pages/official/`, `pages/blog/`, `pages/faq/`, `pages/errors/404/` |
+| Every page's Besti dress | `style/besti.scss`, `style/besti-pages.scss` (loaded last) |
 
-[`KALIO.md`](https://github.com/selldone-custom-layouts/official-walio/blob/main/KALIO.md) explains every part, the reason behind each decision, and each workaround.
+## Rules the design keeps
 
-## Rules that keep it working
-
-- **Re-skin, don't replace.** Keep Selldone's scripts for the basket, bill, checkout, variants, vendor offers and orders; change templates and styles.
-- **Prefix every class** (`k-…`). Short names collide with Selldone's.
-- **Live data only.** Never hard-code product names, prices, categories or URLs.
-- **Vuetify draws icons as `<i>`.** Style decorative icons with `> i`, or you will move the icon inside them.
-- **Sticky needs `overflow: clip`.** `.v-application` has `overflow: hidden`.
-- **Android search:** `v-model` waits for the keyboard's composition to end. Use `:value` with `@input` for live search.
-- **Never commit inside `modules/*`.** Keep a fix there as a patch in `patches/`.
-
-## Two account designs
-
-- `desk`: a side rail with order cards. This is the default for releases.
-- `home`: tabs with an overview.
-
-Pick at build time: `bash scripts/release.sh <version> desk` or `… home`.
-
-## Test before you release
-
-- Check the phone first: 360 and 390 px wide. Then tablet (768, 1024), laptop (1366, 1440) and desktop (1920).
-- Walk through as a shopper: add products from cards and rows, add and save an address on the map, fill the checkout up to Pay, and tour the account.
-- Look for:
-  - overlapping or clipped text;
-  - off-centre icons;
-  - empty boxes;
-  - anything hidden under a fixed bar;
-  - Selldone's default look showing through.
+- **Re-skin, don't replace.** Keep Selldone's scripts for the cart, bill, checkout, variants and orders; change templates and styles.
+- **One blue for every button, white words, flat; hover changes the colour only.** No line under any word or icon, except links inside an article's text.
+- **Nothing is named in code.** Categories, tags, brands, prices and deals come from the shop. A tag becomes its own "<Tag> Items" row on the home; a tag with no products shows nothing.
+- **No pop-ups.** "Add to cart" turns into "− n +" in place; there is no "Added" toast and no phone bottom bar.
+- **Category grids never leave a hole:** two rows of the same length (an "All departments" tile fills an odd count).

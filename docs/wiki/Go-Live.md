@@ -17,14 +17,16 @@ An uploaded version changes nothing until it is **attached** to your shop.
 
 Pin the **exact** version, never `latest`, so an unverified upload never goes live. Read `api.shops.layout.options` before and after.
 
-## Two Layouts on one shop (how Tario runs)
+## Two Layouts on one shop (how Besti runs)
 
-A shop can show a different Layout on one of its domains. Tario lives only on `walio.selldone.shop`, while the shop's default (and every other domain) stays on another Layout:
+A shop can show a different Layout on one of its domains. Besti lives only on `besti.selldone.shop` (domain 1240 of the shop Digini, Layout 29), while the shop's default and its other domains carry other Layouts:
 
 ```json
 api.shops.domains.layout.set   path { "domain_key": "<the domain's id>" }
-body { "mode": "private", "layout_id": <tario's id>, "layout_version": "1.0.0" }
+body { "mode": "private", "layout_id": <your layout id>, "layout_version": "1.0.0" }
 ```
+
+That domain's own Home can be set too: `selldone_shop_home_domain_set` with `domain_address` and `page_id: "shop"`.
 
 Then **don't** pin the shop default when you release this Layout: that would move every other address too. Check both addresses' `window.sdShopLayout` after a release.
 

@@ -37,10 +37,6 @@ Those are Selldone's own components using the theme colour. Set `--v-theme-prima
 
 Specs must be **flat**, plus `spec_order`. Save the category's filter list again after editing specs. See [Shop Requirements](Shop-Requirements).
 
-## Prices change after editing vendors
-
-Creating or deleting a vendor offer recomputes the product and variant prices and clears the product discount. Restore them from your saved copy. Put deals on each seller's offer.
-
 ## The map is grey or 0 px tall
 
 `mapbox-gl.css` sets `position: relative` on the map; the canvas must stay `position: absolute`. Use the `streets-v12` style. Search finds streets and numbers, not landmarks.

@@ -1,27 +1,27 @@
 <p align="center">
-  <img src="docs/screenshots/cover.jpg" alt="Walio Market — a red, big-box style storefront Layout for Selldone, on desktop and phone" width="100%">
+  <img src="docs/screenshots/cover.jpg" alt="Besti Electronics — a white department-store storefront Layout for Selldone, on desktop and phone" width="100%">
 </p>
 
-<h1 align="center">Walio Market</h1>
+<h1 align="center">Besti Electronics</h1>
 
 <p align="center">
-  <b>A blue, everyday-low-price superstore storefront for a Selldone grocery marketplace.</b><br>
+  <b>A big white electronics department store for a Selldone shop.</b><br>
   A custom Selldone Layout built on the official <a href="https://github.com/selldone/storefront">selldone/storefront</a>.
 </p>
 
 <p align="center">
-  <a href="https://walio.selldone.shop"><img src="https://img.shields.io/badge/live%20shop-walio.selldone.shop-0071DC?style=flat-square" alt="Live shop"></a>
-  <a href="https://github.com/selldone-custom-layouts/official-walio/wiki"><img src="https://img.shields.io/badge/docs-wiki-6C3DF4?style=flat-square" alt="Wiki"></a>
-  <a href="https://github.com/selldone-custom-layouts/official-walio/wiki/Install-with-AI"><img src="https://img.shields.io/badge/set%20up-with%20AI-f39f37?style=flat-square" alt="Set up with AI"></a>
+  <a href="https://besti.selldone.shop"><img src="https://img.shields.io/badge/live%20shop-besti.selldone.shop-0A4BD8?style=flat-square" alt="Live shop"></a>
+  <a href="https://github.com/selldone-custom-layouts/official-besti/wiki"><img src="https://img.shields.io/badge/docs-wiki-071634?style=flat-square" alt="Wiki"></a>
+  <a href="https://github.com/selldone-custom-layouts/official-besti/wiki/Install-with-AI"><img src="https://img.shields.io/badge/set%20up-with%20AI-FFD91A?style=flat-square" alt="Set up with AI"></a>
   <img src="https://img.shields.io/badge/Selldone-Layout-2B2F7A?style=flat-square" alt="Selldone Layout">
   <img src="https://img.shields.io/badge/Vue-3-1fc8a9?style=flat-square&logo=vuedotjs&logoColor=white" alt="Vue 3">
 </p>
 
 <p align="center">
-  <a href="https://walio.selldone.shop"><b>Open the live shop</b></a> ·
-  <a href="https://github.com/selldone-custom-layouts/official-walio/wiki/Install-with-AI">Set it up with AI</a> ·
-  <a href="https://github.com/selldone-custom-layouts/official-walio/wiki/Manual-Setup">Manual setup</a> ·
-  <a href="https://github.com/selldone-custom-layouts/official-walio/wiki/Shop-Requirements">What your shop needs</a> ·
+  <a href="https://besti.selldone.shop"><b>Open the live shop</b></a> ·
+  <a href="https://github.com/selldone-custom-layouts/official-besti/wiki/Install-with-AI">Set it up with AI</a> ·
+  <a href="https://github.com/selldone-custom-layouts/official-besti/wiki/Manual-Setup">Manual setup</a> ·
+  <a href="https://github.com/selldone-custom-layouts/official-besti/wiki/Shop-Requirements">What your shop needs</a> ·
   <a href="https://github.com/selldone-custom-layouts">All Selldone custom layouts</a>
 </p>
 
@@ -29,67 +29,68 @@
 
 ## What it is
 
-**Walio Market** dresses a grocery marketplace like an everyday-low-price superstore:
-- a solid blue header with a white search and a spark-yellow basket;
-- savings in green;
-- rounded Nunito Sans;
-- white cards on light wells;
-- a checkout laid out as numbered steps.
+**Besti Electronics** dresses a single-shop electronics store as a big white department store, after a big-box electronics retailer's sections but in its own look:
+- a white page with products in bordered tiles;
+- one blue (`#0a4bd8`) for every button, flat, with white words;
+- yellow (`#ffd91a`) only as an accent: deal flags, the Deal of the Day, the logo's dot, "Deals";
+- sale red for "Save $X", navy for the deal strip and the footer;
+- Archivo type and Material Symbols Rounded icons.
 
-It runs on **[walio.selldone.shop](https://walio.selldone.shop)**, one address of the Selldone shop molino. The shop's main address carries [Molino Market Hall](https://github.com/selldone-custom-layouts/official-molino), and `tario.selldone.shop` carries [Tario Market](https://github.com/selldone-custom-layouts/official-tario). Selldone lets each domain of a shop carry its own Layout.
+It runs on **[besti.selldone.shop](https://besti.selldone.shop)**, one address of the Selldone shop Digini. Selldone lets each domain of a shop carry its own Layout.
 
-Selldone's own basket, checkout, payments, vendor offers and orders keep working underneath. Nothing about the shop is hard-coded.
+Selldone's own cart, checkout, payments and orders keep working underneath. Nothing about the shop is hard-coded except the brand name (one line) and the department photos, which are matched to categories by their slug and replaced by a collage of the category's products when missing.
 
 ## Highlights
 
-- **Header:** solid blue, with the shop's wordmark and a yellow round mark, an Aisles menu, a white search pill, Saved, Sign in and a **yellow Cart** that opens a small window with the cart's lines, the subtotal, the saving and View cart / Check out (a phone keeps the side drawer). Below it, a white aisle bar with blue Deals.
-- **Home:** a split hero (a photo with the shop's line, a blue Deals tile with the week's best saving and a New tile), **Best saving today** (a row of equal cards, the biggest saving first), the aisles as coloured tiles, Top picks, **Shop the idea** (four breakfast products beside a photo, with Add all to cart), Pickup or delivery from the shop's own methods, Trending in the fresh aisle, and the sellers.
-- **Aisle, search, Deals, All products:** a banner on the aisle's tint with its numbers and packshots, a **filter column** beside the grid (On sale only, price with quick ranges, sizes as buttons, the aisle's own filters as ticks), and Sort by; a phone gets a Filters / Sort bar. A search shows its top match first.
-- **Seller pages:** a shop in the shop: the seller's card with their aisles as a menu, a blue deals banner, a row per aisle, then everything they sell.
-- **Cards:** prices in heavy type (green when on offer, with the regular price), the seller, and a blue **Add to cart** that turns into "− 1 in cart +" in place; products with sizes say "Choose options".
-- **Product page:** "Shop all &lt;brand&gt;", the price, the sizes, **How do you want it?** (Pickup / Delivery / Shipping with what each costs), the sellers as cards, Add to cart with the shop's free rules under it, and "About this item" in tabs.
-- **Checkout:** Cart ✓ — Delivery — Contact — Review & pay over numbered steps: review your items by seller, delivery and contact (a map-first address sheet), and an order summary that leads to whatever is missing.
-- **Account:** a greeting with tabs and an overview; orders as a table. **Sign-in** is a whole page.
-- **Pages:** About as a magazine (How an order works), Terms and Privacy as cards and folding sections, a journal with a side column, articles with a shopping column, and a blue 404.
-- **Everywhere:** no pop-ups and no phone bottom bar.
+- **Header:** a navy strip with today's deal and "Next deal in" counting to midnight; the wordmark, a search with a department scope, suggestions while typing and a blue search button; Track order, Saved, Sign in, and a blue cart pill with the count and the total. A blue department bar: "All departments" opens a mega menu on a click and closes on a second click, then the live department names, More, Deals in yellow, New arrivals and Brands. On a phone the search spans the screen and the department bar swipes; there is no bottom tab bar.
+- **Home:** a photo hero (one slide per department with a wide photo, a white card with "Up to $X off" or "From $Y") beside two photo tiles; **Shop by department** in two even rows (an "All departments" tile fills an odd count); a wide **Deal of the Day**; **Top deals** with department tabs; **Everyday essentials** (one big photo and four); **Best sellers** from the shop's `best-seller` tag; a wide photo banner; **New arrivals**; **Shop by brand** in one row with See all; a row for **every other tag** ("Wireless Items"…); **Recently viewed**; and the four newest **Tips and guides**, last.
+- **Cards:** a yellow "% off" flag, colour swatches that pick the colour (its photo, price and stock), capacity chips, a two-line name, the price with a red "Save $X" and "Was $Y", a blue **Add to cart** that turns into "− n +" in place, "Choose capacity" for a quick-buy sheet with an X, Compare and Save. The same card in every grid, five to a row.
+- **Department, search, Deals:** a short head, a filter column built from the products' own specs (departments, price slider with short boxes, On sale only, brand, colour swatches, spec keys), the filters that are on as chips, Sort by.
+- **Product page:** three columns: the gallery, the details with colour or capacity **tiles** and key specs, and a **sticky buy box** (price, stock, delivery, Add to cart, Compare, Save); then Specifications in the shop's groups, Reviews, Frequently bought together, Related products and More in the department.
+- **Compare:** the picks pinned on top, specs side by side, differences marked, same values merged, "Only differences".
+- **Cart:** a receipt-first drawer (subtotal, savings, Checkout, compact rows, "Often added"), a stepped checkout with a map-first address sheet, delivery method and the payment window.
+- **Orders and account:** receipt, delivery and the trip, messages with the Besti mark; the account as a **desk** (side menu, order cards, address book).
+- **Pages:** guides and articles, About, Terms, Privacy (sample text marked as such until the shop writes its own), Contact us with a form, FAQ and a designed 404.
 
 ## Use it on your shop
 
 | You want to… | Read |
 | --- | --- |
-| Let an AI agent (Claude Code, Codex…) set it up for your shop | [Install with AI](https://github.com/selldone-custom-layouts/official-walio/wiki/Install-with-AI) |
-| Do it yourself, step by step | [Manual Setup](https://github.com/selldone-custom-layouts/official-walio/wiki/Manual-Setup) |
-| Know what data your shop needs for the design to look right | [Shop Requirements](https://github.com/selldone-custom-layouts/official-walio/wiki/Shop-Requirements) |
-| Build, upload and verify a release | [Build and Upload](https://github.com/selldone-custom-layouts/official-walio/wiki/Build-and-Upload) |
-| Put the Layout live on your shop, or on one domain of it | [Go Live](https://github.com/selldone-custom-layouts/official-walio/wiki/Go-Live) |
-| Change colours, fonts, sections or pages | [Customize](https://github.com/selldone-custom-layouts/official-walio/wiki/Customize) |
-| Fix a blank page, a rejected upload or an old version showing | [Troubleshooting](https://github.com/selldone-custom-layouts/official-walio/wiki/Troubleshooting) |
+| Let an AI agent (Claude Code, Codex…) set it up for your shop | [Install with AI](https://github.com/selldone-custom-layouts/official-besti/wiki/Install-with-AI) |
+| Do it yourself, step by step | [Manual Setup](https://github.com/selldone-custom-layouts/official-besti/wiki/Manual-Setup) |
+| Know what data your shop needs for the design to look right | [Shop Requirements](https://github.com/selldone-custom-layouts/official-besti/wiki/Shop-Requirements) |
+| Build, upload and verify a release | [Build and Upload](https://github.com/selldone-custom-layouts/official-besti/wiki/Build-and-Upload) |
+| Put the Layout live on your shop, or on one domain of it | [Go Live](https://github.com/selldone-custom-layouts/official-besti/wiki/Go-Live) |
+| Change the name, colours, photos, sections or pages | [Customize](https://github.com/selldone-custom-layouts/official-besti/wiki/Customize) |
+| Fix a blank page, a rejected upload or an old version showing | [Troubleshooting](https://github.com/selldone-custom-layouts/official-besti/wiki/Troubleshooting) |
 
 The wiki's source is also in [`docs/wiki/`](docs/wiki/).
 
 ## Quick start (developers)
 
 ```bash
-git clone --recurse-submodules https://github.com/selldone-custom-layouts/official-walio.git
-cd official-tario
+git clone --recurse-submodules https://github.com/selldone-custom-layouts/official-besti.git
+cd official-besti
 npm install --force
-npm run serve            # dev server on http://localhost:9126
+npm run serve            # dev server on http://localhost:9131
 ```
 
-Releases: `bash scripts/release.sh <new-version> desk`. See [Build and Upload](https://github.com/selldone-custom-layouts/official-walio/wiki/Build-and-Upload).
+Releases: `bash scripts/release.sh <new-version> desk`. See [Build and Upload](https://github.com/selldone-custom-layouts/official-besti/wiki/Build-and-Upload).
 
 ## Where things are
 
 | Area | Files |
 | --- | --- |
-| Walio's dress: the blue header, yellow basket, footer, checkout steps | [`style/walio-skin.scss`](style/walio-skin.scss) |
-| Tokens: blue, green savings, Nunito Sans, corners | [`style/kalio-tokens.scss`](style/kalio-tokens.scss) |
-| What Walio changed, and why | [`WALIO.md`](WALIO.md) |
-| The components and every behaviour (shared with Molino) | [`components/kalio/`](components/kalio/), [`KALIO.md`](KALIO.md) |
+| The brand name (one line) and the mark | [`components/kalio/kalio-brand.ts`](components/kalio/kalio-brand.ts), [`assets/brand/`](assets/brand/) |
+| Header, footer, home, card, product page | [`components/besti/`](components/besti/) |
+| Department photos (by category slug) | [`assets/besti/`](assets/besti/) |
+| Besti's dress | [`style/besti.scss`](style/besti.scss), [`style/besti-pages.scss`](style/besti-pages.scss) |
+| What Besti changed, and why | [`BESTI.md`](BESTI.md) |
+| The behaviours it keeps (cart, checkout, account…) | [`components/kalio/`](components/kalio/), [`KALIO.md`](KALIO.md) |
 | Release tooling | [`scripts/`](scripts/) |
 | Selldone storefront's original README | [`README.selldone.md`](README.selldone.md) |
 
-The code shares its components with [Molino Market Hall](https://github.com/selldone-custom-layouts/official-molino): the class names start with `k-` and the files with `kalio-`. The checkout steps are `t-step`; Walio's own stylesheet is `walio-skin.scss`.
+Besti started from [Walio Market](https://github.com/selldone-custom-layouts/official-walio) and keeps its shared components (classes `k-`, `t-`, `w-`); Besti's own are `b-`.
 
 ## Credits and license
 

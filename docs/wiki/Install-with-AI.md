@@ -24,14 +24,14 @@ An AI coding agent (for example **Claude Code** or **OpenAI Codex**) can set thi
 Fill in the four values in braces first.
 
 ```text
-Set up the Selldone custom Layout "Walio Market" on my Selldone shop.
+Set up the Selldone custom Layout "Besti Electronics" on my Selldone shop.
 
 My shop handle: {SHOP_HANDLE}        (as in {SHOP_HANDLE}.myselldone.com)
 My shop id: {SHOP_ID}
 My GitHub account: {GITHUB_USER}
-New Layout package name (lowercase, permanent, unique to me): {PACKAGE}   e.g. mybrand-market
+New Layout package name (lowercase, permanent, unique to me): {PACKAGE}   e.g. mybrand-electronics
 
-Source: https://github.com/selldone-custom-layouts/official-walio
+Source: https://github.com/selldone-custom-layouts/official-besti
 
 Before you change anything, read completely: README.md, KALIO.md, every file in
 docs/wiki/, and .ai-agent/AGENTS.md, .ai-agent/SKILL.md, .ai-agent/AI_WORKFLOW.md.
@@ -40,10 +40,10 @@ Then:
 1. Fork the repository to my GitHub account (or create {GITHUB_USER}/{PACKAGE}) and clone it
    with submodules. Keep https://github.com/selldone/storefront as a fetch-only "upstream".
 2. npm install --force. Put my shop in .env: VITE_APP_SAMPLE_SHOP_NAME={SHOP_HANDLE},
-   and my currency, country and language. Run the dev server and check home, an aisle,
-   a product page and the basket against my shop. Tell me what my shop's data is missing
+   and my currency, country and language. Run the dev server and check home, a department,
+   a product page and the cart against my shop. Tell me what my shop's data is missing
    (see docs/wiki/Shop-Requirements.md) instead of hard-coding anything.
-3. In manifest.json set "package" to {PACKAGE}, "name" to my shop's name plus "Market Hall"
+3. In manifest.json set "package" to {PACKAGE}, "name" to my shop's name plus "Electronics"
    (at least 8 characters), and "version" to 1.0.0. The package name is permanent after
    the first upload.
 4. Install the CLI (npm i -g selldone-cli) and clone https://github.com/selldone/cli for its
@@ -66,8 +66,8 @@ Do not change my shop's settings (payments, shipping, login modes). Do not place
 ## 3. What the agent does
 
 1. **Forks and clones** the repository with its six Selldone submodules (`modules/*`).
-2. **Installs and configures** `.env` for your shop, then runs the dev server on port 9123. In development the Layout reads your shop's public data from Selldone.
-3. **Checks your data** against [Shop Requirements](Shop-Requirements): category icons, product photos, units, seller offers, specs for filters.
+2. **Installs and configures** `.env` for your shop, then runs the dev server on port 9131. In development the Layout reads your shop's public data from Selldone.
+3. **Checks your data** against [Shop Requirements](Shop-Requirements): category icons, product photos, brands, variants, tags, specs for filters.
 4. **Sets your identity** in `manifest.json`: the package name, a display name and a first version.
 5. **Releases** with `scripts/release.sh`: build, SVG flattening, safety checks, packaging, upload and server check. See [Build and Upload](Build-and-Upload).
 6. **Goes live** by attaching the exact version to your shop, making every domain inherit it, and setting Home to the shop page. See [Go Live](Go-Live).
@@ -75,9 +75,9 @@ Do not change my shop's settings (payments, shipping, login modes). Do not place
 
 ## 4. Check the result yourself
 
-- Open your shop's address. You should see the deals banner, the aisle row and product rows, not Selldone's default home.
-- Tap "Add to basket" on a card: it becomes "− 1 in basket +".
-- Open the basket from the header and add an address on the map.
+- Open your shop's address. You should see the deal strip, the photo hero and Shop by department, not Selldone's default home.
+- Tap "Add to cart" on a card: it becomes "− 1 in cart +".
+- Open the cart from the header and add an address on the map.
 - If something is off, see [Troubleshooting](Troubleshooting).
 
 ## Tips for working with the agent

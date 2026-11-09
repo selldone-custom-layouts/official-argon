@@ -1,4 +1,4 @@
-**[Walio Market](Home)**
+**[Besti Electronics](Home)**
 
 - [Install with AI](Install-with-AI)
 - [Manual Setup](Manual-Setup)
@@ -10,6 +10,6 @@
 
 ---
 
-- [Live shop](https://walio.selldone.shop)
-- [Repository](https://github.com/selldone-custom-layouts/official-walio)
+- [Live shop](https://besti.selldone.shop)
+- [Repository](https://github.com/selldone-custom-layouts/official-besti)
 - [All custom Layouts](https://github.com/selldone-custom-layouts)
