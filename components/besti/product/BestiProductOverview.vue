@@ -62,7 +62,7 @@
             type="button"
             @click="current_variant = t.v"
           >
-            <img v-if="tilesHavePhotos" :src="t.img" alt="" loading="lazy" />
+            <span v-if="tilesHavePhotos" class="b-vtile__ph"><img :src="t.img" alt="" loading="lazy" /></span>
             <span class="b-vtile__l">
               <i v-if="t.swatch" :style="{ background: t.swatch }" aria-hidden="true"></i>{{ t.label }}
             </span>

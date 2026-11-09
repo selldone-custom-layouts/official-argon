@@ -38,7 +38,7 @@
   --c-accent-deep-t: var(--k-green-deep-t);
   --c-sale-t: var(--k-coral-t);
   --c-ok-t: var(--c-ok);
-  --c-on-accent: #fff;
+  --c-on-accent: var(--b-on-brand, #fff);
   --c-soft: var(--k-green-soft);
   --c-ink: var(--k-ink);
   --c-ink-2: var(--k-ink-2);
@@ -1116,10 +1116,10 @@
   &__empty {
     .k-cmp__btn.-main {
       background: #ffd91a;
-      color: #071634 !important;
+      color: var(--b-on-yellow) !important; /* navy on yellow in both modes */
 
       .v-icon {
-        color: #071634 !important;
+        color: var(--b-on-yellow) !important; /* navy on yellow in both modes */
       }
 
       &:hover {

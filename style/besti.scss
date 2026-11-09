@@ -119,7 +119,7 @@ body {
   border: 0;
   border-radius: 6px;
   background: $blue;
-  color: #fff !important;
+  color: var(--b-on-brand) !important;
   font: 700 14px/1 "Archivo", system-ui, sans-serif;
   white-space: nowrap;
   cursor: pointer;
@@ -150,6 +150,7 @@ body {
 
   &.-navy {
     background: $navy;
+    color: #fff !important; /* light words on the navy in every palette */
 
     &:hover {
       background: #000;
@@ -461,7 +462,7 @@ body {
     border: 0;
     border-radius: 0 5px 5px 0;
     background: $blue;
-    color: #fff !important; /* Selldone's [type=button] { color: inherit } loads after */
+    color: var(--b-on-brand) !important; /* Selldone's [type=button] { color: inherit } loads after */
     display: grid;
     place-items: center;
     cursor: pointer;
@@ -596,14 +597,14 @@ body {
   border: 0;
   border-radius: 8px;
   background: $blue;
-  color: #fff !important; /* Selldone's [type=button] { color: inherit } loads after */
+  color: var(--b-on-brand) !important; /* Selldone's [type=button] { color: inherit } loads after */
   font: 800 15px "Archivo", sans-serif;
   white-space: nowrap;
   cursor: pointer;
 
   .ms,
   .b-cartpill__t {
-    color: #fff !important;
+    color: var(--b-on-brand) !important;
   }
 
   .ms {
@@ -626,7 +627,7 @@ body {
   }
 
   .u--price {
-    color: #fff !important;
+    color: var(--b-on-brand) !important;
     font-weight: 800;
   }
 
@@ -638,8 +639,8 @@ body {
 /* the blue department bar */
 .b-dept {
   position: relative;
-  background: $blue;
-  color: #fff;
+  background: var(--b-head); /* the light primary in both modes */
+  color: var(--b-on-head);
 
   &__in {
     max-width: 1600px;
@@ -660,7 +661,7 @@ body {
     padding: 0 11px;
     border: 0;
     background: none;
-    color: #fff !important;
+    color: var(--b-on-head) !important;
     font: 600 14px "Archivo", sans-serif;
     white-space: nowrap;
     cursor: pointer;
@@ -677,14 +678,14 @@ body {
     &:hover,
     &.-on,
     &[aria-expanded="true"] {
-      background: $blue-d;
+      background: var(--b-head-d);
     }
   }
 
   &__all {
     flex: none;
     margin-right: 6px;
-    background: $blue-d;
+    background: var(--b-head-d);
     font-weight: 800;
 
     &:hover,
@@ -698,7 +699,7 @@ body {
   }
 
   &__a.-deals {
-    color: $yellow !important;
+    color: var(--b-pop) !important;
     font-weight: 800;
   }
 }
@@ -991,7 +992,7 @@ body {
     aspect-ratio: 1;
     border-radius: 6px;
     overflow: hidden;
-    background: $surface;
+    background: $photo; /* a packshot keeps its white tile in dark mode */
 
     img {
       width: 100%;
@@ -1326,7 +1327,7 @@ body {
   height: 38px;
   border-radius: 6px;
   background: $blue;
-  color: #fff;
+  color: var(--b-on-brand);
 
   button {
     display: grid;
@@ -1337,7 +1338,7 @@ body {
     border: 0;
     border-radius: 6px;
     background: none;
-    color: #fff;
+    color: var(--b-on-brand); /* the step sits on the brand colour */
     cursor: pointer;
 
     &:hover {
@@ -1405,7 +1406,7 @@ body {
 
     .ms {
       font-size: 14px;
-      color: #fff;
+      color: var(--b-on-brand); /* the tick sits on the brand colour once on */
       opacity: 0;
     }
   }
@@ -1816,6 +1817,8 @@ body {
   &__img {
     display: block;
     aspect-ratio: 1;
+    border-radius: 10px;
+    background: $photo; /* a packshot keeps its white tile in dark mode */
 
     img {
       width: 100%;
@@ -1910,14 +1913,23 @@ body {
   min-width: 0;
   color: $ink !important;
 
-  img {
+  /* the packshot's own white tile (in dark mode too) */
+  &__ph {
+    display: grid;
+    place-items: center;
+    flex: none;
     width: 64px;
     height: 64px;
-    flex: none;
-    object-fit: contain;
     border: 1px solid $line;
     border-radius: 8px;
-    background: $surface;
+    background: $photo;
+    overflow: hidden;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 
   > span {
@@ -2328,42 +2340,56 @@ body {
 }
 
 /* empty states */
+/* An empty state (the cart, the contact thanks…), in the same rhythm as
+   every empty state (Digito 1.0.13): a 56px tinted icon circle, 14px, the
+   heading, 8px, the words, 20px, the button; 36px of padding around it. */
 .b-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 40px 24px;
+  padding: 36px 32px;
   text-align: center;
 
   &__ic {
     display: grid;
     place-items: center;
-    width: 64px;
-    height: 64px;
+    width: 56px;
+    height: 56px;
+    margin: 0 0 14px;
     border-radius: 50%;
     background: $blue-l;
     color: $blue-t;
 
     .ms {
-      font-size: 30px;
+      font-size: 28px;
     }
   }
 
   &__t {
-    margin: 4px 0 0;
+    margin: 0 0 8px;
     font-size: 19px;
     font-weight: 800;
+    line-height: 1.25;
   }
 
   &__p {
     max-width: 34ch;
-    margin: 0 0 6px;
+    margin: 0 0 20px;
     color: $muted;
+    line-height: 1.5;
   }
 
   .b-btn {
     min-width: 220px;
+  }
+
+  /* a second action stands 10px under the first, never touching it */
+  .b-btn + .b-btn {
+    margin-top: 10px;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
   }
 }
 
@@ -2754,7 +2780,8 @@ body {
   text-align: start;
 
   &__news {
-    background: $blue;
+    background: var(--b-head); /* the light primary in both modes */
+    color: var(--b-on-head);
   }
 
   &__news-in {
@@ -2766,7 +2793,7 @@ body {
 
     h3 {
       margin: 0;
-      color: #fff;
+      color: var(--b-on-head);
       font: 800 22px "Archivo", sans-serif !important;
     }
 
@@ -2831,7 +2858,7 @@ body {
       padding: 4px 0;
       border: 0;
       background: none;
-      color: rgba(255, 255, 255, 0.74) !important;
+      color: rgba(255, 255, 255, 0.82) !important;
       font: 400 14px "Archivo", sans-serif;
       text-align: start;
       cursor: pointer;
@@ -2846,7 +2873,7 @@ body {
     p {
       max-width: 32ch;
       margin: 12px 0 16px;
-      color: rgba(255, 255, 255, 0.74);
+      color: rgba(255, 255, 255, 0.82);
     }
 
     .b-logo {
@@ -2863,33 +2890,12 @@ body {
   }
 
   &__gdpr {
-    color: rgba(255, 255, 255, 0.74) !important;
+    color: rgba(255, 255, 255, 0.82) !important;
 
     * {
       color: inherit !important;
       font-size: 14px !important;
     }
-  }
-
-  /* The Theme row: a swatch per palette and a Light / Dark switch. The
-     swatch draws its colour as a disc inside its own box and the chosen
-     one a white ring on its own edge (inset): nothing reaches outside. */
-  &__theme {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px 18px;
-    padding-top: 16px;
-    padding-bottom: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-  }
-
-  &__theme-t {
-    color: #fff;
-    font-size: 13px;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
   }
 
   &__legal {
@@ -2900,7 +2906,7 @@ body {
     padding-top: 16px;
     padding-bottom: 22px;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.82);
     font-size: 13px;
 
     > span:first-child {
@@ -2908,7 +2914,7 @@ body {
     }
 
     > a {
-      color: rgba(255, 255, 255, 0.7) !important;
+      color: rgba(255, 255, 255, 0.82) !important;
 
       &:hover {
         color: #fff !important;
@@ -2933,11 +2939,12 @@ body {
   &__made * {
     font-size: 11px !important;
     line-height: 1.2 !important;
-    color: rgba(255, 255, 255, 0.6) !important;
+    color: rgba(255, 255, 255, 0.82) !important; /* 4.5:1 or more on the navy */
     opacity: 1;
   }
 
   &__made {
+    opacity: 1 !important; /* Selldone's "plain" button sits at 62% */
     padding: 0 !important;
     margin: 0 !important;
     min-height: 0 !important;
@@ -3066,227 +3073,9 @@ body {
   }
 }
 
-/* ── The footer's Theme row (Besti 1.0.9) ── */
-.b-themes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.b-tsw {
-  position: relative;
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: none !important;
-  box-shadow: none;
-  cursor: pointer;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 5px;
-    border-radius: 50%;
-    background: var(--sw);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
-  }
-
-  &.-on {
-    box-shadow: inset 0 0 0 2px #fff;
-  }
-
-  &:focus-visible {
-    outline: 0 !important; /* the focus ring is inside the swatch too */
-    box-shadow: inset 0 0 0 2px $yellow;
-  }
-}
-
-.b-modes {
-  display: inline-flex;
-  padding: 3px;
-  border-radius: 8px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
-
-  button {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    height: 32px;
-    padding: 0 12px;
-    border: 0;
-    border-radius: 6px;
-    background: transparent;
-    color: #fff !important; /* Vuetify's [type=button] { color: inherit } loads after */
-    font: 700 13px "Archivo", sans-serif;
-    cursor: pointer;
-
-    .ms {
-      font-size: 18px;
-      color: inherit !important;
-    }
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    &.-on {
-      background: #fff;
-      color: var(--b-navy) !important;
-    }
-
-    &:focus-visible {
-      outline: 0 !important;
-      box-shadow: inset 0 0 0 2px $yellow;
-    }
-  }
-}
-
-/* ── The header's theme picker (1.0.10 trial, BestiThemePicker) ── */
-.b-theme {
-  display: flex; /* static: the panel is placed in the header's own box */
-}
-
-.b-theme__pop {
-  position: absolute;
-  z-index: 40;
-  box-sizing: border-box;
-  padding: 14px 16px 16px;
-  border-radius: 12px;
-  background: $surface;
-  box-shadow: inset 0 0 0 1px $line, 0 18px 40px -18px var(--b-pop-shadow);
-  color: $ink;
-  font-family: "Archivo", sans-serif;
-}
-
-.b-theme__t {
-  margin: 0 0 8px;
-  color: $muted;
-  font-size: 11.5px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-
-  & + .b-theme__pals,
-  & + .b-theme__modes {
-    margin-bottom: 14px;
-  }
-
-  &:nth-of-type(2) {
-    margin-top: 2px;
-  }
-}
-
-.b-theme__pals {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 4px;
-}
-
-/* A palette: its swatch (the ring on the swatch's own edge, inset) and
-   its name under it. */
-.b-tpick {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  min-width: 0;
-  padding: 6px 2px 7px;
-  border: 0;
-  border-radius: 8px;
-  background: none;
-  color: $ink !important; /* Vuetify's [type=button] { color: inherit } loads after */
-  font: 600 11.5px/1.2 "Archivo", sans-serif;
-  cursor: pointer;
-
-  &:hover {
-    background: $page;
-  }
-
-  &:focus-visible {
-    outline: 0 !important;
-    box-shadow: inset 0 0 0 2px $blue-t;
-  }
-
-  &__sw {
-    position: relative;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 5px;
-      border-radius: 50%;
-      background: var(--sw);
-      box-shadow: inset 0 0 0 1px var(--b-sw-edge);
-    }
-  }
-
-  &.-on &__sw {
-    box-shadow: inset 0 0 0 2px $blue-t;
-  }
-
-  &__n {
-    max-width: 100%;
-    text-align: center;
-    overflow-wrap: anywhere;
-  }
-
-  &.-on &__n {
-    font-weight: 800;
-  }
-}
-
-.b-theme__modes {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px;
-  padding: 3px;
-  border-radius: 9px;
-  box-shadow: inset 0 0 0 1px $line;
-
-  button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    height: 36px;
-    border: 0;
-    border-radius: 7px;
-    background: transparent;
-    color: $ink !important;
-    font: 700 13.5px "Archivo", sans-serif;
-    cursor: pointer;
-
-    .ms {
-      font-size: 18px;
-      color: inherit !important;
-    }
-
-    &:hover {
-      background: $page;
-    }
-
-    &.-on {
-      background: $blue;
-      color: #fff !important;
-    }
-
-    &:focus-visible {
-      outline: 0 !important;
-      box-shadow: inset 0 0 0 2px $blue-t;
-    }
-
-    &.-on:focus-visible {
-      box-shadow: inset 0 0 0 2px #fff;
-    }
-  }
-}
-
-.b-act.-theme[aria-expanded="true"] {
+/* The header's Theme action (the shared switcher's button, with Besti's own
+   action class): open = the same tint as a hover. */
+.b-act.-theme.-open {
   color: $blue-t !important;
   background: $blue-l;
 }

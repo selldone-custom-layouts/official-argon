@@ -17,7 +17,7 @@ $t-tablet: 1100px;
   &.-red {
     border: 0;
     background: var(--k-green);
-    color: #fff !important;
+    color: var(--b-on-brand) !important;
 
     &:hover {
       background: var(--k-green-deep);
@@ -761,7 +761,7 @@ $t-tablet: 1100px;
     padding: 0 6px;
     border-radius: 10px;
     background: var(--k-green);
-    color: #fff;
+    color: var(--b-on-brand);
     font-size: 12px;
     font-weight: 800;
   }
@@ -1145,7 +1145,7 @@ $t-tablet: 1100px;
   border-radius: 16px;
   overflow: hidden;
   background: var(--k-green);
-  color: #fff !important;
+  color: var(--b-on-brand) !important;
   text-decoration: none;
 
   &__tx {
@@ -1515,7 +1515,7 @@ $t-tablet: 1100px;
       padding: 0 5px;
       border-radius: 10px;
       background: var(--k-green);
-      color: #fff;
+      color: var(--b-on-brand);
       font-size: 12px;
       font-style: normal;
       font-weight: 800;
@@ -1625,7 +1625,7 @@ $t-tablet: 1100px;
 
     &.-done > i {
       background: var(--k-green);
-      color: #fff;
+      color: var(--b-on-brand);
     }
 
     &.-now {
@@ -1706,14 +1706,14 @@ $t-tablet: 1100px;
     justify-content: center;
     padding: 48px 44px;
     background: var(--k-green);
-    color: #fff;
+    color: var(--b-on-brand);
 
     h1 {
       margin: 14px 0 10px;
       font-family: var(--k-display);
       font-size: 32px;
       font-weight: 800;
-      color: #fff;
+      color: var(--b-on-brand);
     }
 
     p {

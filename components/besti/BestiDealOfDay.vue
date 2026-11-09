@@ -59,7 +59,7 @@
     <div v-if="more.length" class="b-dotd__more">
       <h3>More top deals</h3>
       <router-link v-for="p in more" :key="p.id" :to="{ name: window.$storefront.routes.PRODUCT_PAGE, params: { product_id: p.id } }" class="b-mini">
-        <img :src="thumb(p)" alt="" loading="lazy" />
+        <span class="b-mini__ph"><img :src="thumb(p)" alt="" loading="lazy" /></span>
         <span><b>{{ p.title }}</b><em><u-price :amount="nowOf(p).now" :currency="currency" /><s v-if="nowOf(p).was"><u-price :amount="nowOf(p).was" :currency="currency" /></s></em></span>
       </router-link>
     </div>

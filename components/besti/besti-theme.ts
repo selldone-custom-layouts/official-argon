@@ -1,106 +1,173 @@
 /*
- * Besti — the shopper's theme: a colour palette and Light / Dark (the owner's
- * rule of 9 November 2026: "put colour palettes and light / dark themes in the
- * footer; a click changes the site's theme").
+ * Besti — the theme switcher's config (the header's "Theme" action; the
+ * owner's rules of 9 November 2026: colour palettes and Light / Dark, a click
+ * changes the whole site; then "at the top of the header"; then "the same in
+ * every Layout": Besti runs the shared switcher, components/theme-switcher/).
  *
- * The choice lives in localStorage ("besti-theme", "<palette>:<mode>") and is
- * put on <html data-bp data-bm> before the app mounts (bootTheme, called from
- * storefront.ts right after Vuetify is made), so the first paint already has
- * it. Every colour in Besti's styles reads tokens keyed on those attributes
- * (besti-theme.scss); Vuetify's theme gets the palette's primary and its
- * light / dark name, so Selldone's own parts follow. One click: no reload.
+ * This file is everything Besti-specific: its five palettes, which Besti
+ * variables each palette value feeds (the Kalio base reads Besti's: --k-green
+ * is var(--b-blue) in kalio-tokens.scss), the dark token set, and Vuetify's
+ * dark surfaces. storefront.ts calls bootThemeSwitcher(BESTI_THEME, vuetify)
+ * before mounting, so the chosen theme paints first, with no flash. The
+ * merchant's choice is in besti-theme.settings.ts.
+ *
+ * Contrast (WCAG 2.1, measured 9 November 2026): white on each light primary
+ * (buttons, and the department bar in both modes) — blue 6.97, violet 7.10,
+ * emerald 6.71, copper 6.65, magenta 6.32; the yellow "Deals" on it 5.05,
+ * 5.14, 4.86, 4.81, 4.57. White on each dark primary (buttons on dark cards)
+ * — 5.17, 5.31, 5.48, 5.02, 5.25, each 3:1 or more against the dark card
+ * #151c2b; each dark "text" colour on that card 7.97 or more.
  */
-import { reactive } from "vue";
+import type { ThemeSwitcherConfig } from "../theme-switcher/theme-switcher";
+import { THEME_SETTINGS } from "./besti-theme.settings";
 
-export interface Palette {
-  id: string;
-  name: string;
-  /** The swatch's colour (the palette's primary). */
-  primary: string;
+/* A dark band of a colour's hue (the deal strip, the footer): the colour
+   mixed toward black. */
+function shade(hex: string, keep: number): string {
+  const h = hex.replace("#", "");
+  const c = [0, 2, 4].map((i) => Math.round(parseInt(h.slice(i, i + 2), 16) * keep));
+  return "#" + c.map((v) => v.toString(16).padStart(2, "0")).join("");
 }
 
-/* The colours themselves live in besti-theme.scss ($palettes); these are the
-   names and the swatch colours the footer shows. */
-export const PALETTES: Palette[] = [
-  { id: "blue", name: "Besti blue", primary: "#0a4bd8" },
-  { id: "violet", name: "Violet", primary: "#6d28d9" },
-  { id: "emerald", name: "Emerald", primary: "#03694c" },
-  { id: "copper", name: "Copper", primary: "#9a4207" },
-  { id: "magenta", name: "Magenta", primary: "#a21caf" },
-];
+export const BESTI_THEME: ThemeSwitcherConfig = {
+  /* The merchant's choice: besti-theme.settings.ts, the one file to edit. */
+  settings: THEME_SETTINGS,
 
-export type Mode = "light" | "dark";
+  /* The owner (9 November 2026): a merchant who imports Besti into their own
+     shop must not see the switcher. With themeSwitcher "showcase" it shows
+     only on these shops (window.shop.id, else <meta name="shop-name">). */
+  showcaseShops: [
+    { id: 15549, name: "digini-hzgablru" }, // Digini: Digito, Besti
+    { id: 15645, name: "molino" }, // Molino: Molino, Tario, Walio, Dino, Valero
+  ],
 
-const KEY = "besti-theme";
-const DEFAULT = { palette: "blue", mode: "light" as Mode };
+  storageKey: "besti-theme",
+  darkClass: "b-dark",
 
-/** The theme now on the page (reactive, for the footer's row). */
-export const theme = reactive({ ...DEFAULT });
+  palettes: [
+    {
+      id: "blue",
+      name: "Besti blue",
+      light: { primary: "#0a4bd8", deep: "#0838a8", soft: "#e8efff", onPrimary: "#ffffff", text: "#0a4bd8", navy: "#071634", navy2: "#0e2350", pop: "#ffd91a" },
+      dark: { primary: "#2563eb", deep: "#1d4ed8", soft: "#18294f", onPrimary: "#ffffff", text: "#8fb0ff" },
+    },
+    {
+      id: "violet",
+      name: "Violet",
+      light: { primary: "#6d28d9", deep: "#5b21b6", soft: "#f1ebfe", onPrimary: "#ffffff", text: "#6d28d9", navy: "#1c0f3a", navy2: "#2a1856", pop: "#ffd91a" },
+      dark: { primary: "#8042f0", deep: "#6d28d9", soft: "#2a1a4d", onPrimary: "#ffffff", text: "#c4a8ff" },
+    },
+    {
+      id: "emerald",
+      name: "Emerald",
+      light: { primary: "#03694c", deep: "#04543d", soft: "#e3f6ee", onPrimary: "#ffffff", text: "#03694c", navy: "#062a20", navy2: "#0b3d2f", pop: "#ffd91a" },
+      dark: { primary: "#047857", deep: "#065f46", soft: "#0f3a2e", onPrimary: "#ffffff", text: "#5fd3a5" },
+    },
+    {
+      id: "copper",
+      name: "Copper",
+      light: { primary: "#9a4207", deep: "#7c3506", soft: "#fdf0e3", onPrimary: "#ffffff", text: "#9a4207", navy: "#2a1607", navy2: "#3d220d", pop: "#ffd91a" },
+      dark: { primary: "#b45309", deep: "#92400e", soft: "#3d2410", onPrimary: "#ffffff", text: "#f5b36b" },
+    },
+    {
+      id: "magenta",
+      name: "Magenta",
+      light: { primary: "#a21caf", deep: "#86198f", soft: "#fbe9fc", onPrimary: "#ffffff", text: "#a21caf", navy: "#2a0b2e", navy2: "#3d1243", pop: "#ffd91a" },
+      dark: { primary: "#b521c6", deep: "#a21caf", soft: "#3d1342", onPrimary: "#ffffff", text: "#f0a6f7" },
+    },
+  ],
 
-let vuetify: any = null;
+  /* Palette value -> the variables that carry it. --b-head (the department
+     bar and the newsletter band) keeps the light primary in both modes, with
+     --b-on-head words and the --b-pop accent; --b-on-brand is the words on a
+     brand-coloured button (dark on a light merchant brand, textOnBrand "auto"). */
+  tokens: {
+    "--b-blue": "primary",
+    "--b-blue-d": "deep",
+    "--b-blue-l": "soft",
+    "--b-blue-t": "text",
+    "--b-blue-rgb": "primary:rgb",
+    "--b-head": "light.primary",
+    "--b-head-d": "light.deep",
+    "--b-on-head": "light.onPrimary",
+    "--b-on-head-rgb": "light.onPrimary:rgb",
+    "--b-navy": "light.navy",
+    "--b-navy-2": "light.navy2",
+    "--b-pop": "light.pop",
+    "--b-on-brand": "onPrimary",
+    "--b-on-brand-rgb": "onPrimary:rgb",
+  },
 
-function read(): { palette: string; mode: Mode } {
-  try {
-    const raw = window.localStorage.getItem(KEY) || "";
-    const [palette, mode] = raw.split(":");
-    return {
-      palette: PALETTES.some((p) => p.id === palette) ? palette : DEFAULT.palette,
-      mode: mode === "dark" ? "dark" : "light",
-    };
-  } catch {
-    return { ...DEFAULT };
-  }
-}
+  /* While dark (removed on light). Packshot tiles (--b-photo, --k-well,
+     --k-tint) stay white, so a white packshot keeps its edge hidden. */
+  dark: {
+    "--b-bg": "#0c111b",
+    "--b-surface": "#151c2b",
+    "--b-page": "#1c2536",
+    "--b-line": "#2b3549",
+    "--b-line-2": "#3d4961",
+    "--b-hover-line": "#55627c",
+    "--b-deco": "#75819a",
+    "--b-ink": "#e8ecf3",
+    "--b-ink-2": "#d3d9e4",
+    "--b-brand-ink": "#e8ecf3",
+    "--b-muted": "#a6b0c2",
+    "--b-soft": "#8d98ac",
+    "--b-off-bg": "#2b3549",
+    "--b-off-ink": "#b3bccc",
+    "--b-red-t": "#ff8193",
+    "--b-green-t": "#4fd18b",
+    "--b-warn-t": "#ffb366",
+    "--b-yellow-l": "#3a3312",
+    "--b-sw-edge": "rgba(255, 255, 255, 0.55)",
+    "--b-pop-shadow": "rgba(0, 0, 0, 0.6)",
+    "--k-line-soft": "#222b3d",
+    "--k-coral-soft": "#3a1820",
+    "--k-star-off": "#75819a",
+    "--k-plain": "#151c2b",
+    "--k-shadow": "0 10px 28px -14px rgba(0, 0, 0, 0.7)",
+  },
 
-function save(): void {
-  try {
-    window.localStorage.setItem(KEY, `${theme.palette}:${theme.mode}`);
-  } catch {
-    /* private mode or blocked storage: the choice lasts for this visit */
-  }
-}
+  vuetify: {
+    light: "light",
+    dark: "dark",
+    paletteColors: { primary: "primary", "on-primary": "onPrimary" },
+    darkColors: {
+      background: "#0c111b",
+      surface: "#151c2b",
+      "surface-bright": "#1c2536",
+      "surface-variant": "#2b3549",
+      "on-background": "#e8ecf3",
+      "on-surface": "#e8ecf3",
+      "on-surface-variant": "#d3d9e4",
+      "on-primary": "#ffffff",
+      secondary: "#e8ecf3",
+      "on-secondary": "#0c111b",
+      error: "#ff8193",
+      info: "#8fb0ff",
+      success: "#4fd18b",
+      warning: "#ffb366",
+    },
+  },
 
-function paint(): void {
-  if (typeof document === "undefined") return;
-  const html = document.documentElement;
-  html.setAttribute("data-bp", theme.palette);
-  html.setAttribute("data-bm", theme.mode);
-  const p = PALETTES.find((x) => x.id === theme.palette) || PALETTES[0];
-  const t = vuetify?.theme;
-  if (t) {
-    try {
-      for (const name of ["light", "dark"]) {
-        const def = t.themes?.value?.[name];
-        if (def?.colors) {
-          def.colors.primary = p.primary;
-          def.colors.secondary = p.primary;
-        }
-      }
-      if (t.global?.name && "value" in t.global.name) t.global.name.value = theme.mode;
-      else if (typeof t.change === "function") t.change(theme.mode);
-    } catch {
-      /* Vuetify's theme API changed: the tokens still carry the colours */
-    }
-  }
-}
+  metaThemeColor: "light.primary",
+  ui: { ink: "var(--b-ink)", muted: "var(--b-muted)", line: "var(--b-line)", surface: "var(--b-surface)", font: '"Archivo", system-ui, sans-serif' },
+  labels: { theme: "Theme", palettes: "Colour", mode: "Light or dark", modeTitle: "Mode", light: "Light", dark: "Dark", custom: "Custom colour", adjusted: "Adjusted for readability", brand: "Brand colour" },
 
-/** Reads the saved choice and puts it on the page; call before mounting. */
-export function bootTheme(v: any): void {
-  vuetify = v;
-  Object.assign(theme, read());
-  paint();
-}
-
-export function setPalette(id: string): void {
-  if (!PALETTES.some((p) => p.id === id) || theme.palette === id) return;
-  theme.palette = id;
-  save();
-  paint();
-}
-
-export function setMode(mode: Mode): void {
-  if (theme.mode === mode) return;
-  theme.mode = mode;
-  save();
-  paint();
-}
+  /* "Custom colour" (the owner, 9 November 2026): any colour, made readable by
+     paletteFromColor(). The department bar carries white words and the yellow
+     "Deals" on the light primary, so white on it must reach 6.5:1 (yellow
+     then reads 4.6:1). The deal strip and the footer take a dark band of the
+     colour's hue. */
+  custom: {
+    headerContrast: 6.5,
+    darkSurfaces: ["#0c111b", "#151c2b", "#1c2536"],
+    lightSurfaces: ["#ffffff", "#f0f2f5"],
+    darkText: "#0f1729",
+    extras: (v) => ({
+      navy: shade(v.primary, 0.16),
+      navy2: shade(v.primary, 0.28),
+      pop: v.onPrimary === "#ffffff" ? "#ffd91a" : v.onPrimary,
+    }),
+  },
+};

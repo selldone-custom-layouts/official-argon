@@ -48,7 +48,7 @@ $photo: var(--b-photo);
 
   .ms {
     font-size: 16px;
-    color: var(--b-soft);
+    color: $muted; /* 4.5:1: the chevron is read as a word */
   }
 
   [aria-current="page"],
@@ -615,6 +615,8 @@ $photo: var(--b-photo);
 
     .gallery-top {
       width: 100% !important;
+      border-radius: 8px;
+      background: $photo !important; /* a packshot keeps its white tile in dark mode */
     }
 
     .gallery-thumbs {
@@ -661,7 +663,7 @@ $photo: var(--b-photo);
         transform: none !important;
         border: 1px solid $line !important;
         border-radius: 8px !important;
-        background: $surface !important;
+        background: $photo !important;
       }
     }
   }
@@ -835,6 +837,14 @@ $photo: var(--b-photo);
   font: 600 12.5px "Archivo", sans-serif;
   cursor: pointer;
   text-align: center;
+
+  /* the packshot's own white tile (in dark mode too) */
+  &__ph {
+    display: grid;
+    place-items: center;
+    border-radius: 6px;
+    background: $photo;
+  }
 
   img {
     width: 64px;
@@ -1032,7 +1042,7 @@ $photo: var(--b-photo);
       height: 46px !important;
       border-radius: 6px !important;
       background: $blue !important;
-      color: #fff !important;
+      color: var(--b-on-brand) !important;
       box-shadow: none !important;
       font: 700 15px "Archivo", sans-serif !important;
       letter-spacing: 0 !important;
@@ -1043,7 +1053,7 @@ $photo: var(--b-photo);
       }
 
       .v-icon {
-        color: #fff !important;
+        color: var(--b-on-brand) !important;
       }
     }
   }
@@ -1075,7 +1085,7 @@ $photo: var(--b-photo);
   &__go {
     border-radius: 6px !important;
     background: $blue !important;
-    color: #fff !important;
+    color: var(--b-on-brand) !important;
 
     &:hover {
       background: $blue-d !important;
@@ -1258,6 +1268,7 @@ $photo: var(--b-photo);
   aspect-ratio: 1;
   border: 1px solid $line;
   border-radius: 8px;
+  background: $photo; /* a packshot keeps its white tile in dark mode */
 
   img {
     width: 80%;
@@ -1291,7 +1302,7 @@ $photo: var(--b-photo);
 
     .ms {
       font-size: 14px;
-      color: #fff;
+      color: var(--b-on-brand); /* the tick sits on the brand colour once on */
       opacity: 0;
     }
   }
@@ -1763,7 +1774,7 @@ $photo: var(--b-photo);
 .b-empty.-page {
   max-width: 560px;
   margin: 24px auto 40px;
-  padding: 44px 24px;
+  padding: 40px 32px;
   border: 1px solid $line;
   border-radius: 12px;
   background: $surface;
@@ -1795,7 +1806,7 @@ $photo: var(--b-photo);
   &__go {
     border-radius: 6px !important;
     background: $blue !important;
-    color: #fff !important;
+    color: var(--b-on-brand) !important;
 
     &:hover {
       background: $blue-d !important;
@@ -1845,11 +1856,11 @@ $photo: var(--b-photo);
   border-radius: 6px !important;
   background: $blue !important;
   box-shadow: none !important;
-  color: #fff !important;
+  color: var(--b-on-brand) !important;
   font: 700 13.5px "Archivo", sans-serif !important;
 
   .v-icon {
-    color: #fff !important;
+    color: var(--b-on-brand) !important;
   }
 
   &:hover {
@@ -1865,11 +1876,11 @@ $photo: var(--b-photo);
 .k-card-step.-card {
   border-radius: 6px !important;
   background: $blue !important;
-  color: #fff !important;
+  color: var(--b-on-brand) !important;
 
   button,
   .v-icon {
-    color: #fff !important;
+    color: var(--b-on-brand) !important;
   }
 }
 
@@ -1962,13 +1973,93 @@ $photo: var(--b-photo);
   }
 }
 
+/* A list that came back empty (a search with no match, filters that leave
+   nothing): the card's ground in both modes (it sat on the white packshot
+   well, which stays white in dark mode), in the empty-state rhythm below. */
+.k-noresult {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  gap: 0 !important;
+  padding: 40px 32px !important;
+  border: 1px solid $line !important;
+  border-radius: 12px !important;
+  background: $surface !important;
+
+  > .v-icon {
+    display: grid;
+    place-items: center;
+    width: 56px !important;
+    height: 56px !important;
+    margin: 0 0 14px;
+    border-radius: 50%;
+    background: $blue-l;
+    font-size: 28px !important;
+  }
+
+  h3 {
+    margin: 0 0 8px !important;
+    font: 800 22px/1.25 "Archivo", sans-serif !important;
+  }
+
+  p {
+    margin: 0 0 20px !important;
+    color: $muted !important;
+    line-height: 1.5;
+  }
+
+  .k-noresult__acts {
+    margin: 0 !important;
+  }
+}
+
+/* An empty page (no questions yet…), in the same rhythm as every empty
+   state (Digito 1.0.13): a 56px tinted icon circle, 14px, the heading, 8px,
+   the words, 20px, the button; 36px of card around it. */
 .k-official__missing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   max-width: 560px;
   margin: 18px 0 8px !important;
-  padding: 28px 24px !important;
+  padding: 36px 32px !important;
   border: 1px solid $line;
   border-radius: 12px;
   background: $surface;
+  text-align: center;
+
+  > .v-icon {
+    display: grid;
+    place-items: center;
+    width: 56px !important;
+    height: 56px !important;
+    margin: 0 0 14px !important;
+    border-radius: 50%;
+    background: $blue-l;
+    color: $blue-t !important;
+    font-size: 28px !important;
+  }
+
+  h2 {
+    margin: 0 0 8px !important;
+    color: $ink;
+    font: 800 20px/1.25 "Archivo", sans-serif !important;
+  }
+
+  p {
+    max-width: 42ch;
+    margin: 0 0 20px !important;
+    color: $muted;
+    line-height: 1.5;
+  }
+
+  .k-official__missingacts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 0 !important;
+  }
 }
 
 .k-btn {
@@ -2060,4 +2151,18 @@ $photo: var(--b-photo);
       color: $ink !important;
     }
   }
+}
+
+/* A picture in a product's own words: its own white ground in dark mode
+   too, like every packshot. */
+.b-pdp figure:has(> img) {
+  border-radius: 8px;
+  background: $photo;
+}
+
+
+/* Selldone's red words (Vuetify's .text-red, #f44336, 3.7:1 on white, e.g.
+   "[Invalid]" on a cart line): the sale red, 4.5:1 or more in both modes. */
+.v-application .text-red {
+  color: var(--b-red-t) !important;
 }

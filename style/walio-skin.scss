@@ -32,7 +32,7 @@ h3 {
   &__brand {
     align-items: center !important;
     gap: 8px !important;
-    color: #fff !important;
+    color: var(--b-on-brand) !important;
     font-family: var(--k-display) !important;
     font-weight: 900 !important;
     letter-spacing: -0.03em !important;
@@ -50,14 +50,14 @@ h3 {
   }
 
   &__icon {
-    color: #fff !important;
+    color: var(--b-on-brand) !important;
 
     &:hover {
       background: rgba(255, 255, 255, 0.14) !important;
     }
 
     .v-icon {
-      color: #fff !important;
+      color: var(--b-on-brand) !important;
     }
   }
 
@@ -104,7 +104,7 @@ h3 {
   }
 
   &__lang {
-    color: #fff !important;
+    color: var(--b-on-brand) !important;
   }
 
   /* The basket: spark yellow with dark words. */
@@ -224,7 +224,7 @@ h3 {
     height: 28px;
     border-radius: 50%;
     background: $walio-blue;
-    color: #fff;
+    color: var(--b-on-brand);
     font-size: 14px;
     font-weight: 900;
     letter-spacing: 0;

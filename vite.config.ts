@@ -18,6 +18,7 @@ import path from "path";
 import fs from "fs";
 import vitePluginRequire from "vite-plugin-require";
 import basicSsl from "@vitejs/plugin-basic-ssl";
+import darkTokens from "./components/theme-switcher/tools/postcss-dark-tokens.mjs";
 
 const manifest = require("./manifest.json");
 
@@ -98,6 +99,28 @@ export default ({mode}: any) => {
           ]
           : []),
     ],
+    /* The theme switcher's build step: every fixed colour gets a dark value
+       under html.b-dark (components/theme-switcher/tools, PORTING.md). */
+    css: {
+      postcss: {
+        plugins: [
+          darkTokens({
+            darkSelector: "html.b-dark",
+            include: [/\/style\//, /\/StorefrontApp\.vue/, /\/components\//, /\/pages\//, /\/layouts\//],
+            exclude: [/\/node_modules\//, /\/modules\/pagebuilder\//, /\/theme-switcher\//],
+            lightVars: ["--k-well", "--k-tint", "--k-leaf", "--b-photo", "--b-yellow"],
+            card: "#151c2b",
+            raise: "#1c2536",
+            variant: "#2b3549",
+            line: "#2b3549",
+            lineStrong: "#3d4961",
+            ink: "#e8ecf3",
+            ink2: "#d3d9e4",
+            muted: "#a6b0c2",
+          }),
+        ],
+      },
+    },
     resolve: {
       alias: {
         // ━━━━━━━━━━━━ Define fix path for modules ━━━━━━━━━━━━

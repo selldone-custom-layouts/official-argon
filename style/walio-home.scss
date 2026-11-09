@@ -343,7 +343,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
     padding: 3px 7px;
     border-radius: 4px;
     background: var(--k-green);
-    color: #fff;
+    color: var(--b-on-brand);
     font-size: 12px;
     font-weight: 800;
     line-height: 1.2;
@@ -707,7 +707,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
 
     &.-deals {
       background: var(--k-green);
-      color: #fff !important;
+      color: var(--b-on-brand) !important;
 
       small {
         color: var(--k-leaf);
@@ -953,14 +953,14 @@ a:hover > .t-photo .t-photo__pack.-p1 {
   &__panel {
     padding: 28px;
     background: var(--k-green);
-    color: #fff;
+    color: var(--b-on-brand);
 
     h2 {
       margin: 0 0 16px;
       font-family: var(--k-display);
       font-size: 28px;
       font-weight: 800;
-      color: #fff;
+      color: var(--b-on-brand);
     }
 
     ul {
@@ -1098,7 +1098,7 @@ a:hover > .t-photo .t-photo__pack.-p1 {
 .t-btn.-main {
   border: 0;
   background: var(--k-green);
-  color: #fff !important;
+  color: var(--b-on-brand) !important;
 
   &:hover {
     background: var(--k-green-deep);

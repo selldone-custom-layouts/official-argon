@@ -31,7 +31,7 @@
 
     &.-main {
       background: var(--k-green);
-      color: #fff !important;
+      color: var(--b-on-brand) !important;
 
       &:hover {
         background: var(--k-green-deep);
@@ -176,7 +176,7 @@
   overflow: hidden;
   border-radius: 50%;
   background: var(--k-green);
-  color: #fff;
+  color: var(--b-on-brand);
   font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -189,7 +189,7 @@
 
   // a guest: a person outline, white on the green (was an empty disc)
   .v-icon {
-    color: #fff !important;
+    color: var(--b-on-brand) !important;
   }
 
   &.-lg {
@@ -228,11 +228,11 @@
 .k-acct__in {
   border-color: var(--k-green-t);
   background: var(--k-green);
-  color: #fff !important;
+  color: var(--b-on-brand) !important;
 
   &:hover {
     background: var(--k-green-deep);
-    color: #fff !important;
+    color: var(--b-on-brand) !important;
   }
 }
 
@@ -1191,7 +1191,7 @@
         background: var(--k-green);
 
         .v-icon {
-          color: #fff !important;
+          color: var(--b-on-brand) !important;
         }
       }
 
@@ -1533,7 +1533,7 @@
     padding: 3px 9px;
     border-radius: var(--k-pill);
     background: var(--k-green);
-    color: #fff;
+    color: var(--b-on-brand);
     font-size: 11.5px;
     font-weight: 700;
   }
@@ -1550,11 +1550,11 @@
     border-radius: 50%;
     background: var(--k-green);
     box-shadow: 0 6px 14px -6px rgba(20, 20, 20, 0.6);
-    color: #fff !important;
+    color: var(--b-on-brand) !important;
     cursor: pointer;
 
     .v-icon {
-      color: #fff !important;
+      color: var(--b-on-brand) !important;
     }
 
     &:hover {
@@ -1669,11 +1669,11 @@
       &.-on {
         background: var(--k-green);
         box-shadow: none;
-        color: #fff !important;
+        color: var(--b-on-brand) !important;
 
         .v-icon,
         em {
-          color: #fff !important;
+          color: var(--b-on-brand) !important;
         }
       }
     }
@@ -1952,7 +1952,7 @@
     .v-btn.v-btn--active,
     .v-application & .v-btn.dark-flat {
       background: var(--k-green) !important;
-      color: #fff !important;
+      color: var(--b-on-brand) !important;
     }
   }
 

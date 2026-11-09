@@ -35,7 +35,7 @@
 - yellow (`#ffd91a`) only as an accent: deal flags, the Deal of the Day, the logo's dot, "Deals";
 - sale red for "Save $X", navy for the deal strip and the footer;
 - Archivo type and Material Symbols Rounded icons;
-- a **Theme** action at the top right of the header (a small panel: five colour palettes, Besti blue, Violet, Emerald, Copper and Magenta, and Light / Dark); one click changes the whole site at once, Selldone's own parts too, and the choice stays in the browser.
+- a **Theme** action at the top right of the header on Besti's own showcase shop: five colour palettes (Besti blue, Violet, Emerald, Copper, Magenta), a **Custom colour** and Light / Dark; one click changes the whole site at once, Selldone's own parts too, and the choice stays in the browser.
 
 It runs on **[besti.selldone.shop](https://besti.selldone.shop)**, one address of the Selldone shop Digini. Selldone lets each domain of a shop carry its own Layout.
 
@@ -52,6 +52,10 @@ Selldone's own cart, checkout, payments and orders keep working underneath. Noth
 - **Cart:** a receipt-first drawer (subtotal, savings, Checkout, compact rows, "Often added"), a stepped checkout with a map-first address sheet, delivery method and the payment window.
 - **Orders and account:** receipt, delivery and the trip, messages with the Besti mark; the account as a **desk** (side menu, order cards, address book).
 - **Pages:** guides and articles, About, Terms, Privacy (sample text marked as such until the shop writes its own), Contact us with a form, FAQ and a designed 404.
+
+## Theme and colours
+
+Besti runs the shared theme switcher (`components/theme-switcher/`, the same code as Digito and the other Layouts). On your own shop the visitor switcher is hidden, and Besti shows the theme you set in **one file**, [`components/besti/besti-theme.settings.ts`](components/besti/besti-theme.settings.ts): a palette (`blue`, `violet`, `emerald`, `copper`, `magenta`) or any brand colour (`brandColor: "#F5C400"`; a light colour keeps dark words on it with `textOnBrand: "auto"`), `light` or `dark`, and whether your visitors get the switcher (`themeSwitcher: "showcase" | "on" | "off"`). Every colour is made readable automatically. An AI agent finds the steps in the "Theme" section of [`AGENTS.md`](AGENTS.md); the wiki page [Theme and colours](https://github.com/selldone-custom-layouts/official-besti/wiki/Theme-and-colours) has the details.
 
 ## Use it on your shop
 

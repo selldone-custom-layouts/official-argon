@@ -42,10 +42,17 @@ import { PageHyper } from "@selldone/page-builder/PageHyperService.ts";
 import {SetupPageBuilder} from "@selldone/page-builder/page-builder.ts";
 import {SetupService} from "@selldone/core-js/server";
 import {Shop} from "@selldone/core-js/models";
-import { bootTheme } from "./components/besti/besti-theme"; // Besti 1.0.9: the shopper's palette and light / dark
+import { bootThemeSwitcher } from "./components/theme-switcher/theme-switcher"; // the shared theme switcher (Besti 1.0.11)
+import { BESTI_THEME } from "./components/besti/besti-theme";
 
 const vuetify = VuetifyInstance(i18n);
-bootTheme(vuetify); // before the app mounts: the first paint already wears the saved theme
+// Vuetify's light error red reads 4.5:1 on white (its #ff5252 is 3.3:1); set
+// here, not in the switcher's config, so it stays when the switcher is hidden.
+try { vuetify.theme.themes.value.light.colors.error = "#c4122f"; } catch (e) {}
+// The shopper's palette and Light / Dark (the header's Theme action), painted
+// before the first paint so the default never flashes; only on Besti's own
+// showcase shop unless besti-theme.settings.ts says otherwise.
+bootThemeSwitcher(BESTI_THEME, vuetify);
 
 //█████████████████████████████████████████████████████████████
 //―――――――――――――― Global Types ―――――――――――――――

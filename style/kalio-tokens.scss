@@ -42,7 +42,7 @@
   /* Besti 1.0.9: the accent and the saving as words, lines and rings (lighter
      in dark mode); --k-green and --k-coral stay the fills under white words. */
   --k-green-t: var(--b-blue-t);
-  --k-green-deep-t: var(--b-blue-d);
+  --k-green-deep-t: var(--b-blue-t); /* the accent as words: always the readable text shade */
   --k-coral-t: var(--b-red-t);
 
   /* Coral marks a saving. #c9431e keeps white badge text and sale prices
@@ -86,8 +86,8 @@
 :root,
 .v-theme--light,
 .v-theme--dark {
-  --v-theme-primary: var(--b-blue-rgb) !important;
-  --v-theme-on-primary: 255, 255, 255 !important;
+  --v-theme-primary: var(--b-blue-rgb, 10, 75, 216) !important;
+  --v-theme-on-primary: var(--b-on-brand-rgb, 255, 255, 255) !important;
   --v-theme-secondary: var(--b-blue-rgb) !important;
   --v-theme-on-secondary: 255, 255, 255 !important;
 }
@@ -204,7 +204,7 @@ s:has(> .u--price) {
 
 .k-btn--solid {
   background: var(--k-green-deep);
-  color: #fff !important;
+  color: var(--b-on-brand) !important;
 
   &:hover {
     background: var(--k-green);

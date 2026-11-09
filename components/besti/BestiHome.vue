@@ -17,7 +17,7 @@
 <template>
   <div class="b-home">
     <!-- ▆▆▆▆ Hero ▆▆▆▆ -->
-    <section v-if="slides.length || !ready" class="b-hero b-wrap" @mouseenter="pause = true" @mouseleave="pause = false">
+    <section v-if="slides.length || !ready" ref="hero" class="b-hero b-wrap" @mouseenter="pause = true" @mouseleave="pause = false">
       <div v-if="!slides.length" class="b-hero__main -skeleton"></div>
       <div v-else :aria-label="`${slide.title || slide.name} deals`" aria-roledescription="slide" class="b-hero__main" role="group">
         <!-- The photo and its words change together (a slide caught between
@@ -242,6 +242,7 @@ export default {
   inject: ["$shop"],
 
   data: () => ({
+    hero_seen: true,
     cats: [],
     products: [],
     tags: new Map(),
@@ -407,6 +408,7 @@ export default {
   watch: {
     slides(list) {
       if (this.at >= list.length) this.at = 0;
+      this.$nextTick(() => this.watchHero());
       /* The next slides' photos load and decode now, so a slide never
          appears half-drawn (seen live on a first visit). */
       for (const c of list) {
@@ -436,20 +438,38 @@ export default {
       .catch(() => (this.posts = []));
     this.onResize = () => (this.width = window.innerWidth);
     window.addEventListener("resize", this.onResize, { passive: true });
-    const still = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
-    if (!still) {
-      this.timer = setInterval(() => {
-        if (!this.pause && !document.hidden && this.slides.length > 1) this.at = (this.at + 1) % this.slides.length;
-      }, 7000);
-    }
+    this.restartHero();
+    this.watchHero();
   },
 
   beforeUnmount() {
     clearInterval(this.timer);
+    this.heroIo?.disconnect();
     window.removeEventListener("resize", this.onResize);
   },
 
   methods: {
+    /* The hero turns every 7 seconds, not while the pointer is on it, nor
+       while it is out of view; back in view, it waits a whole 7 seconds
+       before it turns again (a slide never changes as you come back to it). */
+    restartHero() {
+      clearInterval(this.timer);
+      const still = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+      if (still) return;
+      this.timer = setInterval(() => {
+        if (!this.pause && this.hero_seen && !document.hidden && this.slides.length > 1) this.at = (this.at + 1) % this.slides.length;
+      }, 7000);
+    },
+    watchHero() {
+      const el = this.$refs.hero;
+      if (!el || this.heroIo || typeof IntersectionObserver === "undefined") return;
+      this.heroIo = new IntersectionObserver((entries) => {
+        const seen = entries.some((e) => e.isIntersecting);
+        if (seen && !this.hero_seen) this.restartHero();
+        this.hero_seen = seen;
+      });
+      this.heroIo.observe(el);
+    },
     photoOf,
     tagTitle,
     dateParts,

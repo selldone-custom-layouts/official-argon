@@ -49,3 +49,7 @@ After a custom project has integrated the helper prerequisites documented in
 [`README.md`](README.md), use `npm run doctor` for read-only diagnostics. The
 official base repository intentionally does not wire this command into its
 package scripts.
+
+## Theme
+
+A merchant's theme (palette, brand colour, light or dark, the visitor switcher) is set in one file, `components/besti/besti-theme.settings.ts`: see the "Theme" section in the root [`AGENTS.md`](../AGENTS.md).
