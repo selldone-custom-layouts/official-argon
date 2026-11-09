@@ -39,9 +39,14 @@
 
 <script>
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
-import { hasSizes, pendingLine, quickAdd } from "./kalio-basket";
-import { offers, priceOf, productImage, productSrcset, dropSrcset } from "./kalio-catalog";
+import { addVariant, hasSizes, quickAdd } from "./kalio-basket";
+import { priceOf, productImage, productSrcset, dropSrcset } from "./kalio-catalog";
+import { catalogue, variantDimension } from "../besti/besti";
 
+/* Besti: the catalogue read once (besti.ts), and what goes with the cart:
+   other departments first (a mouse for a laptop, not a second laptop), in
+   stock, a colour product going in with its first colour in stock. A
+   product whose choice is a capacity or size opens its page instead. */
 export default {
   name: "KalioOftenAdded",
   mixins: [CurrencyMixin],
@@ -58,6 +63,7 @@ export default {
   data() {
     return {
       catalogue: [],
+      busy: {},
     };
   },
 
@@ -73,26 +79,24 @@ export default {
     suggestions() {
       if (!this.catalogue.length) return [];
       const inBasket = new Set(this.basketItems.map((item) => item.product_id));
-      const aisles = new Set(this.basketItems.map((item) => item.product?.category_id).filter(Boolean));
+      const cats = new Set(this.basketItems.map((item) => item.product?.category_id).filter(Boolean));
+      const seen = new Set();
       return this.catalogue
-        .filter((product) => !inBasket.has(product.id) && !hasSizes(product) && product.quantity > 0)
+        .filter((product) => !inBasket.has(product.id) && product.quantity > 0 && product.icon)
         .map((product) => ({
           product,
-          near: aisles.has(product.category_id) ? 1 : 0,
-          off: product.discount && product.price ? product.discount / product.price : 0,
+          other: cats.has(product.category_id) ? 0 : 1,
+          price: this.priceOf(product).now || 0,
         }))
-        .sort((a, b) => b.near - a.near || b.off - a.off || a.product.id - b.product.id)
+        .sort((a, b) => b.other - a.other || a.price - b.price || a.product.id - b.product.id)
+        .filter(({ product }) => !seen.has(product.category_id) && seen.add(product.category_id))
         .slice(0, this.count)
         .map(({ product }) => product);
     },
   },
 
   created() {
-    offers().then(({ shelfOf }) => {
-      const seen = new Map();
-      for (const shelf of shelfOf.values()) for (const product of shelf) if (!seen.has(product.id)) seen.set(product.id, product);
-      this.catalogue = [...seen.values()];
-    });
+    catalogue().then((list) => (this.catalogue = list));
   },
 
   methods: {
@@ -108,16 +112,30 @@ export default {
       return priceOf(this.$shop, product, this.currency);
     },
 
-    /* Its "+" was pressed and the basket has not answered yet. */
     adding(product) {
-      return !!pendingLine(product);
+      return !!this.busy[product.id];
     },
 
-    add(product) {
-      quickAdd(this, product, (picked) => {
+    async add(product) {
+      const variants = (product.product_variants || []).filter((v) => v.enable !== false);
+      const dim = variantDimension(variants);
+      const open = () => {
         this.$emit("navigate");
-        this.$router.push(this.productRoute(picked.id));
-      });
+        this.$router.push(this.productRoute(product.id));
+      };
+      if (dim && dim.key !== "color") return open();
+      this.busy = { ...this.busy, [product.id]: true };
+      try {
+        if (variants.length) {
+          const v = variants.find((x) => x.quantity > 0);
+          if (!v) return open();
+          await addVariant(this, product, v);
+        } else if (!hasSizes(product)) {
+          await quickAdd(this, product, open);
+        } else open();
+      } finally {
+        this.busy = { ...this.busy, [product.id]: false };
+      }
     },
 
     productRoute(id) {

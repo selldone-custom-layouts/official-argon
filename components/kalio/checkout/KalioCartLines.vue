@@ -71,6 +71,7 @@
 <script>
 import { settling, shownCount, stepTo } from "../kalio-basket";
 import { productImage, sellerRoute, vendorImage, vendors } from "../kalio-catalog";
+import { colourName } from "../../besti/besti";
 
 /* The size of a variant in words: its volume, weight, pack, colour or style. */
 function sizeOf(variant) {
@@ -155,7 +156,8 @@ export default {
     },
 
     size(item) {
-      return sizeOf(item.variant);
+      /* Besti: a colour line says its colour too. */
+      return sizeOf(item.variant) || (item.variant?.color ? colourName(item.variant.color) : null);
     },
 
     image(item) {

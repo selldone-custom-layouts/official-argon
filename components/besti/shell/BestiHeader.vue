@@ -149,7 +149,7 @@
         <div class="b-mega__in">
           <div class="b-mega__grid">
             <router-link v-for="c in cats" :key="c.id" :to="catTo(c)" class="b-mega__item">
-              <span class="b-mega__ic"><img v-if="c.icon" :src="catIcon(c)" alt="" loading="lazy" /></span>
+              <span class="b-mega__ic"><img v-if="c.icon" :src="catIcon(c)" alt="" /></span>
               <span><b>{{ c.title || c.name }}</b><small v-if="c.description">{{ c.description }}</small></span>
             </router-link>
           </div>

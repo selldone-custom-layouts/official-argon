@@ -2935,3 +2935,14 @@ body {
     aspect-ratio: 16 / 9;
   }
 }
+
+/* Selldone's shop frame centres text; Besti's pieces start at the line's start. */
+.b-header,
+.b-mega,
+.b-menu,
+.b-suggest,
+.b-footer,
+.b-home,
+.b-card {
+  text-align: start;
+}

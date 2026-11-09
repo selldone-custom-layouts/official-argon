@@ -15,12 +15,7 @@
   an order. A missing page is not an error: nothing red is shown.
 -->
 <template>
-  <div class="b-contact b-wrap">
-    <nav aria-label="Breadcrumb" class="b-crumbs">
-      <router-link :to="{ path: '/' }">Home</router-link>
-      <span aria-hidden="true" class="ms">chevron_right</span>
-      <span aria-current="page">Contact us</span>
-    </nav>
+  <div class="b-contact">
     <h1 class="b-contact__h">Contact us</h1>
     <p class="b-contact__lede">Questions about a product or an order? Write to us and we'll get back to you.</p>
 

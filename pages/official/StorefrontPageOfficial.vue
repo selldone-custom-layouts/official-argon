@@ -21,11 +21,11 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="k-official">
     <slot name="header"></slot>
-    <div class="k-wrap">
-      <nav aria-label="Breadcrumb" class="k-official__crumbs">
-        <router-link :to="{ name: 'ShopPage' }">{{ $shop?.title || "Home" }}</router-link>
-        <v-icon size="16">chevron_right</v-icon>
-        <span>{{ page_name }}</span>
+    <div class="b-wrap">
+      <nav aria-label="Breadcrumb" class="b-crumbs">
+        <router-link :to="{ path: '/' }">Home</router-link>
+        <span aria-hidden="true" class="ms">chevron_right</span>
+        <span aria-current="page">{{ page_name }}</span>
       </nav>
       <router-view class="k-official__body" />
     </div>

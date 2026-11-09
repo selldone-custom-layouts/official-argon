@@ -1734,3 +1734,10 @@ $muted: #5a6474;
 .k-cmp {
   font-family: "Archivo", sans-serif;
 }
+
+/* A struck price on its own line keeps its line to its own width. */
+.k-lines__price s,
+.k-order s:has(> .u--price) {
+  display: table !important;
+  margin-inline-start: auto;
+}
