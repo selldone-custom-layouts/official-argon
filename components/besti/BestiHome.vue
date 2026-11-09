@@ -253,6 +253,7 @@ export default {
     recent_ids: [],
     sheet: false,
     picked: null,
+    width: typeof window !== "undefined" ? window.innerWidth : 1440,
   }),
 
   computed: {
@@ -331,9 +332,16 @@ export default {
     },
     topDeals() {
       const pool = this.deals.filter((p) => !this.dotd || p.id !== this.dotd.id);
-      const list = this.tab ? pool.filter((p) => p.category_id === this.tab) : mixByCategory(pool, 10);
-      /* Full rows only: five to a row on a computer (CSS hides a short row's spill). */
-      return list.slice(0, 10);
+      const list = this.tab ? pool.filter((p) => p.category_id === this.tab) : mixByCategory(pool, 15);
+      /* Full rows only, never a hole: as many whole rows as the deals fill
+         (five to a row on a computer, four on a laptop, three on a tablet,
+         two on a phone; two rows, three on a phone). Fewer than one row
+         stays one short row. */
+      const w = this.width;
+      const cols = w >= 1280 ? 5 : w >= 900 ? 4 : w >= 600 ? 3 : 2;
+      const rows = w >= 600 ? 2 : 3;
+      if (list.length <= cols) return list;
+      return list.slice(0, Math.min(Math.floor(list.length / cols), rows) * cols);
     },
 
     /* ── Mosaic ── */
@@ -413,6 +421,8 @@ export default {
     journalPage({ page: 1, limit: 8 })
       .then(({ articles }) => (this.posts = articles.slice(0, 4)))
       .catch(() => (this.posts = []));
+    this.onResize = () => (this.width = window.innerWidth);
+    window.addEventListener("resize", this.onResize, { passive: true });
     const still = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     if (!still) {
       this.timer = setInterval(() => {
@@ -423,6 +433,7 @@ export default {
 
   beforeUnmount() {
     clearInterval(this.timer);
+    window.removeEventListener("resize", this.onResize);
   },
 
   methods: {
