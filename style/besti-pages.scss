@@ -1821,3 +1821,11 @@ $muted: #5a6474;
 .b-reviews .k-rv__list {
   min-width: 0;
 }
+
+/* A two-tone colour's name ("Brown / Indigo") wraps instead of being cut. */
+.b-vtile__l {
+  white-space: normal;
+  text-align: center;
+  line-height: 1.25;
+  overflow: visible;
+}

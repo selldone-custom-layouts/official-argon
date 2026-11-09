@@ -43,6 +43,14 @@
       <span v-for="n in compact ? 2 : 3" :key="n" class="k-board__ghost"></span>
     </div>
 
+    <!-- Besti: a guest whose device holds no order is not an error (Selldone
+         refuses the read when the shop takes no guest orders). -->
+    <div v-else-if="account.failed && !account.orders.length && !USER()" class="k-board__empty">
+      <v-icon size="28">receipt_long</v-icon>
+      <p>No orders on this device yet. Sign in to see the orders on your account.</p>
+      <button class="k-btn k-btn--solid" type="button" @click="NeedLogin()">Sign in</button>
+    </div>
+
     <div v-else-if="account.failed && !account.orders.length" class="k-board__empty">
       <v-icon size="28">cloud_off</v-icon>
       <p>Your orders did not load.</p>
@@ -50,7 +58,7 @@
     </div>
 
     <div v-else-if="!visible.length" class="k-board__empty">
-      <v-icon size="28">{{ filter === "all" ? "shopping_basket" : "filter_alt_off" }}</v-icon>
+      <v-icon size="28">{{ filter === "all" ? "shopping_cart" : "filter_alt_off" }}</v-icon>
       <p>{{ emptyWords }}</p>
       <router-link v-if="filter === 'all'" :to="{ path: '/' }" class="k-btn -main">Start shopping</router-link>
       <button v-else class="k-btn -line" type="button" @click="pick('all')">Show all orders</button>
