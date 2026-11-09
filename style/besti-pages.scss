@@ -2160,9 +2160,3 @@ $photo: var(--b-photo);
   background: $photo;
 }
 
-
-/* Selldone's red words (Vuetify's .text-red, #f44336, 3.7:1 on white, e.g.
-   "[Invalid]" on a cart line): the sale red, 4.5:1 or more in both modes. */
-.v-application .text-red {
-  color: var(--b-red-t) !important;
-}
