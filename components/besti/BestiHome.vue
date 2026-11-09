@@ -20,33 +20,36 @@
     <section v-if="slides.length || !ready" class="b-hero b-wrap" @mouseenter="pause = true" @mouseleave="pause = false">
       <div v-if="!slides.length" class="b-hero__main -skeleton"></div>
       <div v-else :aria-label="`${slide.title || slide.name} deals`" aria-roledescription="slide" class="b-hero__main" role="group">
+        <!-- The photo and its words change together (a slide caught between
+             its old photo and its new words read wrong on a phone). -->
         <transition mode="out-in" name="b-fade">
-          <besti-photo
-            :key="slide.id"
-            :alt="slide.title || slide.name"
-            :photo="photoOf(slide, 'wide')"
-            :products="inCategory(slide).slice(0, 4)"
-            class="b-hero__photo"
-            eager
-            sizes="(max-width: 900px) 100vw, 1100px"
-          />
-        </transition>
-        <div class="b-hero__card">
-          <small>{{ line(slide) }}</small>
-          <h1>{{ slide.title || slide.name }} deals</h1>
-          <p v-if="slide.description">{{ slide.description }}</p>
-          <div class="b-hero__row">
-            <router-link :to="catTo(slide)" class="b-btn">Shop now</router-link>
-            <template v-if="slides.length > 1">
-              <span class="b-hero__count">{{ at + 1 }} / {{ slides.length }}</span>
-              <button aria-label="Previous slide" class="b-round" type="button" @click="go(-1)"><span class="ms">chevron_left</span></button>
-              <button aria-label="Next slide" class="b-round" type="button" @click="go(1)"><span class="ms">chevron_right</span></button>
-            </template>
+          <div :key="slide.id" class="b-hero__slide">
+            <besti-photo
+              :alt="slide.title || slide.name"
+              :photo="photoOf(slide, 'wide')"
+              :products="inCategory(slide).slice(0, 4)"
+              class="b-hero__photo"
+              eager
+              sizes="(max-width: 900px) 100vw, 1100px"
+            />
+            <div class="b-hero__card">
+              <small>{{ line(slide) }}</small>
+              <h1>{{ slide.title || slide.name }} deals</h1>
+              <p v-if="slide.description">{{ slide.description }}</p>
+              <div class="b-hero__row">
+                <router-link :to="catTo(slide)" class="b-btn">Shop now</router-link>
+                <template v-if="slides.length > 1">
+                  <span class="b-hero__count">{{ at + 1 }} / {{ slides.length }}</span>
+                  <button aria-label="Previous slide" class="b-round" type="button" @click="go(-1)"><span class="ms">chevron_left</span></button>
+                  <button aria-label="Next slide" class="b-round" type="button" @click="go(1)"><span class="ms">chevron_right</span></button>
+                </template>
+              </div>
+            </div>
           </div>
-        </div>
+        </transition>
       </div>
       <router-link v-for="c in sideTiles" :key="c.id" :to="catTo(c)" class="b-hero__side">
-        <besti-photo :photo="sidePhoto(c)" :products="inCategory(c).slice(0, 3)" sizes="(max-width: 900px) 50vw, 320px" />
+        <besti-photo :photo="sidePhoto(c)" :products="inCategory(c).slice(0, 3)" eager sizes="(max-width: 900px) 50vw, 320px" />
         <span>
           <b>{{ c.title || c.name }}</b>
           <small>{{ line(c) }}</small>
@@ -404,6 +407,16 @@ export default {
   watch: {
     slides(list) {
       if (this.at >= list.length) this.at = 0;
+      /* The next slides' photos load and decode now, so a slide never
+         appears half-drawn (seen live on a first visit). */
+      for (const c of list) {
+        const ph = photoOf(c, "wide");
+        if (!ph) continue;
+        const img = new Image();
+        img.decoding = "async";
+        img.src = ph.src;
+        img.decode?.().catch(() => {});
+      }
     },
   },
 

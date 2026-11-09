@@ -110,22 +110,24 @@ export default {
       if (d && !/^it['’]s my awesome .* website\.?$/i.test(d)) return d;
       return "Electronics for work, play and everything in between.";
     },
-    /* The merchant's footer menu (Selldone menus, type FOOTER), or the pages. */
+    /* The merchant's footer menu (Selldone menus, type FOOTER), without what
+       the other columns already show (Home is the logo; Terms and Privacy are
+       under Policies), then Guides, Contact us and FAQ when it lacks them. */
     aboutLinks() {
+      const r = this.r;
       const menu = this.$shop?.menus?.find((it) => it.type === "FOOTER" && it.enable !== false);
-      const shopPage = this.r.SHOP_PAGE;
+      const skip = new Set([r.SHOP_PROFILE_PAGE_TERMS, r.SHOP_PROFILE_PAGE_PRIVACY]);
       const items = (menu?.menu || [])
         .flat()
         .filter((item) => item && item.name && item.to)
         .filter((item) => !item.to.name || this.$router.hasRoute(item.to.name))
-        .map((item) => (item.to.name === shopPage && !item.to.query ? { ...item, to: this.allTo } : item));
-      if (items.length) return items;
-      const out = [
-        { name: "About us", to: { name: this.r.SHOP_PROFILE_PAGE_ABOUT_US } },
-        { name: "Tips and guides", to: { name: this.r.BLOGS_PAGE } },
-        { name: "Contact us", to: { name: this.r.SHOP_CONTACT_US } },
-      ];
-      if (this.$router.hasRoute("ShopFAQ")) out.push({ name: "FAQ", to: { name: "ShopFAQ" } });
+        .filter((item) => !skip.has(item.to.name) && item.to.path !== "/")
+        .map((item) => (item.to.name === r.SHOP_PAGE && !item.to.query ? { ...item, name: item.name === "Shop" ? "All products" : item.name, to: this.allTo } : item));
+      const has = (name) => items.some((it) => it.to?.name === name);
+      const out = items.length ? items : [{ name: "About us", to: { name: r.SHOP_PROFILE_PAGE_ABOUT_US } }];
+      if (!has(r.BLOGS_PAGE) && !has(r.SHOP_BLOGS_PAGE) && !items.some((it) => it.to?.name === "Blogs")) out.push({ name: "Tips and guides", to: { name: r.BLOGS_PAGE } });
+      if (!has(r.SHOP_CONTACT_US)) out.push({ name: "Contact us", to: { name: r.SHOP_CONTACT_US } });
+      if (this.$router.hasRoute("ShopFAQ") && !has("ShopFAQ")) out.push({ name: "FAQ", to: { name: "ShopFAQ" } });
       return out;
     },
   },

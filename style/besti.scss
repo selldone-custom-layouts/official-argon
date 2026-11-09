@@ -2943,3 +2943,22 @@ body {
 .v-application :is(a, button, a *, button *):not(s, s *, del, del *, .k-prose a:not(.k-btn, .b-btn, .t-btn), .k-prose a:not(.k-btn, .b-btn, .t-btn) *):hover {
   text-decoration-line: none !important;
 }
+
+/* The hero's slide: the photo and its card, changing together. */
+.b-hero__slide {
+  position: absolute;
+  inset: 0;
+}
+
+.b-fade-enter-active,
+.b-fade-leave-active {
+  transition-duration: 0.22s !important;
+}
+
+@media (max-width: 899px) {
+  .b-hero__slide {
+    position: static;
+    display: flex;
+    flex-direction: column;
+  }
+}
