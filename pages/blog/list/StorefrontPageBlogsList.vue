@@ -19,7 +19,7 @@
 
     <div class="k-wrap">
       <nav aria-label="Breadcrumb" class="k-official__crumbs">
-        <router-link :to="{ name: 'ShopPage' }">{{ shopTitle }}</router-link>
+        <router-link :to="{ path: '/' }">Home</router-link>
         <v-icon size="16">chevron_right</v-icon>
         <router-link v-if="filtered" :to="homeRoute">Tips and guides</router-link>
         <span v-else>Tips and guides</span>

@@ -27,7 +27,7 @@
 <template>
   <div :class="{ '-numbered': SKIN.numbered }" :style="vars" class="k-cmp k-wrap">
     <nav aria-label="Breadcrumb" class="k-crumbs k-cmp__crumbs">
-      <router-link :to="home">{{ shop?.title || "Home" }}</router-link>
+      <router-link :to="home">Home</router-link>
       <v-icon size="16">chevron_right</v-icon>
       <span>Compare</span>
     </nav>

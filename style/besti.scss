@@ -109,9 +109,9 @@ body {
   text-decoration: none !important;
 }
 
-.v-application .k-prose a,
-.v-application .s--article a,
-.v-application .k-note-body a {
+.v-application .k-prose a:not(.k-btn, .b-btn, .t-btn),
+.v-application .s--article a:not(.k-btn, .b-btn, .t-btn),
+.v-application .k-note-body a:not(.k-btn, .b-btn, .t-btn) {
   text-decoration: underline !important;
   text-underline-offset: 3px;
 }
@@ -2945,4 +2945,13 @@ body {
 .b-home,
 .b-card {
   text-align: start;
+}
+
+/* The owner's rule, once more and for every inherited page: nothing inside a
+   link or a button carries a line, at rest or on hover (titles in the guides
+   list underlined on hover). Struck prices (<s>) and links inside an
+   article's text keep theirs. */
+.v-application :is(a, button, a *, button *):not(s, s *, del, del *, .k-prose a:not(.k-btn, .b-btn, .t-btn), .k-prose a:not(.k-btn, .b-btn, .t-btn) *),
+.v-application :is(a, button, a *, button *):not(s, s *, del, del *, .k-prose a:not(.k-btn, .b-btn, .t-btn), .k-prose a:not(.k-btn, .b-btn, .t-btn) *):hover {
+  text-decoration-line: none !important;
 }

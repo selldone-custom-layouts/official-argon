@@ -21,7 +21,7 @@
     <slot name="header"></slot>
     <div class="k-wrap">
       <nav aria-label="Breadcrumb" class="k-official__crumbs">
-        <router-link :to="{ name: 'ShopPage' }">{{ shop?.title || "Home" }}</router-link>
+        <router-link :to="{ path: '/' }">Home</router-link>
         <v-icon size="16">chevron_right</v-icon>
         <router-link v-if="current_tag" :to="{ name: 'ShopFAQ' }">Questions and answers</router-link>
         <span v-else>Questions and answers</span>

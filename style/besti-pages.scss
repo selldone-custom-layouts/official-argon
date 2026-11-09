@@ -476,7 +476,8 @@ $muted: #5a6474;
    own card markup is hidden; Besti's card is drawn inside it
    (kalio-card-basket.ts). */
 .s--product-card:has(> .b-card-host) {
-  display: block !important;
+  display: flex !important;
+  flex-direction: column;
   padding: 8px !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -487,12 +488,14 @@ $muted: #5a6474;
   }
 
   > .b-card-host {
-    display: block;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
     min-width: 0;
 
     > .b-card {
-      width: 100%;
+      flex: 1 1 auto;
+      height: auto;
     }
   }
 
@@ -1759,5 +1762,45 @@ $muted: #5a6474;
 
   .k-journal__eyebrow {
     color: #ffd91a !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Official pages, FAQ: Besti's type and a calm empty card ━━━━━━━━━━━━━━━━━━━━━ */
+.k-official__title,
+.k-faq .k-official__title {
+  font: 800 32px/1.15 "Archivo", sans-serif !important;
+  letter-spacing: -0.025em !important;
+
+  @media (max-width: 899px) {
+    font-size: 26px !important;
+  }
+}
+
+.k-official__crumbs {
+  font-size: 13px;
+
+  a {
+    color: #5a6474 !important;
+  }
+}
+
+.k-official__missing {
+  max-width: 560px;
+  margin: 18px 0 8px !important;
+  padding: 28px 24px !important;
+  border: 1px solid $line;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.k-btn {
+  border-radius: 6px !important;
+}
+
+.k-btn--solid {
+  background: $blue !important;
+
+  &:hover {
+    background: $blue-d !important;
   }
 }
