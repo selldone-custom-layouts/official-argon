@@ -21,8 +21,8 @@
       <nav aria-label="Breadcrumb" class="k-official__crumbs">
         <router-link :to="{ name: 'ShopPage' }">{{ shopTitle }}</router-link>
         <v-icon size="16">chevron_right</v-icon>
-        <router-link v-if="filtered" :to="homeRoute">Journal</router-link>
-        <span v-else>Journal</span>
+        <router-link v-if="filtered" :to="homeRoute">Tips and guides</router-link>
+        <span v-else>Tips and guides</span>
         <template v-if="filtered">
           <v-icon size="16">chevron_right</v-icon>
           <span>{{ heading }}</span>
@@ -31,17 +31,17 @@
 
       <section class="k-journal__hero">
         <div>
-          <p class="k-journal__eyebrow">{{ filtered ? "Market journal" : `The ${shopTitle} journal` }}</p>
+          <p class="k-journal__eyebrow">{{ filtered ? "Tips and guides" : `${shopTitle} guides` }}</p>
           <h1>{{ heading }}</h1>
           <p>{{ lede }}</p>
         </div>
         <p v-if="total" class="k-journal__count">
-          <b>{{ total }}</b>{{ total === 1 ? "note" : "notes" }}{{ filtered ? "" : " so far" }}
+          <b>{{ total }}</b>{{ total === 1 ? "guide" : "guides" }}{{ filtered ? "" : " so far" }}
         </p>
       </section>
 
       <kalio-sample-note v-if="demo" class="k-journal__note">
-        These notes came with the shop's demo content to show the page. They are not real {{ shopTitle }} articles.
+        These guides came with the shop's demo content to show the page. They are not real {{ shopTitle }} articles.
       </kalio-sample-note>
 
       <div class="k-journal__cols">
@@ -90,9 +90,9 @@
 
           <div v-else class="k-board__empty k-journal__empty">
             <v-icon size="30">menu_book</v-icon>
-            <h2>{{ filtered ? "No notes here yet" : "The journal is empty for now" }}</h2>
-            <p>{{ filtered ? "Nothing matches this yet. The latest notes are one tap away." : `${shopTitle} has not written any notes yet.` }}</p>
-            <router-link v-if="filtered" :to="homeRoute" class="k-btn k-btn--line">All notes</router-link>
+            <h2>{{ filtered ? "No guides here yet" : "No guides yet" }}</h2>
+            <p>{{ filtered ? "Nothing matches this yet. The latest guides are one tap away." : `${shopTitle} has not written any guides yet.` }}</p>
+            <router-link v-if="filtered" :to="homeRoute" class="k-btn k-btn--line">All guides</router-link>
           </div>
 
           <nav v-if="pageCount > 1" aria-label="Pages" class="k-journal__pages">
@@ -214,9 +214,9 @@ export default {
       return "Tips and guides";
     },
     lede() {
-      if (this.current_category) return this.category?.description || "Every note on this topic, newest first.";
-      if (this.current_author_id) return "Every note by this author, newest first.";
-      if (this.current_tag || this.current_search) return "The notes that match, newest first.";
+      if (this.current_category) return this.category?.description || "Every guide on this topic, newest first.";
+      if (this.current_author_id) return "Every guide by this author, newest first.";
+      if (this.current_tag || this.current_search) return "The guides that match, newest first.";
       return "Buying guides and how-tos: what to look for, how to set it up and how to make it last.";
     },
     homeRoute() {

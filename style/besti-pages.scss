@@ -1741,3 +1741,23 @@ $muted: #5a6474;
   display: table !important;
   margin-inline-start: auto;
 }
+
+.k-quickbuy,
+.b-pdp,
+.b-product,
+.b-contact,
+.b-404,
+.w-shop {
+  text-align: start;
+}
+
+/* Banners are never blue when every button is (the Digini lesson): the
+   guides' head is navy, its count yellow. */
+.k-journal__hero {
+  background: #071634 !important;
+  border-radius: 12px !important;
+
+  .k-journal__eyebrow {
+    color: #ffd91a !important;
+  }
+}

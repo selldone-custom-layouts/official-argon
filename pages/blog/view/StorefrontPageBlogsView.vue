@@ -21,7 +21,7 @@
       <nav aria-label="Breadcrumb" class="k-official__crumbs">
         <router-link :to="{ name: 'ShopPage' }">{{ shopTitle }}</router-link>
         <v-icon size="16">chevron_right</v-icon>
-        <router-link :to="journalRoute()">Journal</router-link>
+        <router-link :to="journalRoute()">Tips and guides</router-link>
         <template v-if="topic">
           <v-icon size="16">chevron_right</v-icon>
           <router-link :to="journalRoute({ category: category.id })">{{ topic }}</router-link>
@@ -36,9 +36,9 @@
     <div v-else-if="failed" class="k-post__col">
       <div class="k-board__empty k-journal__empty">
         <v-icon size="30">menu_book</v-icon>
-        <h2>We can't find this note</h2>
-        <p>It may have been moved or taken down. The rest of the journal is still here.</p>
-        <router-link :to="journalRoute()" class="k-btn k-btn--solid">Back to the journal</router-link>
+        <h2>We can't find this guide</h2>
+        <p>It may have been moved or taken down. The rest of the guides is still here.</p>
+        <router-link :to="journalRoute()" class="k-btn k-btn--solid">Back to the guides</router-link>
       </div>
     </div>
 
@@ -53,7 +53,7 @@
           <span><v-icon size="17">schedule</v-icon>{{ minutes }} min read</span>
         </p>
         <kalio-sample-note v-if="demo">
-          This note came with the shop's demo content to show the page. It is not a real {{ shopTitle }} article.
+          This guide came with the shop's demo content to show the page. It is not a real {{ shopTitle }} article.
         </kalio-sample-note>
       </header>
 
@@ -67,7 +67,7 @@
 
         <section v-if="list.length" class="k-post__shop">
           <header>
-            <h2>{{ named ? "Shop this list" : "On offer this week" }}</h2>
+            <h2>{{ named ? "Shop the guide" : "On offer this week" }}</h2>
             <button
               v-if="addable.length > 1"
               :disabled="adding || allIn"
@@ -75,7 +75,7 @@
               type="button"
               @click="addAll"
             >
-              <v-icon size="20">{{ allIn ? "check" : "shopping_basket" }}</v-icon>
+              <v-icon size="20">{{ allIn ? "check" : "add_shopping_cart" }}</v-icon>
               <template v-if="allIn">All in your cart</template>
               <template v-else>Add all {{ addable.length }} · <u-price :amount="addableTotal" :currency="currency" /></template>
             </button>
@@ -93,7 +93,7 @@
           <a :href="mailto" class="k-chip"><v-icon size="18">mail_outline</v-icon>Email</a>
           <span class="k-post__spacer"></span>
           <router-link :to="journalRoute()" class="k-more">
-            <v-icon class="k-flip" size="20">chevron_left</v-icon>All notes
+            <v-icon class="k-flip" size="20">chevron_left</v-icon>All guides
           </router-link>
         </footer>
 
@@ -114,7 +114,7 @@
     </article>
 
     <section v-if="more.length" class="k-wrap k-post__more">
-      <h2>More from the journal</h2>
+      <h2>More guides</h2>
       <div class="k-post__morerow">
         <router-link v-for="note in more" :key="note.id" :to="postRoute(note)" class="k-post__card">
           <span class="k-post__cardpic">
@@ -139,7 +139,8 @@ import { StorefrontSeo } from "../../../helpers/StorefrontSeo";
 import KalioSampleNote from "@app-storefront/components/kalio/pages/KalioSampleNote.vue";
 import KalioMiniProduct from "@app-storefront/components/kalio/pages/KalioMiniProduct.vue";
 import KalioQuickBuy from "@app-storefront/components/kalio/KalioQuickBuy.vue";
-import { basketLine, hasSizes, mayBuy, pendingLine, quickAdd, shownCount } from "@app-storefront/components/kalio/kalio-basket";
+import { addVariant, basketLine, hasSizes, mayBuy, pendingLine, quickAdd, shownCount } from "@app-storefront/components/kalio/kalio-basket";
+import { catalogueById, variantDimension } from "@app-storefront/components/besti/besti";
 import { priceOf, productsById } from "@app-storefront/components/kalio/kalio-catalog";
 import {
   dateParts,
@@ -223,18 +224,17 @@ export default {
     mailto() {
       return `mailto:?subject=${encodeURIComponent(this.article?.title || "")}&body=${encodeURIComponent(location.href)}`;
     },
-    /* Products "Add all" can put straight in the basket (no size to pick). */
+    /* Products "Add all" can put straight in the cart: no choice to make,
+       or (Besti) a colour, which goes in as its first colour in stock. */
     addable() {
-      return this.list.filter((product) => !hasSizes(product));
+      return this.list.filter((product) => !hasSizes(product) || this.firstColour(product));
     },
     addableTotal() {
       const shop = this.$store.getters.getShop;
       return this.addable.reduce((sum, product) => sum + (priceOf(shop, product, this.currency).now || 0), 0);
     },
     allIn() {
-      return this.addable.every(
-        (product) => shownCount(product, basketLine(this, product) || pendingLine(product)) > 0,
-      );
+      return this.addable.every((product) => (basketLine(this, product)?.count || shownCount(product, pendingLine(product))) > 0);
     },
   },
 
@@ -283,7 +283,7 @@ export default {
 
     /* The products the note names; this week's deals when it names none. */
     shopList(article) {
-      productsById()
+      catalogueById()
         .then((catalogue) => productsIn(article.body, catalogue.values(), 4))
         .then((found) => {
           if (article.id !== this.article?.id) return;
@@ -292,10 +292,10 @@ export default {
             this.list = found;
             return;
           }
-          return deals(4).then((list) => {
+          return Promise.all([deals(4), catalogueById()]).then(([list, rich]) => {
             if (article.id !== this.article?.id) return;
             this.named = false;
-            this.list = list;
+            this.list = list.map((p) => rich.get(p.id) || p);
           });
         });
     },
@@ -315,12 +315,20 @@ export default {
       this.adding = true;
       try {
         for (const product of this.addable) {
-          if (shownCount(product, basketLine(this, product) || pendingLine(product)) > 0) continue;
-          await quickAdd(this, product, () => {});
+          if (basketLine(this, product)?.count > 0) continue;
+          const colour = this.firstColour(product);
+          if (colour) await addVariant(this, product, colour);
+          else await quickAdd(this, product, () => {});
         }
       } finally {
         this.adding = false;
       }
+    },
+
+    firstColour(product) {
+      const list = (product.product_variants || []).filter((v) => v.enable !== false);
+      if (!list.length || variantDimension(list)?.key !== "color") return null;
+      return list.find((v) => v.quantity > 0) || null;
     },
 
     copyLink() {

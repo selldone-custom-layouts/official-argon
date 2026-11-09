@@ -35,10 +35,10 @@ VITE_APP_SAMPLE_SHOP_CUSTOM_HOME=shop
 VITE_APP_SAMPLE_DEFAULT_CURRENCY=USD
 VITE_APP_SAMPLE_DEFAULT_COUNTRY=US
 VITE_APP_SAMPLE_DEFAULT_LANGUAGE=en
-VITE_APP_DEV_SERVER_PORT=9123
+VITE_APP_DEV_SERVER_PORT=9131
 ```
 
-`.env.development.local` picks the buyer-account design for development: `VITE_KALIO_ACCOUNT=desk` (side rail) or remove it for `home` (tabs).
+`.env.development.local` picks the buyer-account design for development: `VITE_KALIO_ACCOUNT=desk` (side rail, the one Besti ships) or remove it for `home` (tabs).
 
 ## 4. Run it
 

@@ -33,7 +33,7 @@ New Layout package name (lowercase, permanent, unique to me): {PACKAGE}   e.g. m
 
 Source: https://github.com/selldone-custom-layouts/official-besti
 
-Before you change anything, read completely: README.md, KALIO.md, every file in
+Before you change anything, read completely: README.md, BESTI.md, KALIO.md, every file in
 docs/wiki/, and .ai-agent/AGENTS.md, .ai-agent/SKILL.md, .ai-agent/AI_WORKFLOW.md.
 
 Then:
