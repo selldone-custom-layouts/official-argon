@@ -18,14 +18,14 @@
     <p class="k-basket-line__cap">
       <i aria-hidden="true"></i>
       <template v-if="shown > 0">
-        {{ shown }} in your basket<template v-if="seller">, from {{ seller }}</template>
+        {{ shown }} in your cart
       </template>
-      <template v-else>Taking it out of your basket…</template>
+      <template v-else>Taking it out of your cart…</template>
     </p>
     <div class="k-basket-line__row">
-      <div aria-label="Quantity in basket" class="k-basket-line__qty" role="group">
+      <div aria-label="Quantity in cart" class="k-basket-line__qty" role="group">
         <button
-          :aria-label="shown > 1 ? 'One fewer' : 'Remove from basket'"
+          :aria-label="shown > 1 ? 'One fewer' : 'Remove from cart'"
           :disabled="shown <= 0"
           type="button"
           @click="step(-1)"

@@ -1,18 +1,17 @@
 /*
- * Kalio — typefaces.
+ * Besti — typefaces.
  *
- * Fraunces sets the headings, DM Sans everything else. They are requested
- * from the app at start-up rather than from index.html: in production the
- * Layout runs inside the HTML Selldone renders for the shop, and index.html
- * never reaches the visitor — Market Hall's fonts, linked there, only ever
- * loaded on the dev server. Roboto stays where Selldone's page asks for it;
- * Vuetify components name it.
+ * Archivo sets every word; Material Symbols Rounded draws Besti's own icons
+ * (the `.ms` spans in components/besti). They are requested from the app at
+ * start-up rather than from index.html: in production the Layout runs inside
+ * the HTML Selldone renders for the shop, and index.html never reaches the
+ * visitor. Selldone's own components keep their Material Icons (v-icon).
  */
 
-const FONTS_HREF =
-  "https://fonts.googleapis.com/css2" +
-  "?family=Nunito+Sans:opsz,wght@6..12,400..900" +
-  "&display=swap";
+const FONTS = [
+  "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap",
+  "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..24,400..600,0..1,0&display=block",
+];
 
 function addLink(attrs: Record<string, string>) {
   if (document.head.querySelector(`link[href="${attrs.href}"]`)) return;
@@ -22,4 +21,4 @@ function addLink(attrs: Record<string, string>) {
 }
 
 addLink({ rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" });
-addLink({ rel: "stylesheet", href: FONTS_HREF });
+for (const href of FONTS) addLink({ rel: "stylesheet", href });

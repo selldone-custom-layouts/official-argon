@@ -178,7 +178,7 @@ export function switchOffer(
 
 const fullProducts = new Map<number, Promise<any>>();
 
-function full(product: any): Promise<any> {
+export function full(product: any): Promise<any> {
   if (!fullProducts.has(product.id)) {
     fullProducts.set(
       product.id,
@@ -264,4 +264,42 @@ export async function reorder(vm: any, items: any[]): Promise<{ added: number; f
     }
   }
   return { added, failed };
+}
+
+/* ━━━━━━━━━━━━ Besti: a card adds the colour picked on it ━━━━━━━━━━━━
+   Besti's cards show a product's colour swatches; a tap picks that variant
+   and "Add to cart" puts that colour in the cart, then reads "− n +" for it.
+   The same queue as every other count (stepTo), keyed by product and
+   variant, so quick taps add up here too. */
+
+/** A variant's line while its first add is on its way. */
+export function pendingLineFor(product: any, variantId: any): any {
+  const key = lineKey(product, variantId);
+  return key in wanted ? { product_id: product.id, variant_id: variantId || null, count: 0, pending: true } : null;
+}
+
+/** Add one of this variant (the cart's line for it, or a new one). */
+export function addVariant(vm: any, product: any, variant: any): Promise<any> {
+  if (!mayBuy(vm)) return Promise.resolve(null);
+  const ref = variant ? { id: variant.id } : null;
+  const line = basketLine(vm, product, ref) || pendingLineFor(product, variant?.id);
+  if (line) return stepTo(vm, product, line, shownCount(product, line) + 1);
+  const key = lineKey(product, variant?.id);
+  wanted[key] = 1;
+  queued.add(key);
+  return inTurn(key, () => {
+    queued.delete(key);
+    const target = wanted[key] ?? 0;
+    if (target <= 0) {
+      delete wanted[key];
+      return null;
+    }
+    const existing = basketLine(vm, product, ref);
+    const request = existing
+      ? setCount(vm, product, existing, target)
+      : add(vm, { id: product.id, type: product.type || "PHYSICAL" }, ref, target, null);
+    return request.finally(() => {
+      if (wanted[key] === target) delete wanted[key];
+    });
+  }).catch(() => null);
 }

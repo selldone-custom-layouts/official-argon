@@ -63,12 +63,12 @@
       "
     >
       <s-header-section v-if="custom_header_code"></s-header-section>
-      <kalio-header
+      <besti-header
         v-else
         :show-search="!!show_search_box"
         @clear="onClear"
         @search="onSearch"
-      ></kalio-header>
+      ></besti-header>
     </template>
 
     <!-- Kalio: the search box lives in the Kalio header. -->
@@ -149,7 +149,7 @@
           :dark="!is_light_footer"
           class="m-0"
         />
-        <kalio-footer v-else />
+        <besti-footer v-else />
       </template>
 
       <!-- ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Basket Indicator ▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆▆ -->
@@ -182,8 +182,8 @@
 </template>
 
 <script lang="ts">
-import KalioHeader from "../components/kalio/shell/KalioHeader.vue";
-import KalioFooter from "../components/kalio/shell/KalioFooter.vue";
+import BestiHeader from "../components/besti/shell/BestiHeader.vue";
+import BestiFooter from "../components/besti/shell/BestiFooter.vue";
 import SStorefrontTopMenu from "@selldone/components-vue/storefront/menu/header/SStorefrontTopMenu.vue";
 import SHeaderSection from "@selldone/components-vue/storefront/header/section/SHeaderSection.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
@@ -216,8 +216,8 @@ export default {
     SHeaderSection,
     SStorefrontTopMenu,
 
-    KalioHeader,
-    KalioFooter,
+    BestiHeader,
+    BestiFooter,
 
     SStorefrontListingCompareBar: defineAsyncComponent(
       () =>

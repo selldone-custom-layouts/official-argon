@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <title>walio</title>
-  <rect width="64" height="64" rx="16" fill="#0071dc"/>
-  <path d="M20 29C20 15 44 15 44 29" fill="none" stroke="#ffc220" stroke-width="5" stroke-linecap="round"/>
-  <path d="M12 28H52L46.5 48.5A4 4 0 0 1 42.6 51.5H21.4A4 4 0 0 1 17.5 48.5Z" fill="#ffc220"/>
-  <path d="M26 34V45M32 34V45M38 34V45" stroke="#0071dc" stroke-width="3.2" stroke-linecap="round"/>
-</svg>

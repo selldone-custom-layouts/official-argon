@@ -3,240 +3,195 @@
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
-  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  -
-  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
-  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
-  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
-  - Our journey is not just about reaching a destination, but about creating a masterpiece.
-  - Tread carefully, for you're treading on dreams.
   -->
+<!--
+  Besti — Contact us (digini-design/contact-b.html).
 
+  A message form (name, email, order number, topic, message) sent with
+  Selldone's own contact form call, and beside it how else to reach the
+  shop. When the shop has written its "Contact us" page in the dashboard,
+  that text is shown there; until then sample cards under a clear "Sample
+  text" note (the owner's rule for a test shop), and always a card to track
+  an order. A missing page is not an error: nothing red is shown.
+-->
 <template>
-  <div>
-    <v-container>
-      <h1 class="text-start text-h2 font-weight-black text-capitalize">
-        {{ $t("official_pages.contact_us") }}
-      </h1>
-      <u-loading-progress v-if="busy"></u-loading-progress>
+  <div class="b-contact b-wrap">
+    <nav aria-label="Breadcrumb" class="b-crumbs">
+      <router-link :to="{ path: '/' }">Home</router-link>
+      <span aria-hidden="true" class="ms">chevron_right</span>
+      <span aria-current="page">Contact us</span>
+    </nav>
+    <h1 class="b-contact__h">Contact us</h1>
+    <p class="b-contact__lede">Questions about a product or an order? Write to us and we'll get back to you.</p>
 
-      <div
-        class="text-start px-lg-5 px-md-4 px-3 master-article-container min-height-40vh"
-      >
-        <s-article-editor
-          v-if="profile"
-          :body="profile.body"
-          :edit="false"
-          :enable-title="false"
-          :only-view="true"
-          class="p-lg-5 p-md-4 p-3 article"
-        />
-      </div>
-    </v-container>
+    <div class="b-contact__cols">
+      <section aria-labelledby="b-contact-form" class="b-contact__form">
+        <template v-if="submitted">
+          <div class="b-empty">
+            <span class="b-empty__ic"><span class="ms">mark_email_read</span></span>
+            <p id="b-contact-form" class="b-empty__t">Thanks, your message is on its way</p>
+            <p class="b-empty__p">We usually answer within a working day, at the email you gave us.</p>
+            <button class="b-btn -line" type="button" @click="submitted = false">Send another message</button>
+          </div>
+        </template>
+        <form v-else novalidate @submit.prevent="sendForm">
+          <h2 id="b-contact-form">Send us a message</h2>
+          <div class="b-form">
+            <label class="b-field">
+              <span>Name</span>
+              <input v-model.trim="name" autocomplete="name" placeholder="Your name" type="text" />
+            </label>
+            <label :class="{ '-bad': tried && !emailOk }" class="b-field">
+              <span>Email</span>
+              <input v-model.trim="email" autocomplete="email" placeholder="you@example.com" type="email" />
+              <small v-if="tried && !emailOk">Please enter your email, so we can answer.</small>
+            </label>
+            <label class="b-field">
+              <span>Order number (optional)</span>
+              <input v-model.trim="order" placeholder="e.g. 1042" type="text" />
+            </label>
+            <label class="b-field">
+              <span>Topic</span>
+              <select v-model="category">
+                <option v-for="t in topics" :key="t" :value="t">{{ t }}</option>
+              </select>
+            </label>
+            <label :class="{ '-bad': tried && !message }" class="b-field -wide">
+              <span>Message</span>
+              <textarea v-model="message" placeholder="How can we help?" rows="5"></textarea>
+              <small v-if="tried && !message">Please write your message.</small>
+            </label>
+          </div>
+          <div class="b-contact__send">
+            <button :disabled="busy_send" class="b-btn" type="submit">
+              <span class="ms">send</span>{{ busy_send ? "Sending…" : "Send message" }}
+            </button>
+            <small>We usually answer within a working day.</small>
+          </div>
+          <p v-if="error" class="b-contact__err" role="alert">{{ error }}</p>
+        </form>
+      </section>
 
-    <div class="contact-form">
-      <div v-if="submitted">
-        <div class="py-16 px-5">
-          <h2 class="font-weight-medium mb-5">
-            <v-icon class="me-2" color="green" size="large"
-              >check_circle</v-icon
-            >
-            {{ $t("contact_us_form.submitted_title") }}
-          </h2>
-          <p class="text-muted max-widget-width mx-auto">
-            {{ $t("contact_us_form.submitted_message") }}
-          </p>
+      <aside aria-label="Other ways to reach us" class="b-contact__side">
+        <div v-if="profile && profileText" class="b-contact__card -profile">
+          <s-article-editor :body="profile.body" :edit="false" :enable-title="false" :only-view="true" class="k-prose" />
         </div>
-      </div>
-      <div v-else>
-        <u-widget-header
-          :title="$t('contact_us_form.title')"
-          icon="contact_mail"
-        ></u-widget-header>
-
-        <div v-if="USER()" class="text-start d-flex mb-8 mt-5 align-items-center">
-          <v-avatar
-            v-if="USER().id"
-            class="flex-grow-0 me-4 avatar-gradient -thin -user"
-            size="4.2em"
-          >
-            <v-img :src="getUserAvatar(USER().id)"></v-img>
-          </v-avatar>
-          <div class="flex-grow-1">
-            <p class="font-weight-bold m-0">{{ USER().name }}</p>
-            <p class="small m-0">{{ USER().email }}</p>
-            <p class="small m-0">{{ USER().phone }}</p>
+        <template v-else-if="!busy">
+          <kalio-sample-note />
+          <div v-for="c in samples" :key="c.title" class="b-contact__card">
+            <span class="b-contact__ic"><span class="ms">{{ c.icon }}</span></span>
+            <div>
+              <b>{{ c.title }}</b>
+              <p>{{ c.line }}</p>
+              <span class="b-contact__more">{{ c.more }}</span>
+            </div>
+          </div>
+        </template>
+        <div class="b-contact__card">
+          <span class="b-contact__ic"><span class="ms">local_shipping</span></span>
+          <div>
+            <b>Track an order</b>
+            <p>Your orders, their status and messages are in your account.</p>
+            <router-link :to="{ name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL }" class="b-link">Track order<span class="ms">chevron_right</span></router-link>
           </div>
         </div>
-        <div v-else>
-          <v-text-field
-            v-model="name"
-            :label="$t('contact_us_form.name')"
-            :placeholder="$t('global.placeholders.name')"
-            class="max-width-field mt-5" variant="outlined" persistent-placeholder
-
-          />
-
-          <v-text-field
-            v-model="email"
-            :label="$t('contact_us_form.email')"
-            :placeholder="$t('global.placeholders.email')"
-            :rules="[GlobalRules.required(), GlobalRules.email()]"
-            class="max-width-field english-field"
-            prepend-inner-icon="email" variant="outlined" persistent-placeholder
-          />
-
-          <v-text-field
-            v-model="phone"
-            :label="$t('contact_us_form.phone')"
-            :placeholder="$t('global.placeholders.phone')"
-            class="max-width-field english-field"
-            prepend-inner-icon="phone" variant="outlined" persistent-placeholder
-          />
-        </div>
-
-        <v-textarea
-          v-model="message"
-          :label="$t('contact_us_form.message')"
-          :rules="[GlobalRules.required()]"
-          auto-grow variant="outlined" persistent-placeholder
-        />
-
-        <div class="widget-buttons">
-          <v-btn
-            :class="{ disabled: !canSend }"
-            :loading="busy_send"
-            color="primary"
-            dark
-            size="x-large"
-            @click="sendForm"
-          >
-            {{ $t("global.actions.send") }}
-
-            <v-icon class="mx-1">send</v-icon>
-          </v-btn>
-        </div>
-      </div>
+      </aside>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
-
 import SArticleEditor from "@selldone/components-vue/article/SArticleEditor.vue";
+import KalioSampleNote from "../../../components/kalio/pages/KalioSampleNote.vue";
+import { plainText } from "../../../components/kalio/pages/kalio-sample-pages";
 
 export default {
   name: "StorefrontPageOfficialContactUs",
-  components: { SArticleEditor },
+  components: { SArticleEditor, KalioSampleNote },
   inject: ["$shop"],
-  props: {
-
-  },
 
   data: () => ({
-    profile: null,
+    window,
+    profile: null as any,
     busy: false,
-
-    name: null,
-    email: null,
-    phone: null,
+    name: "",
+    email: "",
+    order: "",
     message: "",
-    category: null,
-
+    category: "A product question",
+    topics: ["A product question", "An order I placed", "Delivery or pickup", "Returns and refunds", "Something else"],
     busy_send: false,
     submitted: false,
+    tried: false,
+    error: null as string | null,
   }),
 
   computed: {
-    canSend() {
-      return this.message && this.message.length > 0;
+    emailOk(): boolean {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email || "");
+    },
+    profileText(): string {
+      return plainText(this.profile?.body);
+    },
+    samples() {
+      return [
+        { icon: "mail", title: "Email us", line: "hello@besti.example", more: "Answers within a working day" },
+        { icon: "call", title: "Call us", line: "+1 305 555 0100", more: "Mon–Fri, 9 AM – 6 PM" },
+        { icon: "location_on", title: "Visit", line: "100 Biscayne Blvd, Miami, FL 33132", more: "Pickup point" },
+      ];
     },
   },
 
-  watch: {},
   created() {
-    this.setPageTitle("Contact us"); // Set Page Title!
+    this.setPageTitle("Contact us");
     this.fetchProfile();
-
-    if (this.USER()) {
-      this.name = this.USER().name;
-      this.email = this.USER().email;
-      this.phone = this.USER().phone;
+    const u = this.USER();
+    if (u) {
+      this.name = u.name || "";
+      this.email = u.email || "";
     }
   },
 
   methods: {
+    /* The shop's own "Contact us" page, if it wrote one. None is not an error. */
     fetchProfile() {
       this.busy = true;
-
-      axios
+      window.axios
         .get(window.XAPI.GET_SHOP_PROFILE(this.$shop.name, "contact-us"))
-        .then(({ data }) => {
-          if (data.error) return NotificationService.showErrorAlert(null, data.error_msg);
-          this.profile = data.profile;
+        .then(({ data }: any) => {
+          this.profile = data?.error ? null : data.profile;
         })
-        .catch((error) => {
-          NotificationService.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy = false;
-        });
+        .catch(() => (this.profile = null))
+        .finally(() => (this.busy = false));
     },
-
     sendForm() {
-      this.message = this.message.replace(/<[^>]*>?/gm, "");
-      if (!this.message) return;
-
+      this.tried = true;
+      this.error = null;
+      const text = String(this.message || "").replace(/<[^>]*>?/gm, "").trim();
+      if (!text || !this.emailOk) return;
       this.busy_send = true;
-
-      axios
+      window.axios
         .post(window.XAPI.POST_CONTACT_US_FORM(this.$shop.name), {
           name: this.name,
           email: this.email,
-          phone: this.phone,
-          message: this.message,
+          phone: this.USER()?.phone || null,
+          message: this.order ? `Order ${this.order}\n\n${text}` : text,
           category: this.category,
           url: window.location.href,
         })
-        .then(({ data }) => {
-          if (!data.error) {
-            this.name = null;
-            this.email = null;
-            this.phone = null;
-            this.message = "";
-            this.category = null;
-
-            this.submitted = true;
-
-            NotificationService.showSuccessAlert(
-              null,
-              this.$t("contact_us_form.notifications.success"),
-            );
-          } else {
-            NotificationService.showErrorAlert(null, data.error_msg);
+        .then(({ data }: any) => {
+          if (data?.error) {
+            this.error = data.error_msg || "That did not go through. Please try again.";
+            return;
           }
+          this.message = "";
+          this.order = "";
+          this.tried = false;
+          this.submitted = true;
         })
-        .catch((error) => {
-          NotificationService.showLaravelError(error);
-        })
-        .finally(() => {
-          this.busy_send = false;
-        });
+        .catch(() => (this.error = "That did not go through. Please try again in a moment."))
+        .finally(() => (this.busy_send = false));
     },
   },
 };
 </script>
-
-<style scoped>
-.contact-form {
-  z-index: 1;
-  position: relative;
-  background-color: #fcfcfc;
-  border-radius: 38px !important;
-  max-width: 800px;
-  width: 90%;
-  margin: 48px auto;
-  padding: 18px 16px;
-}
-</style>

@@ -58,7 +58,7 @@
           </router-link>
           <button v-if="['ok', 'off'].includes(tone.tone)" :disabled="busy_again" class="k-btn -line" type="button" @click="buyAgain">
             <v-progress-circular v-if="busy_again" indeterminate size="16" width="2" />
-            <v-icon v-else size="17">{{ again_done ? "check" : "replay" }}</v-icon>{{ again_done ? "In your basket" : "Buy again" }}
+            <v-icon v-else size="17">{{ again_done ? "check" : "replay" }}</v-icon>{{ again_done ? "In your cart" : "Buy again" }}
           </button>
           <router-link v-if="tone.tone === 'pay'" :to="orderRoute(latest)" class="k-btn -pay"><v-icon size="17">lock</v-icon>Pay now</router-link>
           <router-link v-else :to="orderRoute(latest)" class="k-btn -main">View order</router-link>
@@ -68,7 +68,7 @@
       <section v-else-if="account.loaded" class="k-ahome__latest -empty">
         <v-icon size="34">shopping_basket</v-icon>
         <h2>No orders yet</h2>
-        <p>Fill a basket from the aisles; your orders and where they are show up here.</p>
+        <p>Fill a cart from the departments; your orders and where they are show up here.</p>
         <router-link :to="{ path: '/' }" class="k-btn -main">Start shopping</router-link>
       </section>
       <section v-else aria-busy="true" class="k-ahome__latest -wait"><span class="k-board__ghost"></span><span class="k-board__ghost"></span></section>

@@ -1048,7 +1048,14 @@ const routes: IVueRoute[] = [
 
 
   // will match everything and put it under `route.params.pathMatch`
-  { path: "/:pathMatch(.*)*", component: StorefrontPageError404 },
+  /* Besti: the 404 inside the Layout, with the header (and its search) and
+     the footer, as the 404 mockup draws it. */
+  {
+    path: "",
+    component: StorefrontLayout,
+    meta: { footer: true },
+    children: [{ path: "/:pathMatch(.*)*", name: "BestiNotFound", component: StorefrontPageError404, meta: { footer: true, search: true } }],
+  },
   { name: "AvocadoBuyerFormPage", component: StorefrontPageError404 },
   { name: "ShopHyperPage", component: StorefrontPageError404 },
 

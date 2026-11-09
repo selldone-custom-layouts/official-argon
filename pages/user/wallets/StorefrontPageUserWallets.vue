@@ -39,7 +39,7 @@
       </div>
       <div v-else-if="!busy_fetch" class="k-board__empty k-wallets__empty">
         <v-icon size="28">account_balance_wallet</v-icon>
-        <p>Your wallet is empty. Cashback from your orders and refunds land here, ready for your next basket.</p>
+        <p>Your wallet is empty. Cashback from your orders and refunds land here, ready for your next order.</p>
         <router-link :to="{ path: '/' }" class="k-btn -main">Start shopping</router-link>
       </div>
     </div>

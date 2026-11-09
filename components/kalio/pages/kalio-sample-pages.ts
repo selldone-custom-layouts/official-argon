@@ -20,16 +20,16 @@ export interface Section {
 export function termsSample(shop: string): { short: string[]; sections: Section[] } {
   return {
     short: [
-      `Products are sold by independent sellers; ${shop} runs the shop.`,
-      "You pay at checkout, or on delivery where a seller offers it.",
-      "Report a damaged or wrong item within 7 days.",
-      "Each order has a message thread with its seller.",
+      `${shop} sells every product on this site itself.`,
+      "You pay at checkout, or on delivery where it is offered.",
+      "Report a damaged or wrong item within 14 days.",
+      "Each order has a message thread with our team.",
     ],
     sections: [
       {
         title: "Who we are",
         text: [
-          `${shop} is an online marketplace. The products are sold by independent sellers; ${shop} runs the shop where you find them and place your order.`,
+          `${shop} is an online electronics store. We sell, pack and send every product on this site ourselves.`,
         ],
       },
       {
@@ -42,25 +42,25 @@ export function termsSample(shop: string): { short: string[]; sections: Section[
       {
         title: "Orders and prices",
         text: [
-          "Prices are set by each seller and shown with taxes as stated at checkout. An order is placed when you confirm it; the seller confirms it when they accept it.",
+          "Prices are shown with taxes as stated at checkout. An order is placed when you confirm it, and accepted when we confirm it.",
         ],
       },
       {
         title: "Payment",
         text: [
-          `You pay at checkout, or on delivery where the seller offers cash on delivery. Card payments are handled by the payment provider and are not stored by ${shop}.`,
+          `You pay at checkout, or on delivery where cash on delivery is offered. Card payments are handled by the payment provider and are not stored by ${shop}.`,
         ],
       },
       {
         title: "Delivery",
         text: [
-          "Delivery times and costs are shown before you pay. The seller sends the items; you can follow the order and message the seller from your account.",
+          "Delivery times and costs are shown before you pay. You can follow the order and message us from your account.",
         ],
       },
       {
         title: "Returns and refunds",
         text: [
-          "If something arrives damaged or wrong, tell the seller from the order page within 7 days. Fresh food can be refunded but not returned.",
+          "If something arrives damaged or wrong, tell us from the order page within 14 days. Opened software and personal-care items can be refunded but not returned.",
         ],
       },
       {
@@ -75,7 +75,7 @@ export function privacySample(shop: string): { short: string[]; sections: Sectio
   return {
     short: [
       "We use your details to take and deliver orders.",
-      "Sellers see only what they need to send your order.",
+      "Couriers see only what they need to deliver it.",
       "We do not sell your data.",
       "You choose which optional cookies to allow.",
     ],
@@ -89,14 +89,14 @@ export function privacySample(shop: string): { short: string[]; sections: Sectio
       {
         title: "Why we use it",
         text: [
-          "To take and deliver your orders, to let sellers and you talk about an order, to keep the shop secure and to improve it.",
+          "To take and deliver your orders, to answer your messages about an order, to keep the shop secure and to improve it.",
           "Sample paragraph: a fuller explanation would go here, written in plain words, with an example for each use.",
         ],
       },
       {
         title: "Who sees it",
         text: [
-          "The seller who fills your order sees what they need to send it. Payment providers handle card details. We do not sell your data.",
+          "The courier who delivers your order sees what they need to bring it. Payment providers handle card details. We do not sell your data.",
         ],
       },
       {
@@ -109,7 +109,7 @@ export function privacySample(shop: string): { short: string[]; sections: Sectio
       },
       {
         title: "Cookies",
-        text: ["Essential cookies keep you signed in and your basket full. Anything optional is your choice, below."],
+        text: ["Essential cookies keep you signed in and your cart full. Anything optional is your choice, below."],
       },
     ],
   };
@@ -117,21 +117,21 @@ export function privacySample(shop: string): { short: string[]; sections: Sectio
 
 export function aboutSample(shop: string) {
   return {
-    title: "Why we built one basket",
-    lead: "Good grocers are often small, and shopping several of them used to mean several trips, several baskets and several deliveries. We wanted their shelves side by side, in one place, with one checkout.",
+    title: "Tech, made simple to buy",
+    lead: "Buying electronics should be easy: clear specs, honest prices and someone to ask. We keep the things we would recommend to a friend in one store, with one cart and one checkout.",
     text: [
-      `So ${shop} is a marketplace: each product comes from an independent seller, prices are theirs, and they pack and send what you order from them. We look after the shop itself — the aisles, the basket and the account where you follow your orders.`,
+      `${shop} picks every product it sells, lists its specifications in full and keeps prices plain, with the saving marked when there is one. We pack and send every order ourselves, and answer every message from the order page.`,
     ],
     values: [
-      { title: "Clear prices", text: "The price you see is the one you pay, with the unit price under it and savings marked plainly." },
-      { title: "Your choice of seller", text: "When two shops stock the same item, both are shown and you pick." },
-      { title: "Less waste", text: "Sizes that fit a week, and seasonal picks in the journal." },
-      { title: "People you can reach", text: "Every order has a message thread with the shop that sent it." },
+      { title: "Clear prices", text: "The price you see is the one you pay, with the saving and the old price marked plainly." },
+      { title: "Specs you can compare", text: "Every product lists its specifications, and Compare puts them side by side." },
+      { title: "Packed with care", text: "We pack each order ourselves and tell you where it is on the way." },
+      { title: "People you can reach", text: "Every order has a message thread with our team." },
     ],
     timeline: [
-      { when: "Spring", text: "The first seller joins and the first aisles open. (Example.)" },
-      { when: "Summer", text: "A second seller joins; both sell from one basket. (Example.)" },
-      { when: "Today", text: "Every aisle, every seller, one checkout. (Example.)" },
+      { when: "Spring", text: "The first departments open. (Example.)" },
+      { when: "Summer", text: "Same-day delivery starts in town. (Example.)" },
+      { when: "Today", text: "Every department, one checkout. (Example.)" },
     ],
     sign: `— the ${shop} team`,
   };

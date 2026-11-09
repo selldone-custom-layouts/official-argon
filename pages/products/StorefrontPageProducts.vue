@@ -64,7 +64,7 @@
       <!-- Shown on the bare shop page only. Every narrowing action the
            listing performs travels as a query parameter, so the home page
            gets out of the way the moment a shopper searches or filters. -->
-      <walio-home v-if="show_home" />
+      <besti-home v-if="show_home" />
 
       <!-- ▆▆▆▆▆▆▆▆ Aisle, search, Deals, All products, seller (design B) ▆▆▆▆▆▆▆▆ -->
       <!-- A banner on top (the aisle with its numbers and packshots; a
@@ -80,13 +80,15 @@
           :mode="category_name ? 'aisle' : 'catalogue'"
           :on-sale="on_sale"
           :products="listing_products"
-          :sellers="sold_by_list"
           :total="catalogue_total"
+          @quick-buy="(p) => { quick_pick = p; quick_open = true; }"
         />
         <div class="w-shop__cols">
           <walio-seller-side v-if="vendor_id" :tab="seller_tab" :vendor-id="vendor_id" @tab="sellerTab" />
           <walio-filter-rail
             v-else
+            :cats="aisle_list"
+            :current="category_name"
             :filters="filters_def"
             :model-value="t_filter"
             :sort="t_sort"
@@ -96,11 +98,15 @@
           />
           <div class="w-shop__main">
             <walio-seller-main v-if="vendor_id" :key="'sm' + vendor_id" :vendor-id="vendor_id" />
-            <div class="w-tools">
-              <span v-if="catalogue_total !== null">
-                <b>{{ catalogue_total.toLocaleString() }} {{ catalogue_total === 1 ? "product" : "products" }}</b>
-                <span class="w-tools__in">{{ where_line }}</span>
-              </span>
+            <!-- Besti: the filters that are on, as chips (no product count in
+                 the shopper's words), and Sort by on the right. -->
+            <div class="w-tools b-tools">
+              <div class="b-chips">
+                <button v-for="c in on_chips" :key="c.key" class="b-chip -on" type="button" @click="c.off()">
+                  {{ c.label }}<v-icon size="16">close</v-icon>
+                </button>
+                <button v-if="on_chips.length > 1" class="b-link" type="button" @click="setFilter(null)">Clear all</button>
+              </div>
               <walio-filter-rail
                 v-if="vendor_id"
                 :filters="filters_def"
@@ -131,7 +137,7 @@
 
         <!-- ▆▆▆▆▆▆▆▆ Under the grid ▆▆▆▆▆▆▆▆ -->
         <template v-if="!vendor_id">
-          <walio-row v-if="catalogue && search_query" :limit="12" lazy sort="bestselling" title="Popular right now" />
+          <besti-row v-if="catalogue && search_query" :limit="12" lazy sort="bestselling" title="Popular right now" />
           <section v-if="more_aisles.length" class="t-keep">
             <h2 class="t-keep__h">Keep shopping</h2>
             <div class="t-keep__list">
@@ -150,11 +156,12 @@
 <script lang="ts">
 import SProductsListing from "@selldone/components-vue/storefront/products/listing/SProductsListing.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
-import WalioHome from "../../components/walio/WalioHome.vue";
+import BestiHome from "../../components/besti/BestiHome.vue";
 import WalioShelfTop from "../../components/walio/shop/WalioShelfTop.vue";
 import WalioFilterRail from "../../components/walio/shop/WalioFilterRail.vue";
-import WalioRow from "../../components/walio/WalioRow.vue";
+import BestiRow from "../../components/besti/BestiRow.vue";
 import { fromRoute } from "../../components/walio/shop/walio-filters";
+import { colourName } from "../../components/besti/besti";
 import { aisleRoute, aisles, countProducts, offers, vendors } from "../../components/kalio/kalio-catalog";
 import WalioSellerSide from "../../components/walio/shop/WalioSellerSide.vue";
 import WalioSellerMain from "../../components/walio/shop/WalioSellerMain.vue";
@@ -169,10 +176,10 @@ export default {
   name: "StorefrontPageProducts",
   components: {
     SProductsListing,
-    WalioHome,
+    BestiHome,
     WalioShelfTop,
     WalioFilterRail,
-    WalioRow,
+    BestiRow,
     KalioQuickBuy,
     WalioSellerSide,
     WalioSellerMain,
@@ -241,6 +248,39 @@ export default {
       return "";
     },
 
+    /* The narrowing choices that are on, each with its own way off. */
+    on_chips() {
+      const f = this.t_filter;
+      if (!f) return [];
+      const out = [];
+      const next = () => JSON.parse(JSON.stringify(f));
+      if (f.only_has_discount) out.push({ key: "sale", label: "On sale", off: () => this.setFilter({ ...next(), only_has_discount: false }) });
+      if (f.prices && Object.keys(f.prices).length) out.push({ key: "price", label: "Price", off: () => this.setFilter({ ...next(), prices: null }) });
+      for (const b of f.brands || []) out.push({ key: "b" + b, label: b, off: () => this.setFilter({ ...next(), brands: (f.brands || []).filter((x) => x !== b) }) });
+      for (const [k, vals] of Object.entries(f.selected_spec || {}))
+        for (const v of vals || [])
+          out.push({
+            key: "s" + k + v,
+            label: String(v).split("|")[0],
+            off: () => {
+              const n = next();
+              n.selected_spec[k] = (n.selected_spec[k] || []).filter((x) => x !== v);
+              this.setFilter(n);
+            },
+          });
+      for (const [k, vals] of Object.entries(f.selected_variants || {}))
+        for (const v of vals || [])
+          out.push({
+            key: "v" + k + v,
+            label: k === "colors" ? colourName(v) || "Colour" : String(v).split("|")[0],
+            off: () => {
+              const n = next();
+              n.selected_variants[k] = (n.selected_variants[k] || []).filter((x) => x !== v);
+              this.setFilter(n);
+            },
+          });
+      return out;
+    },
     more_aisles() {
       return this.aisle_list.filter((a) => a.name !== this.category_name).slice(0, 12);
     },

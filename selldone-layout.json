@@ -1,28 +1,28 @@
 {
-  "name": "Walio Market",
-  "shop": "molino",
-  "kind": "Grocery marketplace · blue superstore",
-  "summary": "The molino grocery marketplace as a blue superstore: a split hero with deal tiles, best savings, category tiles and shop-the-idea lists, aisles with a banner and a filter column, a classic product page with delivery choices, a cart window under the cart button, a stepped checkout, and seller pages as a shop in the shop.",
-  "live": "https://walio.selldone.shop",
+  "name": "Besti Electronics",
+  "shop": "Digini",
+  "kind": "Electronics store · white department store",
+  "summary": "A single-shop electronics store dressed as a big white department store: a Deal of the Day strip, a photo hero by department, departments in two even rows, top deals by category, best sellers from the shop's tag, brands and guides; bordered product tiles with colour swatches that pick the colour; filters built from the products' own specs; a three-column product page with a sticky buy box, specs, reviews and bought-together; a side-by-side compare page; a receipt-first cart and a desk-style account.",
+  "live": "https://besti.selldone.shop",
   "cover": "docs/screenshots/cover.jpg",
   "screenshots": [
     "docs/screenshots/desktop-home.jpg",
-    "docs/screenshots/desktop-aisle.jpg",
+    "docs/screenshots/desktop-category.jpg",
     "docs/screenshots/desktop-product.jpg",
-    "docs/screenshots/desktop-basket.jpg",
+    "docs/screenshots/desktop-cart.jpg",
     "docs/screenshots/phone-home.jpg",
-    "docs/screenshots/phone-aisle.jpg",
+    "docs/screenshots/phone-category.jpg",
     "docs/screenshots/phone-product.jpg",
-    "docs/screenshots/phone-basket.jpg"
+    "docs/screenshots/phone-cart.jpg"
   ],
   "tags": [
-    "grocery",
-    "marketplace",
-    "multi-vendor",
-    "superstore",
+    "electronics",
+    "single-vendor",
+    "department-store",
+    "white",
     "blue"
   ],
-  "package": "walio-market",
+  "package": "besti-electronics",
   "base": "selldone/storefront",
   "status": "live"
 }

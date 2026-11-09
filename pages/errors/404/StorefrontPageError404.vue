@@ -3,57 +3,87 @@
   -
   - Author: M.Pajuhaan
   - Web: https://selldone.com
-  - ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  -
-  - All rights reserved. In the weave of time, where traditions and innovations intermingle, this content was crafted.
-  - From the essence of thought, through the corridors of creativity, each word, and sentiment has been molded.
-  - Not just to exist, but to inspire. Like an artist's stroke or a sculptor's chisel, every nuance is deliberate.
-  - Our journey is not just about reaching a destination, but about creating a masterpiece.
-  - Tread carefully, for you're treading on dreams.
   -->
 <template>
-  <!-- Walio 1.1.0 (404 design B): the home's split panel — a blue side with
-       a large 404 and the way back, a photo beside it — then today's deals. -->
-  <div class="w-404">
-    <section class="w-404__panel k-wrap">
-      <div class="w-404__l">
-        <span class="w-404__big">404</span>
-        <h1>We couldn't find that page</h1>
-        <p>It may have moved. Everything else is right where you left it — your cart included.</p>
-        <div class="w-404__acts">
-          <router-link :to="{ path: '/' }" class="w-404__btn -solid">Back to the home page</router-link>
-          <router-link :to="catalogue" class="w-404__btn -ghost">Browse every product</router-link>
+  <!-- Besti 404 (digini-design/404-b.html): a bordered panel with a large
+       404 (the 0 in blue), a search, quick ways out; then one row of
+       departments and today's deals. -->
+  <div class="b-404">
+    <section class="b-404__panel b-wrap">
+      <div class="b-404__in">
+        <span aria-hidden="true" class="b-404__big">4<em>0</em>4</span>
+        <div class="b-404__txt">
+          <h1>We can't find that page</h1>
+          <p>The link may be old, or the page has moved. Try a search or start from a department.</p>
+          <form class="b-search -big" role="search" @submit.prevent="go">
+            <input v-model="q" aria-label="Search" enterkeyhint="search" placeholder="What can we help you find?" type="search" />
+            <button aria-label="Search" class="b-search__go" type="submit"><span class="ms">search</span></button>
+          </form>
+          <div class="b-404__links">
+            <span>Or go to</span>
+            <router-link :to="deals" class="b-chip">Today's deals</router-link>
+            <router-link :to="newest" class="b-chip">New arrivals</router-link>
+            <router-link :to="{ name: r.HISTORY_ORDERS_PHYSICAL }" class="b-chip">Track an order</router-link>
+            <router-link :to="{ name: r.SHOP_CONTACT_US }" class="b-chip">Help</router-link>
+          </div>
         </div>
       </div>
-      <div :style="pic ? { backgroundImage: `url(${pic})` } : null" aria-hidden="true" class="w-404__r"></div>
     </section>
-    <walio-row :filter="{ only_has_discount: true }" :limit="12" :more-to="deals" title="Today's top deals" />
+
+    <section v-if="cats.length" class="b-sec b-wrap">
+      <header class="b-head">
+        <h2>Popular departments</h2>
+        <router-link :to="catalogue" class="b-more">All departments<span class="ms">chevron_right</span></router-link>
+      </header>
+      <div :style="{ '--cols': Math.min(8, cats.length) }" class="b-depts -one">
+        <router-link v-for="c in cats.slice(0, 8)" :key="c.id" :to="catTo(c)" class="b-dtile">
+          <span><img v-if="c.icon" :src="icon(c)" alt="" loading="lazy" /><span v-else class="ms">category</span></span>
+          <b>{{ c.title || c.name }}</b>
+        </router-link>
+      </div>
+    </section>
+
+    <besti-row :filter="{ only_has_discount: true }" :limit="12" :more-to="deals" class="b-wrap" more-label="See all deals" title="Today's deals" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import WalioRow from "../../../components/walio/WalioRow.vue";
-import { photo } from "../../../components/walio/walio-home";
-import { catalogueRoute, dealsRoute } from "../../../components/kalio/kalio-catalog";
+import BestiRow from "../../../components/besti/BestiRow.vue";
+import { aisleRoute, aisles, catalogueRoute, dealsRoute } from "../../../components/kalio/kalio-catalog";
 
 export default defineComponent({
   name: "StorefrontPageError404",
-  components: { WalioRow },
+  components: { BestiRow },
+  data: () => ({ q: "", cats: [] as any[] }),
   computed: {
-    shop() {
-      return this.getShop();
-    },
-    pic() {
-      return photo("walio-hero-2-new");
+    r(): any {
+      return (window as any).$storefront.routes;
     },
     deals() {
       return dealsRoute();
+    },
+    newest() {
+      return catalogueRoute({ sort: "newest" });
     },
     catalogue() {
       return catalogueRoute();
     },
   },
+  mounted() {
+    aisles().then((list) => (this.cats = list));
+  },
+  methods: {
+    catTo(c: any) {
+      return aisleRoute(c);
+    },
+    icon(c: any) {
+      return (window as any).CDN.GET_CATEGORY_ICON(c.id, 256);
+    },
+    go() {
+      const text = this.q.trim();
+      this.$router.push(text ? { name: this.r.SHOP_PAGE, query: { search: text } } : catalogueRoute());
+    },
+  },
 });
 </script>
-<style scoped lang="scss"></style>

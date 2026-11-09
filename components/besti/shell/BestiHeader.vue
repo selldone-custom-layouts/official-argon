@@ -1,0 +1,433 @@
+<!--
+  Besti — the header (Home B "Department store").
+
+  1. A navy strip with today's deal: its name, price and old price, "Next
+     deal in" counting to local midnight (the shop's discounts carry no end
+     date, so the clock never says "Ends in"), and "Shop the deal".
+  2. A white bar: the ink wordmark, a search with a department scope and a
+     blue search button (suggestions while typing), Track order, Saved, Sign
+     in (or the account), and a blue cart pill with the count and the total.
+  3. A blue department bar: "All departments" opens a mega menu on a click
+     and closes on a second click (no dark scrim behind it), then the live
+     category names that fit and "More", and on the right Deals (yellow),
+     New arrivals and Brands.
+
+  Phone: a compact strip, the wordmark with the account and the cart pill,
+  the search across the screen, and the department bar swiping sideways.
+  There is no bottom tab bar. The cart opens Kalio's drawer (design C).
+  A shop with custom header code keeps Selldone's header (StorefrontLayout).
+-->
+<template>
+  <header v-if="!$store.getters.getIsNative" class="b-header">
+    <!-- ▆▆▆▆ 1. Today's deal ▆▆▆▆ -->
+    <div v-if="dotd" class="b-strip">
+      <span class="b-strip__deal">
+        <span class="ms fill">bolt</span><b>Deal of the Day</b>
+        <em class="b-strip__t">{{ dotd.title }}, {{ money(price(dotd).now) }}<s v-if="price(dotd).was">{{ money(price(dotd).was) }}</s></em>
+        <b v-if="dotdOff" class="b-strip__pct">{{ dotdOff }}% off</b>
+      </span>
+      <span class="b-strip__clock">Next deal in <b>{{ clock.h }}:{{ clock.m }}:{{ clock.s }}</b></span>
+      <router-link :to="productTo(dotd)" class="b-strip__go">Shop the deal<span class="ms">chevron_right</span></router-link>
+    </div>
+
+    <!-- ▆▆▆▆ 2. The main bar ▆▆▆▆ -->
+    <div class="b-header__main">
+      <besti-logo class="b-header__logo" />
+
+      <form v-if="showSearch" class="b-search" role="search" @submit.prevent="submit()">
+        <label class="b-search__scope">
+          <span class="k-sr">Search in</span>
+          <select v-model="scope" aria-label="Search in">
+            <option :value="null">All</option>
+            <option v-for="c in cats" :key="c.id" :value="c.name">{{ c.title || c.name }}</option>
+          </select>
+          <span class="b-search__scope-t">{{ scopeTitle }}<span class="ms">expand_more</span></span>
+        </label>
+        <input
+          ref="q"
+          :value="q"
+          aria-autocomplete="list"
+          aria-label="Search"
+          autocomplete="off"
+          enterkeyhint="search"
+          placeholder="What can we help you find?"
+          type="search"
+          @blur="blurSoon"
+          @focus="open_suggest = true"
+          @input="onType($event.target.value)"
+          @keydown.down.prevent="move(1)"
+          @keydown.up.prevent="move(-1)"
+          @keydown.esc="open_suggest = false"
+        />
+        <button aria-label="Search" class="b-search__go" type="submit"><span class="ms">search</span></button>
+
+        <div v-if="open_suggest && (hits.length || catHits.length)" class="b-suggest" role="listbox">
+          <router-link
+            v-for="c in catHits"
+            :key="'c' + c.id"
+            :to="catTo(c)"
+            class="b-suggest__cat"
+            role="option"
+            @mousedown.prevent
+            @click="open_suggest = false"
+          >
+            <span class="ms">category</span>{{ c.title || c.name }}<small>Department</small>
+          </router-link>
+          <router-link
+            v-for="(p, i) in hits"
+            :key="p.id"
+            :class="{ '-on': i === cursor }"
+            :to="productTo(p)"
+            class="b-suggest__p"
+            role="option"
+            @mousedown.prevent
+            @click="open_suggest = false"
+          >
+            <img :src="thumb(p)" alt="" />
+            <span>{{ p.title }}</span>
+            <u-price :amount="price(p).now" :currency="currency" />
+          </router-link>
+          <button class="b-suggest__all" type="button" @mousedown.prevent @click="submit()">
+            See all results for “{{ q }}”<span class="ms">arrow_forward</span>
+          </button>
+        </div>
+      </form>
+      <span v-else class="b-header__sp"></span>
+
+      <nav aria-label="Your account" class="b-acts">
+        <router-link :to="ordersTo" class="b-act -track"><span class="ms">local_shipping</span><span class="b-act__t">Track order</span></router-link>
+        <component :is="user ? 'router-link' : 'button'" :to="user ? savedTo : undefined" :type="user ? undefined : 'button'" class="b-act -saved" @click="!user && signIn()">
+          <span class="ms">favorite</span><span class="b-act__t">Saved</span>
+        </component>
+        <router-link v-if="user" :to="accountTo" class="b-act -me">
+          <span class="ms">person</span><span class="b-act__t">{{ firstName }}</span>
+        </router-link>
+        <button v-else-if="!busyUser" class="b-act -me" type="button" @click="signIn"><span class="ms">person</span><span class="b-act__t">Sign in</span></button>
+        <span v-else class="b-act -me -wait"><span class="ms">person</span><span class="b-act__t">Account</span></span>
+
+        <button :aria-label="`Cart, ${units} items`" class="b-cartpill" type="button" @click="cart = true">
+          <span class="ms fill">shopping_cart</span>
+          <i v-if="units">{{ units }}</i>
+          <span class="b-cartpill__t"><u-price v-if="units" :amount="cartTotal" :currency="currency" /><template v-else>Cart</template></span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- ▆▆▆▆ 3. Departments ▆▆▆▆ -->
+    <nav aria-label="Departments" class="b-dept">
+      <div ref="deptRow" class="b-dept__in">
+        <button :aria-expanded="mega ? 'true' : 'false'" class="b-dept__all" type="button" @click="toggleMega">
+          <span class="ms">{{ mega ? "close" : "menu" }}</span>All departments
+        </button>
+        <router-link v-for="c in barCats" :key="c.id" :class="{ '-on': $route.params.category_name === c.name }" :to="catTo(c)" class="b-dept__a">
+          {{ c.title || c.name }}
+        </router-link>
+        <v-menu v-if="moreCats.length && !compact" location="bottom start" offset="0">
+          <template v-slot:activator="{ props, isActive }">
+            <button class="b-dept__a -more" type="button" v-bind="props">More<span :class="{ '-up': isActive }" class="ms">expand_more</span></button>
+          </template>
+          <div class="b-menu">
+            <router-link v-for="c in moreCats" :key="c.id" :to="catTo(c)">{{ c.title || c.name }}</router-link>
+          </div>
+        </v-menu>
+        <span class="b-dept__sp"></span>
+        <router-link :to="dealsTo" class="b-dept__a -deals"><span class="ms fill">sell</span>Deals</router-link>
+        <router-link :to="newTo" class="b-dept__a">New arrivals</router-link>
+        <v-menu v-if="brands.length && !compact" location="bottom end" offset="0">
+          <template v-slot:activator="{ props, isActive }">
+            <button class="b-dept__a" type="button" v-bind="props">Brands<span :class="{ '-up': isActive }" class="ms">expand_more</span></button>
+          </template>
+          <div class="b-menu -brands">
+            <router-link v-for="b in brands" :key="b" :to="searchTo(b)">{{ b }}</router-link>
+          </div>
+        </v-menu>
+      </div>
+
+      <!-- The mega menu: opened and closed by "All departments" only (and Esc,
+           a click elsewhere, or going to a page). No scrim. -->
+      <div v-if="mega" ref="mega" class="b-mega" @keydown.esc="mega = false">
+        <div class="b-mega__in">
+          <div class="b-mega__grid">
+            <router-link v-for="c in cats" :key="c.id" :to="catTo(c)" class="b-mega__item">
+              <span class="b-mega__ic"><img v-if="c.icon" :src="catIcon(c)" alt="" loading="lazy" /></span>
+              <span><b>{{ c.title || c.name }}</b><small v-if="c.description">{{ c.description }}</small></span>
+            </router-link>
+          </div>
+          <div class="b-mega__side">
+            <router-link :to="dealsTo"><span class="ms fill">sell</span>Today’s deals</router-link>
+            <router-link :to="newTo"><span class="ms">new_releases</span>New arrivals</router-link>
+            <router-link :to="allTo"><span class="ms">grid_view</span>All products</router-link>
+            <router-link :to="ordersTo"><span class="ms">local_shipping</span>Track an order</router-link>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ▆▆▆▆ The cart drawer (design C) ▆▆▆▆ -->
+    <teleport to="body">
+      <v-navigation-drawer
+        v-model="cart"
+        :location="$vuetify.locale.isRtl ? 'left' : 'right'"
+        :width="windowWidth < 520 ? windowWidth : 440"
+        class="k-drawer -basket b-drawer"
+        temporary
+      >
+        <div class="k-drawer__head">
+          <p class="k-drawer__title">Your cart<small v-if="units">{{ units }} {{ units === 1 ? "item" : "items" }}</small></p>
+          <button aria-label="Close" class="b-x" type="button" @click="cart = false"><span class="ms">close</span></button>
+        </div>
+        <div v-if="!units" class="b-empty -drawer">
+          <span aria-hidden="true" class="b-empty__ic"><span class="ms">shopping_cart</span></span>
+          <p class="b-empty__t">Your cart is empty</p>
+          <p class="b-empty__p">Find something you love and it will wait for you here.</p>
+          <router-link :to="dealsTo" class="b-btn" @click="cart = false">Shop today’s deals</router-link>
+          <router-link :to="allTo" class="b-btn -line" @click="cart = false">Continue shopping</router-link>
+        </div>
+        <kalio-basket-drawer v-else @close="cart = false" />
+      </v-navigation-drawer>
+    </teleport>
+  </header>
+</template>
+
+<script>
+import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
+import BestiLogo from "../BestiLogo.vue";
+import KalioBasketDrawer from "../../kalio/shell/KalioBasketDrawer.vue";
+import { aisleRoute, aisles, catalogueRoute, dealsRoute } from "../../kalio/kalio-catalog";
+import { basketView } from "../../kalio/kalio-basket";
+import { brandsOf, catalogue, clock, dealOfTheDay, moneyOf, moneyText, percentOff, startClock } from "../besti";
+
+export default {
+  name: "BestiHeader",
+  components: { BestiLogo, KalioBasketDrawer },
+  mixins: [CurrencyMixin],
+  inject: ["$shop"],
+
+  props: {
+    showSearch: { type: Boolean, default: true },
+  },
+
+  emits: ["search", "clear"],
+
+  data: () => ({
+    cats: [],
+    products: [],
+    clock,
+    q: "",
+    scope: null,
+    hits: [],
+    cursor: -1,
+    open_suggest: false,
+    mega: false,
+    cart: false,
+    windowWidth: typeof window !== "undefined" ? window.innerWidth : 1440,
+  }),
+
+  computed: {
+    user() {
+      return this.$store.getters.getUser;
+    },
+    busyUser() {
+      return this.$store.getters.getBusyUser;
+    },
+    firstName() {
+      return String(this.user?.name || "Account").split(/\s+/)[0].slice(0, 14);
+    },
+    compact() {
+      return this.windowWidth < 900;
+    },
+    currency() {
+      return this.GetUserSelectedCurrency()?.code;
+    },
+    units() {
+      return this.getBaskets().reduce((sum, b) => sum + (b?.items || []).reduce((n, it) => n + (it.count || 0), 0), 0);
+    },
+    /* The cart's total: the bill's when there is one, else the basket's. */
+    cartTotal() {
+      let sum = 0;
+      for (const b of this.getBaskets()) {
+        if (!b?.items?.length) continue;
+        if (typeof b.bill?.price === "number") sum += b.bill.price;
+        else if (typeof b.price === "number") sum += b.price;
+        else for (const it of b.items) sum += Number(it.price || 0) * (it.count || 0);
+      }
+      return Math.max(0, sum);
+    },
+    ordersTo() {
+      return { name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL };
+    },
+    savedTo() {
+      return { name: window.$storefront.routes.USER_FAVORITES_PAGE };
+    },
+    accountTo() {
+      return { name: "KalioAccountHome" };
+    },
+    dealsTo() {
+      return dealsRoute();
+    },
+    newTo() {
+      return catalogueRoute({ sort: "newest" });
+    },
+    allTo() {
+      return catalogueRoute();
+    },
+    dotd() {
+      return dealOfTheDay(this.$shop, this.products);
+    },
+    dotdOff() {
+      return this.dotd ? percentOff(this.$shop, this.dotd) : 0;
+    },
+    brands() {
+      return brandsOf(this.products);
+    },
+    /* As many department names as fit the bar; the rest go under "More". */
+    barCount() {
+      const w = this.windowWidth;
+      if (w < 900) return this.cats.length;
+      if (w >= 1560) return 9;
+      if (w >= 1400) return 8;
+      if (w >= 1240) return 6;
+      if (w >= 1080) return 4;
+      return 3;
+    },
+    barCats() {
+      return this.cats.slice(0, this.barCount);
+    },
+    moreCats() {
+      return this.cats.slice(this.barCount);
+    },
+    scopeTitle() {
+      const c = this.cats.find((x) => x.name === this.scope);
+      return c ? c.title || c.name : "All";
+    },
+    catHits() {
+      const q = this.q.trim().toLowerCase();
+      if (q.length < 2) return [];
+      return this.cats.filter((c) => `${c.title} ${c.name}`.toLowerCase().includes(q)).slice(0, 2);
+    },
+  },
+
+  watch: {
+    $route() {
+      this.mega = false;
+      this.cart = false;
+      this.open_suggest = false;
+    },
+    cart(open) {
+      basketView.drawerOpen = open;
+      this.$store.commit("setForceHideNavigation", open);
+    },
+    mega(open) {
+      if (open) document.addEventListener("click", this.outside, true);
+      else document.removeEventListener("click", this.outside, true);
+    },
+    "$route.query.search": {
+      handler(v) {
+        this.q = v ? String(v) : "";
+      },
+      immediate: true,
+    },
+  },
+
+  mounted() {
+    aisles().then((list) => (this.cats = list));
+    catalogue().then((list) => (this.products = list));
+    startClock();
+    this.onResize = () => (this.windowWidth = window.innerWidth);
+    window.addEventListener("resize", this.onResize, { passive: true });
+    /* Any part of the page can open the cart (the footer's Cart link). */
+    this.openCart = () => (this.cart = true);
+    EventBus.$on("besti:open-cart", this.openCart);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("resize", this.onResize);
+    document.removeEventListener("click", this.outside, true);
+    EventBus.$off("besti:open-cart", this.openCart);
+    clearTimeout(this.typing);
+  },
+
+  methods: {
+    money(n) {
+      return moneyText(n, this.currency);
+    },
+    price(p) {
+      return moneyOf(this.$shop, p, null, this.currency);
+    },
+    catTo: aisleRoute,
+    catIcon(c) {
+      return window.CDN.GET_CATEGORY_ICON(c.id, 128);
+    },
+    productTo(p) {
+      return { name: window.$storefront.routes.PRODUCT_PAGE, params: { product_id: p.id } };
+    },
+    searchTo(text) {
+      return { name: window.$storefront.routes.SHOP_PAGE, query: { search: text } };
+    },
+    thumb(p) {
+      return window.CDN.GET_SHOP_IMAGE_PATH(p.icon, 64);
+    },
+    signIn() {
+      EventBus.$emit("need-login", true);
+    },
+    toggleMega() {
+      this.mega = !this.mega;
+    },
+    outside(e) {
+      const inside = this.$refs.mega?.contains(e.target) || this.$refs.deptRow?.querySelector(".b-dept__all")?.contains(e.target);
+      if (!inside) this.mega = false;
+    },
+    /* Suggestions while typing: the input's own value (v-model waits for an
+       Android keyboard's composition to end). */
+    onType(value) {
+      this.q = value;
+      this.cursor = -1;
+      this.open_suggest = true;
+      clearTimeout(this.typing);
+      const q = value.trim();
+      if (q.length < 2) {
+        this.hits = [];
+        return;
+      }
+      this.typing = setTimeout(() => {
+        window.axios
+          .get(window.XAPI.GET_SEARCH_QUERY(window.$storefront.name, encodeURIComponent(q)))
+          .then(({ data }) => {
+            if (this.q.trim() !== q) return;
+            const items = (data?.items || []).filter((p) => p && p.id && p.title && p.icon);
+            const scoped = this.scope ? items.filter((p) => this.cats.find((c) => c.name === this.scope)?.id === p.category_id) : items;
+            this.hits = scoped.slice(0, 6);
+          })
+          .catch(() => (this.hits = []));
+      }, 250);
+    },
+    move(d) {
+      if (!this.hits.length) return;
+      this.cursor = (this.cursor + d + this.hits.length) % this.hits.length;
+    },
+    blurSoon() {
+      setTimeout(() => (this.open_suggest = false), 150);
+    },
+    submit() {
+      if (this.cursor >= 0 && this.hits[this.cursor]) {
+        this.$router.push(this.productTo(this.hits[this.cursor]));
+        this.open_suggest = false;
+        return;
+      }
+      const text = this.q.trim();
+      this.open_suggest = false;
+      this.$refs.q?.blur();
+      if (this.scope) {
+        this.$router.push({ ...aisleRoute({ name: this.scope }), query: text ? { search: text } : {} });
+        return;
+      }
+      if (!text) {
+        this.$emit("clear");
+        return;
+      }
+      this.$emit("search", { search: text, search_type: null });
+    },
+  },
+};
+</script>

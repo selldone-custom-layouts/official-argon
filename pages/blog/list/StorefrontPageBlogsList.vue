@@ -128,7 +128,7 @@
 
           <section class="k-jbox -ask">
             <h2>Got a question?</h2>
-            <p>Ask the sellers anything about a product before you order.</p>
+            <p>Ask us anything about a product before you order.</p>
             <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }" class="k-btn k-btn--line">
               Contact the shop
             </router-link>
@@ -211,13 +211,13 @@ export default {
       if (this.current_author_id) return this.articles[0]?.user?.name || this.current_author || "Author";
       if (this.current_tag) return `#${this.current_tag}`;
       if (this.current_search) return `“${this.current_search}”`;
-      return "Notes from the aisles";
+      return "Tips and guides";
     },
     lede() {
       if (this.current_category) return this.category?.description || "Every note on this topic, newest first.";
       if (this.current_author_id) return "Every note by this author, newest first.";
       if (this.current_tag || this.current_search) return "The notes that match, newest first.";
-      return "Short, useful reads for the weekly shop: what's good now, how to keep it fresh and what to cook with it.";
+      return "Buying guides and how-tos: what to look for, how to set it up and how to make it last.";
     },
     homeRoute() {
       return journalRoute();

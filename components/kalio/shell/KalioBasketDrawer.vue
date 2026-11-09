@@ -50,7 +50,7 @@
             class="k-bdrawer__qty"
             role="group"
           >
-            <button :aria-label="shown(item) > 1 ? 'One fewer' : 'Remove from basket'" type="button" @click="step(item, -1)">
+            <button :aria-label="shown(item) > 1 ? 'One fewer' : 'Remove from cart'" type="button" @click="step(item, -1)">
               <v-icon size="16">{{ shown(item) > 1 ? "remove" : "delete_outline" }}</v-icon>
             </button>
             <output aria-live="polite">{{ shown(item) }}</output>
@@ -70,7 +70,8 @@
 <script>
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { settling, shownCount, stepTo } from "../kalio-basket";
-import { productImage, vendors } from "../kalio-catalog";
+import { productImage } from "../kalio-catalog";
+import { colourName } from "../../besti/besti";
 import KalioOftenAdded from "../KalioOftenAdded.vue";
 
 /* The size of a variant in words: its volume, weight, pack, colour or style. */
@@ -84,12 +85,6 @@ export default {
   components: { KalioOftenAdded },
 
   emits: ["close"],
-
-  data() {
-    return {
-      sellerNames: new Map(),
-    };
-  },
 
   computed: {
     /* One receipt per basket with something in it: usually the one basket
@@ -119,12 +114,6 @@ export default {
     },
   },
 
-  created() {
-    vendors().then((list) => {
-      this.sellerNames = new Map(list.map((vendor) => [vendor.id, vendor.name]));
-    });
-  },
-
   methods: {
     settling,
 
@@ -132,9 +121,10 @@ export default {
       return productImage(product, true);
     },
 
+    /* Besti is one shop, not a marketplace: the line says its size or
+       colour, never a seller. */
     meta(item) {
-      const seller = this.sellerNames.get(item.vendor_id);
-      return [sizeOf(item.variant), seller].filter(Boolean).join(" · ");
+      return sizeOf(item.variant) || (item.variant?.color ? colourName(item.variant.color) : null);
     },
 
     typeName(type) {

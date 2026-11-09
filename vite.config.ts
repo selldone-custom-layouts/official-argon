@@ -146,8 +146,13 @@ export default ({mode}: any) => {
          (experimentalMinChunkSize): Rollup merged them into the entry, so
          chunks imported code from shop.js, which Selldone's redirected
          address loads twice — see coreChunk below. */
-      assetsInlineLimit: (file: string, content: Buffer) =>
-          file.toLowerCase().endsWith(".svg") ? content.length <= 16384 : undefined,
+      assetsInlineLimit: (file: string, content: Buffer) => {
+        const f = file.toLowerCase();
+        if (f.endsWith(".svg")) return content.length <= 16384;
+        /* Besti: small PNG/JPG icons ride inline too (fewer files); photos never. */
+        if (/\.(png|jpe?g|gif)$/.test(f)) return content.length <= 12288;
+        return undefined;
+      },
       /* One stylesheet. The 95 per-chunk CSS files total 689 KB; as files
          they were a sixth of the archive, as part of shop.css they are a
          ~100 KB gzip addition to the first load. */

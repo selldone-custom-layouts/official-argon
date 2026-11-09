@@ -14,18 +14,33 @@
   (walio-filters.ts); the page hands every change to the listing.
 -->
 <template>
-  <aside v-if="!compact" aria-label="Filters" class="w-rail">
+  <!-- Besti (digini-design/shop-b.html): Filters with Clear all, the
+       departments (ten, the rest behind "N more departments", the open one
+       always shown), price with a slider and two short boxes, On sale only,
+       brands, colours as swatches, the other variant values, then the
+       category's own spec filters (the first open, the rest folded). -->
+  <aside v-if="!compact" aria-label="Filters" class="w-rail b-rail-f">
     <header class="w-rail__hd">
       <b>Filters</b>
       <button v-if="on_count" class="w-rail__clear" type="button" @click="clearAll">Clear all</button>
     </header>
-    <div v-if="!ignore.includes('discount')" class="w-grp">
-      <label class="t-switch">
-        <span>On sale only</span>
-        <input :checked="!!value.only_has_discount" type="checkbox" @change="toggleDeals" />
-        <i></i>
-      </label>
-    </div>
+    <details v-if="cats.length" class="w-grp" open>
+      <summary>Department<v-icon size="22">expand_more</v-icon></summary>
+      <nav class="b-deps" aria-label="Departments">
+        <router-link
+          v-for="c in shownCats"
+          :key="c.id"
+          :aria-current="c.name === current ? 'page' : undefined"
+          :class="{ '-on': c.name === current }"
+          :to="catTo(c)"
+          >{{ c.title || c.name }}</router-link
+        >
+        <button v-if="cats.length > 10" class="b-deps__more" type="button" @click="all_cats = !all_cats">
+          <v-icon size="18">{{ all_cats ? "expand_less" : "expand_more" }}</v-icon
+          >{{ all_cats ? "Fewer departments" : `${cats.length - 10} more departments` }}
+        </button>
+      </nav>
+    </details>
     <details v-if="has_price" class="w-grp" open>
       <summary>Price<v-icon size="22">expand_more</v-icon></summary>
       <v-range-slider
@@ -34,23 +49,45 @@
         :min="price_min"
         :step="price_step"
         class="w-rail__slider"
-        color="#0071dc"
+        color="#0a4bd8"
         hide-details
+        thumb-size="18"
+        track-size="3"
         @end="applyPrice(price_draft)"
       ></v-range-slider>
-      <div class="w-rail__prices">
-        <span><u-price :amount="price_draft[0]" /></span>–<span><u-price :amount="price_draft[1]" /></span>
-      </div>
-      <div class="w-rail__quick">
-        <button v-for="q in quick" :key="q.label" type="button" @click="applyPrice(q.range)">{{ q.label }}</button>
+      <div class="b-prange">
+        <label><span>$</span><input :value="Math.round(price_draft[0])" aria-label="Lowest price" inputmode="numeric" @change="typed(0, $event)" /></label>
+        <em>to</em>
+        <label><span>$</span><input :value="Math.round(price_draft[1])" aria-label="Highest price" inputmode="numeric" @change="typed(1, $event)" /></label>
       </div>
     </details>
-    <details v-for="(group, i) in groups" :key="group.kind + group.key" :open="i < 3" class="w-grp">
+    <details v-if="!ignore.includes('discount')" class="w-grp" open>
+      <summary>Deals<v-icon size="22">expand_more</v-icon></summary>
+      <label class="t-switch">
+        <span>On sale only</span>
+        <input :checked="!!value.only_has_discount" type="checkbox" @change="toggleDeals" />
+        <i></i>
+      </label>
+    </details>
+    <details v-for="(group, i) in ordered" :key="group.kind + group.key" :open="i < 3" class="w-grp">
       <summary>
         {{ group.label }}<b v-if="picked(group).length" class="w-rail__n">{{ picked(group).length }}</b>
         <v-icon size="22">expand_more</v-icon>
       </summary>
-      <div v-if="group.kind === 'variant'" class="w-rail__pills">
+      <div v-if="group.key === 'colors'" class="b-swfilter">
+        <button
+          v-for="v in group.values"
+          :key="v"
+          :aria-label="colourName(v)"
+          :aria-pressed="picked(group).includes(v) ? 'true' : 'false'"
+          :class="{ '-on': picked(group).includes(v) }"
+          :style="{ background: swatchBg(v) }"
+          :title="colourName(v)"
+          type="button"
+          @click="toggle(group, v)"
+        ></button>
+      </div>
+      <div v-else-if="group.kind === 'variant'" class="w-rail__pills">
         <button
           v-for="v in group.values"
           :key="v"
@@ -63,10 +100,10 @@
         </button>
       </div>
       <template v-else>
-        <label v-for="v in group.values" :key="v" class="t-check">
+        <label v-for="v in group.values" :key="v" :title="valueLabel(v)" class="t-check">
           <input :checked="picked(group).includes(v)" type="checkbox" @change="toggle(group, v)" />
           <span class="t-check__box"><v-icon size="16">check</v-icon></span>
-          {{ valueLabel(v) }}
+          <span class="t-check__t">{{ valueLabel(v) }}</span>
         </label>
       </template>
     </details>
@@ -117,14 +154,27 @@
             </section>
             <section v-if="has_price" class="t-fgrp">
               <h5>Price</h5>
-              <v-range-slider v-model="draft_price" :max="price_max" :min="price_min" :step="price_step" color="#0071dc" hide-details />
+              <v-range-slider v-model="draft_price" :max="price_max" :min="price_min" :step="price_step" color="#0a4bd8" hide-details />
               <div class="w-rail__prices">
                 <span><u-price :amount="draft_price[0]" /></span>–<span><u-price :amount="draft_price[1]" /></span>
               </div>
             </section>
-            <section v-for="group in groups" :key="'p' + group.kind + group.key" class="t-fgrp">
+            <section v-for="group in ordered" :key="'p' + group.kind + group.key" class="t-fgrp">
               <h5>{{ group.label }}</h5>
-              <div class="t-fgrp__opts">
+              <div v-if="group.key === 'colors'" class="b-swfilter">
+                <button
+                  v-for="v in group.values"
+                  :key="v"
+                  :aria-label="colourName(v)"
+                  :aria-pressed="draftPicked(group).includes(v) ? 'true' : 'false'"
+                  :class="{ '-on': draftPicked(group).includes(v) }"
+                  :style="{ background: swatchBg(v) }"
+                  :title="colourName(v)"
+                  type="button"
+                  @click="draftToggle(group, v)"
+                ></button>
+              </div>
+              <div v-else class="t-fgrp__opts">
                 <button
                   v-for="v in group.values"
                   :key="v"
@@ -154,6 +204,8 @@ import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { PriceHelper } from "@selldone/core-js/helper";
 import { SORTS, clone, countOn, groupsOf, picked, sortName, valueLabel, withGroup } from "./walio-filters";
+import { colourName, swatchBg } from "../../besti/besti";
+import { aisleRoute } from "../../kalio/kalio-catalog";
 
 export default {
   name: "WalioFilterRail",
@@ -168,6 +220,9 @@ export default {
     sort: { type: String, default: null },
     sortFallback: { type: String, default: "Featured" },
     compact: Boolean,
+    /** The departments, and the one open (Besti). */
+    cats: { type: Array, default: () => [] },
+    current: { type: String, default: null },
   },
 
   data() {
@@ -177,6 +232,7 @@ export default {
       price_draft: [0, 0],
       draft: clone(null),
       draft_price: [0, 0],
+      all_cats: false,
     };
   },
 
@@ -189,6 +245,20 @@ export default {
     },
     groups() {
       return groupsOf(this.filters);
+    },
+    /* Brands, colours, the other variant values, then the spec keys. */
+    ordered() {
+      const g = this.groups;
+      const rank = (x) => (x.kind === "brand" ? 0 : x.key === "colors" ? 1 : x.kind === "variant" ? 2 : 3);
+      return [...g].sort((a, b) => rank(a) - rank(b));
+    },
+    /* Ten departments; the open one is always among them. */
+    shownCats() {
+      if (this.all_cats || this.cats.length <= 10) return this.cats;
+      const first = this.cats.slice(0, 10);
+      const open = this.cats.find((c) => c.name === this.current);
+      if (open && !first.includes(open)) first[9] = open;
+      return first;
     },
     on_count() {
       return countOn(this.modelValue);
@@ -256,6 +326,19 @@ export default {
   methods: {
     sortName,
     valueLabel,
+    swatchBg,
+    colourName,
+    catTo(c) {
+      return aisleRoute(c);
+    },
+    typed(i, e) {
+      const n = Number(String(e.target.value).replace(/[^0-9.]/g, ""));
+      if (!Number.isFinite(n)) return;
+      const next = [...this.price_draft];
+      next[i] = Math.min(this.price_max, Math.max(this.price_min, n));
+      if (next[0] > next[1]) next.reverse();
+      this.applyPrice(next);
+    },
     picked(group) {
       return picked(this.modelValue, group);
     },

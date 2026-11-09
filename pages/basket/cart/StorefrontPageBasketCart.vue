@@ -136,7 +136,7 @@
                       ? "Where the service takes place."
                       : all_is_pickup
                         ? "Your billing address."
-                        : "Your address, for the receipt and the seller."
+                        : "Your address, for the receipt and the delivery."
                   }}
                 </p>
                 <button class="k-cart__map" type="button" @click="openAddress()">
@@ -356,25 +356,12 @@
       <!-- Kalio: an empty basket is a starting point, so it offers the way back
            to the aisles instead of only announcing itself. The heading keeps
            the translated platform string. -->
-      <div v-else class="k-basket-empty">
-        <img
-          alt=""
-          class="k-basket-empty__art"
-          height="96"
-          src="@selldone/components-vue/assets/icons/baskets.svg"
-        />
-        <h1 class="k-basket-empty__title">
-          {{ $t("basket_page.basket_empty") }}
-        </h1>
-        <p class="k-basket-empty__lede">
-          The aisles are stocked. Pick up where you left off.
-        </p>
-        <router-link
-          :to="{ name: window.$storefront.routes.SHOP_PAGE }"
-          class="k-btn k-btn--solid"
-        >
-          Start shopping
-        </router-link>
+      <div v-else class="k-basket-empty b-empty -page">
+        <span aria-hidden="true" class="b-empty__ic"><span class="ms">shopping_cart</span></span>
+        <h1 class="b-empty__t">Your cart is empty</h1>
+        <p class="b-empty__p">Find something you love and it will wait for you here.</p>
+        <router-link :to="{ name: window.$storefront.routes.SHOP_PAGE, query: { sort: 'newest' } }" class="b-btn">Continue shopping</router-link>
+        <router-link :to="{ name: window.$storefront.routes.SHOP_PAGE, query: { filter: JSON.stringify({ only_has_discount: true }) } }" class="b-btn -line">Shop today's deals</router-link>
       </div>
 
       <div v-if="busy_shop" class="busy-overlay">
@@ -462,7 +449,7 @@
       :center="center"
       :countries="$shop.countries?.length ? $shop.countries : null"
       :heading="isService ? 'Where should we come?' : all_is_pickup ? 'Your billing address' : 'Where should it go?'"
-      :lede="isService ? 'The address for the service.' : 'Your address, for the receipt and the seller.'"
+      :lede="isService ? 'The address for the service.' : 'Your address, for the receipt and the delivery.'"
       :no-map="no_map"
       :receiver-info="receiver_info"
       @save="onClickSetLocation"
@@ -1054,7 +1041,7 @@ export default {
       if (this.error_message_payment) return this.error_message_payment;
       if (this.enter_guest_email_error) return "Add your email to pay.";
       if (!this.guest_email_ok) return "Check your email address.";
-      if (this.bill && !this.can_pay) return "This basket cannot be paid yet.";
+      if (this.bill && !this.can_pay) return "This cart cannot be paid yet.";
       if (
         this.payment_ways &&
         !this.payment_ways.length &&

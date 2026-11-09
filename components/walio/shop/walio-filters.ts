@@ -30,12 +30,12 @@ export interface WalioFilter {
 }
 
 const VARIANT_LABEL: Record<string, string> = {
-  volumes: "Size",
+  volumes: "Capacity",
   weights: "Weight",
   packs: "Pack",
-  colors: "Color",
+  colors: "Colour",
   styles: "Style",
-  types: "Kind",
+  types: "Type",
 };
 const RESERVED = ["prices", "brands", "ignore"];
 
@@ -61,7 +61,7 @@ export function groupsOf(filters: any): WalioGroup[] {
     if (values.length) out.push({ kind: "spec", key, label: key, values });
   }
   const brands = list(filters.brands);
-  if (brands.length > 1) out.push({ kind: "brand", key: "brands", label: "Brand", values: brands });
+  if (brands.length) out.push({ kind: "brand", key: "brands", label: "Brand", values: brands });
   return out;
 }
 
@@ -121,8 +121,11 @@ export function valueLabel(value: string): string {
   return String(value).split("|")[0].trim();
 }
 
+/* Besti: Selldone sorts by sales, date, price, likes and visits; it has no
+   sort by rating, so "Customer reviews" is not offered (it would not do
+   what it says). */
 export const SORTS = [
-  { val: "bestselling", name: "Best selling" },
+  { val: "bestselling", name: "Best sellers" },
   { val: "newest", name: "Newest" },
   { val: "cheapest", name: "Price: low to high" },
   { val: "most_expensive", name: "Price: high to low" },

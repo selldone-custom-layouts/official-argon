@@ -1084,9 +1084,9 @@
   --c-head-track: -0.01em;
   --c-h1: 34px;
   --c-diff-bg: #fff8e1;
-  --c-share-bg: #041e42;
+  --c-share-bg: #071634;
   --c-share-ink: #c9d6ea;
-  --c-share-head: #ffc220;
+  --c-share-head: #ffd91a;
   --c-star: var(--k-amber);
   --c-ok: var(--k-coral);
 
@@ -1105,21 +1105,21 @@
   }
 
   &__row.-diff &__c {
-    box-shadow: inset 3px 0 0 #ffc220;
+    box-shadow: inset 3px 0 0 #ffd91a;
   }
 
   &__share,
   &__empty {
     .k-cmp__btn.-main {
-      background: #ffc220;
-      color: #041e42 !important;
+      background: #ffd91a;
+      color: #071634 !important;
 
       .v-icon {
-        color: #041e42 !important;
+        color: #071634 !important;
       }
 
       &:hover {
-        background: #ffd35c;
+        background: #ffe14d;
       }
     }
   }

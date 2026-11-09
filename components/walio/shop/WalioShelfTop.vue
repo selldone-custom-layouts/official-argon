@@ -9,50 +9,38 @@
   results sit in, and on a search its top match as one wide card.
 -->
 <template>
-  <div class="w-top">
-    <nav aria-label="Breadcrumb" class="t-crumbs">
-      <router-link :to="{ name: window.$storefront.routes.SHOP_PAGE }">{{ $shop.title }}</router-link>
-      <v-icon aria-hidden="true" size="16">chevron_right</v-icon>
+  <!-- Besti (digini-design/shop-b.html, search-b.html, deals-b.html): the
+       crumbs, the title with the category's one-line description beside it
+       (no product counts), and on a search its top match as a wide band. -->
+  <div class="w-top b-top">
+    <nav aria-label="Breadcrumb" class="b-crumbs">
+      <router-link :to="{ path: '/' }">Home</router-link>
+      <span aria-hidden="true" class="ms">chevron_right</span>
       <span aria-current="page">{{ crumb }}</span>
     </nav>
 
-    <section v-if="mode === 'aisle'" :style="{ background: tint }" class="w-banner">
-      <div class="w-banner__tx">
-        <small>Aisle</small>
-        <h1>{{ aisle ? aisle.title || aisle.name : "" }}</h1>
-        <p v-if="aisle && aisle.description">{{ aisle.description }}</p>
-        <div class="w-banner__facts">
-          <span v-if="total !== null">{{ total.toLocaleString() }} {{ total === 1 ? "product" : "products" }}</span>
-          <span v-if="onSale" class="-hot"><v-icon size="16">local_offer</v-icon>{{ onSale.toLocaleString() }} on sale</span>
-          <span v-if="sellers.length">{{ sellers.length === 1 ? `Sold by ${sellers[0]}` : `${sellers.length} sellers` }}</span>
-        </div>
-      </div>
-      <div aria-hidden="true" class="w-banner__packs">
-        <img v-for="(p, i) in packs" :key="p.id" :class="'-p' + i" :src="image(p, false)" :srcset="srcset(p)" alt="" sizes="130px" @error="dropSrcset" />
-      </div>
-    </section>
+    <div :class="{ '-deals': deals_page }" class="b-top__title">
+      <h1>{{ mode === "aisle" ? (aisle ? aisle.title || aisle.name : crumb) : title }}</h1>
+      <p v-if="mode === 'aisle' && aisle && aisle.description">{{ aisle.description }}</p>
+    </div>
 
-    <template v-else>
-      <div class="t-top__q">
-        <h1 class="t-top__h1">{{ title }}</h1>
-        <span v-if="total !== null" class="t-top__count">{{ total.toLocaleString() }} {{ total === 1 ? "product" : "products" }}</span>
+    <besti-deal-of-day v-if="deals_page && dotd" :more="dotdMore" :product="dotd" class="b-top__dotd" @quick-buy="$emit('quick-buy', $event)" />
+
+    <template v-if="mode !== 'aisle'">
+      <div v-if="hits.length > 1" class="b-inaisles">
+        <span>In departments</span>
+        <router-link v-for="h in hits" :key="h.aisle.id" :to="h.to" class="b-chip">{{ h.aisle.title || h.aisle.name }}</router-link>
       </div>
-      <div v-if="hits.length" class="t-inaisles">
-        <span class="t-inaisles__l">In aisles:</span>
-        <router-link v-for="h in hits" :key="h.aisle.id" :to="h.to" class="t-inaisles__a">
-          <img v-if="h.image" :src="h.image" alt="" />{{ h.aisle.title || h.aisle.name }}<b v-if="h.count">{{ h.count }}</b>
-        </router-link>
-      </div>
-      <router-link v-if="search && top" :to="productTo(top)" class="w-match">
-        <span class="w-match__im"><img :src="image(top, false)" :srcset="srcset(top)" alt="" sizes="(max-width: 760px) 96px, 200px" @error="dropSrcset" /></span>
-        <span class="w-match__tx">
+      <router-link v-if="search && top" :to="productTo(top)" class="b-match">
+        <span class="b-match__im"><img :src="image(top, false)" :srcset="srcset(top)" alt="" sizes="(max-width: 760px) 96px, 200px" @error="dropSrcset" /></span>
+        <span class="b-match__tx">
           <small>Top match</small>
           <b>{{ top.title }}</b>
-          <span class="w-match__price">
-            <u-price :amount="price(top).now" :currency="currency" :class="{ '-sale': price(top).was }" />
-            <s v-if="price(top).was"><u-price :amount="price(top).was" :currency="currency" /></s>
+          <span class="b-match__price">
+            <u-price :amount="price(top).now" :currency="currency" />
+            <span v-if="price(top).was" class="b-save">Save <u-price :amount="price(top).was - price(top).now" :currency="currency" /></span>
           </span>
-          <em>See the product<v-icon size="18">chevron_right</v-icon></em>
+          <em>See the product<span class="ms">chevron_right</span></em>
         </span>
       </router-link>
     </template>
@@ -61,11 +49,15 @@
 
 <script>
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
+import BestiDealOfDay from "../../besti/BestiDealOfDay.vue";
+import { catalogue, dealOfTheDay, dealsOf, mixByCategory } from "../../besti/besti";
 import { aisleImage, aisleIndex, dropSrcset, priceOf, productImage, productSrcset, tintFor } from "../../kalio/kalio-catalog";
 
 export default {
   name: "WalioShelfTop",
+  components: { BestiDealOfDay },
   mixins: [CurrencyMixin],
+  emits: ["quick-buy"],
   inject: ["$shop"],
 
   props: {
@@ -80,7 +72,7 @@ export default {
   },
 
   data() {
-    return { window, index: null };
+    return { window, index: null, all: [] };
   },
 
   computed: {
@@ -92,6 +84,16 @@ export default {
     },
     deals() {
       return !!this.filter?.only_has_discount;
+    },
+    deals_page() {
+      return this.deals && !this.search && this.mode !== "aisle";
+    },
+    dotd() {
+      return dealOfTheDay(this.$shop, this.all);
+    },
+    dotdMore() {
+      if (!this.dotd) return [];
+      return mixByCategory(dealsOf(this.$shop, this.all).filter((p) => p.id !== this.dotd.id && p.category_id !== this.dotd.category_id), 3);
     },
     title() {
       if (this.search) return `Results for “${this.search}”`;
@@ -138,6 +140,7 @@ export default {
 
   mounted() {
     if (this.mode !== "aisle") aisleIndex().then((index) => (this.index = index));
+    catalogue().then((list) => (this.all = list));
   },
 
   methods: {

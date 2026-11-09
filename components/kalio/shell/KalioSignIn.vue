@@ -28,12 +28,13 @@
     <div class="k-signin__card">
       <!-- ▆▆▆▆▆▆▆▆ The shop ▆▆▆▆▆▆▆▆ -->
       <aside class="k-signin__brand">
-        <p class="k-signin__mark">{{ shopTitle }}<i aria-hidden="true"></i></p>
-        <p class="k-signin__pitch">Your weekly shop, remembered.</p>
+        <p class="k-signin__mark"><besti-logo :to="null" light /></p>
+        <p class="k-signin__pitch">Your orders, saved items and addresses, in one place.</p>
 
         <ul class="k-signin__perks">
           <li><v-icon size="20">local_shipping</v-icon>Follow every order to your door</li>
-          <li><v-icon size="20">favorite_border</v-icon>Keep your favourites for next week</li>
+          <li><v-icon size="20">favorite_border</v-icon>Save products to compare and buy later</li>
+          <li><v-icon size="20">place</v-icon>Your addresses ready at checkout</li>
           <li v-if="sellerCount > 1">
             <v-icon size="20">storefront</v-icon>One cart across {{ sellerCount }} independent sellers
           </li>
@@ -76,6 +77,7 @@
 <script>
 import { throttle } from "lodash-es";
 import SShopLogin from "@selldone/components-vue/storefront/login/SShopLogin.vue";
+import BestiLogo from "../../besti/BestiLogo.vue";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import { aisleImage, aisles, tintFor, vendors } from "../kalio-catalog";
 
@@ -97,7 +99,7 @@ const WORDS = {
 
 export default {
   name: "KalioSignIn",
-  components: { SShopLogin },
+  components: { SShopLogin, BestiLogo },
   inject: ["$shop"],
 
   data() {
