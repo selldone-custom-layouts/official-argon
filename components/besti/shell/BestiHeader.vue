@@ -6,7 +6,8 @@
      "Shop the deal".
   2. A white bar: the ink wordmark, a search with a department scope and a
      blue search button (suggestions while typing), Track order, Saved, Sign
-     in (or the account), and a blue cart pill with the count and the total.
+     in (or the account), Theme (1.0.10 trial: the palettes and Light / Dark
+     in a small panel, BestiThemePicker), and a blue cart pill with the count and the total.
   3. A blue department bar: "All departments" opens a mega menu on a click
      and closes on a second click (no dark scrim behind it), then the live
      category names that fit and "More", and on the right Deals (yellow),
@@ -105,6 +106,8 @@
         <button v-else-if="!busyUser" class="b-act -me" type="button" @click="signIn"><span class="ms">person</span><span class="b-act__t">Sign in</span></button>
         <span v-else class="b-act -me -wait"><span class="ms">person</span><span class="b-act__t">Account</span></span>
 
+        <besti-theme-picker />
+
         <button :aria-label="`Cart, ${units} items`" class="b-cartpill" type="button" @click="cart = true">
           <span class="ms fill">shopping_cart</span>
           <i v-if="units">{{ units }}</i>
@@ -194,6 +197,7 @@ import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import BestiLogo from "../BestiLogo.vue";
 import BestiDealClock from "../BestiDealClock.vue";
+import BestiThemePicker from "./BestiThemePicker.vue";
 import KalioBasketDrawer from "../../kalio/shell/KalioBasketDrawer.vue";
 import { aisleRoute, aisles, catalogueRoute, dealsRoute } from "../../kalio/kalio-catalog";
 import { basketView } from "../../kalio/kalio-basket";
@@ -201,7 +205,7 @@ import { brandRoute, brandsOf, catalogue, dealEnd, dealOfTheDay, leadVariant, mo
 
 export default {
   name: "BestiHeader",
-  components: { BestiLogo, BestiDealClock, KalioBasketDrawer },
+  components: { BestiLogo, BestiDealClock, BestiThemePicker, KalioBasketDrawer },
   mixins: [CurrencyMixin],
   inject: ["$shop"],
 

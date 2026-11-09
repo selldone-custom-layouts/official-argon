@@ -3142,3 +3142,151 @@ body {
     }
   }
 }
+
+/* ── The header's theme picker (1.0.10 trial, BestiThemePicker) ── */
+.b-theme {
+  display: flex; /* static: the panel is placed in the header's own box */
+}
+
+.b-theme__pop {
+  position: absolute;
+  z-index: 40;
+  box-sizing: border-box;
+  padding: 14px 16px 16px;
+  border-radius: 12px;
+  background: $surface;
+  box-shadow: inset 0 0 0 1px $line, 0 18px 40px -18px var(--b-pop-shadow);
+  color: $ink;
+  font-family: "Archivo", sans-serif;
+}
+
+.b-theme__t {
+  margin: 0 0 8px;
+  color: $muted;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  & + .b-theme__pals,
+  & + .b-theme__modes {
+    margin-bottom: 14px;
+  }
+
+  &:nth-of-type(2) {
+    margin-top: 2px;
+  }
+}
+
+.b-theme__pals {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+}
+
+/* A palette: its swatch (the ring on the swatch's own edge, inset) and
+   its name under it. */
+.b-tpick {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 6px 2px 7px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: $ink !important; /* Vuetify's [type=button] { color: inherit } loads after */
+  font: 600 11.5px/1.2 "Archivo", sans-serif;
+  cursor: pointer;
+
+  &:hover {
+    background: $page;
+  }
+
+  &:focus-visible {
+    outline: 0 !important;
+    box-shadow: inset 0 0 0 2px $blue-t;
+  }
+
+  &__sw {
+    position: relative;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border-radius: 50%;
+      background: var(--sw);
+      box-shadow: inset 0 0 0 1px var(--b-sw-edge);
+    }
+  }
+
+  &.-on &__sw {
+    box-shadow: inset 0 0 0 2px $blue-t;
+  }
+
+  &__n {
+    max-width: 100%;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  &.-on &__n {
+    font-weight: 800;
+  }
+}
+
+.b-theme__modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 9px;
+  box-shadow: inset 0 0 0 1px $line;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 36px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: $ink !important;
+    font: 700 13.5px "Archivo", sans-serif;
+    cursor: pointer;
+
+    .ms {
+      font-size: 18px;
+      color: inherit !important;
+    }
+
+    &:hover {
+      background: $page;
+    }
+
+    &.-on {
+      background: $blue;
+      color: #fff !important;
+    }
+
+    &:focus-visible {
+      outline: 0 !important;
+      box-shadow: inset 0 0 0 2px $blue-t;
+    }
+
+    &.-on:focus-visible {
+      box-shadow: inset 0 0 0 2px #fff;
+    }
+  }
+}
+
+.b-act.-theme[aria-expanded="true"] {
+  color: $blue-t !important;
+  background: $blue-l;
+}
