@@ -1082,7 +1082,7 @@ body {
   display: none;
 }
 
-@container (max-width: 150px) {
+@container (max-width: 128px) {
   .b-long {
     display: none;
   }
@@ -1299,7 +1299,7 @@ body {
   }
 }
 
-@container (max-width: 160px) {
+@container (max-width: 140px) {
   .b-step output small {
     display: none;
   }
