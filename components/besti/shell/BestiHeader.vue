@@ -138,7 +138,7 @@
             <button class="b-dept__a" type="button" v-bind="props">Brands<span :class="{ '-up': isActive }" class="ms">expand_more</span></button>
           </template>
           <div class="b-menu -brands">
-            <router-link v-for="b in brands" :key="b" :to="searchTo(b)">{{ b }}</router-link>
+            <router-link v-for="b in brands" :key="b" :to="brandTo(b)">{{ b }}</router-link>
           </div>
         </v-menu>
       </div>
@@ -196,7 +196,7 @@ import BestiLogo from "../BestiLogo.vue";
 import KalioBasketDrawer from "../../kalio/shell/KalioBasketDrawer.vue";
 import { aisleRoute, aisles, catalogueRoute, dealsRoute } from "../../kalio/kalio-catalog";
 import { basketView } from "../../kalio/kalio-basket";
-import { brandsOf, catalogue, clock, dealOfTheDay, moneyOf, moneyText, percentOff, startClock } from "../besti";
+import { brandRoute, brandsOf, catalogue, clock, dealOfTheDay, moneyOf, moneyText, percentOff, startClock } from "../besti";
 
 export default {
   name: "BestiHeader",
@@ -362,6 +362,7 @@ export default {
     productTo(p) {
       return { name: window.$storefront.routes.PRODUCT_PAGE, params: { product_id: p.id } };
     },
+    brandTo: brandRoute,
     searchTo(text) {
       return { name: window.$storefront.routes.SHOP_PAGE, query: { search: text } };
     },

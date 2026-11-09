@@ -375,3 +375,8 @@ export function startClock(): void {
   tick();
   window.setInterval(tick, 1000);
 }
+
+/** A brand's products: the catalogue with Selldone's own brand filter. */
+export function brandRoute(brand: string) {
+  return { name: window.$storefront.routes.SHOP_PAGE, query: { filter: JSON.stringify({ brands: [brand] }) } };
+}

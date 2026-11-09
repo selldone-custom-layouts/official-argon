@@ -98,6 +98,8 @@ export default {
     title() {
       if (this.search) return `Results for “${this.search}”`;
       if (this.deals) return "Today’s deals";
+      /* Besti: a brand's page (Shop by brand, Brands menu). */
+      if (this.filter?.brands?.length === 1) return this.filter.brands[0];
       return "All products";
     },
     crumb() {

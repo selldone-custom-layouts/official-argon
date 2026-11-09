@@ -200,7 +200,7 @@
 <script>
 import KalioProductOverview from "../../kalio/product/KalioProductOverview.vue";
 import { waysOf } from "../../walio/walio-home";
-import { colourName, moneyOf, moneyText, saved, swatchBg, toggleSaved, variantDimension } from "../besti";
+import { brandRoute, colourName, moneyOf, moneyText, saved, swatchBg, toggleSaved, variantDimension } from "../besti";
 import { specRows } from "./besti-spec";
 
 export default {
@@ -219,7 +219,7 @@ export default {
       return { name: window.$storefront.routes.PRODUCT_PAGE, params: { product_id: this.$product.id } };
     },
     brandTo() {
-      return { name: window.$storefront.routes.SHOP_PAGE, query: { search: this.$product.brand } };
+      return brandRoute(this.$product.brand);
     },
     ways() {
       return waysOf(this.shop || this.$shop).slice(0, 3);

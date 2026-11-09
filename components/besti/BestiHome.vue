@@ -210,6 +210,7 @@ import KalioQuickBuy from "../kalio/KalioQuickBuy.vue";
 import { aisleRoute, aisles, catalogueRoute, dealsRoute, dropSrcset, photoSrcset } from "../kalio/kalio-catalog";
 import { dateParts, journalPage, journalRoute, postRoute } from "../kalio/pages/kalio-journal";
 import {
+  brandRoute,
   brandsOf,
   catalogue,
   categoryLine,
@@ -452,7 +453,7 @@ export default {
       return { name: window.$storefront.routes.SHOP_PAGE, query: { search: tag } };
     },
     brandTo(b) {
-      return { name: window.$storefront.routes.SHOP_PAGE, query: { search: b } };
+      return brandRoute(b);
     },
     productTo(p) {
       return { name: window.$storefront.routes.PRODUCT_PAGE, params: { product_id: p.id } };
