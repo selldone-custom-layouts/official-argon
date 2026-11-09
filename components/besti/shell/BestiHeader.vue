@@ -21,15 +21,19 @@
 -->
 <template>
   <header v-if="!$store.getters.getIsNative" class="b-header">
-    <!-- ▆▆▆▆ 1. Today's deal ▆▆▆▆ -->
-    <div v-if="dotd" class="b-strip">
-      <span class="b-strip__deal">
-        <span class="ms fill">bolt</span><b>Deal of the Day</b>
-        <em class="b-strip__t">{{ dotd.title }}, {{ money(dotdMoney.now) }}<s v-if="dotdMoney.was">{{ money(dotdMoney.was) }}</s></em>
-        <b v-if="dotdOff" class="b-strip__pct">{{ dotdOff }}% off</b>
-      </span>
-      <besti-deal-clock :end="dotdEnd" mode="strip" />
-      <router-link :to="productTo(dotd)" class="b-strip__go">Shop the deal<span class="ms">chevron_right</span></router-link>
+    <!-- ▆▆▆▆ 1. Today's deal ▆▆▆▆
+         The strip keeps its place while the catalogue loads, so the header
+         never shifts down under anything already placed (the theme panel). -->
+    <div v-if="dotd || !products_loaded" class="b-strip">
+      <template v-if="dotd">
+        <span class="b-strip__deal">
+          <span class="ms fill">bolt</span><b>Deal of the Day</b>
+          <em class="b-strip__t">{{ dotd.title }}, {{ money(dotdMoney.now) }}<s v-if="dotdMoney.was">{{ money(dotdMoney.was) }}</s></em>
+          <b v-if="dotdOff" class="b-strip__pct">{{ dotdOff }}% off</b>
+        </span>
+        <besti-deal-clock :end="dotdEnd" mode="strip" />
+        <router-link :to="productTo(dotd)" class="b-strip__go">Shop the deal<span class="ms">chevron_right</span></router-link>
+      </template>
     </div>
 
     <!-- ▆▆▆▆ 2. The main bar ▆▆▆▆ -->
@@ -221,6 +225,7 @@ export default {
   data: () => ({
     cats: [],
     products: [],
+    products_loaded: false,
     q: "",
     scope: null,
     hits: [],
@@ -353,7 +358,9 @@ export default {
 
   mounted() {
     aisles().then((list) => (this.cats = list));
-    catalogue().then((list) => (this.products = list));
+    catalogue()
+      .then((list) => (this.products = list))
+      .finally(() => (this.products_loaded = true));
     this.onResize = () => (this.windowWidth = window.innerWidth);
     window.addEventListener("resize", this.onResize, { passive: true });
     /* Any part of the page can open the cart (the footer's Cart link). */
