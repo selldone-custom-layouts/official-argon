@@ -79,7 +79,7 @@
                   <span
                     ><b>{{ w.word }}</b> {{ w.line }}.
                     <template v-if="w.free">Free.</template>
-                    <template v-else-if="w.freeOver">Free on orders over <u-price :amount="w.freeOver" :currency="w.currency" />.</template>
+                    <template v-else-if="w.freeOver">Free on orders over {{ moneyFrom(w.freeOver, w.currency, { short: "auto" }) }}.</template>
                   </span>
                 </li>
               </ul>
@@ -142,6 +142,7 @@
 </template>
 
 <script lang="ts">
+import { money as moneyFrom } from "../../components/region-switcher/region";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 import ArgonProductOverview from "../../components/argon/product/ArgonProductOverview.vue";
@@ -345,6 +346,7 @@ export default {
   },
 
   methods: {
+    moneyFrom,
     jump(id) {
       document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
     },

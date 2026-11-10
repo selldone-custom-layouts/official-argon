@@ -194,7 +194,7 @@
             <span class="ms">{{ w.icon === "storefront" ? "storefront" : "local_shipping" }}</span>
             <span>
               {{ w.word }}<template v-if="w.free"> · Free</template
-              ><template v-else-if="w.freeOver"> · Free over <u-price :amount="w.freeOver" :currency="w.currency" /></template>
+              ><template v-else-if="w.freeOver"> · Free over {{ moneyFrom(w.freeOver, w.currency, { short: "auto" }) }}</template>
             </span>
           </li>
           <li v-if="!ways.length"><span class="ms">local_shipping</span><span>Delivery options at checkout</span></li>
@@ -257,6 +257,7 @@
 </template>
 
 <script>
+import { currentCurrency, money as moneyFrom } from "../../region-switcher/region";
 import KalioProductOverview from "../../kalio/product/KalioProductOverview.vue";
 import ArgonDealClock from "../ArgonDealClock.vue";
 import ArgonComplete from "./ArgonComplete.vue";
@@ -275,7 +276,7 @@ export default {
 
   computed: {
     currency() {
-      return this.GetUserSelectedCurrency()?.code;
+      return currentCurrency();
     },
     productTo() {
       return { name: window.$storefront.routes.PRODUCT_PAGE, params: { product_id: this.$product.id } };
@@ -404,6 +405,7 @@ export default {
   },
 
   methods: {
+    moneyFrom,
     onResize() {
       this.compact = window.innerWidth < 900;
     },

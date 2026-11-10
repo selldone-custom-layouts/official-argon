@@ -44,6 +44,8 @@ import {SetupService} from "@selldone/core-js/server";
 import {Shop} from "@selldone/core-js/models";
 import { bootThemeSwitcher } from "./components/theme-switcher/theme-switcher"; // the shared theme switcher (Argon 1.0.11)
 import { ARGON_THEME } from "./components/argon/argon-theme";
+import { bootRegion, defineMessages } from "./components/region-switcher/region"; // language + currency (the owner's choice B)
+import { ARGON_MESSAGES } from "./components/argon/i18n";
 
 const vuetify = VuetifyInstance(i18n);
 // Vuetify's light error red reads 4.5:1 on white (its #ff5252 is 3.3:1); set
@@ -91,6 +93,8 @@ app.use(components);
 
 // ━━━ Storefront SDK (xapi) ━━━
 StorefrontSDK.Setup(); // Set up the Shop SDK.
+defineMessages(ARGON_MESSAGES); // Argon's own words, per language
+bootRegion(store); // the visitor's currency and language, mirrored for money() and t()
 
 // ━━━ Community SDK (capi) ━━━
 CapiCommunity.Setup(); // Setup community.

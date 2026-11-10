@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import { currentCurrency } from "../../region-switcher/region";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { addVariant, mayBuy, quickAdd } from "../../kalio/kalio-basket";
 import { catalogue, leadVariant, moneyOf } from "../argon";
@@ -51,7 +52,7 @@ export default {
       return this.$store.getters.getShop;
     },
     currency() {
-      return this.GetUserSelectedCurrency()?.code;
+      return currentCurrency();
     },
     partnerVariant() {
       if (!this.partner) return null;

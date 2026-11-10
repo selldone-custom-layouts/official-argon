@@ -243,6 +243,7 @@
 </template>
 
 <script>
+import { currentCurrency } from "../region-switcher/region";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import ArgonRail from "./ArgonRail.vue";
 import ArgonPhoto from "./ArgonPhoto.vue";
@@ -291,7 +292,7 @@ export default {
 
   computed: {
     currency() {
-      return this.GetUserSelectedCurrency()?.code;
+      return currentCurrency();
     },
     shopTitle() {
       return this.$shop?.title || "";

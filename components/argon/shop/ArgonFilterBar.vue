@@ -74,9 +74,9 @@
             @end="applyPrice(price_draft)"
           ></v-range-slider>
           <div class="ar-prange">
-            <label><span>$</span><input :value="Math.round(price_draft[0])" aria-label="Lowest price" inputmode="numeric" @change="typed(0, $event)" /></label>
+            <label><span>{{ sign }}</span><input :value="Math.round(price_draft[0])" aria-label="Lowest price" inputmode="numeric" @change="typed(0, $event)" /></label>
             <em>to</em>
-            <label><span>$</span><input :value="Math.round(price_draft[1])" aria-label="Highest price" inputmode="numeric" @change="typed(1, $event)" /></label>
+            <label><span>{{ sign }}</span><input :value="Math.round(price_draft[1])" aria-label="Highest price" inputmode="numeric" @change="typed(1, $event)" /></label>
           </div>
           <button v-if="priceSet" class="ar-fdd__clear" type="button" @click="applyPrice([price_min, price_max])">Any price</button>
         </div>
@@ -209,6 +209,7 @@
 </template>
 
 <script>
+import { currentCurrency, signOf } from "../../region-switcher/region";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { PriceHelper } from "@selldone/core-js/helper";
 import { SORTS, clone, countOn, groupsOf, picked, sortName, valueLabel, withGroup } from "../../walio/shop/walio-filters";
@@ -274,7 +275,11 @@ export default {
       return countOn(this.modelValue);
     },
     currency() {
-      return this.GetUserSelectedCurrency()?.code;
+      return currentCurrency();
+    },
+    /* The price boxes' sign, in the visitor's currency. */
+    sign() {
+      return signOf(this.currency);
     },
     price_rows() {
       return (this.filters?.prices || []).filter((row) => this.rate(row.currency, true));

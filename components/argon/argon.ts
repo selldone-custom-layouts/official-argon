@@ -20,6 +20,7 @@
  *    own "<Tag> Items" section without a code change.
  */
 
+import { currentCurrency, formatMoney } from "../region-switcher/region";
 import { reactive } from "vue";
 import { PriceHelper } from "@selldone/core-js";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
@@ -354,17 +355,10 @@ export function colourName(color: string): string {
 
 /* ━━━━━━━━━━━━ Money as words ━━━━━━━━━━━━ */
 
+/* An amount already in `currency` (the visitor's, by default), formatted by
+   the region switcher's rules, so Argon's words match the pill's choice. */
 export function moneyText(amount: number, currency: string, whole = false): string {
-  try {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency || "USD",
-      minimumFractionDigits: whole ? 0 : 2,
-      maximumFractionDigits: whole ? 0 : 2,
-    }).format(amount);
-  } catch {
-    return String(amount);
-  }
+  return formatMoney(amount, currency || currentCurrency(), { short: whole });
 }
 
 /* ━━━━━━━━━━━━ Deal timers: the deal's own end ━━━━━━━━━━━━

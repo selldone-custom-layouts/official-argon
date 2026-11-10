@@ -3630,6 +3630,64 @@ $font: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
       max-width: 440px;
       margin-inline: auto !important;
     }
+
+    /* The ways in, as on Argon's sign-in sheet: one neutral button each,
+       the method's mark at its start (Google's blue fill under white words
+       was 3.6:1, the e-mail mark white on white in dark). */
+    .s--button-flex.v-btn {
+      position: relative;
+      height: 48px !important;
+      margin: 0 0 10px !important;
+      padding: 0 52px !important;
+      border: 1px solid var(--k-line-strong) !important;
+      border-radius: var(--k-pill) !important;
+      background: var(--k-card) !important;
+      color: var(--k-ink) !important;
+      box-shadow: none !important;
+      font-family: $font !important;
+      font-size: 15px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0 !important;
+      text-transform: none !important;
+
+      &:hover {
+        border-color: var(--ar-ink) !important;
+      }
+
+      .v-btn__overlay {
+        display: none;
+      }
+
+      .v-btn__content {
+        justify-content: center;
+        width: 100%;
+        color: inherit !important;
+      }
+
+      .v-btn__prepend {
+        position: absolute;
+        inset-inline-start: 14px;
+        margin: 0 !important;
+
+        .v-avatar {
+          width: 26px !important;
+          height: 26px !important;
+          margin: 0 !important;
+          background: transparent !important;
+        }
+
+        img {
+          width: 22px;
+          height: 22px;
+          padding: 0 !important;
+          object-fit: contain;
+        }
+
+        .v-icon {
+          color: var(--k-ink) !important;
+        }
+      }
+    }
   }
 }
 
@@ -3648,5 +3706,52 @@ $font: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   .k-post .k-post__shop {
     padding: 16px;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Language and currency (1.0.8) ━━━━━━━━━━━━━━━━━━━━━
+   components/region-switcher (the shared package, copied unchanged): the
+   owner's choice B. A small pill at the end of the utility row (Track order,
+   Returns, Help) on the desktop, a row under Help in the phone menu with its
+   bottom sheet. Argon's tokens feed the package's, so every palette, dark
+   mode and a custom colour follow. The header is the surface colour, so the
+   pill is ink on the page grey. */
+:root {
+  --rs-ink: var(--ar-ink);
+  --rs-muted: var(--ar-muted);
+  --rs-line: var(--ar-hover-line);
+  --rs-surface: var(--ar-surface);
+  --rs-accent: var(--ar-brand-t);
+  --rs-accent-soft: var(--ar-brand-l);
+  --rs-on-accent: var(--ar-on-brand);
+  --rs-btn: var(--ar-buy);
+  --rs-on-btn: var(--ar-on-brand);
+  --rs-pill-ink: var(--ar-ink);
+  --rs-pill-bg: var(--ar-page);
+  --rs-pill-bg-hover: var(--ar-off-bg);
+  --rs-font: #{$font};
+}
+
+/* The pill fits the 30px utility row and sits after Help. */
+.ar-util .rs-pick__btn.ar-util__region {
+  height: 26px;
+  padding: 0 8px 0 7px;
+  font-size: 12.5px;
+}
+
+/* The phone menu's row: the help links' grid (24px icon box, the words),
+   with the choice ("EN · DKK ›") at the end. */
+.ar-menu .ar-menu__region {
+  grid-template-columns: 24px minmax(0, 1fr) auto !important;
+  padding: 10px 4px;
+  font: 600 15px $font;
+
+  .rs-row__ic {
+    width: 24px;
+    color: var(--ar-brand-t);
+  }
+
+  .rs-row__v {
+    line-height: 22px;
   }
 }

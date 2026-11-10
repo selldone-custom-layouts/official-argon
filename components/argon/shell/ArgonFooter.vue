@@ -71,10 +71,6 @@
         <router-link :to="{ name: r.SHOP_PROFILE_PAGE_TERMS }">Terms</router-link>
         <router-link :to="{ name: r.SHOP_PROFILE_PAGE_PRIVACY }">Privacy</router-link>
         <s-footer-section-gdpr class="ar-footer__gdpr"></s-footer-section-gdpr>
-        <div class="ar-footer__pickers">
-          <s-language-selector hide-details variant="plain"></s-language-selector>
-          <u-currency-selector v-if="$shop.currencies && $shop.currencies.length > 1" :shop="$shop" hide-details @change="onChangeUserSelectedCurrency" />
-        </div>
         <s-footer-section-selldone class="ar-footer__made"></s-footer-section-selldone>
       </div>
     </div>
@@ -85,8 +81,6 @@
 import ArgonLogo from "../ArgonLogo.vue";
 import ThemeSwitcherRow from "../../theme-switcher/ThemeSwitcherRow.vue";
 import SStorefrontSocialButtons from "@selldone/components-vue/storefront/social/SStorefrontSocialButtons.vue";
-import SLanguageSelector from "@selldone/components-vue/storefront/language/selector/SLanguageSelector.vue";
-import UCurrencySelector from "@selldone/components-vue/ui/currency/selector/UCurrencySelector.vue";
 import SFooterSectionGdpr from "@selldone/components-vue/storefront/footer/section/gdpr/SFooterSectionGdpr.vue";
 import SFooterSectionSelldone from "@selldone/components-vue/storefront/footer/section/selldone/SFooterSectionSelldone.vue";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
@@ -94,7 +88,7 @@ import { aisleRoute, aisles, catalogueRoute, dealsRoute } from "../../kalio/kali
 
 export default {
   name: "ArgonFooter",
-  components: { ArgonLogo, ThemeSwitcherRow, SStorefrontSocialButtons, SLanguageSelector, UCurrencySelector, SFooterSectionGdpr, SFooterSectionSelldone },
+  components: { ArgonLogo, ThemeSwitcherRow, SStorefrontSocialButtons, SFooterSectionGdpr, SFooterSectionSelldone },
   inject: ["$shop"],
 
   data: () => ({ cats: [], email: "", busy: false, sent: false, error: null, year: new Date().getFullYear() }),

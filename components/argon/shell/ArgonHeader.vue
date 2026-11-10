@@ -27,9 +27,12 @@
     <!-- ▆▆▆▆ 1. Utility row ▆▆▆▆ -->
     <div class="ar-util">
       <nav aria-label="Help" class="ar-wrap ar-util__in">
-        <router-link :to="ordersTo"><span class="ms">local_shipping</span>Track order</router-link>
-        <router-link :to="returnsTo"><span class="ms">undo</span>Returns</router-link>
-        <router-link :to="helpTo"><span class="ms">help</span>Help</router-link>
+        <router-link :to="ordersTo"><span class="ms">local_shipping</span>{{ t("header.track") }}</router-link>
+        <router-link :to="returnsTo"><span class="ms">undo</span>{{ t("header.returns") }}</router-link>
+        <router-link :to="helpTo"><span class="ms">help</span>{{ t("header.help") }}</router-link>
+        <!-- Language and currency (the owner's choice B): a small pill at the
+             end of the utility row; hidden when the shop has one of each. -->
+        <region-switcher-button button-class="ar-util__region" />
       </nav>
     </div>
 
@@ -107,8 +110,8 @@
         <router-link v-if="user" :to="accountTo" class="ar-act -me">
           <span class="ms">person</span><span class="ar-act__t">{{ firstName }}</span>
         </router-link>
-        <button v-else-if="!busyUser" class="ar-act -me" type="button" @click="signIn"><span class="ms">person</span><span class="ar-act__t">Account</span></button>
-        <span v-else class="ar-act -me -wait"><span class="ms">person</span><span class="ar-act__t">Account</span></span>
+        <button v-else-if="!busyUser" class="ar-act -me" type="button" @click="signIn"><span class="ms">person</span><span class="ar-act__t">{{ t("header.account") }}</span></button>
+        <span v-else class="ar-act -me -wait"><span class="ms">person</span><span class="ar-act__t">{{ t("header.account") }}</span></span>
 
         <component
           :is="user ? 'router-link' : 'button'"
@@ -117,11 +120,11 @@
           class="ar-act -saved"
           @click="!user && signIn()"
         >
-          <span class="ms">favorite</span><span class="ar-act__t">Wishlist</span>
+          <span class="ms">favorite</span><span class="ar-act__t">{{ t("header.wishlist") }}</span>
         </component>
 
         <button :aria-label="`Cart, ${units} ${units === 1 ? 'item' : 'items'}`" class="ar-act -cart" type="button" @click="cart = true">
-          <span class="ms">shopping_cart</span><i v-if="units" class="ar-act__n">{{ units > 99 ? "99+" : units }}</i><span class="ar-act__t">Cart</span>
+          <span class="ms">shopping_cart</span><i v-if="units" class="ar-act__n">{{ units > 99 ? "99+" : units }}</i><span class="ar-act__t">{{ t("header.cart") }}</span>
         </button>
       </nav>
 
@@ -136,7 +139,7 @@
           </router-link>
         </div>
         <div class="ar-dd__side">
-          <router-link :to="dealsTo"><span class="ms">sell</span>Today’s deals</router-link>
+          <router-link :to="dealsTo"><span class="ms">sell</span>{{ t("menu.todaysDeals") }}</router-link>
           <router-link :to="newTo"><span class="ms">new_releases</span>New arrivals</router-link>
           <router-link :to="allTo"><span class="ms">grid_view</span>All products</router-link>
           <router-link :to="compareTo"><span class="ms">compare_arrows</span>Compare products</router-link>
@@ -169,8 +172,8 @@
             <button ref="menuClose" aria-label="Close menu" class="ar-x" type="button" @click="menu = false"><span class="ms">close</span></button>
           </div>
           <div class="ar-menu__body">
-            <router-link :to="dealsTo" class="ar-menu__deal"><span class="ms">sell</span>Today’s deals</router-link>
-            <p class="ar-menu__h">Shop by category</p>
+            <router-link :to="dealsTo" class="ar-menu__deal"><span class="ms">sell</span>{{ t("menu.todaysDeals") }}</router-link>
+            <p class="ar-menu__h">{{ t("menu.shopByCategory") }}</p>
             <!-- The first 6 categories in the shop's order; the rest behind
                  "Show N more" (8 or fewer: all, no button). The owner's
                  option A, 10 November 2026. -->
@@ -195,19 +198,20 @@
               @click="menu_more = !menu_more"
             >
               <span aria-hidden="true" class="ar-menu__more-ic"><span class="ms">{{ menu_more ? "expand_less" : "expand_more" }}</span></span>
-              {{ menu_more ? "Show fewer" : `Show ${menuRest.length} more` }}
+              {{ menu_more ? t("menu.showFewer") : t("menu.showMore", { n: menuRest.length }) }}
             </button>
             <template v-if="trendTags.length">
-              <p class="ar-menu__h">Trending</p>
+              <p class="ar-menu__h">{{ t("menu.trending") }}</p>
               <div class="ar-menu__tags">
                 <router-link v-for="t in trendTags" :key="t" :to="tagTo(t)" class="ar-pill -line">{{ tagTitle(t) }}</router-link>
               </div>
             </template>
-            <p class="ar-menu__h">Help</p>
-            <router-link :to="ordersTo" class="ar-menu__link"><span class="ms">local_shipping</span>Track order</router-link>
-            <router-link :to="returnsTo" class="ar-menu__link"><span class="ms">undo</span>Returns</router-link>
-            <router-link :to="helpTo" class="ar-menu__link"><span class="ms">help</span>Help &amp; FAQ</router-link>
-            <router-link :to="compareTo" class="ar-menu__link"><span class="ms">compare_arrows</span>Compare products</router-link>
+            <p class="ar-menu__h">{{ t("menu.help") }}</p>
+            <router-link :to="ordersTo" class="ar-menu__link"><span class="ms">local_shipping</span>{{ t("header.track") }}</router-link>
+            <router-link :to="returnsTo" class="ar-menu__link"><span class="ms">undo</span>{{ t("header.returns") }}</router-link>
+            <router-link :to="helpTo" class="ar-menu__link"><span class="ms">help</span>{{ t("menu.helpFaq") }}</router-link>
+            <router-link :to="compareTo" class="ar-menu__link"><span class="ms">compare_arrows</span>{{ t("menu.compare") }}</router-link>
+            <region-sheet row-class="ar-menu__link ar-menu__region" />
           </div>
         </div>
       </transition>
@@ -247,10 +251,13 @@ import KalioBasketDrawer from "../../kalio/shell/KalioBasketDrawer.vue";
 import { aisleRoute, aisles, catalogueRoute, dealsRoute } from "../../kalio/kalio-catalog";
 import { basketView } from "../../kalio/kalio-basket";
 import { catalogue, dealsEndDate, moneyOf, shortDate, tagged, tagTitle } from "../argon";
+import RegionSwitcherButton from "../../region-switcher/RegionSwitcherButton.vue";
+import RegionSheet from "../../region-switcher/RegionSheet.vue";
+import { currentCurrency, t } from "../../region-switcher/region";
 
 export default {
   name: "ArgonHeader",
-  components: { ArgonLogo, KalioBasketDrawer },
+  components: { ArgonLogo, KalioBasketDrawer, RegionSwitcherButton, RegionSheet },
   mixins: [CurrencyMixin],
   inject: ["$shop"],
 
@@ -288,7 +295,7 @@ export default {
       return String(this.user?.name || "Account").split(/\s+/)[0].slice(0, 12);
     },
     currency() {
-      return this.GetUserSelectedCurrency()?.code;
+      return currentCurrency();
     },
     units() {
       return this.getBaskets().reduce((sum, b) => sum + (b?.items || []).reduce((n, it) => n + (it.count || 0), 0), 0);
@@ -413,6 +420,7 @@ export default {
   },
 
   methods: {
+    t,
     tagTitle,
     price(p) {
       return moneyOf(this.$shop, p, null, this.currency);
