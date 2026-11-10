@@ -23,10 +23,10 @@
               Subtotal · {{ group.units }} {{ group.units === 1 ? "item" : "items" }}
               <template v-if="groups.length > 1"> · {{ typeName(group.type) }}</template>
             </small>
-            <u-price :amount="group.total" :currency="group.currency" />
+            <span class="u--price">{{ money(group.total, group.currency) }}</span>
           </p>
           <span v-if="group.saved >= 0.01" class="k-bdrawer__save">
-            You save <u-price :amount="group.saved" :currency="group.currency" />
+            You save <span class="u--price">{{ money(group.saved, group.currency) }}</span>
           </span>
         </div>
         <router-link :to="checkoutRoute(group.type)" class="k-bdrawer__go" @click="$emit('close')">
@@ -58,7 +58,7 @@
               <v-icon size="16">add</v-icon>
             </button>
           </div>
-          <u-price :amount="item.price * shown(item)" :currency="item.currency" class="k-bdrawer__price" />
+          <span class="u--price k-bdrawer__price">{{ money(item.price * shown(item), item.currency || group.currency) }}</span>
         </li>
       </ul>
     </section>
@@ -72,6 +72,7 @@ import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { settling, shownCount, stepTo } from "../kalio-basket";
 import { productImage } from "../kalio-catalog";
 import { colourName } from "../../argon/argon";
+import { money } from "../../region-switcher/region";
 import KalioOftenAdded from "../KalioOftenAdded.vue";
 
 /* The size of a variant in words: its volume, weight, pack, colour or style. */
@@ -115,6 +116,10 @@ export default {
   },
 
   methods: {
+    /* The cart's amounts come in the basket's currency (the server converts it
+       after a currency change); money() shows them in the visitor's, so they
+       are right even before the cart comes back. */
+    money,
     settling,
 
     image(product) {
