@@ -29,7 +29,7 @@ When a merchant asks for a theme ("use the yellow theme", "my brand colour is #F
 | `palette` | `"argon"` (Argon: green buy buttons and a red brand; the default), `"cobalt"`, `"plum"`, `"teal"`, `"tangerine"` |
 | `brandColor` | any `"#RRGGBB"`; when set it replaces `palette` |
 | `mode` | `"light"` or `"dark"` |
-| `themeSwitcher` | `"showcase"` (the visitor switcher shows only on Argon's own showcase shop, Digini 15549; the default), `"on"` (the merchant's visitors get a Theme button in the header), `"off"` |
+| `themeSwitcher` | `"showcase"` (the visitor switcher shows only on Argon's own showcase shop, Digini 15549; the default), `"on"` (the merchant's visitors get the Theme row in the footer), `"off"` |
 | `textOnBrand` | only with `brandColor`: `"auto"` (a light brand such as yellow keeps its colour, with dark words on it) or `"white"` (white words; a light colour is darkened) |
 
 Worked examples (change only these lines; leave the rest of the file as it is):
@@ -50,4 +50,4 @@ Then release and check:
    ```sh
    PAGES="home=/,category=/<a category>,product=/product/<id>" node components/theme-switcher/tools/contrast-audit.cjs https://<your shop> ".ar-cats"
    ```
-3. If the visitor switcher is on, also run `components/theme-switcher/tools/header-check.cjs` (Argon's selectors: `WAIT=".ar-cats" BRAND=".ar-header__logo" CART=".ar-act.-cart" ACCOUNT=".ar-act.-me" STORAGE_KEY=argon-theme`).
+3. If the visitor switcher is on, also run the kit's `ring-sweep.cjs` in light and dark (`STORAGE='{"argon-theme":"{\\"palette\\":\\"argon\\",\\"mode\\":\\"dark\\"}"}'`). The switcher is the Theme row in the footer (since 1.0.4).

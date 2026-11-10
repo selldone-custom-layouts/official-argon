@@ -57,6 +57,13 @@
       </div>
     </div>
 
+    <!-- The theme switcher (the owner, 10 November 2026: in the footer on
+         every Layout): palettes, a custom colour and Light / Dark, in a strip
+         of its own above the legal row; only on Argon's showcase shop. -->
+    <div class="ar-footer__theme">
+      <div class="ar-wrap"><theme-switcher-row /></div>
+    </div>
+
     <div class="ar-footer__legal">
       <div class="ar-wrap ar-footer__legal-in">
         <argon-logo class="ar-footer__logo" />
@@ -76,6 +83,7 @@
 
 <script>
 import ArgonLogo from "../ArgonLogo.vue";
+import ThemeSwitcherRow from "../../theme-switcher/ThemeSwitcherRow.vue";
 import SStorefrontSocialButtons from "@selldone/components-vue/storefront/social/SStorefrontSocialButtons.vue";
 import SLanguageSelector from "@selldone/components-vue/storefront/language/selector/SLanguageSelector.vue";
 import UCurrencySelector from "@selldone/components-vue/ui/currency/selector/UCurrencySelector.vue";
@@ -86,7 +94,7 @@ import { aisleRoute, aisles, catalogueRoute, dealsRoute } from "../../kalio/kali
 
 export default {
   name: "ArgonFooter",
-  components: { ArgonLogo, SStorefrontSocialButtons, SLanguageSelector, UCurrencySelector, SFooterSectionGdpr, SFooterSectionSelldone },
+  components: { ArgonLogo, ThemeSwitcherRow, SStorefrontSocialButtons, SLanguageSelector, UCurrencySelector, SFooterSectionGdpr, SFooterSectionSelldone },
   inject: ["$shop"],
 
   data: () => ({ cats: [], email: "", busy: false, sent: false, error: null, year: new Date().getFullYear() }),

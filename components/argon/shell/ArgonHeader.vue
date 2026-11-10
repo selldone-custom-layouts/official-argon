@@ -7,16 +7,15 @@
      category with its picture, opened and closed by a click, no scrim) and
      "Trending" (the shop's live tags) dropdowns and a "Deals" link; a wide
      rounded grey search joined to a dark "Search" button, with suggestions
-     while typing; then Account, Wishlist, Theme (the shared switcher,
-     components/theme-switcher: the palettes, a custom colour and Light /
-     Dark in a small panel; only on Argon's showcase shop) and Cart, each an
-     icon with a small label, the cart with a count bubble.
+     while typing; then Account, Wishlist and Cart, each an icon with a
+     small label, the cart with a count bubble. (The theme switcher lives in
+     the footer since 1.0.4.)
   3. A thin benefits strip: three honest lines, each a link ("Deal prices
      until <the deals' real end>", "Compare up to 4 products", "Track any
      order").
 
   Phone: the logo tile and a menu button on the left, the account,
-  wishlist, theme and cart icons on the right, the search across the screen,
+  wishlist and cart icons on the right, the search across the screen,
   then the benefits as one line that turns every few seconds. The menu
   button opens a side panel with every category, the trending tags and the
   help links. There is no bottom tab bar. The cart opens Kalio's drawer
@@ -121,10 +120,6 @@
           <span class="ms">favorite</span><span class="ar-act__t">Wishlist</span>
         </component>
 
-        <theme-switcher-button button-class="ar-act -theme">
-          <span class="ms">palette</span><span class="ar-act__t">Theme</span>
-        </theme-switcher-button>
-
         <button :aria-label="`Cart, ${units} ${units === 1 ? 'item' : 'items'}`" class="ar-act -cart" type="button" @click="cart = true">
           <span class="ms">shopping_cart</span><i v-if="units" class="ar-act__n">{{ units > 99 ? "99+" : units }}</i><span class="ar-act__t">Cart</span>
         </button>
@@ -225,7 +220,6 @@
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import ArgonLogo from "../ArgonLogo.vue";
-import ThemeSwitcherButton from "../../theme-switcher/ThemeSwitcherButton.vue";
 import KalioBasketDrawer from "../../kalio/shell/KalioBasketDrawer.vue";
 import { aisleRoute, aisles, catalogueRoute, dealsRoute } from "../../kalio/kalio-catalog";
 import { basketView } from "../../kalio/kalio-basket";
@@ -233,7 +227,7 @@ import { catalogue, dealsEndDate, moneyOf, shortDate, tagged, tagTitle } from ".
 
 export default {
   name: "ArgonHeader",
-  components: { ArgonLogo, ThemeSwitcherButton, KalioBasketDrawer },
+  components: { ArgonLogo, KalioBasketDrawer },
   mixins: [CurrencyMixin],
   inject: ["$shop"],
 

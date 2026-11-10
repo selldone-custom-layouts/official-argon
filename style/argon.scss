@@ -3467,7 +3467,6 @@ $font: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
 
 /* The Theme action while its panel is open, and the drawers' close button:
    the quiet grey with ink, like every other header action. */
-.ar-header .ar-act.-theme[aria-expanded="true"],
 .ar-header .ar-act[aria-expanded="true"] {
   background: var(--ar-page) !important;
   color: var(--ar-ink) !important;
@@ -3480,5 +3479,27 @@ $font: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   &:hover {
     background: var(--ar-line) !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ The theme switcher in the footer (1.0.4) ━━━━━━━━━━━━━━━━━━━━━ */
+/* The owner, 10 November 2026: the theme setting lives in the footer on every
+   Layout. A strip of its own above the legal row, on the footer's content
+   edge, a hairline on top; words from the footer's tokens, the switch's and
+   the swatches' edges 3:1 on the footer's ground in both modes. Not drawn at
+   all on a shop that does not show the switcher. */
+.ar-footer__theme {
+  box-shadow: inset 0 1px 0 var(--ar-line);
+  --ts-ink: var(--ar-ink);
+  --ts-muted: var(--ar-muted);
+  --ts-line: var(--ar-deco);
+
+  > .ar-wrap {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  &:not(:has(.ts-row)) {
+    display: none;
   }
 }

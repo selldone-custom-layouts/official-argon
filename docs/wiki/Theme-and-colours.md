@@ -15,12 +15,12 @@ Only the `argon` palette has two colours. Every other palette, a custom colour a
 
 ## On Argon's showcase shop
 
-A **Theme** button sits at the top right of the header, between Wishlist and Cart (on a phone, one of the four icons). It opens a small panel:
+The **Theme** row sits in the footer, in a strip of its own above the legal row (since 1.0.4; the owner, 10 November 2026: the theme setting lives in the footer on every Layout). It holds:
 
 - **Colour:** Argon (the default: green buttons, red brand), Cobalt, Plum, Teal, Tangerine, and **Custom colour** (any colour from the browser's colour picker; it is made readable in light and dark, with a note "Adjusted for readability" when it had to change).
 - **Mode:** Light or Dark.
 
-One click changes the whole site at once, with no reload: Argon's colours, the Kalio base, Vuetify's theme and Selldone's own parts (the buy button, prices, the cart drawer, the checkout sheets, dialogs). The choice is kept in the browser (key `argon-theme`) and painted before the first paint, so the default never flashes. The panel has no scrim, closes on a second click, Esc or a click outside, and works with the keyboard.
+One click changes the whole site at once, with no reload: Argon's colours, the Kalio base, Vuetify's theme and Selldone's own parts (the buy button, prices, the cart drawer, the checkout sheets, dialogs). The choice is kept in the browser (key `argon-theme`) and painted before the first paint, so the default never flashes. The row works with the keyboard: Tab reaches every swatch and the switch, arrow keys move between swatches. On a phone the palettes stay on one line and Light / Dark wraps under them.
 
 ## On your own shop
 
@@ -41,7 +41,7 @@ export const THEME_SETTINGS: ThemeSettings = {
 | `palette` | `"argon"` (Argon: green buy buttons and a red brand; the default), `"cobalt"`, `"plum"`, `"teal"`, `"tangerine"` |
 | `brandColor` | any `"#RRGGBB"`; when set it replaces `palette` |
 | `mode` | `"light"` or `"dark"` |
-| `themeSwitcher` | `"showcase"` (the visitor switcher shows only on Argon's own showcase shop, Digini 15549; the default), `"on"` (your visitors get a Theme button in the header), `"off"` |
+| `themeSwitcher` | `"showcase"` (the visitor switcher shows only on Argon's own showcase shop, Digini 15549; the default), `"on"` (your visitors get the Theme row in the footer), `"off"` |
 | `textOnBrand` | only with `brandColor`: `"auto"` (a light brand such as yellow keeps its colour, with dark words on it) or `"white"` (white words; a light colour is darkened) |
 
 Every colour is made readable automatically: buttons, links, the logo tile and dark mode.
@@ -94,10 +94,9 @@ Run these from the repository root after a theme change. They need Playwright; s
    SHOP=<your shop's xapi name> STORAGE_KEY=argon-theme WAIT=".ar-cats" CART=".ar-act.-cart" \
      node components/theme-switcher/tools/cart-audit.cjs https://<your shop> argon dark
    ```
-3. **Header and Theme panel**, only if the visitor switcher is on. It must print `PROBLEMS 0`:
+3. **Rings and edges**, only if the visitor switcher is on (the Theme row is in the footer). It must print `TOTAL 0` in light and in dark:
    ```sh
-   STORAGE_KEY=argon-theme WAIT=".ar-cats" BRAND=".ar-header__logo" CART=".ar-act.-cart" ACCOUNT=".ar-act.-me" \
-     node components/theme-switcher/tools/header-check.cjs https://<your shop> argon dark
+   STORAGE='{"argon-theme":"{\"palette\":\"argon\",\"mode\":\"dark\"}"}' PAGES="home=/"      node <kit>/single-vendor-shop/ring-sweep.cjs https://<your shop> ".ar-cats"
    ```
 4. **Colour maths:** `node components/theme-switcher/theme-color.test.mjs`.
 

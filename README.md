@@ -36,7 +36,7 @@
 - near-black pills for quick links, sale red for "Save $X";
 - Barlow type and Material Symbols Rounded icons;
 - flat buttons, hover changes the colour only, no line under any word or icon, selection rings inside the box;
-- a **Theme** button at the top right of the header on Argon's own showcase shop: five palettes (Argon, Cobalt, Plum, Teal, Tangerine), a **Custom colour** and Light / Dark. One click changes the whole site, Selldone's own parts too, and the choice stays in the browser.
+- a **Theme** row in the footer on Argon's own showcase shop: five palettes (Argon, Cobalt, Plum, Teal, Tangerine), a **Custom colour** and Light / Dark. One click changes the whole site, Selldone's own parts too, and the choice stays in the browser.
 
 It runs on **[argon.selldone.shop](https://argon.selldone.shop)**, one address of the Selldone shop Digini. Selldone lets each domain of a shop carry its own Layout.
 
@@ -51,9 +51,9 @@ Selldone's own cart, checkout, payments and orders keep working underneath. Noth
 | ![Product page on desktop](docs/screenshots/desktop-product.jpg) | ![Product page on a phone](docs/screenshots/phone-product.jpg) |
 | ![Cart on desktop](docs/screenshots/desktop-cart.jpg) | ![Cart on a phone](docs/screenshots/phone-cart.jpg) |
 
-| The Theme panel | Dark mode |
+| The Theme row (footer) | Dark mode |
 | --- | --- |
-| ![The Theme panel open in the header](docs/screenshots/desktop-theme.jpg) | ![Argon in dark mode](docs/screenshots/desktop-dark.jpg) |
+| ![The Theme row in the footer](docs/screenshots/desktop-theme.jpg) | ![Argon in dark mode](docs/screenshots/desktop-dark.jpg) |
 
 ## Highlights
 
