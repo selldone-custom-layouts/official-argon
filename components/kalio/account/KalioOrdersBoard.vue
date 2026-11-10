@@ -48,7 +48,7 @@
     <div v-else-if="account.failed && !account.orders.length && !USER()" class="k-board__empty">
       <v-icon size="28">receipt_long</v-icon>
       <p>No orders on this device yet. Sign in to see the orders on your account.</p>
-      <button class="k-btn k-btn--solid" type="button" @click="NeedLogin()">Sign in</button>
+      <button class="k-btn k-btn--solid" type="button" @click="askSignIn">Sign in</button>
     </div>
 
     <div v-else-if="account.failed && !account.orders.length" class="k-board__empty">
@@ -175,6 +175,7 @@
 
 <script>
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
+import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import { reorder } from "../kalio-basket";
 import { productImage, vendors } from "../kalio-catalog";
 import KalioOrderKinds from "./KalioOrderKinds.vue";
@@ -279,6 +280,11 @@ export default {
   },
 
   methods: {
+    /** The app's sign-in sheet (KalioSignIn). This board has no AuthMixin, so
+     *  NeedLogin() was not a function and the guest's "Sign in" did nothing. */
+    askSignIn() {
+      EventBus.$emit("need-login", true);
+    },
     standing,
     productIds,
     paidWords,

@@ -22,6 +22,7 @@
 
 import { reactive } from "vue";
 import { PriceHelper } from "@selldone/core-js";
+import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import { percentOff, priceOf } from "../kalio/kalio-catalog";
 
 declare const window: any;
@@ -269,7 +270,9 @@ export const saved = reactive<Record<number, boolean>>({});
 
 export function toggleSaved(vm: any, product: any): Promise<void> {
   if (!vm.USER()) {
-    vm.NeedLogin();
+    // The app's own sign-in event (KalioSignIn listens). Cards have no AuthMixin,
+    // so vm.NeedLogin() threw "is not a function" and a guest's heart did nothing.
+    EventBus.$emit("need-login", true);
     return Promise.resolve();
   }
   const on = saved[product.id] ?? !!product.wishlist;
