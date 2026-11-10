@@ -128,7 +128,7 @@
       </section>
 
       <!-- ▆▆▆▆ 3. Buy ▆▆▆▆ -->
-      <section class="ar-pcard ar-pdp__buy">
+      <section ref="buyCard" class="ar-pcard ar-pdp__buy">
         <div class="ar-pdp__more">
           <s-product-section-service v-model:preferences="preferences"></s-product-section-service>
           <s-product-section-valuation
@@ -225,6 +225,27 @@
       </p>
     </div>
 
+    <!-- Phone: a buy bar at the foot of the screen once the buy card has
+         scrolled away (the price, and Add to cart, or the count in the cart
+         and Checkout). A plain panel teleported to the body. -->
+    <teleport to="body">
+      <transition name="ar-bar">
+        <div v-if="showBar" aria-label="Buy" class="ar-buybar" role="region">
+          <div class="ar-buybar__p">
+            <u-price :amount="money.now" :currency="currency" class="ar-buybar__now" />
+            <small v-if="money.save > 0">Save {{ moneyWhole(money.save) }}</small>
+          </div>
+          <router-link v-if="corresponding_basket_item" :to="cartTo" class="ar-btn ar-buybar__go">
+            <span class="ms">shopping_cart</span>{{ corresponding_basket_item.count }} in cart · Checkout
+          </router-link>
+          <button v-else-if="simpleBuy" :disabled="stock <= 0 || adding" class="ar-btn ar-buybar__go" type="button" @click="addToCart">
+            {{ stock > 0 ? "Add to cart" : "Out of stock" }}
+          </button>
+          <button v-else class="ar-btn ar-buybar__go" type="button" @click="toBuy">Choose options</button>
+        </div>
+      </transition>
+    </teleport>
+
     <basket-item-user-message-form
       v-if="basket"
       :basket="basket"
@@ -249,7 +270,7 @@ export default {
   components: { ArgonDealClock, ArgonComplete },
 
   data() {
-    return { compact: false, qty: 1, adding: false, galAt: 0, galN: 0, incentRaw: "" };
+    return { compact: false, qty: 1, adding: false, galAt: 0, galN: 0, incentRaw: "", buyInView: true };
   },
 
   computed: {
@@ -322,6 +343,12 @@ export default {
       if (/⚡/u.test(e)) return "bolt";
       return "trending_up";
     },
+    showBar() {
+      return this.compact && !this.quickBuyMode && !this.buyInView && !this.isSubscription && (this.simpleBuy || !!this.corresponding_basket_item);
+    },
+    cartTo() {
+      return { name: window.$storefront.routes.BASKET_PAGE, params: { type: (this.$product.type || "PHYSICAL").toUpperCase() } };
+    },
     /* A plain physical product gets Argon's quantity menu and Add to cart;
        anything Selldone's own button knows more about keeps that button. */
     simpleBuy() {
@@ -365,8 +392,14 @@ export default {
     );
     this.onResize();
     window.addEventListener("resize", this.onResize, { passive: true });
+    /* The phone's buy bar shows while the buy card is out of view. */
+    if (typeof IntersectionObserver !== "undefined" && this.$refs.buyCard) {
+      this.buyIo = new IntersectionObserver((entries) => (this.buyInView = entries.some((e) => e.isIntersecting)), { rootMargin: "0px 0px -40px 0px" });
+      this.buyIo.observe(this.$refs.buyCard);
+    }
   },
   beforeUnmount() {
+    this.buyIo?.disconnect();
     window.removeEventListener("resize", this.onResize);
   },
 
@@ -382,6 +415,9 @@ export default {
     },
     toSpecs() {
       document.getElementById("ar-specs")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    },
+    toBuy() {
+      this.$refs.buyCard?.scrollIntoView({ behavior: "smooth", block: "center" });
     },
     galGo(d) {
       const g = this.$refs.gallery;

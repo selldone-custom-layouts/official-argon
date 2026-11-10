@@ -3395,3 +3395,72 @@ $font: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
 .ar-ltop__d .ms {
   color: var(--ar-buy-t) !important;
 }
+
+/* ━━━━━━━━━━━━━━━━━━━━━ The phone's buy bar (product page) ━━━━━━━━━━━━━━━━━━━━━ */
+.ar-buybar {
+  position: fixed;
+  z-index: 1500;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  background: var(--ar-surface);
+  box-shadow: inset 0 1px 0 var(--ar-line), 0 -8px 24px -16px rgba(0, 0, 0, 0.35);
+  color: var(--ar-ink);
+  font-family: "Barlow", system-ui, sans-serif;
+
+  &__p {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    small {
+      color: var(--ar-red-t);
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+  }
+
+  &__now,
+  &__now .u--price {
+    font: 700 20px/1.1 "Barlow", sans-serif !important;
+    color: var(--ar-ink) !important;
+  }
+
+  &__go {
+    flex: 1;
+    height: 46px;
+    min-width: 0;
+    padding: 0 12px;
+
+    .ms {
+      font-size: 19px;
+    }
+  }
+}
+
+.ar-bar-enter-active,
+.ar-bar-leave-active {
+  transition: transform 0.2s ease;
+}
+
+.ar-bar-enter-from,
+.ar-bar-leave-to {
+  transform: translateY(100%);
+}
+
+@media (max-width: 899px) {
+  .ar-product {
+    padding-bottom: 84px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ar-bar-enter-active,
+  .ar-bar-leave-active {
+    transition: none;
+  }
+}
