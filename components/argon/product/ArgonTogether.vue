@@ -1,5 +1,5 @@
 <!--
-  Besti — "Frequently bought together" (product page).
+  Argon — "Frequently bought together" (product page).
 
   This product and two more, each with a tick to leave it out, the total of
   the ticked ones and one blue "Add all to cart". The two come from the
@@ -10,29 +10,29 @@
   Each goes in with its first colour or capacity in stock.
 -->
 <template>
-  <section v-if="items.length > 1" id="b-together" aria-labelledby="b-together-h" class="b-sec b-together">
-    <header class="b-head"><h2 id="b-together-h">{{ curated ? "Frequently bought together" : "Goes well together" }}</h2></header>
-    <div class="b-together__box">
-      <div class="b-together__row">
+  <section v-if="items.length > 1" id="ar-together" aria-labelledby="ar-together-h" class="ar-sec ar-together">
+    <header class="ar-head"><h2 id="ar-together-h">{{ curated ? "Frequently bought together" : "Goes well together" }}</h2></header>
+    <div class="ar-together__box">
+      <div class="ar-together__row">
         <template v-for="(it, i) in items" :key="it.p.id">
-          <span v-if="i" aria-hidden="true" class="b-together__plus"><span class="ms">add</span></span>
-          <div :class="{ '-off': !it.on }" class="b-together__it">
-            <router-link :to="to(it.p)" class="b-together__img"><img :src="image(it.p)" alt="" loading="lazy" /></router-link>
-            <label class="b-together__pick">
+          <span v-if="i" aria-hidden="true" class="ar-together__plus"><span class="ms">add</span></span>
+          <div :class="{ '-off': !it.on }" class="ar-together__it">
+            <router-link :to="to(it.p)" class="ar-together__img"><img :src="image(it.p)" alt="" loading="lazy" /></router-link>
+            <label class="ar-together__pick">
               <input v-model="it.on" type="checkbox" />
               <i aria-hidden="true"><span class="ms">check</span></i>
               <span>
                 <template v-if="!i"><b>This item:</b> </template>{{ it.p.title }}
               </span>
             </label>
-            <b class="b-together__price"><u-price :amount="priceOf(it)" :currency="currency" /></b>
+            <b class="ar-together__price"><u-price :amount="priceOf(it)" :currency="currency" /></b>
           </div>
         </template>
       </div>
-      <div class="b-together__sum">
+      <div class="ar-together__sum">
         <small>Total for {{ count === items.length ? (count === 3 ? "all three" : "both") : count === 1 ? "one item" : `${count} items` }}</small>
-        <u-price :amount="total" :currency="currency" class="b-together__total" />
-        <button :disabled="!count || adding" class="b-btn" type="button" @click="addAll">
+        <u-price :amount="total" :currency="currency" class="ar-together__total" />
+        <button :disabled="!count || adding" class="ar-btn" type="button" @click="addAll">
           <template v-if="done"><span class="ms">check</span>Added to cart</template>
           <template v-else><span class="ms">add_shopping_cart</span>Add {{ count === items.length && count > 1 ? `all ${count}` : count }} to cart</template>
         </button>
@@ -44,10 +44,10 @@
 <script>
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { addVariant, mayBuy, quickAdd } from "../../kalio/kalio-basket";
-import { catalogue, moneyOf, tagged } from "../besti";
+import { catalogue, moneyOf, tagged } from "../argon";
 
 export default {
-  name: "BestiTogether",
+  name: "ArgonTogether",
   mixins: [CurrencyMixin],
   props: {
     product: { type: Object, required: true },

@@ -1,0 +1,139 @@
+/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Argon — the theme tokens ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+
+   Every colour Argon paints comes from these tokens: argon.scss and
+   argon-pages.scss read them through their $variables, and Kalio's tokens
+   read them (kalio-tokens.scss: --k-green is var(--ar-blue), which is the
+   buy colour).
+
+   Argon is a bright catalogue store: white page, light-grey section grounds,
+   a green buy colour (every "Add to cart" and Checkout), a red brand colour
+   (the logo tile, links, accents, a saving's words), near-black pills for
+   quick links, Barlow type.
+
+   The values here are Argon's designed default: Argon red, light. The shared
+   theme switcher (components/theme-switcher/, config argon-theme.ts) writes a
+   palette's values and the dark set inline on <html>, and puts the class
+   "ar-dark" on it while dark, before the app mounts; it does that only on
+   Argon's own showcase shop unless argon-theme.settings.ts says otherwise.
+   The build step (tools/postcss-dark-tokens.mjs, vite.config.ts) gives every
+   remaining fixed colour a dark value under html.ar-dark. */
+
+:root {
+  --ar-max: 1440px;
+  --ar-pad: 32px;
+  --ar-r: 10px;
+  --ar-r-s: 8px;
+
+  /* The palette (the switcher rewrites these inline). */
+  --ar-buy: #007a3d; /* every buy button: "Add to cart", Checkout */
+  --ar-buy-d: #00602f; /* its hover */
+  --ar-buy-l: #e6f2eb; /* a light wash of it */
+  --ar-buy-t: #007a3d; /* it as words */
+  --ar-buy-rgb: 0, 122, 61;
+  --ar-brand: #c8102e; /* the logo tile, the deal badge, accents */
+  --ar-brand-d: #a50d25;
+  --ar-brand-l: #fdecee;
+  --ar-brand-t: #c8102e; /* links and accent words */
+  --ar-brand-rgb: 200, 16, 46;
+  --ar-head: #c8102e; /* the logo tile (the light brand in both modes) */
+  --ar-head-d: #a50d25;
+  --ar-on-head: #ffffff;
+  --ar-on-head-rgb: 255, 255, 255;
+  --ar-on-brand: #ffffff; /* words on a buy button */
+  --ar-on-brand-rgb: 255, 255, 255;
+
+  /* The inherited names (Kalio, Walio and Besti pieces read these). */
+  --ar-blue: var(--ar-buy);
+  --ar-blue-d: var(--ar-buy-d);
+  --ar-blue-l: var(--ar-buy-l);
+  --ar-blue-t: var(--ar-brand-t); /* the accent as words: links are the brand colour */
+  --ar-blue-rgb: var(--ar-buy-rgb);
+  --ar-navy: #1f1f1f; /* dark bands (promo cards, the share card) */
+  --ar-navy-2: #2e2e2e;
+  --ar-pop: #ffffff;
+  --ar-brand-ink: var(--ar-ink); /* brand names, the 404's digits */
+
+  /* Quick links: near-black pills (light pills in dark mode). */
+  --ar-pill: #1a1a1a;
+  --ar-on-pill: #ffffff;
+  --ar-pill-hover: #3a3a3a;
+
+  /* Fixed accents */
+  --ar-yellow: #ffd91a;
+  --ar-on-yellow: #1a1a1a;
+  --ar-yellow-l: #fff6c2;
+  --ar-red: #c8102e; /* sale red: the deal badge (white words) */
+  --ar-red-solid: #c8102e; /* fixed red fills under white words */
+  --ar-red-t: #c8102e; /* a saving as words (sale red in every palette) */
+  --ar-new: #1d4fc4; /* the "New" badge */
+  --ar-green: #007a3d;
+  --ar-green-t: #007a3d;
+  --ar-warn-t: #a14a00;
+  --ar-promo: #7a0c1e; /* the dark red promo band (white words, 10:1) */
+  --ar-dark-card: #1f1f1f; /* the dark promo cards */
+
+  /* Grounds, lines and words */
+  --ar-bg: #ffffff;
+  --ar-surface: #ffffff;
+  --ar-page: #f2f2f2; /* section grounds */
+  --ar-tile: #efefef; /* category tiles */
+  --ar-line: #dedede;
+  --ar-line-2: #c4c4c4;
+  --ar-hover-line: #a8a8a8;
+  --ar-deco: #8a8a8a; /* separators and empty stars: 3:1 on the ground */
+  --ar-ink: #1a1a1a;
+  --ar-ink-2: #333333;
+  --ar-muted: #5c5c5c;
+  --ar-soft: #6b6b6b;
+  --ar-off-bg: #e8e8e8;
+  --ar-off-ink: #4f4f4f;
+  --ar-photo: #ffffff; /* a packshot's tile: white in both modes */
+  --ar-ph-bg: #e9ecef; /* a photo slot waiting for its photo */
+  --ar-ph-line: #dde1e6;
+  --ar-ph-ink: #5c5c5c;
+  --ar-sw-edge: rgba(15, 23, 41, 0.34); /* a swatch disc's edge */
+  --ar-pop-shadow: rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 899px) {
+  :root {
+    --ar-pad: 16px;
+  }
+}
+
+/* Dark (html.ar-dark, argon-theme.ts sets the grounds and words): Vuetify's
+   dark theme on Argon's grounds. */
+html.ar-dark,
+html.ar-dark .v-theme--dark {
+  --v-theme-background: 18, 19, 21 !important;
+  --v-theme-on-background: 236, 236, 238 !important;
+  --v-theme-surface: 27, 29, 33 !important;
+  --v-theme-on-surface: 236, 236, 238 !important;
+  --v-theme-surface-variant: 51, 54, 60 !important;
+  --v-theme-on-surface-variant: 236, 236, 238 !important;
+}
+
+/* The page's own ground under the app (overscroll, the moment before the app
+   draws) follows the mode; Selldone's grey body rule loads later. */
+html body,
+html {
+  background: var(--ar-bg) !important;
+}
+
+/* Dark: brand marks drawn in black (Apple's sign-in mark) turn white. */
+html.ar-dark img[src*="apple-b"] {
+  filter: invert(1);
+}
+
+/* Dark: Selldone's own white rows (Vuetify's .bg-white, e.g. the billing
+   Business / Personal choice) take the card's ground; photo tiles keep white. */
+html.ar-dark .bg-white:not(:has(> img, > .v-img)) {
+  background-color: var(--ar-surface) !important;
+  color: var(--ar-ink) !important;
+}
+
+/* A picture's caption in a product's or article's text: Selldone's #ccc on
+   white read 1.6:1; the muted ink reads in both modes. */
+.v-application figure figcaption {
+  color: var(--ar-muted) !important;
+}

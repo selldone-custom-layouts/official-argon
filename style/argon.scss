@@ -1,0 +1,3193 @@
+/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Argon — the catalogue store ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+
+   A bright, busy, friendly catalogue store, after argos.co.uk's sections
+   but in Argon's own dress: a white page, light-grey section grounds,
+   compact Barlow type and lots of rows. The brand colour (red, --ar-brand)
+   paints the logo tile, links and accents; the buy colour (green, --ar-buy)
+   every primary button ("Add to cart", Checkout); near-black pills the
+   quick links. Corners 8–10px, buttons flat, hover changes the colour only,
+   no line under anything, and every ring drawn inside its own box.
+   Loaded last (storefront.scss). Header, footer, home, card, rails, the
+   results page and the product page. */
+
+$buy: var(--ar-buy);
+$buy-d: var(--ar-buy-d);
+$buy-l: var(--ar-buy-l);
+$brand: var(--ar-brand);
+$brand-t: var(--ar-brand-t);
+$brand-l: var(--ar-brand-l);
+$red: var(--ar-red);
+$red-t: var(--ar-red-t);
+$page: var(--ar-page);
+$tile: var(--ar-tile);
+$line: var(--ar-line);
+$line-2: var(--ar-line-2);
+$ink: var(--ar-ink);
+$muted: var(--ar-muted);
+$soft: var(--ar-soft);
+$bg: var(--ar-bg);
+$surface: var(--ar-surface);
+$photo: var(--ar-photo);
+$font: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Base ━━━━━━━━━━━━━━━━━━━━━ */
+.v-application,
+.s--shop {
+  font-family: $font;
+}
+
+/* Buttons: the buy colour, white words, flat, 8px corners. */
+.ar-btn {
+  height: 44px;
+  border-radius: var(--ar-r-s);
+  background: $buy;
+  font: 700 15px/1 $font;
+
+  &:hover {
+    background: $buy-d;
+  }
+
+  &.-line {
+    background: $surface;
+    color: $ink !important;
+    box-shadow: inset 0 0 0 1.5px $ink !important;
+
+    &:hover {
+      background: $page;
+    }
+  }
+
+  &.-white {
+    background: #fff;
+    color: #1a1a1a !important; /* on the dark red band in every mode */
+
+    &:hover {
+      background: #f2f2f2;
+    }
+  }
+}
+
+/* Quick links: near-black pills. */
+.ar-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: var(--ar-r-s);
+  background: var(--ar-pill);
+  color: var(--ar-on-pill) !important;
+  font: 700 14px/1.2 $font;
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s;
+
+  &:hover {
+    background: var(--ar-pill-hover);
+  }
+
+  &.-line {
+    background: $surface;
+    color: $ink !important;
+    box-shadow: inset 0 0 0 1.5px $ink;
+
+    &:hover {
+      background: $page;
+    }
+  }
+}
+
+.ar-link,
+.ar-more {
+  color: $brand-t !important;
+  font-weight: 700;
+
+  &:hover {
+    color: var(--ar-brand-d) !important;
+  }
+}
+
+.ar-sec {
+  margin-top: 40px;
+}
+
+.ar-head h2 {
+  font: 700 24px/1.2 $font !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* The arrows of rails and carousels: white discs with a dark, heavy
+   chevron, an inset edge (never a shadow outside the disc). */
+.ar-arrow,
+.ar-round {
+  background: #fff !important;
+  color: #1a1a1a !important;
+  box-shadow: inset 0 0 0 1px #c4c4c4 !important;
+
+  &:hover {
+    color: #1a1a1a !important;
+    background: #f2f2f2 !important;
+  }
+}
+
+/* A badge on a photo: small, square-ish, white words. */
+.ar-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--ar-red-solid);
+  color: #fff;
+  font: 700 11px/1 $font;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+
+  &.-new {
+    background: var(--ar-new);
+  }
+
+  &.-best {
+    background: #1a1a1a;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Header ━━━━━━━━━━━━━━━━━━━━━ */
+.ar-header {
+  position: relative;
+  z-index: 30;
+  background: $surface;
+  color: $ink;
+  font-family: $font;
+}
+
+.ar-util {
+  &__in {
+    display: flex;
+    justify-content: flex-end;
+    gap: 22px;
+    height: 30px;
+    align-items: center;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: $muted !important;
+      font-size: 13px;
+      font-weight: 500;
+
+      .ms {
+        font-size: 17px;
+      }
+
+      &:hover {
+        color: $ink !important;
+      }
+    }
+  }
+}
+
+.ar-header__main {
+  position: relative; /* the theme panel and the dropdowns are placed in it */
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  height: 76px;
+}
+
+.ar-logo {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  height: 56px;
+  padding: 0 14px;
+  border-radius: var(--ar-r);
+  background: var(--ar-head);
+  color: var(--ar-on-head) !important;
+
+  &__w {
+    font: 800 25px/1 $font;
+    letter-spacing: -0.03em;
+    transform: translateY(-1px);
+  }
+
+  &:hover {
+    background: var(--ar-head-d);
+  }
+}
+
+.ar-burger {
+  display: none;
+}
+
+.ar-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+
+  &__b {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    height: 40px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: var(--ar-r-s);
+    background: none;
+    color: $ink !important;
+    font: 600 15px $font;
+    cursor: pointer;
+
+    .ms {
+      font-size: 20px;
+      transition: transform 0.15s;
+
+      &.-up {
+        transform: rotate(180deg);
+      }
+    }
+
+    &:hover,
+    &[aria-expanded="true"] {
+      background: $page;
+    }
+
+    &.-deals {
+      color: $brand-t !important;
+      font-weight: 700;
+    }
+  }
+}
+
+.ar-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  border-radius: 999px;
+  background: $page;
+
+  &__ic {
+    flex: none;
+    margin-left: 16px;
+    color: $muted;
+  }
+
+  input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 12px;
+    border: 0;
+    outline: 0;
+    background: none;
+    color: $ink;
+    font: 500 15px $font;
+
+    &::placeholder {
+      color: $soft;
+      opacity: 1;
+    }
+
+    &::-webkit-search-cancel-button {
+      display: none;
+    }
+  }
+
+  &:focus-within {
+    box-shadow: inset 0 0 0 2px $ink;
+  }
+
+  &__go {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 100%;
+    padding: 0 22px;
+    border: 0;
+    border-radius: 0 999px 999px 0;
+    background: var(--ar-pill);
+    color: var(--ar-on-pill) !important;
+    font: 700 15px $font;
+    cursor: pointer;
+
+    .ms {
+      display: none;
+      color: inherit !important;
+    }
+
+    &:hover {
+      background: var(--ar-pill-hover);
+    }
+  }
+}
+
+.ar-suggest {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  padding: 6px;
+  border-radius: var(--ar-r);
+  background: $surface;
+  box-shadow: inset 0 0 0 1px $line, 0 16px 40px -16px rgba(0, 0, 0, 0.35);
+
+  a,
+  button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    color: $ink !important;
+    font: 600 14px $font;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover,
+    &.-on {
+      background: $page;
+      color: $brand-t !important;
+    }
+  }
+
+  &__cat small {
+    margin-left: auto;
+    color: $muted;
+    font-weight: 500;
+  }
+
+  &__p {
+    img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      flex: none;
+      border-radius: 6px;
+      background: $photo;
+    }
+
+    > span {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .u--price {
+      font-weight: 800;
+      flex: none;
+    }
+  }
+
+  &__all {
+    justify-content: space-between;
+    margin-top: 4px;
+    color: $brand-t !important;
+  }
+}
+
+.ar-acts {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: none;
+}
+
+.ar-act {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 58px;
+  height: 52px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: var(--ar-r-s);
+  background: none;
+  color: $ink !important;
+  font: 600 12px/1 $font;
+  white-space: nowrap;
+  cursor: pointer;
+
+  .ms {
+    font-size: 26px;
+    color: inherit !important;
+  }
+
+  &:hover,
+  &[aria-expanded="true"] {
+    background: $page;
+  }
+
+  &__t {
+    max-width: 72px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__n {
+    position: absolute;
+    top: 3px;
+    left: calc(50% + 6px);
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: var(--ar-red-solid);
+    color: #fff;
+    font: 700 11px/18px $font;
+    font-style: normal;
+    text-align: center;
+  }
+
+  &.-wait {
+    opacity: 0.7;
+  }
+}
+
+/* The Shop and Trending dropdowns, under the main row. */
+.ar-dd {
+  position: absolute;
+  z-index: 45;
+  top: 100%;
+  border-radius: var(--ar-r);
+  background: $surface;
+  box-shadow: inset 0 0 0 1px $line, 0 20px 48px -20px rgba(0, 0, 0, 0.4);
+
+  &.-mega {
+    left: var(--ar-pad);
+    right: var(--ar-pad);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: 8px;
+    padding: 16px;
+  }
+
+  &.-trend {
+    left: calc(var(--ar-pad) + 170px);
+    display: grid;
+    gap: 2px;
+    min-width: 220px;
+    padding: 8px;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  &__cat,
+  &__tag,
+  &__side a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 10px;
+    border-radius: var(--ar-r-s);
+    color: $ink !important;
+    font: 600 14px/1.25 $font;
+
+    &:hover {
+      background: $page;
+      color: $brand-t !important;
+    }
+
+    .ms {
+      font-size: 20px;
+      color: $brand-t;
+    }
+  }
+
+  &__ic {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--ar-r-s);
+    background: $tile;
+
+    img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+  }
+
+  &__side {
+    display: grid;
+    align-content: start;
+    gap: 2px;
+    padding-left: 12px;
+    box-shadow: inset 1px 0 0 $line;
+  }
+}
+
+/* Benefits: three honest lines split by dividers. */
+.ar-perks {
+  box-shadow: inset 0 1px 0 $line, inset 0 -1px 0 $line;
+
+  &__in {
+    display: flex;
+    align-items: center;
+    height: 38px;
+  }
+}
+
+.ar-perk {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  color: $ink !important;
+  font: 500 13.5px $font;
+  white-space: nowrap;
+
+  .ms {
+    font-size: 19px;
+  }
+
+  & + & {
+    box-shadow: inset 1px 0 0 $line-2;
+  }
+
+  &:hover {
+    color: $brand-t !important;
+  }
+}
+
+/* The phone menu: a plain panel from the left. */
+.ar-menu-scrim,
+.ar-sheet-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 2400;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.ar-menu {
+  position: fixed;
+  z-index: 2401;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(360px, 88vw);
+  background: $surface;
+  color: $ink;
+  font-family: $font;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    box-shadow: inset 0 -1px 0 $line;
+
+    .ar-logo {
+      height: 44px;
+
+      .ar-logo__w {
+        font-size: 21px;
+      }
+    }
+  }
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 16px 24px;
+  }
+
+  &__deal {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border-radius: var(--ar-r-s);
+    background: var(--ar-promo);
+    color: #fff !important;
+    font-weight: 700;
+  }
+
+  &__h {
+    margin: 18px 0 6px;
+    color: $muted;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  &__cat,
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 4px;
+    color: $ink !important;
+    font-size: 15px;
+    font-weight: 600;
+
+    .ms {
+      color: $brand-t;
+    }
+
+    &:hover {
+      color: $brand-t !important;
+    }
+  }
+
+  &__cat .ar-dd__ic {
+    width: 40px;
+    height: 40px;
+
+    img {
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  &__link {
+    padding: 10px 4px;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .ar-pill {
+      min-height: 36px;
+      padding: 0 14px;
+    }
+  }
+}
+
+.ar-slide-enter-active,
+.ar-slide-leave-active,
+.ar-slide-r-enter-active,
+.ar-slide-r-leave-active {
+  transition: transform 0.25s ease;
+}
+
+.ar-slide-enter-from,
+.ar-slide-leave-to {
+  transform: translateX(-100%);
+}
+
+.ar-slide-r-enter-from,
+.ar-slide-r-leave-to {
+  transform: translateX(100%);
+}
+
+.ar-fade-enter-active,
+.ar-fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.ar-fade-enter-from,
+.ar-fade-leave-to {
+  opacity: 0;
+}
+
+@media (max-width: 1279px) {
+  .ar-header__main {
+    gap: 12px;
+  }
+
+  .ar-nav__b {
+    padding: 0 8px;
+  }
+
+  .ar-act {
+    min-width: 50px;
+  }
+}
+
+@media (max-width: 1099px) {
+  .ar-act__t {
+    display: none;
+  }
+
+  .ar-act {
+    min-width: 44px;
+    height: 44px;
+  }
+
+  .ar-act__n {
+    top: 0;
+  }
+}
+
+/* Phone and small tablet: logo and menu left, icons right, search below. */
+@media (max-width: 899px) {
+  .ar-util {
+    display: none;
+  }
+
+  .ar-header__main {
+    flex-wrap: wrap;
+    gap: 6px 4px;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .ar-burger {
+    display: inline-grid;
+    place-items: center;
+    order: 2;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: var(--ar-r-s);
+    background: none;
+    color: $ink !important;
+    cursor: pointer;
+
+    .ms {
+      font-size: 28px;
+      color: inherit !important;
+    }
+  }
+
+  .ar-header__logo {
+    order: 1;
+    height: 46px;
+
+    .ar-logo__w {
+      font-size: 21px;
+    }
+  }
+
+  .ar-nav {
+    display: none;
+  }
+
+  .ar-acts {
+    order: 3;
+    margin-left: auto;
+  }
+
+  .ar-act {
+    min-width: 40px;
+    width: 42px;
+    padding: 0;
+
+    .ms {
+      font-size: 27px;
+    }
+  }
+
+  .ar-search {
+    order: 4;
+    flex: 1 1 100%;
+    height: 44px;
+    margin-top: 4px;
+
+    &__go {
+      padding: 0 16px;
+
+      .ar-search__w {
+        display: none;
+      }
+
+      .ms {
+        display: inline-flex;
+      }
+    }
+  }
+
+  .ar-dd {
+    display: none !important;
+  }
+
+  .ar-perks__in {
+    justify-content: center;
+  }
+
+  .ar-perk {
+    display: none;
+    flex: none;
+
+    &.-on {
+      display: flex;
+    }
+
+    & + & {
+      box-shadow: none;
+    }
+  }
+}
+
+@media (max-width: 380px) {
+  .ar-act {
+    width: 38px;
+    min-width: 38px;
+
+    .ms {
+      font-size: 25px;
+    }
+  }
+
+  .ar-burger {
+    width: 38px;
+  }
+
+  .ar-header__logo {
+    padding: 0 10px;
+
+    .ar-logo__w {
+      font-size: 19px;
+    }
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Photo slots ━━━━━━━━━━━━━━━━━━━━━ */
+.ar-slot {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--ratio, 1.5);
+  overflow: hidden;
+  background: var(--ar-ph-bg);
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__ph {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+    background-image: repeating-linear-gradient(135deg, transparent 0 14px, var(--ar-ph-line) 14px 15px);
+    color: var(--ar-ph-ink);
+    text-align: center;
+
+    .ms {
+      font-size: 26px;
+      opacity: 0.8;
+    }
+
+    small {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font: 600 11.5px $font;
+    }
+  }
+}
+
+.ar-photo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: $page;
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &.-collage {
+    background: $photo;
+  }
+
+  &__pack {
+    position: absolute;
+    object-fit: contain;
+
+    &.-p0 {
+      left: 28%;
+      top: 8%;
+      width: 50%;
+      height: 70%;
+    }
+
+    &.-p1 {
+      left: 70%;
+      top: 44%;
+      width: 28%;
+      height: 46%;
+    }
+
+    &.-p2 {
+      left: 4%;
+      top: 54%;
+      width: 26%;
+      height: 40%;
+    }
+
+    &.-p3 {
+      left: 72%;
+      top: 4%;
+      width: 22%;
+      height: 34%;
+    }
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Product card ━━━━━━━━━━━━━━━━━━━━━ */
+.ar-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  border-radius: var(--ar-r);
+  background: $surface;
+  box-shadow: inset 0 0 0 1px $line;
+  color: $ink;
+  font-family: $font;
+  container-type: inline-size;
+  text-align: start;
+
+  &__media {
+    position: relative;
+    padding: 10px 10px 0;
+  }
+
+  &__img {
+    display: block;
+    aspect-ratio: 1;
+    border-radius: var(--ar-r-s);
+    background: $photo;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 7%;
+      display: block;
+    }
+  }
+
+  &__badges {
+    position: absolute;
+    left: 16px;
+    top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    max-width: calc(100% - 64px);
+    pointer-events: none;
+  }
+
+  &__heart,
+  &__sq {
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: #fff;
+    color: #1a1a1a !important; /* on the white packshot tile in every mode */
+    cursor: pointer;
+
+    .ms {
+      font-size: 22px;
+      color: inherit !important;
+    }
+
+    &:hover,
+    &.-on {
+      color: var(--ar-red-solid) !important;
+    }
+  }
+
+  &__heart {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px #dedede;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 10px 12px 12px;
+  }
+
+  &__t {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: calc(1.35em * 2);
+    color: $ink !important;
+    font: 500 14px/1.35 $font;
+  }
+
+  a.ar-card__t:hover {
+    color: $brand-t !important;
+  }
+
+  &__rate {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    color: $muted;
+    font-size: 12px;
+
+    .k-stars {
+      --k-star: 13px;
+    }
+  }
+
+  &__cd {
+    height: 18px;
+    margin-top: 2px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  &__buy {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 10px;
+
+    > .ar-btn,
+    > .ar-step {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  &__sq {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--ar-r-s);
+    background: $surface;
+    color: $ink !important;
+    box-shadow: inset 0 0 0 1px $line-2;
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+    min-height: 20px;
+  }
+
+  .ar-btn {
+    height: 44px;
+    padding: 0 10px;
+    font-size: 15px;
+  }
+
+  .ar-short {
+    display: none;
+  }
+
+  &.-skeleton {
+    padding: 10px;
+    pointer-events: none;
+
+    i {
+      display: block;
+      aspect-ratio: 1;
+      border-radius: var(--ar-r-s);
+      background: $page;
+    }
+
+    b {
+      display: block;
+      height: 14px;
+      margin-top: 12px;
+      border-radius: 4px;
+      background: $page;
+
+      &.-short {
+        width: 55%;
+      }
+    }
+  }
+}
+
+@container (max-width: 150px) {
+  .ar-card .ar-long {
+    display: none;
+  }
+
+  .ar-card .ar-short {
+    display: inline;
+  }
+
+  .ar-cd__w {
+    display: none;
+  }
+
+  .ar-was__t {
+    display: none;
+  }
+}
+
+.ar-price {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 6px;
+  margin-top: 8px;
+
+  &__from {
+    color: $muted;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  &__now,
+  &__now .u--price,
+  .u--price {
+    font: 700 20px/1.15 $font !important;
+    letter-spacing: -0.01em;
+    color: $ink !important;
+  }
+
+  &.-lg .ar-price__now,
+  &.-lg .ar-price__now .u--price,
+  &.-lg .u--price {
+    font-size: 32px !important;
+  }
+}
+
+.ar-was {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  height: 18px;
+  margin-top: 3px;
+  color: $muted;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+
+  s,
+  s * {
+    font-size: 13px !important;
+    color: $muted !important;
+  }
+}
+
+.ar-save {
+  display: inline;
+  padding: 0;
+  border-radius: 0;
+  background: none !important;
+  color: $red-t !important;
+  font: 700 13px $font;
+}
+
+.ar-cd {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  max-width: 100%;
+  color: $muted;
+  font-size: 12px;
+  line-height: 18px;
+
+  .ms {
+    font-size: 14px;
+  }
+
+  b {
+    font-weight: 600;
+    color: $ink;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.ar-swrow {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  margin-top: 6px;
+
+  em {
+    margin-left: 4px;
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 600;
+    color: $muted;
+  }
+}
+
+/* A colour swatch: a 24px button, the colour a disc 4px inside it (from
+   --sw), the chosen one a 2px ring on its own edge (inset). */
+.ar-sw {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none !important;
+  box-shadow: none;
+  flex: none;
+  cursor: pointer;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: var(--sw, #fff);
+    box-shadow: inset 0 0 0 1px var(--ar-sw-edge);
+  }
+
+  &.-on {
+    box-shadow: inset 0 0 0 2px $ink;
+  }
+
+  &.-out::before {
+    opacity: 0.45;
+  }
+}
+
+.ar-caps {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  margin-top: 6px;
+  overflow: hidden;
+
+  span {
+    padding: 2px 6px;
+    border-radius: 5px;
+    box-shadow: inset 0 0 0 1px $line-2;
+    color: $ink;
+    font-size: 11.5px;
+    font-weight: 700;
+    line-height: 16px;
+    white-space: nowrap;
+  }
+
+  em {
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 600;
+    color: $muted;
+  }
+}
+
+.ar-step {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  border-radius: var(--ar-r-s);
+  background: $buy;
+  color: var(--ar-on-brand);
+
+  button {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 44px;
+    flex: none;
+    border: 0;
+    border-radius: var(--ar-r-s);
+    background: none;
+    color: var(--ar-on-brand) !important;
+    cursor: pointer;
+
+    &:hover {
+      background: $buy-d;
+    }
+
+    .ms {
+      font-size: 20px;
+      color: inherit !important;
+    }
+  }
+
+  output {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 600;
+
+    b {
+      font-size: 16px;
+      font-weight: 800;
+      margin-right: 3px;
+    }
+  }
+}
+
+@container (max-width: 170px) {
+  .ar-step output small {
+    display: none;
+  }
+}
+
+.ar-cmp {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: $muted !important;
+  font: 600 13px $font;
+  white-space: nowrap;
+  cursor: pointer;
+
+  i {
+    display: grid;
+    place-items: center;
+    width: 17px;
+    height: 17px;
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1.5px $line-2;
+
+    .ms {
+      font-size: 14px;
+      color: var(--ar-on-brand) !important;
+      opacity: 0;
+    }
+  }
+
+  &:hover {
+    color: $ink !important;
+  }
+
+  &.-on {
+    color: $ink !important;
+
+    i {
+      background: $buy;
+      box-shadow: none;
+
+      .ms {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+/* ── Rails: one line, round arrows at the ends ── */
+.ar-rail {
+  position: relative;
+
+  &__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 5 * 14px) / 6);
+    gap: 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    > * {
+      scroll-snap-align: start;
+    }
+  }
+
+  .ar-arrow {
+    position: absolute;
+    top: 30%;
+    width: 42px;
+    height: 42px;
+
+    &.-l {
+      left: 6px;
+    }
+
+    &.-r {
+      right: 6px;
+    }
+  }
+}
+
+@media (max-width: 1279px) {
+  .ar-rail__track {
+    grid-auto-columns: calc((100% - 4 * 14px) / 5);
+  }
+}
+
+@media (max-width: 1023px) {
+  .ar-rail__track {
+    grid-auto-columns: calc((100% - 3 * 14px) / 4);
+  }
+}
+
+@media (max-width: 767px) {
+  .ar-rail__track {
+    grid-auto-columns: calc((100% - 12px) / 2.25);
+    gap: 12px;
+  }
+
+  .ar-rail .ar-arrow {
+    display: none;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Home ━━━━━━━━━━━━━━━━━━━━━ */
+.ar-home {
+  padding: 18px 0 8px;
+  font-family: $font;
+}
+
+/* 1. Categories: light-grey tiles with the category's own packshot. */
+.ar-cats {
+  position: relative;
+
+  &__track {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .ar-arrow {
+    position: absolute;
+    top: 36px;
+    width: 40px;
+    height: 40px;
+
+    &.-l {
+      left: calc(var(--ar-pad) + 4px);
+    }
+
+    &.-r {
+      right: calc(var(--ar-pad) + 4px);
+    }
+  }
+}
+
+.ar-cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  width: 112px;
+  color: $ink !important;
+  scroll-snap-align: start;
+
+  &__tile {
+    display: grid;
+    place-items: center;
+    width: 112px;
+    height: 112px;
+    border-radius: var(--ar-r);
+    background: $tile;
+    overflow: hidden;
+    transition: background-color 0.15s;
+
+    img {
+      width: 78%;
+      height: 78%;
+      object-fit: contain;
+    }
+  }
+
+  &__t {
+    max-width: 100%;
+    font: 500 13.5px/1.25 $font;
+    text-align: center;
+  }
+
+  &:hover &__tile {
+    background: var(--ar-line);
+  }
+
+  &:hover &__t {
+    color: $brand-t;
+  }
+
+  &.-deals &__tile {
+    background: var(--ar-promo);
+    color: #fff;
+
+    b {
+      font: 800 17px/1.12 $font;
+      text-align: center;
+    }
+  }
+
+  &.-deals:hover &__tile {
+    background: #5e0917;
+  }
+
+  &.-skeleton &__tile {
+    background: $page;
+  }
+
+  &.-skeleton &__t {
+    width: 70%;
+    height: 12px;
+    border-radius: 4px;
+    background: $page;
+  }
+}
+
+/* 2. Promo cards and the offer pills. */
+.ar-promos {
+  margin-top: 22px;
+
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+.ar-promo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--ar-r);
+  background: var(--ar-dark-card);
+  color: #fff !important;
+
+  &__ph {
+    --ar-ph-bg: #2c2c2c;
+    --ar-ph-line: #383838;
+    --ar-ph-ink: #b8b8b8;
+  }
+
+  &__tx {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px 16px;
+
+    b {
+      font: 700 20px/1.2 $font;
+    }
+
+    small {
+      color: #e4e4e4;
+      font-size: 14px;
+    }
+  }
+
+  &:hover b {
+    text-decoration: none;
+    color: #fff;
+  }
+
+  &:hover {
+    background: #2a2a2a;
+  }
+}
+
+.ar-offers {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+
+  .ar-pill {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* 3. The green deal strip. */
+.ar-gstrip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  margin-top: 22px;
+  padding: 8px 16px;
+  border-radius: var(--ar-r-s);
+  background: $buy;
+  color: var(--ar-on-brand) !important;
+  font-size: 15px;
+
+  b {
+    font-weight: 700;
+  }
+
+  .ms {
+    color: inherit;
+  }
+
+  &__go {
+    display: inline-flex;
+    align-items: center;
+    margin-left: auto;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  &:hover {
+    background: $buy-d;
+  }
+}
+
+/* 4, 8, 9, 10, 13: four photo cards. */
+.ar-tiles4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.ar-ptile {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  color: $ink !important;
+
+  &__ph {
+    border-radius: var(--ar-r);
+    overflow: hidden;
+
+    &.ar-photo {
+      aspect-ratio: 3 / 2;
+      height: auto;
+    }
+
+    &.-post {
+      display: block;
+      aspect-ratio: 3 / 2;
+      background: $page;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+    }
+  }
+
+  &__t {
+    margin-top: 10px;
+    font: 700 16px/1.3 $font;
+  }
+
+  &__l {
+    margin-top: 2px;
+    color: $muted;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  &__d {
+    margin-top: 10px;
+    color: $muted;
+    font-size: 13px;
+  }
+
+  &__go {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 6px;
+    color: $brand-t;
+    font-size: 14px;
+    font-weight: 700;
+
+    .ms {
+      font-size: 18px;
+    }
+  }
+
+  &:hover &__t {
+    color: $brand-t;
+  }
+
+  &.-post &__t {
+    margin-top: 2px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* 5. The wide banner. */
+.ar-banner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  height: 340px;
+  overflow: hidden;
+  border-radius: var(--ar-r);
+  background: $page;
+  color: $ink !important;
+
+  &__tx {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 32px 36px;
+
+    small {
+      color: $brand-t;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    b {
+      font: 800 40px/1.05 $font;
+      letter-spacing: -0.02em;
+      color: $brand-t;
+
+      span {
+        display: block;
+        color: $ink;
+      }
+    }
+
+    .ar-btn {
+      margin-top: 8px;
+    }
+  }
+
+  &__p {
+    max-width: 420px;
+    color: $muted;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  &__ph {
+    height: 100%;
+    min-height: 0;
+  }
+}
+
+/* 7. The dark red compare band. */
+.ar-redband {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  gap: 24px;
+  align-items: center;
+  padding: 32px;
+  border-radius: var(--ar-r);
+  background: var(--ar-promo);
+  color: #fff !important;
+
+  &__tx {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+
+    b {
+      max-width: 460px;
+      font: 800 34px/1.1 $font;
+      letter-spacing: -0.01em;
+    }
+
+    > span:not(.ar-btn) {
+      max-width: 440px;
+      color: #f6dfe2;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+  }
+
+  &__ph {
+    border-radius: var(--ar-r-s);
+    --ar-ph-bg: #8c1427;
+    --ar-ph-line: #9b1d31;
+    --ar-ph-ink: #f6dfe2;
+  }
+}
+
+/* 12. Need a hand? */
+.ar-help {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr);
+  gap: 28px;
+  align-items: center;
+  padding: 28px 32px;
+  border-radius: var(--ar-r);
+  background: $page;
+
+  h2 {
+    margin: 0 0 8px;
+    font: 700 26px/1.2 $font !important;
+    color: $ink;
+  }
+
+  p {
+    max-width: 520px;
+    margin: 0 0 20px;
+    color: $muted;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  &__acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  &__ph {
+    border-radius: var(--ar-r-s);
+  }
+}
+
+/* About the shop. */
+.ar-seo {
+  padding-top: 28px;
+  box-shadow: inset 0 1px 0 $line;
+
+  h2 {
+    margin: 0 0 8px;
+    font: 700 18px $font !important;
+    color: $ink;
+  }
+
+  &__body {
+    max-height: 3.1em;
+    overflow: hidden;
+    color: $muted;
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-mask-image: linear-gradient(#000 40%, transparent);
+    mask-image: linear-gradient(#000 40%, transparent);
+
+    p {
+      margin: 0 0 8px;
+    }
+
+    a {
+      color: $brand-t !important;
+      font-weight: 600;
+    }
+
+    &.-open {
+      max-height: none;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+  }
+
+  &__more {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 4px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: $brand-t !important;
+    font: 700 14px $font;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 1023px) {
+  .ar-tiles4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ar-banner__tx b {
+    font-size: 32px;
+  }
+
+  .ar-redband__tx b {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 899px) {
+  .ar-cats .ar-arrow {
+    display: none;
+  }
+
+  .ar-cat {
+    width: 92px;
+
+    &__tile {
+      width: 92px;
+      height: 92px;
+    }
+
+    &.-deals .ar-cat__tile b {
+      font-size: 15px;
+    }
+  }
+
+  .ar-promos__row {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+    gap: 12px;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .ar-promo {
+    flex: none;
+    width: 78%;
+    scroll-snap-align: start;
+  }
+
+  .ar-offers {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .ar-banner {
+    grid-template-columns: 1fr;
+    height: auto;
+
+    &__ph {
+      order: -1;
+      height: auto;
+      aspect-ratio: 16 / 9;
+    }
+
+    &__tx {
+      padding: 20px;
+    }
+  }
+
+  .ar-redband,
+  .ar-help {
+    grid-template-columns: 1fr;
+    padding: 22px 20px;
+  }
+
+  .ar-gstrip {
+    flex-wrap: wrap;
+    font-size: 14px;
+  }
+
+  .ar-tiles4 {
+    gap: 14px 12px;
+  }
+}
+
+@media (max-width: 599px) {
+  .ar-offers .ar-pill {
+    padding: 0 10px;
+    font-size: 13px;
+  }
+
+  .ar-gstrip__go {
+    margin-left: 0;
+  }
+
+  .ar-ptile__t {
+    font-size: 15px;
+  }
+
+  .ar-ptile__l {
+    font-size: 13px;
+  }
+
+  .ar-banner__tx b,
+  .ar-redband__tx b {
+    font-size: 26px;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Results pages ━━━━━━━━━━━━━━━━━━━━━ */
+.ar-list {
+  padding-top: 12px;
+  padding-bottom: 32px;
+  font-family: $font;
+}
+
+.ar-ltop {
+  &__for {
+    margin: 10px 0 0;
+    color: $ink;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  &__t {
+    margin: 4px 0 4px !important;
+    color: $ink;
+    font: 700 32px/1.15 $font !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  &__d {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 760px;
+    margin: 0;
+    color: $muted;
+    font-size: 15px;
+
+    .ms {
+      color: $buy;
+      font-size: 18px;
+    }
+  }
+}
+
+.ar-fbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+  padding-bottom: 14px;
+  box-shadow: inset 0 -1px 0 $line;
+
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__count {
+    flex: none;
+    margin: 0 0 0 auto;
+    color: $muted;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+}
+
+.ar-fbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 42px;
+  padding: 0 12px 0 14px;
+  border: 0;
+  border-radius: var(--ar-r-s);
+  background: $surface;
+  box-shadow: inset 0 0 0 1px $line-2;
+  color: $ink !important;
+  font: 600 14px $font;
+  white-space: nowrap;
+  cursor: pointer;
+
+  .ms {
+    font-size: 20px;
+    color: inherit !important;
+  }
+
+  &__k {
+    color: $muted;
+    font-weight: 500;
+  }
+
+  b {
+    font-weight: 700;
+  }
+
+  &__n {
+    display: inline-grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: var(--ar-pill);
+    color: var(--ar-on-pill);
+    font-size: 11.5px;
+  }
+
+  &:hover,
+  &.-open {
+    box-shadow: inset 0 0 0 1.5px $ink;
+  }
+
+  &.-set {
+    box-shadow: inset 0 0 0 2px $ink;
+  }
+
+  &.-sale.-set {
+    background: var(--ar-pill);
+    color: var(--ar-on-pill) !important;
+  }
+
+  &.-all {
+    padding: 0 16px;
+  }
+}
+
+/* A dropdown's panel (Vuetify puts it in the overlay layer). */
+.ar-fdd {
+  display: grid;
+  gap: 2px;
+  min-width: 240px;
+  max-width: min(360px, 92vw);
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 8px;
+  border-radius: var(--ar-r);
+  background: $surface;
+  box-shadow: inset 0 0 0 1px $line, 0 20px 48px -20px rgba(0, 0, 0, 0.4);
+  color: $ink;
+  font-family: $font;
+
+  &__opt {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 9px 10px;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    color: $ink !important;
+    font: 500 14.5px $font;
+    text-align: start;
+    cursor: pointer;
+
+    .ms {
+      font-size: 18px;
+      color: $buy;
+    }
+
+    &:hover {
+      background: $page;
+    }
+
+    &.-on {
+      font-weight: 700;
+    }
+  }
+
+  &.-price {
+    min-width: 300px;
+    padding: 14px 16px 16px;
+  }
+
+  &__slider {
+    margin: 4px 6px 10px;
+  }
+
+  &__clear {
+    justify-self: start;
+    margin-top: 6px;
+    padding: 4px 2px;
+    border: 0;
+    background: none;
+    color: $brand-t !important;
+    font: 700 13.5px $font;
+    cursor: pointer;
+  }
+
+  .t-check {
+    padding: 6px 4px;
+  }
+}
+
+.ar-prange {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    height: 38px;
+    padding: 0 10px;
+    border-radius: var(--ar-r-s);
+    box-shadow: inset 0 0 0 1px $line-2;
+    color: $muted;
+
+    input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      background: none;
+      color: $ink;
+      font: 600 14px $font;
+    }
+
+    &:focus-within {
+      box-shadow: inset 0 0 0 2px $ink;
+    }
+  }
+
+  em {
+    color: $muted;
+    font-style: normal;
+    font-size: 13px;
+  }
+
+  &.-static span {
+    font-weight: 700;
+  }
+}
+
+/* All filters: a side sheet. */
+.ar-sheet {
+  position: fixed;
+  z-index: 2401;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(420px, 100vw);
+  background: $surface;
+  color: $ink;
+  font-family: $font;
+
+  &__h {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 14px 20px;
+    box-shadow: inset 0 -1px 0 $line;
+
+    b {
+      font: 700 20px $font;
+    }
+  }
+
+  &__b {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 20px 20px;
+  }
+
+  &__f {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 10px;
+    padding: 12px 16px;
+    box-shadow: inset 0 1px 0 $line;
+  }
+}
+
+.ar-sgrp {
+  padding: 16px 0;
+  box-shadow: inset 0 -1px 0 $line;
+
+  h5 {
+    margin: 0 0 10px;
+    font: 700 15px $font;
+    color: $ink;
+  }
+
+  &__opts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+.ar-opt {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--ar-r-s);
+  background: $surface;
+  box-shadow: inset 0 0 0 1px $line-2;
+  color: $ink !important;
+  font: 600 13.5px $font;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: inset 0 0 0 1.5px $ink;
+  }
+
+  &.-on {
+    background: var(--ar-pill);
+    color: var(--ar-on-pill) !important;
+    box-shadow: none;
+  }
+}
+
+.ar-list__on {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+
+  .ar-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 32px;
+    padding: 0 8px 0 12px;
+    border: 0;
+    border-radius: 16px;
+    background: $page;
+    color: $ink !important;
+    font: 600 13px $font;
+    cursor: pointer;
+
+    .ms {
+      font-size: 16px;
+    }
+
+    &:hover {
+      background: var(--ar-line);
+    }
+  }
+}
+
+/* The grid: four to a row (three on a tablet, two on a phone). */
+.ar-grid {
+  margin-top: 16px;
+}
+
+.ar-keep {
+  margin-top: 36px;
+
+  &__h {
+    margin: 0 0 12px;
+    font: 700 20px $font !important;
+    color: $ink;
+  }
+
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .ar-pill {
+      min-height: 36px;
+      padding: 0 14px;
+      font-size: 13.5px;
+    }
+  }
+}
+
+@media (max-width: 899px) {
+  .ar-ltop__t {
+    font-size: 26px !important;
+  }
+
+  .ar-fbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+
+    &__row {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: 8px;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    &__count {
+      margin: 0;
+    }
+  }
+
+  .ar-fbtn {
+    flex: none;
+    height: 40px;
+
+    &.-all {
+      order: -1;
+    }
+
+    &.-sort {
+      order: -1;
+    }
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Product page ━━━━━━━━━━━━━━━━━━━━━ */
+.ar-product {
+  background: $page;
+  padding-bottom: 32px;
+
+  .ar-crumbs {
+    padding-top: 14px;
+  }
+}
+
+.ar-pdp {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  margin-top: 8px;
+
+  &__left {
+    display: grid;
+    gap: 20px;
+    min-width: 0;
+  }
+
+  &__right {
+    position: sticky;
+    top: 12px;
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  &__media {
+    position: static;
+    padding: 16px;
+    border: 0;
+  }
+
+  &__head,
+  &__buy,
+  &__choice {
+    position: static;
+  }
+
+  &__brand {
+    display: inline-block;
+    margin-bottom: 2px;
+    color: $brand-t !important;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  &__title {
+    margin: 0 0 4px !important;
+    font: 700 24px/1.25 $font !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  &__meta {
+    gap: 6px 16px;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+
+  &__deal {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  &__dealt {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: $ink;
+    font-size: 13.5px;
+    font-weight: 700;
+
+    .ms {
+      font-size: 18px;
+      color: $red-t;
+    }
+  }
+
+  &__stock {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 12px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+
+    &.-ok {
+      color: var(--ar-green-t);
+    }
+
+    &.-no {
+      color: $red-t;
+    }
+
+    .ms {
+      font-size: 19px;
+    }
+  }
+
+  &__choice {
+    margin-top: 0;
+    padding-top: 18px;
+    border-top: 0;
+  }
+
+  &__add {
+    display: flex;
+    gap: 10px;
+  }
+
+  &__acts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    margin-top: 14px;
+  }
+
+  &__ways {
+    display: grid;
+    gap: 6px;
+    margin: 14px 0 0;
+    padding: 12px 0 0;
+    list-style: none;
+    box-shadow: inset 0 1px 0 $line;
+    color: $ink;
+    font-size: 14px;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ms {
+      color: $muted;
+      font-size: 20px;
+    }
+  }
+
+  &__full {
+    margin-top: 14px;
+  }
+
+  &__ask {
+    margin: 0 4px;
+  }
+
+  .ar-was {
+    height: auto;
+  }
+
+  .ar-cd-blocks em {
+    display: none;
+  }
+}
+
+/* A white card on the product page's grey ground. */
+.ar-pcard {
+  padding: 18px 20px;
+  border-radius: var(--ar-r);
+  background: $surface;
+  color: $ink;
+
+  &__h {
+    margin: 0 0 12px;
+    font: 700 16px $font !important;
+    color: $ink;
+
+    &.-big {
+      font-size: 22px !important;
+    }
+  }
+}
+
+.ar-lbl {
+  margin: 0 0 12px;
+  color: $ink;
+  font-size: 15px;
+
+  b {
+    font-weight: 700;
+  }
+}
+
+/* Quantity and Add to cart. */
+.ar-qty {
+  position: relative;
+  flex: none;
+  width: 86px;
+
+  select {
+    width: 100%;
+    height: 50px;
+    padding: 0 30px 0 14px;
+    border: 0;
+    border-radius: var(--ar-r-s);
+    background: $surface;
+    box-shadow: inset 0 0 0 1px $line-2;
+    color: $ink;
+    font: 600 16px $font;
+    appearance: none;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 0;
+      box-shadow: inset 0 0 0 2px $ink;
+    }
+  }
+
+  .ms {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: $ink;
+  }
+}
+
+.ar-btn.-buy {
+  flex: 1;
+  height: 50px;
+  font-size: 16px;
+}
+
+/* Selldone's own buy button (a product with a service, subscription…)
+   and Kalio's in-cart line take the buy colour and the full width. */
+.ar-pdp__selldone-buy .v-btn,
+.ar-pdp__line .k-btn {
+  min-height: 50px;
+  border-radius: var(--ar-r-s) !important;
+}
+
+.ar-textbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: $ink !important;
+  font: 600 14px $font;
+  cursor: pointer;
+
+  .ms {
+    font-size: 21px;
+    color: $ink;
+  }
+
+  &:hover,
+  &:hover .ms {
+    color: $brand-t !important;
+  }
+
+  &.-on .ms {
+    color: var(--ar-red-solid);
+  }
+}
+
+/* The deal clock's blocks (the product page). */
+.ar-count {
+  display: flex;
+  gap: 6px;
+
+  span {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 1 54px;
+    min-width: 0;
+    padding: 6px 0 5px;
+    border-radius: var(--ar-r-s);
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  b {
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: 0;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Complete your purchase. */
+.ar-complete {
+  &__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1fr);
+    align-items: start;
+    gap: 8px;
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    color: $ink !important;
+
+    b {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      font: 500 13.5px/1.3 $font;
+    }
+
+    .u--price {
+      font-weight: 700;
+    }
+  }
+
+  a.ar-complete__item:hover b {
+    color: $brand-t;
+  }
+
+  &__im {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border-radius: var(--ar-r-s);
+    background: $photo;
+    box-shadow: inset 0 0 0 1px $line;
+
+    img {
+      width: 84%;
+      height: 84%;
+      object-fit: contain;
+    }
+  }
+
+  &__plus {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    max-height: 140px;
+    color: $muted;
+
+    .ms {
+      font-size: 28px;
+    }
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+    padding-top: 14px;
+    box-shadow: inset 0 1px 0 $line;
+  }
+
+  &__total {
+    font-size: 14px;
+    color: $muted;
+
+    .u--price {
+      color: $ink;
+      font-weight: 800;
+      font-size: 18px;
+    }
+  }
+}
+
+/* About this product, specifications, delivery, reviews. */
+.ar-about {
+  &__bullets {
+    margin: 0 0 12px;
+    padding-left: 20px;
+    color: $ink;
+    font-size: 14.5px;
+    line-height: 1.6;
+
+    b {
+      font-weight: 600;
+    }
+  }
+
+  &__en,
+  &__p {
+    margin: 0 0 8px;
+    color: $muted;
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+}
+
+.ar-specs .ar-spec {
+  width: 100%;
+  margin: 0 0 14px;
+  border-collapse: collapse;
+  font-size: 14px;
+
+  caption {
+    padding: 0 0 6px;
+    caption-side: top;
+    text-align: start;
+    color: $ink;
+    font-weight: 700;
+  }
+
+  th,
+  td {
+    padding: 9px 0;
+    border-bottom: 1px solid $line;
+    text-align: start;
+    vertical-align: top;
+  }
+
+  th {
+    width: 42%;
+    padding-right: 16px;
+    color: $muted;
+    font-weight: 500;
+  }
+
+  td {
+    color: $ink;
+    font-weight: 600;
+  }
+}
+
+.ar-ship {
+  .ar-ship__ways {
+    margin: 0 0 10px;
+  }
+}
+
+@media (max-width: 1279px) {
+  .ar-pdp {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 899px) {
+  .ar-pdp {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+
+    &__left {
+      display: contents;
+    }
+
+    &__media {
+      order: 0;
+    }
+
+    &__right {
+      position: static;
+      order: 1;
+    }
+
+    &__left > :not(.ar-pdp__media) {
+      order: 2;
+    }
+  }
+
+  .ar-pcard {
+    padding: 16px;
+  }
+
+  .ar-pdp__title {
+    font-size: 21px !important;
+  }
+}
+
+/* The quick-buy sheet: the photo beside the right column's cards. */
+.ar-pdp.-quick {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  margin-top: 0;
+
+  .ar-pdp__right {
+    position: static;
+  }
+
+  .ar-pcard {
+    padding: 4px 0;
+  }
+
+  .ar-pdp__media {
+    padding: 0;
+  }
+}
+
+@media (max-width: 699px) {
+  .ar-pdp.-quick {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Footer ━━━━━━━━━━━━━━━━━━━━━ */
+.ar-footer {
+  margin-top: 40px;
+  background: $page;
+  color: $ink;
+  font-family: $font;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(0, 1.5fr);
+    gap: 24px;
+    padding-top: 36px;
+    padding-bottom: 32px;
+
+    nav {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 9px;
+      min-width: 0;
+    }
+
+    h4 {
+      margin: 0 0 4px;
+      font: 700 16px $font;
+      color: $ink;
+    }
+
+    a,
+    .ar-footer__btn {
+      padding: 0;
+      border: 0;
+      background: none;
+      color: $muted !important;
+      font: 500 14px $font;
+      text-align: start;
+      cursor: pointer;
+
+      &:hover {
+        color: $brand-t !important;
+      }
+    }
+  }
+
+  &__news {
+    min-width: 0;
+
+    p {
+      margin: 0 0 12px;
+      color: $muted;
+      font-size: 14px;
+    }
+  }
+
+  &__form {
+    display: flex;
+    gap: 8px;
+
+    input {
+      flex: 1;
+      min-width: 0;
+      height: 44px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: var(--ar-r-s);
+      background: $surface;
+      box-shadow: inset 0 0 0 1px $line-2;
+      color: $ink;
+      font: 500 14px $font;
+      outline: 0;
+
+      &:focus {
+        box-shadow: inset 0 0 0 2px $ink;
+      }
+    }
+  }
+
+  &__err {
+    margin: 8px 0 0 !important;
+    color: $red-t !important;
+  }
+
+  &__social {
+    margin-top: 16px;
+  }
+
+  &__legal {
+    box-shadow: inset 0 1px 0 $line;
+  }
+
+  &__legal-in {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    min-height: 64px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: $muted;
+    font-size: 13px;
+
+    a {
+      color: $muted !important;
+
+      &:hover {
+        color: $brand-t !important;
+      }
+    }
+  }
+
+  &__logo {
+    height: 38px;
+    padding: 0 10px;
+
+    .ar-logo__w {
+      font-size: 17px;
+    }
+  }
+
+  &__pickers {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  &__made {
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .ar-footer__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ar-footer__news {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 599px) {
+  .ar-footer__legal-in {
+    gap: 8px 14px;
+  }
+
+  .ar-footer__pickers {
+    margin-left: 0;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ The results grid: four to a row ━━━━━━━━━━━━━━━━━━━━━ */
+@media (min-width: 1360px) {
+  .ar-grid.t-listing .s--products-listing-row > .s--product-card {
+    flex: 0 0 25% !important;
+    max-width: 25% !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Gallery controls ━━━━━━━━━━━━━━━━━━━━━ */
+/* Argon's arrows, counter and zoom over Selldone's picture; Selldone's own
+   hover arrows (84px thumbnails) are not shown. The picture's height is the
+   card's width less the one row of thumbnails (7 to a row, 5 on a phone). */
+.ar-gal {
+  --thumbs: calc((100cqw - 6 * 8px) / 7 + 10px);
+  position: relative;
+  container-type: inline-size;
+
+  .gallery-top .v-window__controls {
+    display: none !important;
+  }
+
+  &__prev,
+  &__next {
+    position: absolute;
+    z-index: 2;
+    top: calc((100% - var(--thumbs)) / 2 - 21px);
+    width: 42px;
+    height: 42px;
+  }
+
+  &__prev {
+    left: 4px;
+  }
+
+  &__next {
+    right: 4px;
+  }
+
+  &__n {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    bottom: calc(var(--thumbs) + 8px);
+    transform: translateX(-50%);
+    color: #5c5c5c;
+    font: 600 13px "Barlow", sans-serif;
+  }
+
+  &__zoom {
+    position: absolute;
+    z-index: 2;
+    right: 4px;
+    bottom: calc(var(--thumbs) + 6px);
+    width: 38px;
+    height: 38px;
+
+    .ms {
+      font-size: 22px !important;
+    }
+  }
+}
+
+@container (max-width: 599px) {
+  .ar-gal {
+    --thumbs: calc((100cqw - 4 * 8px) / 5 + 10px);
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Fixes after the first look ━━━━━━━━━━━━━━━━━━━━━ */
+.ar-list,
+.ar-ltop,
+.ar-keep,
+.ar-product,
+.ar-home {
+  text-align: start;
+}
+
+.ar-complete__im {
+  aspect-ratio: auto;
+  height: 132px;
+}
+
+.ar-footer .ar-footer__legal-in a.ar-logo,
+.ar-footer .ar-footer__legal-in a.ar-logo:hover {
+  color: var(--ar-on-head) !important;
+}

@@ -1,12 +1,12 @@
-/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Besti — tokens, type and shared pieces ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Argon — tokens, type and shared pieces ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
 
-   Besti (9 November 2026) is a white electronics department store: blue
+   Argon (9 November 2026) is a white electronics department store: blue
    #0a4bd8 for every button (white words), yellow #ffd91a as an accent only
    (deal flags, the Deal of the Day, the logo's dot), sale red #c4122f for
    "Save $X", navy #071634 for the deal strip and the footer, Archivo type.
    The token NAMES stay Kalio's (--k-green is the action colour, now blue;
    --k-coral is the saving, now red) so every inherited component follows;
-   besti-*.scss hold the structure.
+   argon-*.scss hold the structure.
 
 
    Kalio is a grocery marketplace: sixteen aisles, independent sellers, one
@@ -22,41 +22,41 @@
 
 :root {
   /* Ink and surface */
-  /* Besti 1.0.9: every colour follows Besti's theme tokens (besti-theme.scss),
+  /* Argon 1.0.9: every colour follows Argon's theme tokens (argon-theme.scss),
      so a palette or dark mode reaches Kalio's pieces too. */
-  --k-ink: var(--b-ink);
-  --k-ink-2: var(--b-ink-2);
-  --k-muted: var(--b-muted);
-  --k-paper: var(--b-bg);
-  --k-wash: var(--b-page);
-  --k-card: var(--b-surface);
-  --k-line: var(--b-line);
-  --k-line-strong: var(--b-line-2);
+  --k-ink: var(--ar-ink);
+  --k-ink-2: var(--ar-ink-2);
+  --k-muted: var(--ar-muted);
+  --k-paper: var(--ar-bg);
+  --k-wash: var(--ar-page);
+  --k-card: var(--ar-surface);
+  --k-line: var(--ar-line);
+  --k-line-strong: var(--ar-line-2);
 
   /* Deep green carries every commerce action */
-  --k-green: var(--b-blue);
-  --k-green-deep: var(--b-blue-d);
-  --k-green-lift: var(--b-blue-t);
-  --k-leaf: var(--b-yellow);
-  --k-green-soft: var(--b-blue-l);
-  /* Besti 1.0.9: the accent and the saving as words, lines and rings (lighter
+  --k-green: var(--ar-blue);
+  --k-green-deep: var(--ar-blue-d);
+  --k-green-lift: var(--ar-blue-t);
+  --k-leaf: var(--ar-yellow);
+  --k-green-soft: var(--ar-blue-l);
+  /* Argon 1.0.9: the accent and the saving as words, lines and rings (lighter
      in dark mode); --k-green and --k-coral stay the fills under white words. */
-  --k-green-t: var(--b-blue-t);
-  --k-green-deep-t: var(--b-blue-t); /* the accent as words: always the readable text shade */
-  --k-coral-t: var(--b-red-t);
+  --k-green-t: var(--ar-blue-t);
+  --k-green-deep-t: var(--ar-blue-t); /* the accent as words: always the readable text shade */
+  --k-coral-t: var(--ar-red-t);
 
   /* Coral marks a saving. #c9431e keeps white badge text and sale prices
      above 4.5:1 on white; the brighter mockup coral did not. */
-  --k-coral: var(--b-red);
+  --k-coral: var(--ar-red);
   --k-coral-soft: #fdecef;
 
   /* A product tile's ground. Each aisle sets its own --k-tint; this is the
      tint of anything that has no aisle of its own. */
-  --k-tint: var(--b-photo);
+  --k-tint: var(--ar-photo);
 
   /* The shop pages' one ground for every packshot (design A, 3 November
      2026): the aisle is named in type, not painted on its products. */
-  --k-well: var(--b-photo);
+  --k-well: var(--ar-photo);
   --k-line-soft: #eef0f3;
 
   /* Ratings (design A, 7 November 2026): amber stars on a warm grey. */
@@ -64,14 +64,14 @@
   --k-star-off: #d9d9d9;
 
   /* Type */
-  --k-display: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --k-body: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --k-display: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --k-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /* Geometry */
   --k-radius: 10px;
   --k-radius-sm: 8px;
   --k-radius-lg: 16px;
-  --k-pill: 8px; /* Besti: squarer buttons */
+  --k-pill: 8px; /* Argon: squarer buttons */
   --k-maxw: 1440px;
   --k-gutter: clamp(16px, 2.4vw, 24px);
   --k-tap: 44px;
@@ -86,9 +86,9 @@
 :root,
 .v-theme--light,
 .v-theme--dark {
-  --v-theme-primary: var(--b-blue-rgb, 10, 75, 216) !important;
-  --v-theme-on-primary: var(--b-on-brand-rgb, 255, 255, 255) !important;
-  --v-theme-secondary: var(--b-blue-rgb) !important;
+  --v-theme-primary: var(--ar-blue-rgb, 10, 75, 216) !important;
+  --v-theme-on-primary: var(--ar-on-brand-rgb, 255, 255, 255) !important;
+  --v-theme-secondary: var(--ar-blue-rgb) !important;
   --v-theme-on-secondary: 255, 255, 255 !important;
 }
 
@@ -204,7 +204,7 @@ s:has(> .u--price) {
 
 .k-btn--solid {
   background: var(--k-green-deep);
-  color: var(--b-on-brand) !important;
+  color: var(--ar-on-brand) !important;
 
   &:hover {
     background: var(--k-green);

@@ -21,8 +21,8 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <div class="k-official">
     <slot name="header"></slot>
-    <div class="b-wrap">
-      <nav aria-label="Breadcrumb" class="b-crumbs">
+    <div class="ar-wrap">
+      <nav aria-label="Breadcrumb" class="ar-crumbs">
         <router-link :to="{ path: '/' }">Home</router-link>
         <span aria-hidden="true" class="ms">chevron_right</span>
         <span aria-current="page">{{ page_name }}</span>

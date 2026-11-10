@@ -1,23 +1,22 @@
 /* ━━━━━━━━━━━━ The Layout's own name and logo ━━━━━━━━━━━━
-   Besti Electronics runs on its own address of the shop Digini (one shop, a
+   Argon Electronics runs on its own address of the shop Digini (one shop, a
    Layout per domain), so the shop's own title would put "Digini" in its
    header, footer, page titles and every line that names the shop. Like Tario
    and Walio, the title is replaced here, as soon as the shop is read, for
    this Layout only. The shop record on Selldone (its emails, dashboard, the
    SEO page Selldone serves to crawlers) keeps its own title.
 
-   THE BRAND IS THIS ONE LINE: `name`. The wordmark (components/besti/
-   BestiLogo.vue) is drawn from it in lower case, every "i" carrying a small
-   yellow square for its dot. Set `name: null` to keep the shop's own title.
+   THE BRAND IS THIS ONE LINE: `name`. The wordmark (components/argon/
+   ArgonLogo.vue) is drawn from it in lower case, white on a red rounded
+   tile. Set `name: null` to keep the shop's own title.
 
-   The mark (assets/brand/besti-mark.svg, 64x64 SVG: a white "b" on navy with
-   the yellow square) is the browser tab's icon and the avatar on order
-   messages. */
+   The mark (assets/brand/argon-mark.svg, 64x64 SVG: a white "a" on the red
+   tile) is the browser tab's icon and the avatar on order messages. */
 
-import mark from "../../assets/brand/besti-mark.svg?url";
+import mark from "../../assets/brand/argon-mark.svg?url";
 
 export const BRAND: { name: string | null; mark: string } = {
-  name: "Besti",
+  name: "Argon",
   mark,
 };
 
@@ -56,7 +55,7 @@ export function brandIcon(): void {
 }
 
 /* ━━━━━━━━━━━━ One word for the cart ━━━━━━━━━━━━
-   Besti says "cart" everywhere. Selldone's own English strings that still
+   Argon says "cart" everywhere. Selldone's own English strings that still
    say "basket" (its buy button, the share-order dialog, the "others have
    this" line) are set to "cart" here, in English only, once. */
 let wordsMerged = false;
@@ -70,7 +69,7 @@ export function cartWords(): void {
     share_order: { address_included: "Share cart items + address", address_excluded: "Share only cart items" },
     product_section_incentivise: { have_in_their_bag: "<b>{in_carts}</b> others have this in their carts!" },
     /* Selldone's countdown (the product page's deal clock) reads "Day",
-       "Hour": Besti's clocks say days, hrs, min, sec everywhere. */
+       "Hour": Argon's clocks say days, hrs, min, sec everywhere. */
     global: { count_down: { days: "days", hours: "hrs", minutes: "min", seconds: "sec" } },
   });
   wordsMerged = true;

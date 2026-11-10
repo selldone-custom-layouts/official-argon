@@ -4,7 +4,7 @@ Set the Layout up on your shop yourself. Follow these steps in order, or let an 
 
 ## 1. Get your own copy
 
-Fork **selldone-custom-layouts/official-besti** on GitHub, then clone your fork with its submodules:
+Fork **selldone-custom-layouts/official-argon** on GitHub, then clone your fork with its submodules:
 
 ```bash
 git clone --recurse-submodules https://github.com/<you>/<your-repo>.git
@@ -38,7 +38,7 @@ VITE_APP_SAMPLE_DEFAULT_LANGUAGE=en
 VITE_APP_DEV_SERVER_PORT=9131
 ```
 
-`.env.development.local` picks the buyer-account design for development: `VITE_KALIO_ACCOUNT=desk` (side rail, the one Besti ships) or remove it for `home` (tabs).
+`.env.development.local` picks the buyer-account design for development: `VITE_KALIO_ACCOUNT=desk` (side rail, the one Argon ships) or remove it for `home` (tabs).
 
 ## 4. Run it
 
@@ -79,7 +79,7 @@ git fetch upstream main --tags --prune
 git merge --no-ff upstream/main
 ```
 
-Resolve conflicts by keeping Besti's templates and Selldone's logic. Then re-apply the patches if the submodules changed:
+Resolve conflicts by keeping Argon's templates and Selldone's logic. Then re-apply the patches if the submodules changed:
 
 ```bash
 git -C modules/components apply ../../patches/modules-components.kalio.patch

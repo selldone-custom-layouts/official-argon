@@ -1,5 +1,5 @@
 /*
- * Besti — what every buy button shares (the card, the Deal of the Day,
+ * Argon — what every buy button shares (the card, the Deal of the Day,
  * "Frequently bought together"): the product's variants, the colour picked
  * on it, its price, whether it can be added, and its count in the cart.
  *
@@ -14,7 +14,7 @@
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { percentOff } from "../kalio/kalio-catalog";
 import { addVariant, basketLine, hasSizes, pendingLine, pendingLineFor, quickAdd, settling, shownCount, stepTo } from "../kalio/kalio-basket";
-import { catalogueById, colourName, dealEnd, moneyOf, moneyText, saved, swatchBg, toggleSaved, variantDimension } from "./besti";
+import { catalogueById, colourName, dealEnd, moneyOf, moneyText, saved, swatchBg, toggleSaved, variantDimension } from "./argon";
 
 declare const window: any;
 
@@ -62,7 +62,7 @@ export default {
       return moneyOf(this.shop, this.product, this.variant, this.currency);
     },
     /** When this deal ends (the picked colour's dates when it has its own
-        pricing), for BestiDealClock; null without an end date. */
+        pricing), for ArgonDealClock; null without an end date. */
     dealEndsAt(this: any): Date | null {
       return dealEnd(this.product, this.variant);
     },

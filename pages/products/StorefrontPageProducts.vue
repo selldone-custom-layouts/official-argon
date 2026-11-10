@@ -64,87 +64,60 @@
       <!-- Shown on the bare shop page only. Every narrowing action the
            listing performs travels as a query parameter, so the home page
            gets out of the way the moment a shopper searches or filters. -->
-      <besti-home v-if="show_home" />
+      <argon-home v-if="show_home" />
 
-      <!-- ▆▆▆▆▆▆▆▆ Aisle, search, Deals, All products, seller (design B) ▆▆▆▆▆▆▆▆ -->
-      <!-- A banner on top (the aisle with its numbers and packshots; a
-           search's top match), then a column beside the grid: the filters
-           (WalioFilterRail), or on a seller's page the seller's card. On a
-           phone the column folds into a "Filters | Sort" bar over the grid. -->
-      <div v-if="!show_home" class="w-shop k-wrap">
-        <walio-shelf-top
-          v-if="!vendor_id"
+      <!-- ▆▆▆▆▆▆▆▆ Category, search, Deals, All products (Argon) ▆▆▆▆▆▆▆▆ -->
+      <!-- A big catalogue store's results page: the title, a row of filter
+           dropdowns with "All filters" (a side sheet) and the result count,
+           the filters that are on as chips, then the grid, four to a row
+           (two on a phone). No side column. -->
+      <div v-if="!show_home" class="ar-wrap ar-list">
+        <argon-list-top
           :aisle="listing_parent"
           :category-name="category_name"
           :filter="t_filter"
           :mode="category_name ? 'aisle' : 'catalogue'"
-          :on-sale="on_sale"
           :products="listing_products"
-          :total="catalogue_total"
-          @quick-buy="(p) => { quick_pick = p; quick_open = true; }"
         />
-        <div class="w-shop__cols">
-          <walio-seller-side v-if="vendor_id" :tab="seller_tab" :vendor-id="vendor_id" @tab="sellerTab" />
-          <walio-filter-rail
-            v-else
-            :cats="aisle_list"
-            :current="category_name"
-            :filters="filters_def"
-            :model-value="t_filter"
-            :sort="t_sort"
-            :sort-fallback="category_name ? 'Featured' : 'Best match'"
-            @update:model-value="setFilter"
-            @update:sort="setSort"
-          />
-          <div class="w-shop__main">
-            <walio-seller-main v-if="vendor_id" :key="'sm' + vendor_id" :vendor-id="vendor_id" />
-            <!-- Besti: the filters that are on, as chips (no product count in
-                 the shopper's words), and Sort by on the right. -->
-            <div class="w-tools b-tools">
-              <div class="b-chips">
-                <button v-for="c in on_chips" :key="c.key" class="b-chip -on" type="button" @click="c.off()">
-                  {{ c.label }}<v-icon size="16">close</v-icon>
-                </button>
-                <button v-if="on_chips.length > 1" class="b-link" type="button" @click="setFilter(null)">Clear all</button>
-              </div>
-              <walio-filter-rail
-                v-if="vendor_id"
-                :filters="filters_def"
-                :model-value="t_filter"
-                :sort="t_sort"
-                compact
-                sort-fallback="Featured"
-                @update:model-value="setFilter"
-                @update:sort="setSort"
-              />
-              <walio-sort-menu v-else :model-value="t_sort" :fallback="category_name ? 'Featured' : 'Best match'" @update:model-value="setSort" />
-            </div>
-            <s-products-listing
-              ref="listing"
-              :key="$route.path"
-              :class="{ '-catalogue': catalogue }"
-              :vendor-id="vendor_id"
-              :has-breadcrumb="false"
-              :has-filter="false"
-              class="t-listing w-listing"
-              load-more
-              route-mode
-              update-route
-              @fetch-products="updateProductsSeo"
-            ></s-products-listing>
-          </div>
+        <argon-filter-bar
+          :cats="aisle_list"
+          :current="category_name"
+          :filters="filters_def"
+          :model-value="t_filter"
+          :sort="t_sort"
+          :sort-fallback="search_query ? 'Relevance' : 'Featured'"
+          :total="catalogue_total"
+          @update:model-value="setFilter"
+          @update:sort="setSort"
+        />
+        <div v-if="on_chips.length" class="ar-chips ar-list__on">
+          <button v-for="c in on_chips" :key="c.key" class="ar-chip -on" type="button" @click="c.off()">
+            {{ c.label }}<span class="ms">close</span>
+          </button>
+          <button v-if="on_chips.length > 1" class="ar-link" type="button" @click="setFilter(null)">Clear all</button>
         </div>
+        <s-products-listing
+          ref="listing"
+          :key="$route.path"
+          :class="{ '-catalogue': catalogue }"
+          :vendor-id="vendor_id"
+          :has-breadcrumb="false"
+          :has-filter="false"
+          class="t-listing w-listing ar-grid"
+          load-more
+          route-mode
+          update-route
+          @fetch-products="updateProductsSeo"
+        ></s-products-listing>
 
         <!-- ▆▆▆▆▆▆▆▆ Under the grid ▆▆▆▆▆▆▆▆ -->
-        <template v-if="!vendor_id">
-          <besti-row v-if="catalogue && search_query" :limit="12" lazy sort="bestselling" title="Popular right now" />
-          <section v-if="more_aisles.length" class="t-keep">
-            <h2 class="t-keep__h">Keep shopping</h2>
-            <div class="t-keep__list">
-              <router-link v-for="a in more_aisles" :key="a.id" :to="aisleTo(a)">{{ a.title || a.name }}</router-link>
-            </div>
-          </section>
-        </template>
+        <argon-row v-if="catalogue && search_query" :limit="12" lazy sort="bestselling" title="Popular right now" />
+        <section v-if="more_aisles.length" class="ar-keep">
+          <h2 class="ar-keep__h">Keep shopping</h2>
+          <div class="ar-keep__list">
+            <router-link v-for="a in more_aisles" :key="a.id" :to="aisleTo(a)" class="ar-pill -line">{{ a.title || a.name }}</router-link>
+          </div>
+        </section>
       </div>
     </v-card>
 
@@ -156,16 +129,13 @@
 <script lang="ts">
 import SProductsListing from "@selldone/components-vue/storefront/products/listing/SProductsListing.vue";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
-import BestiHome from "../../components/besti/BestiHome.vue";
-import WalioShelfTop from "../../components/walio/shop/WalioShelfTop.vue";
-import WalioFilterRail from "../../components/walio/shop/WalioFilterRail.vue";
-import BestiRow from "../../components/besti/BestiRow.vue";
+import ArgonHome from "../../components/argon/ArgonHome.vue";
+import ArgonListTop from "../../components/argon/shop/ArgonListTop.vue";
+import ArgonFilterBar from "../../components/argon/shop/ArgonFilterBar.vue";
+import ArgonRow from "../../components/argon/ArgonRow.vue";
 import { fromRoute } from "../../components/walio/shop/walio-filters";
-import { colourName } from "../../components/besti/besti";
+import { colourName } from "../../components/argon/argon";
 import { aisleRoute, aisles, countProducts, offers, vendors } from "../../components/kalio/kalio-catalog";
-import WalioSellerSide from "../../components/walio/shop/WalioSellerSide.vue";
-import WalioSellerMain from "../../components/walio/shop/WalioSellerMain.vue";
-import WalioSortMenu from "../../components/walio/shop/WalioSortMenu.vue";
 import {StorefrontSeo} from "../../helpers/StorefrontSeo";
 import KalioQuickBuy from "../../components/kalio/KalioQuickBuy.vue";
 import { hostQuickBuy } from "../../components/kalio/kalio-listing-quick-buy";
@@ -176,14 +146,11 @@ export default {
   name: "StorefrontPageProducts",
   components: {
     SProductsListing,
-    BestiHome,
-    WalioShelfTop,
-    WalioFilterRail,
-    BestiRow,
+    ArgonHome,
+    ArgonListTop,
+    ArgonFilterBar,
+    ArgonRow,
     KalioQuickBuy,
-    WalioSellerSide,
-    WalioSellerMain,
-    WalioSortMenu,
   },
   mixins: [TemplateMixin],
 

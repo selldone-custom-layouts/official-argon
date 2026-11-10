@@ -41,9 +41,9 @@
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { addVariant, hasSizes, quickAdd } from "./kalio-basket";
 import { priceOf, productImage, productSrcset, dropSrcset } from "./kalio-catalog";
-import { catalogue, variantDimension } from "../besti/besti";
+import { catalogue, variantDimension } from "../argon/argon";
 
-/* Besti: the catalogue read once (besti.ts), and what goes with the cart:
+/* Argon: the catalogue read once (argon.ts), and what goes with the cart:
    other departments first (a mouse for a laptop, not a second laptop), in
    stock, a colour product going in with its first colour in stock. A
    product whose choice is a capacity or size opens its page instead. */

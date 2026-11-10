@@ -266,8 +266,8 @@ export async function reorder(vm: any, items: any[]): Promise<{ added: number; f
   return { added, failed };
 }
 
-/* ━━━━━━━━━━━━ Besti: a card adds the colour picked on it ━━━━━━━━━━━━
-   Besti's cards show a product's colour swatches; a tap picks that variant
+/* ━━━━━━━━━━━━ Argon: a card adds the colour picked on it ━━━━━━━━━━━━
+   Argon's cards show a product's colour swatches; a tap picks that variant
    and "Add to cart" puts that colour in the cart, then reads "− n +" for it.
    The same queue as every other count (stepTo), keyed by product and
    variant, so quick taps add up here too. */
@@ -286,6 +286,36 @@ export function addVariant(vm: any, product: any, variant: any): Promise<any> {
   if (line) return stepTo(vm, product, line, shownCount(product, line) + 1);
   const key = lineKey(product, variant?.id);
   wanted[key] = 1;
+  queued.add(key);
+  return inTurn(key, () => {
+    queued.delete(key);
+    const target = wanted[key] ?? 0;
+    if (target <= 0) {
+      delete wanted[key];
+      return null;
+    }
+    const existing = basketLine(vm, product, ref);
+    const request = existing
+      ? setCount(vm, product, existing, target)
+      : add(vm, { id: product.id, type: product.type || "PHYSICAL" }, ref, target, null);
+    return request.finally(() => {
+      if (wanted[key] === target) delete wanted[key];
+    });
+  }).catch(() => null);
+}
+
+/** Argon's product page: put `count` of a product (or one variant) in the
+ *  cart at once (its quantity menu, then Add to cart). A line already in the
+ *  cart grows by `count`; the same queue as every stepper, so a quick second
+ *  tap is never lost. */
+export function addCount(vm: any, product: any, variant: any, count: number): Promise<any> {
+  if (!mayBuy(vm)) return Promise.resolve(null);
+  const n = Math.max(1, Math.floor(count || 1));
+  const ref = variant ? { id: variant.id } : null;
+  const line = basketLine(vm, product, ref) || pendingLineFor(product, variant?.id);
+  if (line) return stepTo(vm, product, line, shownCount(product, line) + n);
+  const key = lineKey(product, variant?.id);
+  wanted[key] = n;
   queued.add(key);
   return inTurn(key, () => {
     queued.delete(key);

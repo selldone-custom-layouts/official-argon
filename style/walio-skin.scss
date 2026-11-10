@@ -9,9 +9,9 @@
    Sans, white cards on light wells and a deep navy footer.
    Loaded last (storefront.scss), so it only overrides. */
 
-$walio-blue: var(--b-blue);
-$walio-blue-deep: var(--b-blue-d);
-$walio-navy: var(--b-navy);
+$walio-blue: var(--ar-blue);
+$walio-blue-deep: var(--ar-blue-d);
+$walio-navy: var(--ar-navy);
 $walio-spark: #ffd91a;
 
 h1,
@@ -32,7 +32,7 @@ h3 {
   &__brand {
     align-items: center !important;
     gap: 8px !important;
-    color: var(--b-on-brand) !important;
+    color: var(--ar-on-brand) !important;
     font-family: var(--k-display) !important;
     font-weight: 900 !important;
     letter-spacing: -0.03em !important;
@@ -50,14 +50,14 @@ h3 {
   }
 
   &__icon {
-    color: var(--b-on-brand) !important;
+    color: var(--ar-on-brand) !important;
 
     &:hover {
       background: rgba(255, 255, 255, 0.14) !important;
     }
 
     .v-icon {
-      color: var(--b-on-brand) !important;
+      color: var(--ar-on-brand) !important;
     }
   }
 
@@ -104,7 +104,7 @@ h3 {
   }
 
   &__lang {
-    color: var(--b-on-brand) !important;
+    color: var(--ar-on-brand) !important;
   }
 
   /* The basket: spark yellow with dark words. */
@@ -134,11 +134,11 @@ h3 {
 
     &:hover,
     &.-on {
-      color: var(--b-blue-t) !important;
+      color: var(--ar-blue-t) !important;
     }
 
     &.-deals {
-      color: var(--b-blue-t) !important;
+      color: var(--ar-blue-t) !important;
       font-weight: 800 !important;
 
       &::after {
@@ -224,7 +224,7 @@ h3 {
     height: 28px;
     border-radius: 50%;
     background: $walio-blue;
-    color: var(--b-on-brand);
+    color: var(--ar-on-brand);
     font-size: 14px;
     font-weight: 900;
     letter-spacing: 0;
@@ -288,5 +288,5 @@ h3 {
 /* What is still missing before paying reads as a caution, not a saving. */
 .k-cart__need,
 .k-cart__need .v-icon {
-  color: var(--b-warn-t, #b35900) !important;
+  color: var(--ar-warn-t, #b35900) !important;
 }

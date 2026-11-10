@@ -17,9 +17,9 @@ An uploaded version changes nothing until it is **attached** to your shop.
 
 Pin the **exact** version, never `latest`, so an unverified upload never goes live. Read `api.shops.layout.options` before and after.
 
-## Two Layouts on one shop (how Besti runs)
+## Two Layouts on one shop (how Argon runs)
 
-A shop can show a different Layout on one of its domains. Besti lives only on `besti.selldone.shop` (domain 1240 of the shop Digini, Layout 29), while the shop's default and its other domains carry other Layouts:
+A shop can show a different Layout on one of its domains. Argon lives only on `argon.selldone.shop` (domain 1240 of the shop Digini, Layout 29), while the shop's default and its other domains carry other Layouts:
 
 ```json
 api.shops.domains.layout.set   path { "domain_key": "<the domain's id>" }

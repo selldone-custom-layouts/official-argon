@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/screenshots/cover.jpg" alt="Besti Electronics — a white department-store storefront Layout for Selldone, on desktop and phone" width="100%">
+  <img src="docs/screenshots/cover.jpg" alt="Argon Electronics — a white department-store storefront Layout for Selldone, on desktop and phone" width="100%">
 </p>
 
-<h1 align="center">Besti Electronics</h1>
+<h1 align="center">Argon Electronics</h1>
 
 <p align="center">
   <b>A big white electronics department store for a Selldone shop.</b><br>
@@ -10,18 +10,18 @@
 </p>
 
 <p align="center">
-  <a href="https://besti.selldone.shop"><img src="https://img.shields.io/badge/live%20shop-besti.selldone.shop-0A4BD8?style=flat-square" alt="Live shop"></a>
-  <a href="https://github.com/selldone-custom-layouts/official-besti/wiki"><img src="https://img.shields.io/badge/docs-wiki-071634?style=flat-square" alt="Wiki"></a>
-  <a href="https://github.com/selldone-custom-layouts/official-besti/wiki/Install-with-AI"><img src="https://img.shields.io/badge/set%20up-with%20AI-FFD91A?style=flat-square" alt="Set up with AI"></a>
+  <a href="https://argon.selldone.shop"><img src="https://img.shields.io/badge/live%20shop-argon.selldone.shop-0A4BD8?style=flat-square" alt="Live shop"></a>
+  <a href="https://github.com/selldone-custom-layouts/official-argon/wiki"><img src="https://img.shields.io/badge/docs-wiki-071634?style=flat-square" alt="Wiki"></a>
+  <a href="https://github.com/selldone-custom-layouts/official-argon/wiki/Install-with-AI"><img src="https://img.shields.io/badge/set%20up-with%20AI-FFD91A?style=flat-square" alt="Set up with AI"></a>
   <img src="https://img.shields.io/badge/Selldone-Layout-2B2F7A?style=flat-square" alt="Selldone Layout">
   <img src="https://img.shields.io/badge/Vue-3-1fc8a9?style=flat-square&logo=vuedotjs&logoColor=white" alt="Vue 3">
 </p>
 
 <p align="center">
-  <a href="https://besti.selldone.shop"><b>Open the live shop</b></a> ·
-  <a href="https://github.com/selldone-custom-layouts/official-besti/wiki/Install-with-AI">Set it up with AI</a> ·
-  <a href="https://github.com/selldone-custom-layouts/official-besti/wiki/Manual-Setup">Manual setup</a> ·
-  <a href="https://github.com/selldone-custom-layouts/official-besti/wiki/Shop-Requirements">What your shop needs</a> ·
+  <a href="https://argon.selldone.shop"><b>Open the live shop</b></a> ·
+  <a href="https://github.com/selldone-custom-layouts/official-argon/wiki/Install-with-AI">Set it up with AI</a> ·
+  <a href="https://github.com/selldone-custom-layouts/official-argon/wiki/Manual-Setup">Manual setup</a> ·
+  <a href="https://github.com/selldone-custom-layouts/official-argon/wiki/Shop-Requirements">What your shop needs</a> ·
   <a href="https://github.com/selldone-custom-layouts">All Selldone custom layouts</a>
 </p>
 
@@ -29,15 +29,15 @@
 
 ## What it is
 
-**Besti Electronics** dresses a single-shop electronics store as a big white department store, after a big-box electronics retailer's sections but in its own look:
+**Argon Electronics** dresses a single-shop electronics store as a big white department store, after a big-box electronics retailer's sections but in its own look:
 - a white page with products in bordered tiles;
 - one blue (`#0a4bd8`) for every button, flat, with white words;
 - yellow (`#ffd91a`) only as an accent: deal flags, the Deal of the Day, the logo's dot, "Deals";
 - sale red for "Save $X", navy for the deal strip and the footer;
 - Archivo type and Material Symbols Rounded icons;
-- a **Theme** action at the top right of the header on Besti's own showcase shop: five colour palettes (Besti blue, Violet, Emerald, Copper, Magenta), a **Custom colour** and Light / Dark; one click changes the whole site at once, Selldone's own parts too, and the choice stays in the browser.
+- a **Theme** action at the top right of the header on Argon's own showcase shop: five colour palettes (Argon blue, Violet, Emerald, Copper, Magenta), a **Custom colour** and Light / Dark; one click changes the whole site at once, Selldone's own parts too, and the choice stays in the browser.
 
-It runs on **[besti.selldone.shop](https://besti.selldone.shop)**, one address of the Selldone shop Digini. Selldone lets each domain of a shop carry its own Layout.
+It runs on **[argon.selldone.shop](https://argon.selldone.shop)**, one address of the Selldone shop Digini. Selldone lets each domain of a shop carry its own Layout.
 
 Selldone's own cart, checkout, payments and orders keep working underneath. Nothing about the shop is hard-coded except the brand name (one line) and the department photos, which are matched to categories by their slug and replaced by a collage of the category's products when missing.
 
@@ -50,52 +50,52 @@ Selldone's own cart, checkout, payments and orders keep working underneath. Noth
 - **Product page:** three columns: the gallery, the details with colour or capacity **tiles** and key specs, and a **sticky buy box** (price, the deal's countdown in days, hours, minutes and seconds, stock, delivery, Add to cart, Compare, Save); then Specifications in the shop's groups, Reviews, Frequently bought together, Related products and More in the department.
 - **Compare:** the picks pinned on top, specs side by side, differences marked, same values merged, "Only differences".
 - **Cart:** a receipt-first drawer (subtotal, savings, Checkout, compact rows, "Often added"), a stepped checkout with a map-first address sheet, delivery method and the payment window.
-- **Orders and account:** receipt, delivery and the trip, messages with the Besti mark; the account as a **desk** (side menu, order cards, address book).
+- **Orders and account:** receipt, delivery and the trip, messages with the Argon mark; the account as a **desk** (side menu, order cards, address book).
 - **Pages:** guides and articles, About, Terms, Privacy (sample text marked as such until the shop writes its own), Contact us with a form, FAQ and a designed 404.
 
 ## Theme and colours
 
-Besti runs the shared theme switcher (`components/theme-switcher/`, the same code as Digito and the other Layouts). On your own shop the visitor switcher is hidden, and Besti shows the theme you set in **one file**, [`components/besti/besti-theme.settings.ts`](components/besti/besti-theme.settings.ts): a palette (`blue`, `violet`, `emerald`, `copper`, `magenta`) or any brand colour (`brandColor: "#F5C400"`; a light colour keeps dark words on it with `textOnBrand: "auto"`), `light` or `dark`, and whether your visitors get the switcher (`themeSwitcher: "showcase" | "on" | "off"`). Every colour is made readable automatically. An AI agent finds the steps in the "Theme" section of [`AGENTS.md`](AGENTS.md); the wiki page [Theme and colours](https://github.com/selldone-custom-layouts/official-besti/wiki/Theme-and-colours) has the details.
+Argon runs the shared theme switcher (`components/theme-switcher/`, the same code as Digito and the other Layouts). On your own shop the visitor switcher is hidden, and Argon shows the theme you set in **one file**, [`components/argon/argon-theme.settings.ts`](components/argon/argon-theme.settings.ts): a palette (`blue`, `violet`, `emerald`, `copper`, `magenta`) or any brand colour (`brandColor: "#F5C400"`; a light colour keeps dark words on it with `textOnBrand: "auto"`), `light` or `dark`, and whether your visitors get the switcher (`themeSwitcher: "showcase" | "on" | "off"`). Every colour is made readable automatically. An AI agent finds the steps in the "Theme" section of [`AGENTS.md`](AGENTS.md); the wiki page [Theme and colours](https://github.com/selldone-custom-layouts/official-argon/wiki/Theme-and-colours) has the details.
 
 ## Use it on your shop
 
 | You want to… | Read |
 | --- | --- |
-| Let an AI agent (Claude Code, Codex…) set it up for your shop | [Install with AI](https://github.com/selldone-custom-layouts/official-besti/wiki/Install-with-AI) |
-| Do it yourself, step by step | [Manual Setup](https://github.com/selldone-custom-layouts/official-besti/wiki/Manual-Setup) |
-| Know what data your shop needs for the design to look right | [Shop Requirements](https://github.com/selldone-custom-layouts/official-besti/wiki/Shop-Requirements) |
-| Build, upload and verify a release | [Build and Upload](https://github.com/selldone-custom-layouts/official-besti/wiki/Build-and-Upload) |
-| Put the Layout live on your shop, or on one domain of it | [Go Live](https://github.com/selldone-custom-layouts/official-besti/wiki/Go-Live) |
-| Change the name, colours, photos, sections or pages | [Customize](https://github.com/selldone-custom-layouts/official-besti/wiki/Customize) |
-| Fix a blank page, a rejected upload or an old version showing | [Troubleshooting](https://github.com/selldone-custom-layouts/official-besti/wiki/Troubleshooting) |
+| Let an AI agent (Claude Code, Codex…) set it up for your shop | [Install with AI](https://github.com/selldone-custom-layouts/official-argon/wiki/Install-with-AI) |
+| Do it yourself, step by step | [Manual Setup](https://github.com/selldone-custom-layouts/official-argon/wiki/Manual-Setup) |
+| Know what data your shop needs for the design to look right | [Shop Requirements](https://github.com/selldone-custom-layouts/official-argon/wiki/Shop-Requirements) |
+| Build, upload and verify a release | [Build and Upload](https://github.com/selldone-custom-layouts/official-argon/wiki/Build-and-Upload) |
+| Put the Layout live on your shop, or on one domain of it | [Go Live](https://github.com/selldone-custom-layouts/official-argon/wiki/Go-Live) |
+| Change the name, colours, photos, sections or pages | [Customize](https://github.com/selldone-custom-layouts/official-argon/wiki/Customize) |
+| Fix a blank page, a rejected upload or an old version showing | [Troubleshooting](https://github.com/selldone-custom-layouts/official-argon/wiki/Troubleshooting) |
 
 The wiki's source is also in [`docs/wiki/`](docs/wiki/).
 
 ## Quick start (developers)
 
 ```bash
-git clone --recurse-submodules https://github.com/selldone-custom-layouts/official-besti.git
-cd official-besti
+git clone --recurse-submodules https://github.com/selldone-custom-layouts/official-argon.git
+cd official-argon
 npm install --force
 npm run serve            # dev server on http://localhost:9131
 ```
 
-Releases: `bash scripts/release.sh <new-version> desk`. See [Build and Upload](https://github.com/selldone-custom-layouts/official-besti/wiki/Build-and-Upload).
+Releases: `bash scripts/release.sh <new-version> desk`. See [Build and Upload](https://github.com/selldone-custom-layouts/official-argon/wiki/Build-and-Upload).
 
 ## Where things are
 
 | Area | Files |
 | --- | --- |
 | The brand name (one line) and the mark | [`components/kalio/kalio-brand.ts`](components/kalio/kalio-brand.ts), [`assets/brand/`](assets/brand/) |
-| Header, footer, home, card, product page | [`components/besti/`](components/besti/) |
-| Department photos (by category slug) | [`assets/besti/`](assets/besti/) |
-| Besti's dress | [`style/besti.scss`](style/besti.scss), [`style/besti-pages.scss`](style/besti-pages.scss) |
-| What Besti changed, and why | [`BESTI.md`](BESTI.md) |
+| Header, footer, home, card, product page | [`components/argon/`](components/argon/) |
+| Department photos (by category slug) | [`assets/argon/`](assets/argon/) |
+| Argon's dress | [`style/argon.scss`](style/argon.scss), [`style/argon-pages.scss`](style/argon-pages.scss) |
+| What Argon changed, and why | [`ARGON.md`](ARGON.md) |
 | The behaviours it keeps (cart, checkout, account…) | [`components/kalio/`](components/kalio/), [`KALIO.md`](KALIO.md) |
 | Release tooling | [`scripts/`](scripts/) |
 | Selldone storefront's original README | [`README.selldone.md`](README.selldone.md) |
 
-Besti started from [Walio Market](https://github.com/selldone-custom-layouts/official-walio) and keeps its shared components (classes `k-`, `t-`, `w-`); Besti's own are `b-`.
+Argon started from [Walio Market](https://github.com/selldone-custom-layouts/official-walio) and keeps its shared components (classes `k-`, `t-`, `w-`); Argon's own are `b-`.
 
 ## Credits and license
 

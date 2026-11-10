@@ -1,41 +1,41 @@
 <!--
-  Besti — a row of product cards on one line that scrolls sideways, with
+  Argon — a row of product cards on one line that scrolls sideways, with
   round arrows at its ends ("New arrivals", "<Tag> Items", the product
   page's "Related products" and "More in <category>"). Six cards to a
   computer screen, five on a laptop, two and a half on a phone. A row with
   nothing to show renders nothing; while it loads it shows skeletons.
 -->
 <template>
-  <section v-if="products === null || products.length" :aria-label="title" class="b-sec">
-    <header class="b-head">
+  <section v-if="products === null || products.length" :aria-label="title" class="ar-sec">
+    <header class="ar-head">
       <h2>{{ title }}</h2>
       <slot name="head"></slot>
-      <router-link v-if="moreTo" :to="moreTo" class="b-more">{{ moreLabel }}<span class="ms">chevron_right</span></router-link>
-      <button v-else-if="moreAction" class="b-more" type="button" @click="$emit('more')">{{ moreLabel }}</button>
+      <router-link v-if="moreTo" :to="moreTo" class="ar-more">{{ moreLabel }}<span class="ms">chevron_right</span></router-link>
+      <button v-else-if="moreAction" class="ar-more" type="button" @click="$emit('more')">{{ moreLabel }}</button>
     </header>
-    <div class="b-rail">
-      <div ref="track" class="b-rail__track" @scroll.passive="measure">
+    <div class="ar-rail">
+      <div ref="track" class="ar-rail__track" @scroll.passive="measure">
         <template v-if="products === null">
-          <div v-for="n in 6" :key="'s' + n" aria-hidden="true" class="b-card -skeleton"><i></i><b></b><b class="-short"></b></div>
+          <div v-for="n in 6" :key="'s' + n" aria-hidden="true" class="ar-card -skeleton"><i></i><b></b><b class="-short"></b></div>
         </template>
         <template v-else>
           <slot :products="products">
-            <besti-card v-for="p in products" :key="p.id" :product="p" @quick-buy="$emit('quick-buy', $event)" />
+            <argon-card v-for="p in products" :key="p.id" :product="p" @quick-buy="$emit('quick-buy', $event)" />
           </slot>
         </template>
       </div>
-      <button v-show="!at_start" aria-label="Scroll back" class="b-arrow -l" type="button" @click="nudge(-1)"><span class="ms">chevron_left</span></button>
-      <button v-show="!at_end" aria-label="Scroll forward" class="b-arrow -r" type="button" @click="nudge(1)"><span class="ms">chevron_right</span></button>
+      <button v-show="!at_start" aria-label="Scroll back" class="ar-arrow -l" type="button" @click="nudge(-1)"><span class="ms">chevron_left</span></button>
+      <button v-show="!at_end" aria-label="Scroll forward" class="ar-arrow -r" type="button" @click="nudge(1)"><span class="ms">chevron_right</span></button>
     </div>
   </section>
 </template>
 
 <script>
-import BestiCard from "./BestiCard.vue";
+import ArgonCard from "./ArgonCard.vue";
 
 export default {
-  name: "BestiRail",
-  components: { BestiCard },
+  name: "ArgonRail",
+  components: { ArgonCard },
   props: {
     title: { type: String, required: true },
     /** null while loading. */

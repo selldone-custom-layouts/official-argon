@@ -43,7 +43,7 @@
       <span v-for="n in compact ? 2 : 3" :key="n" class="k-board__ghost"></span>
     </div>
 
-    <!-- Besti: a guest whose device holds no order is not an error (Selldone
+    <!-- Argon: a guest whose device holds no order is not an error (Selldone
          refuses the read when the shop takes no guest orders). -->
     <div v-else-if="account.failed && !account.orders.length && !USER()" class="k-board__empty">
       <v-icon size="28">receipt_long</v-icon>

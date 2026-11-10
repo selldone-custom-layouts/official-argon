@@ -1,10 +1,10 @@
-# Besti Electronics
+# Argon Electronics
 
-![Besti Electronics on desktop and phone](https://raw.githubusercontent.com/selldone-custom-layouts/official-besti/main/docs/screenshots/cover.jpg)
+![Argon Electronics on desktop and phone](https://raw.githubusercontent.com/selldone-custom-layouts/official-argon/main/docs/screenshots/cover.jpg)
 
-**Besti Electronics** is a custom storefront **Layout** for Selldone shops: a single-shop electronics store dressed as a big white department store. A navy strip with the Deal of the Day, a white header with a scoped search and a blue cart pill, a blue department bar with a mega menu, a photo hero by department, departments in two even rows, top deals by category, best sellers from the shop's own tag, brands and guides; bordered product tiles with colour swatches; filters built from the products' own specs; a three-column product page with a sticky buy box; a side-by-side compare page; a receipt-first cart and a desk-style account.
+**Argon Electronics** is a custom storefront **Layout** for Selldone shops: a single-shop electronics store dressed as a big white department store. A navy strip with the Deal of the Day, a white header with a scoped search and a blue cart pill, a blue department bar with a mega menu, a photo hero by department, departments in two even rows, top deals by category, best sellers from the shop's own tag, brands and guides; bordered product tiles with colour swatches; filters built from the products' own specs; a three-column product page with a sticky buy box; a side-by-side compare page; a receipt-first cart and a desk-style account.
 
-It runs on **[besti.selldone.shop](https://besti.selldone.shop)**, one address of the Selldone shop Digini: one shop, one Layout per domain (see [Go Live](Go-Live)). It is built on the official [selldone/storefront](https://github.com/selldone/storefront), so Selldone's cart, checkout, payments and orders keep working underneath a completely new design.
+It runs on **[argon.selldone.shop](https://argon.selldone.shop)**, one address of the Selldone shop Digini: one shop, one Layout per domain (see [Go Live](Go-Live)). It is built on the official [selldone/storefront](https://github.com/selldone/storefront), so Selldone's cart, checkout, payments and orders keep working underneath a completely new design.
 
 ## Start here
 
@@ -39,8 +39,8 @@ It runs on **[besti.selldone.shop](https://besti.selldone.shop)**, one address o
 
 ## Links
 
-- Live shop: <https://besti.selldone.shop>
-- Repository: <https://github.com/selldone-custom-layouts/official-besti>
-- Release log: [`BESTI.md`](https://github.com/selldone-custom-layouts/official-besti/blob/main/BESTI.md); shared behaviours: [`KALIO.md`](https://github.com/selldone-custom-layouts/official-besti/blob/main/KALIO.md)
+- Live shop: <https://argon.selldone.shop>
+- Repository: <https://github.com/selldone-custom-layouts/official-argon>
+- Release log: [`ARGON.md`](https://github.com/selldone-custom-layouts/official-argon/blob/main/ARGON.md); shared behaviours: [`KALIO.md`](https://github.com/selldone-custom-layouts/official-argon/blob/main/KALIO.md)
 - All official custom Layouts: <https://github.com/selldone-custom-layouts>
 - Selldone: <https://selldone.com>

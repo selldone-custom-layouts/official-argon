@@ -100,15 +100,15 @@ export default ({mode}: any) => {
           : []),
     ],
     /* The theme switcher's build step: every fixed colour gets a dark value
-       under html.b-dark (components/theme-switcher/tools, PORTING.md). */
+       under html.ar-dark (components/theme-switcher/tools, PORTING.md). */
     css: {
       postcss: {
         plugins: [
           darkTokens({
-            darkSelector: "html.b-dark",
+            darkSelector: "html.ar-dark",
             include: [/\/style\//, /\/StorefrontApp\.vue/, /\/components\//, /\/pages\//, /\/layouts\//],
             exclude: [/\/node_modules\//, /\/modules\/pagebuilder\//, /\/theme-switcher\//],
-            lightVars: ["--k-well", "--k-tint", "--k-leaf", "--b-photo", "--b-yellow"],
+            lightVars: ["--k-well", "--k-tint", "--k-leaf", "--ar-photo", "--ar-yellow"],
             card: "#151c2b",
             raise: "#1c2536",
             variant: "#2b3549",
@@ -172,7 +172,7 @@ export default ({mode}: any) => {
       assetsInlineLimit: (file: string, content: Buffer) => {
         const f = file.toLowerCase();
         if (f.endsWith(".svg")) return content.length <= 16384;
-        /* Besti: small PNG/JPG icons ride inline too (fewer files); photos never. */
+        /* Argon: small PNG/JPG icons ride inline too (fewer files); photos never. */
         if (/\.(png|jpe?g|gif)$/.test(f)) return content.length <= 12288;
         return undefined;
       },

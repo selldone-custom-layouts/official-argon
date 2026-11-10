@@ -61,7 +61,7 @@
 
     &:hover:not(:disabled) {
       background: var(--k-green);
-      color: var(--b-on-brand) !important;
+      color: var(--ar-on-brand) !important;
     }
   }
 
@@ -867,7 +867,7 @@
 
     .discount-code-row > .v-btn--icon:first-child {
       background: var(--k-green-deep) !important;
-      color: var(--b-on-brand) !important;
+      color: var(--ar-on-brand) !important;
     }
   }
 
@@ -913,17 +913,17 @@
     padding: 0 22px;
     border-radius: var(--k-pill);
     background: var(--k-green-deep);
-    color: var(--b-on-brand) !important;
+    color: var(--ar-on-brand) !important;
     font-size: 17px;
     font-weight: 700;
     transition: background 0.15s;
 
     .v-icon {
-      color: var(--b-on-brand);
+      color: var(--ar-on-brand);
     }
 
     .u--price {
-      color: var(--b-on-brand);
+      color: var(--ar-on-brand);
     }
 
     &:hover {
@@ -1170,7 +1170,7 @@
     height: 54px;
     border-radius: var(--k-pill);
     background: var(--k-green-deep);
-    color: var(--b-on-brand) !important;
+    color: var(--ar-on-brand) !important;
     font-size: 16px;
     font-weight: 700;
 
@@ -2258,7 +2258,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     height: 64px;
     border-radius: 50%;
     background: var(--k-green);
-    color: var(--b-on-brand);
+    color: var(--ar-on-brand);
 
     .-wait & {
       background: #b7791f;
@@ -2269,7 +2269,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     }
 
     .v-icon {
-      color: var(--b-on-brand);
+      color: var(--ar-on-brand);
     }
   }
 
@@ -2383,7 +2383,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       background: var(--k-green);
 
       .v-icon {
-        color: var(--b-on-brand);
+        color: var(--ar-on-brand);
       }
     }
 
@@ -2488,7 +2488,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     padding: 7px 12px;
     border-radius: var(--k-pill);
     background: var(--k-green);
-    color: var(--b-on-brand);
+    color: var(--ar-on-brand);
     font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
@@ -2728,14 +2728,14 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     border: 0;
     border-radius: var(--k-pill);
     background: var(--k-green);
-    color: var(--b-on-brand) !important;
+    color: var(--ar-on-brand) !important;
     font: inherit;
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
 
     .v-icon {
-      color: var(--b-on-brand) !important;
+      color: var(--ar-on-brand) !important;
     }
 
     &:hover:not(:disabled) {
@@ -2914,7 +2914,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     transform: translate(-50%, -100%) rotate(-45deg);
 
     .v-icon {
-      color: var(--b-on-brand) !important;
+      color: var(--ar-on-brand) !important;
       transform: rotate(45deg);
     }
   }
@@ -3079,7 +3079,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
       background: var(--k-green);
 
       .v-icon {
-        color: var(--b-on-brand) !important;
+        color: var(--ar-on-brand) !important;
       }
     }
 
@@ -3287,7 +3287,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     .-mine & {
       border-radius: 18px 18px 6px 18px;
       background: var(--k-green);
-      color: var(--b-on-brand);
+      color: var(--ar-on-brand);
     }
   }
 
@@ -3436,7 +3436,7 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
 
     .v-icon,
     .v-progress-circular {
-      color: var(--b-on-brand) !important;
+      color: var(--ar-on-brand) !important;
     }
 
     &:hover:not(:disabled) {
@@ -3577,14 +3577,14 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     border: 0;
     border-radius: var(--k-pill);
     background: var(--k-green);
-    color: var(--b-on-brand) !important;
+    color: var(--ar-on-brand) !important;
     font: inherit;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
 
     .v-icon {
-      color: var(--b-on-brand) !important;
+      color: var(--ar-on-brand) !important;
     }
 
     &:hover {

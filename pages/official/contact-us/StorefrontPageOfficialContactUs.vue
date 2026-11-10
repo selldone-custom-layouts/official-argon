@@ -5,7 +5,7 @@
   - Web: https://selldone.com
   -->
 <!--
-  Besti — Contact us (digini-design/contact-b.html).
+  Argon — Contact us (digini-design/contact-b.html).
 
   A message form (name, email, order number, topic, message) sent with
   Selldone's own contact form call, and beside it how else to reach the
@@ -15,79 +15,79 @@
   an order. A missing page is not an error: nothing red is shown.
 -->
 <template>
-  <div class="b-contact">
-    <h1 class="b-contact__h">Contact us</h1>
-    <p class="b-contact__lede">Questions about a product or an order? Write to us and we'll get back to you.</p>
+  <div class="ar-contact">
+    <h1 class="ar-contact__h">Contact us</h1>
+    <p class="ar-contact__lede">Questions about a product or an order? Write to us and we'll get back to you.</p>
 
-    <div class="b-contact__cols">
-      <section aria-labelledby="b-contact-form" class="b-contact__form">
+    <div class="ar-contact__cols">
+      <section aria-labelledby="ar-contact-form" class="ar-contact__form">
         <template v-if="submitted">
-          <div class="b-empty">
-            <span class="b-empty__ic"><span class="ms">mark_email_read</span></span>
-            <p id="b-contact-form" class="b-empty__t">Thanks, your message is on its way</p>
-            <p class="b-empty__p">We usually answer within a working day, at the email you gave us.</p>
-            <button class="b-btn -line" type="button" @click="submitted = false">Send another message</button>
+          <div class="ar-empty">
+            <span class="ar-empty__ic"><span class="ms">mark_email_read</span></span>
+            <p id="ar-contact-form" class="ar-empty__t">Thanks, your message is on its way</p>
+            <p class="ar-empty__p">We usually answer within a working day, at the email you gave us.</p>
+            <button class="ar-btn -line" type="button" @click="submitted = false">Send another message</button>
           </div>
         </template>
         <form v-else novalidate @submit.prevent="sendForm">
-          <h2 id="b-contact-form">Send us a message</h2>
-          <div class="b-form">
-            <label class="b-field">
+          <h2 id="ar-contact-form">Send us a message</h2>
+          <div class="ar-form">
+            <label class="ar-field">
               <span>Name</span>
               <input v-model.trim="name" autocomplete="name" placeholder="Your name" type="text" />
             </label>
-            <label :class="{ '-bad': tried && !emailOk }" class="b-field">
+            <label :class="{ '-bad': tried && !emailOk }" class="ar-field">
               <span>Email</span>
               <input v-model.trim="email" autocomplete="email" placeholder="you@example.com" type="email" />
               <small v-if="tried && !emailOk">Please enter your email, so we can answer.</small>
             </label>
-            <label class="b-field">
+            <label class="ar-field">
               <span>Order number (optional)</span>
               <input v-model.trim="order" placeholder="e.g. 1042" type="text" />
             </label>
-            <label class="b-field">
+            <label class="ar-field">
               <span>Topic</span>
               <select v-model="category">
                 <option v-for="t in topics" :key="t" :value="t">{{ t }}</option>
               </select>
             </label>
-            <label :class="{ '-bad': tried && !message }" class="b-field -wide">
+            <label :class="{ '-bad': tried && !message }" class="ar-field -wide">
               <span>Message</span>
               <textarea v-model="message" placeholder="How can we help?" rows="5"></textarea>
               <small v-if="tried && !message">Please write your message.</small>
             </label>
           </div>
-          <div class="b-contact__send">
-            <button :disabled="busy_send" class="b-btn" type="submit">
+          <div class="ar-contact__send">
+            <button :disabled="busy_send" class="ar-btn" type="submit">
               <span class="ms">send</span>{{ busy_send ? "Sending…" : "Send message" }}
             </button>
             <small>We usually answer within a working day.</small>
           </div>
-          <p v-if="error" class="b-contact__err" role="alert">{{ error }}</p>
+          <p v-if="error" class="ar-contact__err" role="alert">{{ error }}</p>
         </form>
       </section>
 
-      <aside aria-label="Other ways to reach us" class="b-contact__side">
-        <div v-if="profile && profileText" class="b-contact__card -profile">
+      <aside aria-label="Other ways to reach us" class="ar-contact__side">
+        <div v-if="profile && profileText" class="ar-contact__card -profile">
           <s-article-editor :body="profile.body" :edit="false" :enable-title="false" :only-view="true" class="k-prose" />
         </div>
         <template v-else-if="!busy">
           <kalio-sample-note />
-          <div v-for="c in samples" :key="c.title" class="b-contact__card">
-            <span class="b-contact__ic"><span class="ms">{{ c.icon }}</span></span>
+          <div v-for="c in samples" :key="c.title" class="ar-contact__card">
+            <span class="ar-contact__ic"><span class="ms">{{ c.icon }}</span></span>
             <div>
               <b>{{ c.title }}</b>
               <p>{{ c.line }}</p>
-              <span class="b-contact__more">{{ c.more }}</span>
+              <span class="ar-contact__more">{{ c.more }}</span>
             </div>
           </div>
         </template>
-        <div class="b-contact__card">
-          <span class="b-contact__ic"><span class="ms">local_shipping</span></span>
+        <div class="ar-contact__card">
+          <span class="ar-contact__ic"><span class="ms">local_shipping</span></span>
           <div>
             <b>Track an order</b>
             <p>Your orders, their status and messages are in your account.</p>
-            <router-link :to="{ name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL }" class="b-link">Track order<span class="ms">chevron_right</span></router-link>
+            <router-link :to="{ name: window.$storefront.routes.HISTORY_ORDERS_PHYSICAL }" class="ar-link">Track order<span class="ms">chevron_right</span></router-link>
           </div>
         </div>
       </aside>
@@ -130,7 +130,7 @@ export default {
     },
     samples() {
       return [
-        { icon: "mail", title: "Email us", line: "hello@besti.example", more: "Answers within a working day" },
+        { icon: "mail", title: "Email us", line: "hello@argon.example", more: "Answers within a working day" },
         { icon: "call", title: "Call us", line: "+1 305 555 0100", more: "Mon–Fri, 9 AM – 6 PM" },
         { icon: "location_on", title: "Visit", line: "100 Biscayne Blvd, Miami, FL 33132", more: "Pickup point" },
       ];

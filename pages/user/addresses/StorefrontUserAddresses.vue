@@ -168,7 +168,7 @@ export default {
        image, the token Selldone's page used). */
     mapOf(address) {
       const { lng, lat } = address.location;
-      const pin = (getComputedStyle(document.documentElement).getPropertyValue("--b-blue").trim() || "#0a4bd8").replace("#", ""); /* the theme's colour */
+      const pin = (getComputedStyle(document.documentElement).getPropertyValue("--ar-blue").trim() || "#0a4bd8").replace("#", ""); /* the theme's colour */
       return `https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s+${pin}(${lng},${lat})/${lng},${lat},14,0,0/160x160@2x?access_token=pk.eyJ1IjoicGFqdWhhYW4iLCJhIjoiY2sxaHNtbnU3MDFjcjNta2V0OTZ0d2ExYiJ9.YKRh0EP7NnhbmuSil7AvSw`;
     },
 

@@ -1,92 +1,92 @@
 <!--
-  Besti — the footer (Home B).
+  Argon — the footer (Home B).
 
   A blue newsletter band ("Deals in your inbox", Selldone's own subscribe),
   then navy columns: the white wordmark with the shop's description and its
   social links, Departments (live), Your orders, About (the merchant's own
   footer menu when there is one, else the standard pages) and Policies; and
-  (1.0.10 trial: the Theme row is in the header, BestiThemePicker); a legal row with a small "made with selldone" and
+  (1.0.10 trial: the Theme row is in the header, ArgonThemePicker); a legal row with a small "made with selldone" and
   Selldone's cookie settings. A shop with custom footer code keeps
   Selldone's footer.
 -->
 <template>
-  <footer class="b-footer">
-    <div class="b-footer__news">
-      <div class="b-wrap b-footer__news-in">
-        <div>
-          <h3>Deals in your inbox</h3>
-          <p>Price drops and new arrivals, about once a week.</p>
-        </div>
-        <form class="b-footer__form" @submit.prevent="subscribe">
-          <input v-model.trim="email" :disabled="sent" aria-label="Email" autocomplete="email" placeholder="Enter your email" type="email" />
-          <button :disabled="busy || sent" class="b-btn -navy" type="submit">
-            <template v-if="sent"><span class="ms">check</span>Signed up</template>
-            <template v-else>Sign up</template>
-          </button>
-          <p v-if="error" class="b-footer__err" role="alert">{{ error }}</p>
-        </form>
-      </div>
-    </div>
-
-    <div class="b-wrap b-footer__grid">
-      <div class="b-footer__brand">
-        <besti-logo light />
-        <p>{{ lede }}</p>
-        <s-storefront-social-buttons class="b-footer__social"></s-storefront-social-buttons>
-      </div>
-      <nav aria-label="Departments">
-        <h4>Departments</h4>
-        <router-link v-for="c in cats.slice(0, 6)" :key="c.id" :to="catTo(c)">{{ c.title || c.name }}</router-link>
-        <router-link :to="allTo">All products</router-link>
-      </nav>
-      <nav aria-label="Your orders">
-        <h4>Your orders</h4>
+  <footer class="ar-footer">
+    <div class="ar-wrap ar-footer__grid">
+      <nav aria-label="Help">
+        <h4>Help</h4>
         <router-link :to="ordersTo">Track an order</router-link>
-        <button class="b-footer__btn" type="button" @click="openCart">Your cart</button>
+        <router-link :to="{ name: r.SHOP_PROFILE_PAGE_TERMS }">Returns</router-link>
+        <router-link v-if="$router.hasRoute('ShopFAQ')" :to="{ name: 'ShopFAQ' }">Help &amp; FAQ</router-link>
+        <router-link :to="{ name: r.SHOP_CONTACT_US }">Contact us</router-link>
+      </nav>
+      <nav aria-label="Shop">
+        <h4>Shop</h4>
+        <router-link :to="dealsTo">Today’s deals</router-link>
+        <router-link :to="newTo">New arrivals</router-link>
+        <router-link :to="allTo">All products</router-link>
+        <router-link v-for="c in cats.slice(0, 4)" :key="c.id" :to="catTo(c)">{{ c.title || c.name }}</router-link>
+      </nav>
+      <nav aria-label="Your account">
+        <h4>Account</h4>
         <router-link v-if="user" :to="{ name: 'KalioAccountHome' }">Your account</router-link>
-        <button v-else class="b-footer__btn" type="button" @click="signIn">Sign in</button>
-        <router-link v-if="user" :to="{ name: r.USER_FAVORITES_PAGE }">Saved</router-link>
+        <button v-else class="ar-footer__btn" type="button" @click="signIn">Sign in</button>
+        <router-link :to="ordersTo">Orders</router-link>
+        <router-link v-if="user" :to="{ name: r.USER_FAVORITES_PAGE }">Wishlist</router-link>
+        <button v-else class="ar-footer__btn" type="button" @click="signIn">Wishlist</button>
+        <button class="ar-footer__btn" type="button" @click="openCart">Your cart</button>
+        <router-link :to="{ name: r.COMPARISON_PAGE }">Compare</router-link>
       </nav>
       <nav :aria-label="`About ${shopTitle}`">
         <h4>About {{ shopTitle }}</h4>
         <router-link v-for="(l, i) in aboutLinks" :key="i" :to="l.to">{{ l.name }}</router-link>
-      </nav>
-      <nav aria-label="Policies">
-        <h4>Policies</h4>
         <router-link :to="{ name: r.SHOP_PROFILE_PAGE_TERMS }">Terms of service</router-link>
         <router-link :to="{ name: r.SHOP_PROFILE_PAGE_PRIVACY }">Privacy policy</router-link>
-        <s-footer-section-gdpr class="b-footer__gdpr"></s-footer-section-gdpr>
       </nav>
+      <div class="ar-footer__news">
+        <h4>Deals in your inbox</h4>
+        <p>New arrivals and price drops, about once a week.</p>
+        <form class="ar-footer__form" @submit.prevent="subscribe">
+          <input v-model.trim="email" :disabled="sent" aria-label="Email" autocomplete="email" placeholder="Your email address" type="email" />
+          <button :disabled="busy || sent" class="ar-btn" type="submit">
+            <template v-if="sent"><span class="ms">check</span>Signed up</template>
+            <template v-else>Sign up</template>
+          </button>
+        </form>
+        <p v-if="error" class="ar-footer__err" role="alert">{{ error }}</p>
+        <s-storefront-social-buttons class="ar-footer__social"></s-storefront-social-buttons>
+      </div>
     </div>
 
-    <!-- 1.0.10 trial: the Theme row moved to the header (BestiThemePicker);
-         1.0.9, with this row in the footer, is the rollback. -->
-    <div class="b-wrap b-footer__legal">
-      <span>© {{ year }} {{ shopTitle }}</span>
-      <router-link :to="{ name: r.SHOP_PROFILE_PAGE_TERMS }">Terms</router-link>
-      <router-link :to="{ name: r.SHOP_PROFILE_PAGE_PRIVACY }">Privacy</router-link>
-      <div class="b-footer__pickers">
-        <s-language-selector hide-details variant="plain"></s-language-selector>
-        <u-currency-selector v-if="$shop.currencies && $shop.currencies.length > 1" :shop="$shop" hide-details @change="onChangeUserSelectedCurrency" />
+    <div class="ar-footer__legal">
+      <div class="ar-wrap ar-footer__legal-in">
+        <argon-logo class="ar-footer__logo" />
+        <span>© {{ year }} {{ shopTitle }}</span>
+        <router-link :to="{ name: r.SHOP_PROFILE_PAGE_TERMS }">Terms</router-link>
+        <router-link :to="{ name: r.SHOP_PROFILE_PAGE_PRIVACY }">Privacy</router-link>
+        <s-footer-section-gdpr class="ar-footer__gdpr"></s-footer-section-gdpr>
+        <div class="ar-footer__pickers">
+          <s-language-selector hide-details variant="plain"></s-language-selector>
+          <u-currency-selector v-if="$shop.currencies && $shop.currencies.length > 1" :shop="$shop" hide-details @change="onChangeUserSelectedCurrency" />
+        </div>
+        <s-footer-section-selldone class="ar-footer__made"></s-footer-section-selldone>
       </div>
-      <s-footer-section-selldone class="b-footer__made"></s-footer-section-selldone>
     </div>
   </footer>
 </template>
 
 <script>
-import BestiLogo from "../BestiLogo.vue";
+import ArgonLogo from "../ArgonLogo.vue";
 import SStorefrontSocialButtons from "@selldone/components-vue/storefront/social/SStorefrontSocialButtons.vue";
 import SLanguageSelector from "@selldone/components-vue/storefront/language/selector/SLanguageSelector.vue";
 import UCurrencySelector from "@selldone/components-vue/ui/currency/selector/UCurrencySelector.vue";
 import SFooterSectionGdpr from "@selldone/components-vue/storefront/footer/section/gdpr/SFooterSectionGdpr.vue";
 import SFooterSectionSelldone from "@selldone/components-vue/storefront/footer/section/selldone/SFooterSectionSelldone.vue";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
-import { aisleRoute, aisles, catalogueRoute } from "../../kalio/kalio-catalog";
+import { aisleRoute, aisles, catalogueRoute, dealsRoute } from "../../kalio/kalio-catalog";
 
 export default {
-  name: "BestiFooter",
-  components: { BestiLogo, SStorefrontSocialButtons, SLanguageSelector, UCurrencySelector, SFooterSectionGdpr, SFooterSectionSelldone },
+  name: "ArgonFooter",
+  components: { ArgonLogo, SStorefrontSocialButtons, SLanguageSelector, UCurrencySelector, SFooterSectionGdpr, SFooterSectionSelldone },
   inject: ["$shop"],
 
   data: () => ({ cats: [], email: "", busy: false, sent: false, error: null, year: new Date().getFullYear() }),
@@ -107,6 +107,12 @@ export default {
     ordersTo() {
       return { name: this.r.HISTORY_ORDERS_PHYSICAL };
     },
+    dealsTo() {
+      return dealsRoute();
+    },
+    newTo() {
+      return catalogueRoute({ sort: "newest" });
+    },
     /* The shop's own description; Selldone's placeholder line is not shown. */
     lede() {
       const d = (this.$shop?.description || "").trim();
@@ -119,7 +125,7 @@ export default {
     aboutLinks() {
       const r = this.r;
       const menu = this.$shop?.menus?.find((it) => it.type === "FOOTER" && it.enable !== false);
-      const skip = new Set([r.SHOP_PROFILE_PAGE_TERMS, r.SHOP_PROFILE_PAGE_PRIVACY]);
+      const skip = new Set([r.SHOP_PROFILE_PAGE_TERMS, r.SHOP_PROFILE_PAGE_PRIVACY, r.SHOP_CONTACT_US, "ShopFAQ"]);
       const items = (menu?.menu || [])
         .flat()
         .filter((item) => item && item.name && item.to)
@@ -129,9 +135,8 @@ export default {
       const has = (name) => items.some((it) => it.to?.name === name);
       const out = items.length ? items : [{ name: "About us", to: { name: r.SHOP_PROFILE_PAGE_ABOUT_US } }];
       if (!has(r.BLOGS_PAGE) && !has(r.SHOP_BLOGS_PAGE) && !items.some((it) => it.to?.name === "Blogs")) out.push({ name: "Tips and guides", to: { name: r.BLOGS_PAGE } });
-      if (!has(r.SHOP_CONTACT_US)) out.push({ name: "Contact us", to: { name: r.SHOP_CONTACT_US } });
-      if (this.$router.hasRoute("ShopFAQ") && !has("ShopFAQ")) out.push({ name: "FAQ", to: { name: "ShopFAQ" } });
-      return out;
+      /* Contact us and the FAQ live under Help. */
+      return out.filter((it) => it.to?.name !== r.SHOP_CONTACT_US && it.to?.name !== "ShopFAQ");
     },
   },
 
@@ -145,7 +150,7 @@ export default {
       EventBus.$emit("need-login", true);
     },
     openCart() {
-      EventBus.$emit("besti:open-cart");
+      EventBus.$emit("argon:open-cart");
     },
     /* Selldone's newsletter audience (the same public call as the Page
        Builder's newsletter form: email marketing, "newsletter"). */

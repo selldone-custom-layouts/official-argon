@@ -121,7 +121,7 @@ export function valueLabel(value: string): string {
   return String(value).split("|")[0].trim();
 }
 
-/* Besti: Selldone sorts by sales, date, price, likes and visits; it has no
+/* Argon: Selldone sorts by sales, date, price, likes and visits; it has no
    sort by rating, so "Customer reviews" is not offered (it would not do
    what it says). */
 export const SORTS = [

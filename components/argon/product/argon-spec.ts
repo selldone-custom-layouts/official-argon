@@ -1,5 +1,5 @@
 /*
- * Besti — a product's specifications, read from Selldone's flat spec:
+ * Argon — a product's specifications, read from Selldone's flat spec:
  * { "Design": "group", "Form Factor": ["Laptop", "Convertible"], … } in the
  * order of `spec_order`. A key whose value is "group" opens a group; the
  * rows after it belong to it. Nested spec is not read (Selldone ignores it

@@ -14,18 +14,18 @@
 
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <!--
-    Besti — product page (digini-design/product-b.html): the breadcrumb of
-    the category, the three columns (BestiProductOverview), then a row of
-    section links, Specifications in the shop's own groups, the description,
-    Reviews, "Frequently bought together", Related products and More in the
-    category. The merchant's section order (theme.order) still orders the
-    blocks below the top.
+    Argon — product page (digini-design/argon-product.html), after a big
+    catalogue store's: the breadcrumb of the category, then two columns on a
+    light-grey ground (ArgonProductOverview): the gallery card with About
+    this product, the specifications, delivery and reviews under it on the
+    left; the stacked buy cards on the right, in view while the left
+    scrolls. Then "Customers also viewed" and "More in <category>".
   -->
-  <div class="s--product k-product b-product">
+  <div class="s--product k-product ar-product">
     <div style="order: 0">
-      <div class="s--product-section-info b-wrap">
+      <div class="s--product-section-info ar-wrap">
         <slot name="header" :center="true"></slot>
-        <nav aria-label="Breadcrumb" class="b-crumbs">
+        <nav aria-label="Breadcrumb" class="ar-crumbs">
           <router-link :to="{ path: '/' }">Home</router-link>
           <template v-if="product && product.category">
             <span aria-hidden="true" class="ms">chevron_right</span>
@@ -36,40 +36,31 @@
           </template>
           <template v-if="product">
             <span aria-hidden="true" class="ms">chevron_right</span>
-            <span aria-current="page" class="b-crumbs__here">{{ product.title }}</span>
+            <span aria-current="page" class="ar-crumbs__here">{{ product.title }}</span>
           </template>
-          <span class="b-crumbs__tools">
+          <span class="ar-crumbs__tools">
             <s-product-admin-button v-if="$vuetify.display.mdAndUp"></s-product-admin-button>
           </span>
         </nav>
 
-        <besti-product-overview v-if="product" can-buy show-cover />
-        <s-product-overview-loading v-else />
-        <u-loading-progress v-if="busy"></u-loading-progress>
+        <argon-product-overview v-if="product" can-buy show-cover>
+          <template #below>
+            <!-- About this product -->
+            <section id="ar-about" aria-labelledby="ar-about-h" class="ar-pcard ar-about">
+              <h2 id="ar-about-h" class="ar-pcard__h -big">About this product</h2>
+              <ul v-if="features.length" class="ar-about__bullets">
+                <li v-for="f in features" :key="f.key"><b>{{ f.key }}:</b> {{ f.value }}</li>
+              </ul>
+              <p v-if="product.title_en && product.title_en !== product.title" class="ar-about__en">{{ product.title_en }}</p>
+              <s-product-article v-if="article" class="k-prose" hide-title></s-product-article>
+              <p v-else-if="aboutLine" class="ar-about__p">{{ aboutLine }}</p>
+            </section>
 
-        <nav v-if="product" aria-label="On this page" class="b-pills">
-          <a v-if="spec_groups.length" href="#b-specs" @click.prevent="jump('b-specs')">Specifications</a>
-          <a v-if="article" href="#b-about" @click.prevent="jump('b-about')">Overview</a>
-          <a href="#b-reviews" @click.prevent="jump('b-reviews')">Reviews</a>
-          <a href="#b-together" @click.prevent="jump('b-together')">Bought together</a>
-          <a href="#b-related" @click.prevent="jump('b-related')">Related</a>
-        </nav>
-      </div>
-    </div>
-
-    <template v-if="product">
-      <div :style="{ order: getOrder('offer') }">
-        <s-product-offers class="s--product-section b-wrap b-block"></s-product-offers>
-      </div>
-
-      <!-- Specifications, in the shop's own groups -->
-      <div :style="{ order: getOrder('spec') }">
-        <section v-if="spec_groups.length" id="b-specs" aria-labelledby="b-specs-h" class="b-sec b-wrap b-specs">
-          <header class="b-head"><h2 id="b-specs-h">Specifications</h2></header>
-          <div class="b-specs__cols">
-            <div v-for="(col, ci) in spec_cols" :key="ci" class="b-specs__col">
-              <table v-for="g in col" :key="g.title" class="b-spec">
-                <caption>{{ g.title }}</caption>
+            <!-- Specifications, in the shop's own groups -->
+            <section v-if="spec_groups.length" id="ar-specs" aria-labelledby="ar-specs-h" class="ar-pcard ar-specs">
+              <h2 id="ar-specs-h" class="ar-pcard__h -big">Specifications</h2>
+              <table v-for="g in spec_groups" :key="g.title" class="ar-spec">
+                <caption v-if="spec_groups.length > 1 || g.title">{{ g.title }}</caption>
                 <tbody>
                   <tr v-for="r in g.rows" :key="r.key">
                     <th scope="row">{{ r.key }}</th>
@@ -77,67 +68,70 @@
                   </tr>
                 </tbody>
               </table>
-            </div>
-          </div>
-        </section>
-        <section v-if="article" id="b-about" aria-labelledby="b-about-h" class="b-sec b-wrap b-about">
-          <header class="b-head"><h2 id="b-about-h">Overview</h2></header>
-          <s-product-article class="k-prose" hide-title></s-product-article>
-        </section>
-        <section v-if="ways.length" class="b-sec b-wrap b-ship">
-          <header class="b-head"><h2>Delivery and returns</h2></header>
-          <ul class="b-ship__ways">
-            <li v-for="w in ways" :key="w.key">
-              <span class="ms">{{ w.icon === "storefront" ? "storefront" : "local_shipping" }}</span>
-              <span
-                ><b>{{ w.word }}</b> {{ w.line }}.
-                <template v-if="w.free">Free.</template>
-                <template v-else-if="w.freeOver">Free on orders over <u-price :amount="w.freeOver" :currency="w.currency" />.</template>
-              </span>
-            </li>
-          </ul>
-          <s-product-shipping class="b-block"></s-product-shipping>
-          <s-product-warranty class="b-block"></s-product-warranty>
-          <s-product-guide class="b-block"></s-product-guide>
-        </section>
+            </section>
+
+            <!-- Delivery and returns -->
+            <section class="ar-pcard ar-ship">
+              <h2 class="ar-pcard__h -big">Delivery and returns</h2>
+              <ul v-if="ways.length" class="ar-ship__ways">
+                <li v-for="w in ways" :key="w.key">
+                  <span class="ms">{{ w.icon === "storefront" ? "storefront" : "local_shipping" }}</span>
+                  <span
+                    ><b>{{ w.word }}</b> {{ w.line }}.
+                    <template v-if="w.free">Free.</template>
+                    <template v-else-if="w.freeOver">Free on orders over <u-price :amount="w.freeOver" :currency="w.currency" />.</template>
+                  </span>
+                </li>
+              </ul>
+              <p v-else class="ar-about__p">Delivery options and their prices show at checkout, for your address.</p>
+              <s-product-shipping class="ar-block"></s-product-shipping>
+              <s-product-warranty class="ar-block"></s-product-warranty>
+              <s-product-guide class="ar-block"></s-product-guide>
+              <router-link :to="{ name: window.$storefront.routes.SHOP_PROFILE_PAGE_TERMS }" class="ar-link">Returns and terms<span class="ms">chevron_right</span></router-link>
+            </section>
+
+            <!-- Reviews -->
+            <section id="ar-reviews" aria-labelledby="ar-reviews-h" class="ar-pcard ar-reviews k-reviews">
+              <h2 id="ar-reviews-h" class="ar-pcard__h -big">Reviews</h2>
+              <kalio-reviews></kalio-reviews>
+            </section>
+          </template>
+        </argon-product-overview>
+        <s-product-overview-loading v-else />
+        <u-loading-progress v-if="busy"></u-loading-progress>
+      </div>
+    </div>
+
+    <template v-if="product">
+      <div :style="{ order: getOrder('offer') }">
+        <s-product-offers class="s--product-section ar-wrap ar-block"></s-product-offers>
       </div>
       <div :style="{ order: getOrder('includes') }">
-        <s-product-includes class="b-wrap b-block"></s-product-includes>
+        <s-product-includes class="ar-wrap ar-block"></s-product-includes>
       </div>
       <div :style="{ order: getOrder('files') }">
-        <s-product-files-list class="b-wrap b-block"></s-product-files-list>
+        <s-product-files-list class="ar-wrap ar-block"></s-product-files-list>
       </div>
       <div :style="{ order: getOrder('contents') }">
-        <s-product-subscription-membership class="b-wrap b-block"></s-product-subscription-membership>
+        <s-product-subscription-membership class="ar-wrap ar-block"></s-product-subscription-membership>
       </div>
       <div :style="{ order: getOrder('page') }">
         <s-product-landing></s-product-landing>
       </div>
 
-      <!-- Reviews -->
-      <div :style="{ order: getOrder('comments') }">
-        <section id="b-reviews" aria-labelledby="b-reviews-h" class="b-sec b-wrap b-reviews k-reviews">
-          <header class="b-head"><h2 id="b-reviews-h">Reviews</h2></header>
-          <kalio-reviews></kalio-reviews>
-        </section>
-      </div>
-
-      <!-- Bought together, related, more in the category -->
-      <div :style="{ order: getOrder('comments') }">
-        <besti-together :product="product" class="b-wrap" />
-      </div>
+      <!-- Customers also viewed, more in the category -->
       <div :style="{ order: getOrder('related-products') }">
-        <div id="b-related">
-          <besti-rail v-if="related === null || related.length" :products="related" class="b-wrap" title="Related products" @quick-buy="quickBuy" />
+        <div id="ar-related">
+          <argon-rail v-if="related === null || related.length" :products="related" class="ar-wrap" title="Customers also viewed" @quick-buy="quickBuy" />
         </div>
-        <besti-row
+        <argon-row
           v-if="product.category"
           :key="'cat-' + product.category.id"
           :dir="product.category.name"
           :exclude="product.id"
           :more-to="{ name: window.$storefront.routes.SHOP_CATEGORY_PAGE, params: { category_name: product.category.name } }"
           :title="'More in ' + (product.category.title || product.category.name)"
-          class="b-wrap"
+          class="ar-wrap"
           lazy
           sort="bestselling"
         />
@@ -150,13 +144,12 @@
 <script lang="ts">
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
-import BestiProductOverview from "../../components/besti/product/BestiProductOverview.vue";
-import BestiTogether from "../../components/besti/product/BestiTogether.vue";
-import BestiRail from "../../components/besti/BestiRail.vue";
+import ArgonProductOverview from "../../components/argon/product/ArgonProductOverview.vue";
+import ArgonRail from "../../components/argon/ArgonRail.vue";
 import KalioQuickBuy from "../../components/kalio/KalioQuickBuy.vue";
-import { specGroups } from "../../components/besti/product/besti-spec";
-import { catalogue, mixByCategory, rememberViewed, tagged } from "../../components/besti/besti";
-import BestiRow from "../../components/besti/BestiRow.vue";
+import { specGroups, specRows } from "../../components/argon/product/argon-spec";
+import { catalogue, mixByCategory, rememberViewed, tagged } from "../../components/argon/argon";
+import ArgonRow from "../../components/argon/ArgonRow.vue";
 import { waysOf } from "../../components/walio/walio-home";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import SProductOverviewLoading from "@selldone/components-vue/storefront/product/overview/loading/SProductOverviewLoading.vue";
@@ -207,10 +200,9 @@ export default {
     SProductIncludes,
 
     SProductOverviewLoading,
-    BestiProductOverview,
-    BestiTogether,
-    BestiRail,
-    BestiRow,
+    ArgonProductOverview,
+    ArgonRail,
+    ArgonRow,
     KalioQuickBuy,
 
   },
@@ -310,6 +302,15 @@ export default {
         if (out.length >= 6) break;
       }
       return out;
+    },
+    /* About this product: the first spec rows as bullets (the shop's own words). */
+    features() {
+      return this.product ? specRows(this.product).slice(0, 5) : [];
+    },
+    /* The category's own line when the product has no article. */
+    aboutLine() {
+      const d = (this.product?.category?.description || '').trim();
+      return d;
     },
     spec_groups() {
       return specGroups(this.product);

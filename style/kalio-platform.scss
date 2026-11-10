@@ -184,7 +184,7 @@
     }
 
     .mini-name {
-      color: var(--b-on-brand) !important;
+      color: var(--ar-on-brand) !important;
     }
 
     img {
@@ -680,7 +680,7 @@
 
       &:hover {
         background: var(--k-green) !important;
-        color: var(--b-on-brand) !important;
+        color: var(--ar-on-brand) !important;
         transform: scale(1.06);
       }
     }
@@ -763,7 +763,7 @@
   background: var(--k-green);
   /* !important: Selldone's base reset [type=button] { color: inherit }
      loads after this sheet. */
-  color: var(--b-on-brand) !important;
+  color: var(--ar-on-brand) !important;
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0;
@@ -881,7 +881,7 @@
   height: 36px;
   border-radius: var(--k-pill);
   background: var(--k-green-deep);
-  color: var(--b-on-brand);
+  color: var(--ar-on-brand);
   box-shadow: 0 8px 18px -8px rgba(0, 79, 154, 0.6);
   font-family: var(--k-body);
   text-align: center;
@@ -892,7 +892,7 @@
     place-items: center;
     height: 36px;
     border-radius: var(--k-pill);
-    color: var(--b-on-brand) !important; /* Selldone's [type=button] reset loads after */
+    color: var(--ar-on-brand) !important; /* Selldone's [type=button] reset loads after */
     cursor: pointer;
     transition: background-color 140ms ease;
 
@@ -1376,7 +1376,7 @@
    cannot reach, so the button itself is re-stated. */
 .s--shop-buy-button {
   background-color: var(--k-green-deep) !important;
-  color: var(--b-on-brand) !important;
+  color: var(--ar-on-brand) !important;
   border-radius: var(--k-pill) !important;
   box-shadow: none !important;
   text-transform: none !important;
@@ -1919,7 +1919,7 @@
   border: 0;
   border-radius: 999px !important;
   background-color: var(--k-green-deep) !important;
-  color: var(--b-on-brand) !important;
+  color: var(--ar-on-brand) !important;
   box-shadow: 0 14px 28px -12px rgba(14, 63, 46, 0.7);
   font-family: var(--k-body);
   font-size: 15px;
@@ -1942,7 +1942,7 @@
   }
 
   .v-icon {
-    color: var(--b-on-brand) !important;
+    color: var(--ar-on-brand) !important;
   }
 
   &.-bump {

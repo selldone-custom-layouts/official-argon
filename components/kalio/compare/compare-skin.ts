@@ -1,4 +1,4 @@
-/* The compare page's words and choices in Besti (9 November 2026).
+/* The compare page's words and choices in Argon (9 November 2026).
    KalioCompare.vue is the same in every molino Layout; this file and
    style/kalio-compare.scss are what make it this Layout's own. */
 export const SKIN = {

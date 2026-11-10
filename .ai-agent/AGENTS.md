@@ -52,4 +52,4 @@ package scripts.
 
 ## Theme
 
-A merchant's theme (palette, brand colour, light or dark, the visitor switcher) is set in one file, `components/besti/besti-theme.settings.ts`: see the "Theme" section in the root [`AGENTS.md`](../AGENTS.md).
+A merchant's theme (palette, brand colour, light or dark, the visitor switcher) is set in one file, `components/argon/argon-theme.settings.ts`: see the "Theme" section in the root [`AGENTS.md`](../AGENTS.md).

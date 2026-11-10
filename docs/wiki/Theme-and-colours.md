@@ -1,19 +1,19 @@
 # Theme and colours
 
-Besti runs the **shared theme switcher** (`components/theme-switcher/`), the same code as Digito and the other custom Layouts. Its config for Besti is `components/besti/besti-theme.ts`; the one file a merchant edits is `components/besti/besti-theme.settings.ts`.
+Argon runs the **shared theme switcher** (`components/theme-switcher/`), the same code as Digito and the other custom Layouts. Its config for Argon is `components/argon/argon-theme.ts`; the one file a merchant edits is `components/argon/argon-theme.settings.ts`.
 
-## On Besti's showcase shop
+## On Argon's showcase shop
 
 A **Theme** action sits at the top right of the header, just before the cart (on a phone, the icon beside the account icon). It opens a small panel:
 
-- **Colour:** Besti blue (the default), Violet, Emerald, Copper, Magenta, and **Custom colour** (any colour from the browser's colour picker; it is made readable in light and dark, with a note "Adjusted for readability" when it had to change). Six swatches in three full rows.
+- **Colour:** Argon blue (the default), Violet, Emerald, Copper, Magenta, and **Custom colour** (any colour from the browser's colour picker; it is made readable in light and dark, with a note "Adjusted for readability" when it had to change). Six swatches in three full rows.
 - **Mode:** Light or Dark.
 
-One click changes the whole site at once, with no reload: Besti's colours, the Kalio base, Vuetify's theme and Selldone's own parts (the buy button, prices, the cart drawer, the checkout sheets, dialogs). The choice is kept in the browser and painted before the first paint, so the default never flashes. The panel has no scrim, closes on a second click, Esc or a click outside, and works with the keyboard.
+One click changes the whole site at once, with no reload: Argon's colours, the Kalio base, Vuetify's theme and Selldone's own parts (the buy button, prices, the cart drawer, the checkout sheets, dialogs). The choice is kept in the browser and painted before the first paint, so the default never flashes. The panel has no scrim, closes on a second click, Esc or a click outside, and works with the keyboard.
 
 ## On your own shop
 
-The visitor switcher is a **showcase** feature: on any shop other than Besti's own showcase shops (Digini 15549, Molino 15645) it is not shown, a saved choice is ignored, and Besti looks exactly as designed. Your theme comes from the settings file:
+The visitor switcher is a **showcase** feature: on any shop other than Argon's own showcase shops (Digini 15549, Molino 15645) it is not shown, a saved choice is ignored, and Argon looks exactly as designed. Your theme comes from the settings file:
 
 ```ts
 export const THEME_SETTINGS: ThemeSettings = {
@@ -44,12 +44,12 @@ Every palette keeps white button words at 6.3:1 or more (light) and 5:1 or more 
 Checks (from the repository root; each must print 0):
 
 ```sh
-STORAGE='{"besti-theme":"{\"palette\":\"blue\",\"mode\":\"dark\"}"}' \
+STORAGE='{"argon-theme":"{\"palette\":\"blue\",\"mode\":\"dark\"}"}' \
 PAGES="home=/,category=/digital-camera-category,product=/product/709990" \
-  node components/theme-switcher/tools/contrast-audit.cjs https://besti.selldone.shop ".b-hero__main"
-SHOP=digini-hzgablru STORAGE_KEY=besti-theme WAIT=".b-hero__main" CART=".b-cartpill" \
-  node components/theme-switcher/tools/cart-audit.cjs https://besti.selldone.shop blue dark
-STORAGE_KEY=besti-theme WAIT=".b-hero__main" BRAND=".b-header__logo" CART=".b-cartpill" ACCOUNT=".b-act.-me" \
-  node components/theme-switcher/tools/header-check.cjs https://besti.selldone.shop blue dark
+  node components/theme-switcher/tools/contrast-audit.cjs https://argon.selldone.shop ".b-hero__main"
+SHOP=digini-hzgablru STORAGE_KEY=argon-theme WAIT=".b-hero__main" CART=".b-cartpill" \
+  node components/theme-switcher/tools/cart-audit.cjs https://argon.selldone.shop blue dark
+STORAGE_KEY=argon-theme WAIT=".b-hero__main" BRAND=".b-header__logo" CART=".b-cartpill" ACCOUNT=".b-act.-me" \
+  node components/theme-switcher/tools/header-check.cjs https://argon.selldone.shop blue dark
 node components/theme-switcher/theme-color.test.mjs
 ```

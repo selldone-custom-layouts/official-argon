@@ -1,35 +1,35 @@
-/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Besti — every page after the home ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Argon — every page after the home ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
 
    The pages follow the B mockups in digini-design/ (shop-b, search-b,
    deals-b, product-b, compare-b, quickbuy-b, cartdrawer-b, cart-b,
    order-b, account-b, signin-b, blog-b, article-b, about-b, terms-b,
    privacy-b, contact-b, faq-b, 404-b, empty-b): the same white store, the
    bordered tiles, one blue for every button, yellow only as an accent,
-   red for a saving. Loaded after besti.scss. */
+   red for a saving. Loaded after argon.scss. */
 
-$blue: var(--b-blue);
-$blue-d: var(--b-blue-d);
-$blue-l: var(--b-blue-l);
-$blue-t: var(--b-blue-t);
-$navy: var(--b-navy);
-$navy-2: var(--b-navy-2);
-$yellow: var(--b-yellow);
-$yellow-l: var(--b-yellow-l);
-$red: var(--b-red);
-$red-t: var(--b-red-t);
-$green: var(--b-green);
-$green-t: var(--b-green-t);
-$page: var(--b-page);
-$line: var(--b-line);
-$ink: var(--b-ink);
-$muted: var(--b-muted);
-$soft: var(--b-soft);
-$bg: var(--b-bg);
-$surface: var(--b-surface);
-$photo: var(--b-photo);
+$blue: var(--ar-blue);
+$blue-d: var(--ar-blue-d);
+$blue-l: var(--ar-blue-l);
+$blue-t: var(--ar-blue-t);
+$navy: var(--ar-navy);
+$navy-2: var(--ar-navy-2);
+$yellow: var(--ar-yellow);
+$yellow-l: var(--ar-yellow-l);
+$red: var(--ar-red);
+$red-t: var(--ar-red-t);
+$green: var(--ar-green);
+$green-t: var(--ar-green-t);
+$page: var(--ar-page);
+$line: var(--ar-line);
+$ink: var(--ar-ink);
+$muted: var(--ar-muted);
+$soft: var(--ar-soft);
+$bg: var(--ar-bg);
+$surface: var(--ar-surface);
+$photo: var(--ar-photo);
 
 /* ── Shared bits ── */
-.b-crumbs {
+.ar-crumbs {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -66,7 +66,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-chip {
+.ar-chip {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -77,7 +77,7 @@ $photo: var(--b-photo);
   background: $surface;
   box-shadow: inset 0 0 0 1px $line;
   color: $ink !important;
-  font: 700 13.5px "Archivo", sans-serif;
+  font: 700 13.5px "Barlow", sans-serif;
   white-space: nowrap;
   cursor: pointer;
 
@@ -99,7 +99,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-lbl {
+.ar-lbl {
   margin: 0 0 8px;
   color: $muted;
   font-size: 14px;
@@ -111,9 +111,9 @@ $photo: var(--b-photo);
 
 /* ━━━━━━━━━━━━━━━━━━━━━ Shop, category, search, deals ━━━━━━━━━━━━━━━━━━━━━ */
 .w-shop {
-  max-width: var(--b-max) !important;
-  padding-inline: var(--b-pad) !important;
-  font-family: "Archivo", system-ui, sans-serif;
+  max-width: var(--ar-max) !important;
+  padding-inline: var(--ar-pad) !important;
+  font-family: "Barlow", system-ui, sans-serif;
 }
 
 .w-shop__cols {
@@ -128,7 +128,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-top {
+.ar-top {
   &__title {
     display: flex;
     align-items: baseline;
@@ -138,7 +138,7 @@ $photo: var(--b-photo);
     h1 {
       margin: 0;
       color: $ink;
-      font: 800 30px/1.15 "Archivo", sans-serif !important;
+      font: 800 30px/1.15 "Barlow", sans-serif !important;
       letter-spacing: -0.025em !important;
     }
 
@@ -165,7 +165,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-inaisles {
+.ar-inaisles {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -180,7 +180,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-match {
+.ar-match {
   display: grid;
   grid-template-columns: 160px minmax(0, 1fr);
   align-items: center;
@@ -243,7 +243,7 @@ $photo: var(--b-photo);
   }
 
   &:hover {
-    border-color: var(--b-hover-line);
+    border-color: var(--ar-hover-line);
   }
 
   @media (max-width: 600px) {
@@ -265,7 +265,7 @@ $photo: var(--b-photo);
   border: 1px solid $line;
   border-radius: 10px;
   background: $surface;
-  font-family: "Archivo", sans-serif;
+  font-family: "Barlow", sans-serif;
 
   &__hd {
     border-bottom: 1px solid $line !important;
@@ -298,7 +298,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-deps {
+.ar-deps {
   display: flex;
   flex-direction: column;
 
@@ -328,7 +328,7 @@ $photo: var(--b-photo);
     border: 0;
     background: none;
     color: $blue-t;
-    font: 700 13.5px "Archivo", sans-serif;
+    font: 700 13.5px "Barlow", sans-serif;
     text-align: start;
     cursor: pointer;
 
@@ -338,7 +338,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-prange {
+.ar-prange {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -367,7 +367,7 @@ $photo: var(--b-photo);
       border: 0;
       outline: 0;
       background: transparent;
-      font: 600 13.5px "Archivo", sans-serif;
+      font: 600 13.5px "Barlow", sans-serif;
       color: $ink;
     }
 
@@ -383,7 +383,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-swfilter {
+.ar-swfilter {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
@@ -407,7 +407,7 @@ $photo: var(--b-photo);
       inset: 4px;
       border-radius: 50%;
       background: var(--sw, #fff);
-      box-shadow: inset 0 0 0 1px var(--b-sw-edge);
+      box-shadow: inset 0 0 0 1px var(--ar-sw-edge);
     }
 
     &.-on {
@@ -443,13 +443,13 @@ $photo: var(--b-photo);
   }
 }
 
-.b-tools {
+.ar-tools {
   margin-bottom: 14px !important;
   gap: 10px !important;
   min-height: 40px;
 }
 
-.b-chips {
+.ar-chips {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -461,7 +461,7 @@ $photo: var(--b-photo);
   height: 38px !important;
   border: 1px solid $line !important;
   border-radius: 6px !important;
-  font-family: "Archivo", sans-serif;
+  font-family: "Barlow", sans-serif;
   font-size: 13.5px !important;
   white-space: nowrap;
 
@@ -473,7 +473,7 @@ $photo: var(--b-photo);
 .t-dd {
   border: 1px solid $line;
   border-radius: 10px !important;
-  font-family: "Archivo", sans-serif;
+  font-family: "Barlow", sans-serif;
 
   &__opt.-on,
   &__opt:hover {
@@ -483,7 +483,7 @@ $photo: var(--b-photo);
 }
 
 .w-split button {
-  font-family: "Archivo", sans-serif;
+  font-family: "Barlow", sans-serif;
 }
 
 .t-keep__list a:hover {
@@ -491,10 +491,10 @@ $photo: var(--b-photo);
   color: $blue-t !important;
 }
 
-/* The listing grid: Besti's cards, five to a row on a computer. Selldone's
-   own card markup is hidden; Besti's card is drawn inside it
+/* The listing grid: Argon's cards, five to a row on a computer. Selldone's
+   own card markup is hidden; Argon's card is drawn inside it
    (kalio-card-basket.ts). */
-.s--product-card:has(> .b-card-host) {
+.s--product-card:has(> .ar-card-host) {
   display: flex !important;
   flex-direction: column;
   padding: 8px !important;
@@ -502,17 +502,17 @@ $photo: var(--b-photo);
   box-shadow: none !important;
   transform: none !important;
 
-  > :not(.b-card-host) {
+  > :not(.ar-card-host) {
     display: none !important;
   }
 
-  > .b-card-host {
+  > .ar-card-host {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
     min-width: 0;
 
-    > .b-card {
+    > .ar-card {
       flex: 1 1 auto;
       height: auto;
     }
@@ -567,23 +567,23 @@ $photo: var(--b-photo);
 /* load more and empty states in the listing */
 .t-listing .s--products-listing-load-more,
 .t-listing .v-btn {
-  font-family: "Archivo", sans-serif !important;
+  font-family: "Barlow", sans-serif !important;
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━ Product page ━━━━━━━━━━━━━━━━━━━━━ */
-.b-product {
-  font-family: "Archivo", system-ui, sans-serif;
+.ar-product {
+  font-family: "Barlow", system-ui, sans-serif;
   text-align: start;
   background: $surface;
 }
 
-.v-application:has(.b-pdp:not(.-quick)),
-.s--shop:has(.b-pdp:not(.-quick)),
-.v-main:has(.b-pdp:not(.-quick)) {
+.v-application:has(.ar-pdp:not(.-quick)),
+.s--shop:has(.ar-pdp:not(.-quick)),
+.v-main:has(.ar-pdp:not(.-quick)) {
   overflow: clip !important;
 }
 
-.b-pdp {
+.ar-pdp {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) 320px;
   gap: 32px;
@@ -675,7 +675,7 @@ $photo: var(--b-photo);
   &__title {
     margin: 6px 0 8px !important;
     color: $ink;
-    font: 800 26px/1.2 "Archivo", sans-serif !important;
+    font: 800 26px/1.2 "Barlow", sans-serif !important;
     letter-spacing: -0.02em !important;
     text-wrap: pretty;
   }
@@ -715,7 +715,7 @@ $photo: var(--b-photo);
     align-items: center;
     gap: 6px;
     margin: 10px 0 0;
-    color: var(--b-warn-t, #a14a00);
+    color: var(--ar-warn-t, #a14a00);
     font-size: 13.5px;
   }
 
@@ -736,7 +736,7 @@ $photo: var(--b-photo);
 
     h2 {
       margin: 0 0 10px;
-      font: 800 17px "Archivo", sans-serif !important;
+      font: 800 17px "Barlow", sans-serif !important;
     }
 
     dl {
@@ -749,7 +749,7 @@ $photo: var(--b-photo);
     dt,
     dd {
       padding: 8px 0;
-      border-bottom: 1px solid var(--b-line);
+      border-bottom: 1px solid var(--ar-line);
     }
 
     dt {
@@ -795,35 +795,35 @@ $photo: var(--b-photo);
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 24px;
 
-    .b-pdp__media {
+    .ar-pdp__media {
       position: static;
       grid-row: span 2;
     }
 
-    .b-pdp__info,
-    .b-pdp__buy {
+    .ar-pdp__info,
+    .ar-pdp__buy {
       grid-column: 2;
     }
 
-    .b-pdp__buy {
+    .ar-pdp__buy {
       position: static;
     }
   }
 }
 
-.b-vtiles {
+.ar-vtiles {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 
-  &.-text .b-vtile {
+  &.-text .ar-vtile {
     width: auto;
     min-width: 92px;
     padding: 10px 14px;
   }
 }
 
-.b-vtile {
+.ar-vtile {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -834,7 +834,7 @@ $photo: var(--b-photo);
   border-radius: 8px;
   background: $surface;
   color: $ink;
-  font: 600 12.5px "Archivo", sans-serif;
+  font: 600 12.5px "Barlow", sans-serif;
   cursor: pointer;
   text-align: center;
 
@@ -866,7 +866,7 @@ $photo: var(--b-photo);
       height: 12px;
       flex: none;
       border-radius: 50%;
-      box-shadow: inset 0 0 0 1px var(--b-sw-edge);
+      box-shadow: inset 0 0 0 1px var(--ar-sw-edge);
     }
   }
 
@@ -887,7 +887,7 @@ $photo: var(--b-photo);
   &.-on {
     border-color: $blue-t;
     box-shadow: inset 0 0 0 1px $blue-t;
-    background: var(--b-blue-l);
+    background: var(--ar-blue-l);
   }
 
   &.-out {
@@ -895,7 +895,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-buybox {
+.ar-buybox {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -904,7 +904,7 @@ $photo: var(--b-photo);
   border-radius: 10px;
   background: $surface;
 
-  .b-price {
+  .ar-price {
     margin-top: 0;
   }
 
@@ -914,8 +914,8 @@ $photo: var(--b-photo);
     gap: 8px;
     margin: 4px 0 2px;
     padding: 10px 0;
-    border-top: 1px solid var(--b-line);
-    border-bottom: 1px solid var(--b-line);
+    border-top: 1px solid var(--ar-line);
+    border-bottom: 1px solid var(--ar-line);
     list-style: none;
     font-size: 13.5px;
 
@@ -949,7 +949,7 @@ $photo: var(--b-photo);
     }
   }
 
-  /* The deal's end on Selldone's countdown (UCountDown), drawn as Besti's
+  /* The deal's end on Selldone's countdown (UCountDown), drawn as Argon's
      navy blocks: white numbers, the label above in sale red. */
   &__deal {
     display: flex;
@@ -984,7 +984,7 @@ $photo: var(--b-photo);
 
       .digit {
         color: #fff;
-        font: 800 18px/1.15 "Archivo", system-ui, sans-serif !important;
+        font: 800 18px/1.15 "Barlow", system-ui, sans-serif !important;
         font-variant-numeric: tabular-nums;
       }
 
@@ -1017,13 +1017,13 @@ $photo: var(--b-photo);
     grid-template-columns: 1fr 1fr;
     gap: 8px;
 
-    .b-btn {
+    .ar-btn {
       height: 40px;
       padding: 0 10px;
       font-size: 13.5px;
     }
 
-    .b-btn.-on {
+    .ar-btn.-on {
       background: $blue-l;
     }
   }
@@ -1033,7 +1033,7 @@ $photo: var(--b-photo);
     margin-top: 2px;
   }
 
-  /* Selldone's buy button, in Besti's blue */
+  /* Selldone's buy button, in Argon's blue */
   &__add {
     .v-btn,
     button.v-btn {
@@ -1042,9 +1042,9 @@ $photo: var(--b-photo);
       height: 46px !important;
       border-radius: 6px !important;
       background: $blue !important;
-      color: var(--b-on-brand) !important;
+      color: var(--ar-on-brand) !important;
       box-shadow: none !important;
-      font: 700 15px "Archivo", sans-serif !important;
+      font: 700 15px "Barlow", sans-serif !important;
       letter-spacing: 0 !important;
       text-transform: none !important;
 
@@ -1053,7 +1053,7 @@ $photo: var(--b-photo);
       }
 
       .v-icon {
-        color: var(--b-on-brand) !important;
+        color: var(--ar-on-brand) !important;
       }
     }
   }
@@ -1061,7 +1061,7 @@ $photo: var(--b-photo);
 
 /* in the cart: − n + and Checkout */
 .k-basket-line {
-  font-family: "Archivo", sans-serif;
+  font-family: "Barlow", sans-serif;
 
   &__cap {
     color: $green-t !important;
@@ -1085,7 +1085,7 @@ $photo: var(--b-photo);
   &__go {
     border-radius: 6px !important;
     background: $blue !important;
-    color: var(--b-on-brand) !important;
+    color: var(--ar-on-brand) !important;
 
     &:hover {
       background: $blue-d !important;
@@ -1093,7 +1093,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-pills {
+.ar-pills {
   display: flex;
   gap: 6px;
   margin-top: 28px;
@@ -1121,20 +1121,20 @@ $photo: var(--b-photo);
   }
 }
 
-.b-specs__cols {
+.ar-specs__cols {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   align-items: start;
 }
 
-.b-specs__col {
+.ar-specs__col {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.b-spec {
+.ar-spec {
   width: 100%;
   border: 1px solid $line;
   border-radius: 10px;
@@ -1159,7 +1159,7 @@ $photo: var(--b-photo);
   th,
   td {
     padding: 10px 14px;
-    border-top: 1px solid var(--b-line);
+    border-top: 1px solid var(--ar-line);
     text-align: start;
     vertical-align: top;
   }
@@ -1180,17 +1180,17 @@ $photo: var(--b-photo);
   }
 }
 
-.b-spec:has(caption) {
+.ar-spec:has(caption) {
   border-top: 0;
   border-radius: 0 0 10px 10px;
 }
 
-.b-about {
+.ar-about {
   max-width: 980px;
   margin-inline: auto;
 }
 
-.b-ship__ways {
+.ar-ship__ways {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 12px;
@@ -1212,12 +1212,12 @@ $photo: var(--b-photo);
   }
 }
 
-.b-block:empty {
+.ar-block:empty {
   display: none;
 }
 
 /* Frequently bought together */
-.b-together__box {
+.ar-together__box {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 260px;
   align-items: center;
@@ -1227,14 +1227,14 @@ $photo: var(--b-photo);
   border-radius: 10px;
 }
 
-.b-together__row {
+.ar-together__row {
   display: flex;
   align-items: flex-start;
   gap: 14px;
   min-width: 0;
 }
 
-.b-together__plus {
+.ar-together__plus {
   display: grid;
   place-items: center;
   width: 28px;
@@ -1250,7 +1250,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-together__it {
+.ar-together__it {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1262,7 +1262,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-together__img {
+.ar-together__img {
   display: grid;
   place-items: center;
   aspect-ratio: 1;
@@ -1277,7 +1277,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-together__pick {
+.ar-together__pick {
   display: flex;
   gap: 8px;
   font-size: 13px;
@@ -1298,11 +1298,11 @@ $photo: var(--b-photo);
     height: 18px;
     margin-top: 1px;
     border-radius: 4px;
-    box-shadow: inset 0 0 0 1.5px var(--b-line-2);
+    box-shadow: inset 0 0 0 1.5px var(--ar-line-2);
 
     .ms {
       font-size: 14px;
-      color: var(--b-on-brand); /* the tick sits on the brand colour once on */
+      color: var(--ar-on-brand); /* the tick sits on the brand colour once on */
       opacity: 0;
     }
   }
@@ -1324,13 +1324,13 @@ $photo: var(--b-photo);
   }
 }
 
-.b-together__price,
-.b-together__price .u--price {
+.ar-together__price,
+.ar-together__price .u--price {
   font-size: 15px !important;
   font-weight: 800 !important;
 }
 
-.b-together__sum {
+.ar-together__sum {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1342,19 +1342,19 @@ $photo: var(--b-photo);
     font-size: 13px;
   }
 
-  .b-btn {
+  .ar-btn {
     margin-top: 6px;
   }
 }
 
-.b-together__total,
-.b-together__total * {
+.ar-together__total,
+.ar-together__total * {
   font-size: 26px !important;
   font-weight: 800 !important;
 }
 
-/* reviews in Besti's dress */
-.b-reviews {
+/* reviews in Argon's dress */
+.ar-reviews {
   .k-reviews__summary,
   .k-rv__summary {
     border-color: $line !important;
@@ -1369,7 +1369,7 @@ $photo: var(--b-photo);
 }
 
 @media (max-width: 1279px) {
-  .b-pdp {
+  .ar-pdp {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 
     &__media {
@@ -1384,7 +1384,7 @@ $photo: var(--b-photo);
 }
 
 @media (max-width: 899px) {
-  .b-pdp {
+  .ar-pdp {
     grid-template-columns: minmax(0, 1fr);
     gap: 18px;
 
@@ -1402,45 +1402,45 @@ $photo: var(--b-photo);
     &.-quick {
       grid-template-columns: minmax(0, 1fr);
 
-      .b-pdp__info,
-      .b-pdp__buy {
+      .ar-pdp__info,
+      .ar-pdp__buy {
         grid-column: auto;
       }
 
-      .b-pdp__media {
+      .ar-pdp__media {
         grid-row: auto;
       }
     }
   }
 
-  .b-vtile {
+  .ar-vtile {
     width: calc(33.333% - 7px);
   }
 
-  .b-specs__cols {
+  .ar-specs__cols {
     grid-template-columns: 1fr;
   }
 
-  .b-together__box {
+  .ar-together__box {
     grid-template-columns: 1fr;
     padding: 14px;
   }
 
-  .b-together__row {
+  .ar-together__row {
     overflow-x: auto;
     scrollbar-width: none;
   }
 
-  .b-together__it {
+  .ar-together__it {
     width: 128px;
     flex: none;
   }
 
-  .b-together__plus {
+  .ar-together__plus {
     margin-top: 46px;
   }
 
-  .b-together__sum {
+  .ar-together__sum {
     padding: 14px 0 0;
     border-left: 0;
     border-top: 1px solid $line;
@@ -1448,8 +1448,8 @@ $photo: var(--b-photo);
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━ 404 ━━━━━━━━━━━━━━━━━━━━━ */
-.b-404 {
-  font-family: "Archivo", system-ui, sans-serif;
+.ar-404 {
+  font-family: "Barlow", system-ui, sans-serif;
   text-align: start;
 
   &__panel {
@@ -1467,8 +1467,8 @@ $photo: var(--b-photo);
   }
 
   &__big {
-    color: var(--b-brand-ink);
-    font: 900 132px/1 "Archivo", sans-serif;
+    color: var(--ar-brand-ink);
+    font: 900 132px/1 "Barlow", sans-serif;
     letter-spacing: -0.06em;
 
     em {
@@ -1480,7 +1480,7 @@ $photo: var(--b-photo);
   &__txt {
     h1 {
       margin: 0 0 8px;
-      font: 800 32px "Archivo", sans-serif !important;
+      font: 800 32px "Barlow", sans-serif !important;
       letter-spacing: -0.02em !important;
     }
 
@@ -1490,7 +1490,7 @@ $photo: var(--b-photo);
       font-size: 15px;
     }
 
-    .b-search {
+    .ar-search {
       max-width: 560px;
     }
   }
@@ -1526,33 +1526,33 @@ $photo: var(--b-photo);
   }
 }
 
-.b-depts.-one {
+.ar-depts.-one {
   grid-template-rows: auto;
 }
 
 @media (max-width: 899px) {
-  .b-depts.-one {
+  .ar-depts.-one {
     grid-template-rows: auto;
   }
 }
 
 /* ── product page: one page width; Selldone's sticky buy bar only on a phone ── */
-.b-product {
+.ar-product {
   padding: 0 !important;
 
   .s--product-section-info {
-    max-width: var(--b-max) !important;
-    padding-inline: var(--b-pad) !important;
+    max-width: var(--ar-max) !important;
+    padding-inline: var(--ar-pad) !important;
   }
 }
 
 @media (min-width: 900px) {
-  .b-pdp .sticky-buy-widget {
+  .ar-pdp .sticky-buy-widget {
     display: none !important;
   }
 }
 
-.b-buybox__add {
+.ar-buybox__add {
   margin: 0 !important;
 
   > div {
@@ -1569,9 +1569,9 @@ $photo: var(--b-photo);
 
 /* ━━━━━━━━━━━━━━━━━━━━━ Sign in ━━━━━━━━━━━━━━━━━━━━━ */
 .k-signin__brand {
-  background: var(--b-navy) !important;
+  background: var(--ar-navy) !important;
 
-  .b-logo {
+  .ar-logo {
     font-size: 40px;
   }
 }
@@ -1585,18 +1585,18 @@ $photo: var(--b-photo);
 }
 
 .k-signin__title {
-  font-family: "Archivo", sans-serif !important;
+  font-family: "Barlow", sans-serif !important;
   font-weight: 800 !important;
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━ Contact us ━━━━━━━━━━━━━━━━━━━━━ */
-.b-contact {
-  font-family: "Archivo", system-ui, sans-serif;
+.ar-contact {
+  font-family: "Barlow", system-ui, sans-serif;
   text-align: start;
 
   &__h {
     margin: 4px 0 6px;
-    font: 800 32px "Archivo", sans-serif !important;
+    font: 800 32px "Barlow", sans-serif !important;
     letter-spacing: -0.025em !important;
   }
 
@@ -1619,7 +1619,7 @@ $photo: var(--b-photo);
 
     h2 {
       margin: 0 0 18px;
-      font: 800 20px "Archivo", sans-serif !important;
+      font: 800 20px "Barlow", sans-serif !important;
     }
   }
 
@@ -1630,7 +1630,7 @@ $photo: var(--b-photo);
     gap: 10px 16px;
     margin-top: 16px;
 
-    .b-btn {
+    .ar-btn {
       height: 48px;
       padding: 0 22px;
     }
@@ -1709,7 +1709,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-form {
+.ar-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px 14px;
@@ -1719,7 +1719,7 @@ $photo: var(--b-photo);
   }
 }
 
-.b-field {
+.ar-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1736,11 +1736,11 @@ $photo: var(--b-photo);
     width: 100%;
     min-height: 44px;
     padding: 10px 12px;
-    border: 1px solid var(--b-line-2);
+    border: 1px solid var(--ar-line-2);
     border-radius: 6px;
     background: $surface;
     color: $ink;
-    font: 500 15px "Archivo", sans-serif;
+    font: 500 15px "Barlow", sans-serif;
     outline: 0;
     appearance: auto;
 
@@ -1771,7 +1771,7 @@ $photo: var(--b-photo);
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━ Empty states ━━━━━━━━━━━━━━━━━━━━━ */
-.b-empty.-page {
+.ar-empty.-page {
   max-width: 560px;
   margin: 24px auto 40px;
   padding: 40px 32px;
@@ -1779,18 +1779,18 @@ $photo: var(--b-photo);
   border-radius: 12px;
   background: $surface;
 
-  .b-btn {
+  .ar-btn {
     width: min(280px, 100%);
   }
 }
 
-.b-empty.-drawer .b-btn {
+.ar-empty.-drawer .ar-btn {
   width: min(300px, 100%);
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━ Cart drawer (design C) in Besti's dress ━━━━━━━━━━━━━━━━━━━━━ */
+/* ━━━━━━━━━━━━━━━━━━━━━ Cart drawer (design C) in Argon's dress ━━━━━━━━━━━━━━━━━━━━━ */
 .k-bdrawer {
-  font-family: "Archivo", sans-serif;
+  font-family: "Barlow", sans-serif;
 
   &__receipt {
     border: 1px solid $line !important;
@@ -1806,7 +1806,7 @@ $photo: var(--b-photo);
   &__go {
     border-radius: 6px !important;
     background: $blue !important;
-    color: var(--b-on-brand) !important;
+    color: var(--ar-on-brand) !important;
 
     &:hover {
       background: $blue-d !important;
@@ -1820,7 +1820,7 @@ $photo: var(--b-photo);
 
 /* ━━━━━━━━━━━━━━━━━━━━━ Quick-buy sheet ━━━━━━━━━━━━━━━━━━━━━ */
 .k-quickbuy {
-  font-family: "Archivo", sans-serif;
+  font-family: "Barlow", sans-serif;
 
   .k-quickbuy__bar .k-more {
     color: $blue-t !important;
@@ -1834,12 +1834,12 @@ $photo: var(--b-photo);
 
 /* the phone's tools row holds only the chips that are on; empty, it goes */
 @media (max-width: 960px) {
-  .b-tools:not(:has(.b-chip)) {
+  .ar-tools:not(:has(.ar-chip)) {
     display: none !important;
   }
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━ Compare in Besti's dress ━━━━━━━━━━━━━━━━━━━━━ */
+/* ━━━━━━━━━━━━━━━━━━━━━ Compare in Argon's dress ━━━━━━━━━━━━━━━━━━━━━ */
 .k-cmp__per {
   display: none !important; /* a price per kg or per unit means nothing for electronics */
 }
@@ -1856,11 +1856,11 @@ $photo: var(--b-photo);
   border-radius: 6px !important;
   background: $blue !important;
   box-shadow: none !important;
-  color: var(--b-on-brand) !important;
-  font: 700 13.5px "Archivo", sans-serif !important;
+  color: var(--ar-on-brand) !important;
+  font: 700 13.5px "Barlow", sans-serif !important;
 
   .v-icon {
-    color: var(--b-on-brand) !important;
+    color: var(--ar-on-brand) !important;
   }
 
   &:hover {
@@ -1868,24 +1868,24 @@ $photo: var(--b-photo);
   }
 
   &.-none {
-    background: var(--b-off-bg) !important;
-    color: var(--b-off-ink) !important;
+    background: var(--ar-off-bg) !important;
+    color: var(--ar-off-ink) !important;
   }
 }
 
 .k-card-step.-card {
   border-radius: 6px !important;
   background: $blue !important;
-  color: var(--b-on-brand) !important;
+  color: var(--ar-on-brand) !important;
 
   button,
   .v-icon {
-    color: var(--b-on-brand) !important;
+    color: var(--ar-on-brand) !important;
   }
 }
 
 .k-cmp {
-  font-family: "Archivo", sans-serif;
+  font-family: "Barlow", sans-serif;
   /* Words on the navy share card are white (the owner's rule for every
      blue or navy surface); its head stays the yellow accent. */
   --c-share-ink: #fff;
@@ -1935,10 +1935,10 @@ $photo: var(--b-photo);
 }
 
 .k-quickbuy,
-.b-pdp,
-.b-product,
-.b-contact,
-.b-404,
+.ar-pdp,
+.ar-product,
+.ar-contact,
+.ar-404,
 .w-shop {
   text-align: start;
 }
@@ -1946,7 +1946,7 @@ $photo: var(--b-photo);
 /* Banners are never blue when every button is (the Digini lesson): the
    guides' head is navy, its count yellow. */
 .k-journal__hero {
-  background: var(--b-navy) !important;
+  background: var(--ar-navy) !important;
   border-radius: 12px !important;
 
   .k-journal__eyebrow {
@@ -1954,10 +1954,10 @@ $photo: var(--b-photo);
   }
 }
 
-/* ━━━━━━━━━━━━━━━━━━━━━ Official pages, FAQ: Besti's type and a calm empty card ━━━━━━━━━━━━━━━━━━━━━ */
+/* ━━━━━━━━━━━━━━━━━━━━━ Official pages, FAQ: Argon's type and a calm empty card ━━━━━━━━━━━━━━━━━━━━━ */
 .k-official__title,
 .k-faq .k-official__title {
-  font: 800 32px/1.15 "Archivo", sans-serif !important;
+  font: 800 32px/1.15 "Barlow", sans-serif !important;
   letter-spacing: -0.025em !important;
 
   @media (max-width: 899px) {
@@ -1969,7 +1969,7 @@ $photo: var(--b-photo);
   font-size: 13px;
 
   a {
-    color: var(--b-muted) !important;
+    color: var(--ar-muted) !important;
   }
 }
 
@@ -1999,7 +1999,7 @@ $photo: var(--b-photo);
 
   h3 {
     margin: 0 0 8px !important;
-    font: 800 22px/1.25 "Archivo", sans-serif !important;
+    font: 800 22px/1.25 "Barlow", sans-serif !important;
   }
 
   p {
@@ -2043,7 +2043,7 @@ $photo: var(--b-photo);
   h2 {
     margin: 0 0 8px !important;
     color: $ink;
-    font: 800 20px/1.25 "Archivo", sans-serif !important;
+    font: 800 20px/1.25 "Barlow", sans-serif !important;
   }
 
   p {
@@ -2075,24 +2075,24 @@ $photo: var(--b-photo);
 }
 
 /* Reviews: the summary as a bordered card, the empty list calm. */
-.b-reviews .k-rv__sum {
+.ar-reviews .k-rv__sum {
   padding: 20px !important;
   border: 1px solid $line !important;
   border-radius: 10px !important;
   background: $surface !important;
 }
 
-.b-reviews .k-rv__none {
+.ar-reviews .k-rv__none {
   font-weight: 800;
   font-size: 16px;
 }
 
-.b-reviews .k-rv__list {
+.ar-reviews .k-rv__list {
   min-width: 0;
 }
 
 /* A two-tone colour's name ("Brown / Indigo") wraps instead of being cut. */
-.b-vtile__l {
+.ar-vtile__l {
   white-space: normal;
   text-align: center;
   line-height: 1.25;
@@ -2105,7 +2105,7 @@ $photo: var(--b-photo);
    a rounded tile that shares the row (76-112px), as tall as its name needs
    (three lines at most), with no Selldone scale or corner tick when
    chosen. */
-.b-pdp__choice.-selldone {
+.ar-pdp__choice.-selldone {
   .s-product-variants__options {
     align-items: stretch;
   }
@@ -2128,7 +2128,7 @@ $photo: var(--b-photo);
     &.selected {
       transform: none !important;
       border-color: $line !important;
-      background: var(--b-blue-l) !important;
+      background: var(--ar-blue-l) !important;
       box-shadow: inset 0 0 0 2px $blue-t !important;
       color: $ink !important;
 
@@ -2155,7 +2155,7 @@ $photo: var(--b-photo);
 
 /* A picture in a product's own words: its own white ground in dark mode
    too, like every packshot. */
-.b-pdp figure:has(> img) {
+.ar-pdp figure:has(> img) {
   border-radius: 8px;
   background: $photo;
 }

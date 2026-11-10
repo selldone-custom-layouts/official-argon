@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>argon</title>
+  <rect width="64" height="64" rx="14" fill="#c8102e"/>
+  <circle cx="28.5" cy="37" r="11" fill="none" stroke="#ffffff" stroke-width="8"/>
+  <rect x="37.5" y="22" width="8" height="28" rx="2" fill="#ffffff"/>
+</svg>

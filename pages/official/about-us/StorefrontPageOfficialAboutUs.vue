@@ -92,7 +92,7 @@ import KalioSampleNote from "@app-storefront/components/kalio/pages/KalioSampleN
 import { aboutSample, plainText } from "@app-storefront/components/kalio/pages/kalio-sample-pages";
 import { aisles, catalogueRoute, countProducts, productImage, vendors } from "@app-storefront/components/kalio/kalio-catalog";
 import { waysOf } from "@app-storefront/components/walio/walio-home";
-import { photoOf, withPhoto } from "@app-storefront/components/besti/besti";
+import { photoOf, withPhoto } from "@app-storefront/components/argon/argon";
 
 export default {
   name: "StorefrontPageOfficialAboutUs",
@@ -115,7 +115,7 @@ export default {
       return this.$shop?.title || "This shop";
     },
     photos() {
-      /* Besti: three of the owner's portrait photos, by department. */
+      /* Argon: three of the owner's portrait photos, by department. */
       return withPhoto(this.aisleList, "portrait")
         .slice(0, 3)
         .map((c) => photoOf(c, "portrait").src);

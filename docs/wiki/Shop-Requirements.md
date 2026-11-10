@@ -1,12 +1,12 @@
 # Shop Requirements
 
-The Layout reads everything from your shop. Nothing about Digini is hard-coded. Here is what your shop's data needs so that each part looks as it does on [besti.selldone.shop](https://besti.selldone.shop).
+The Layout reads everything from your shop. Nothing about Digini is hard-coded. Here is what your shop's data needs so that each part looks as it does on [argon.selldone.shop](https://argon.selldone.shop).
 
 ## Settings (yours to choose)
 
 | Setting | What to set | What the Layout does |
 | --- | --- | --- |
-| **Business model** | A normal shop | Besti shows no seller names, seller pages or seller sections. |
+| **Business model** | A normal shop | Argon shows no seller names, seller pages or seller sections. |
 | **Payment methods** | At least one, for your currency | Without one, the cart says the shop is not taking payments yet, and Pay does not open an empty window. |
 | **Shipping methods / pickup points** | What you offer | The product page lists them; "Delivery method" in the cart appears only when there is a choice. |
 | **Checkout / sign-in** | Guest checkout on or off | With it off, "Add to cart" asks a guest to sign in first, as Selldone's own button does. |
@@ -17,7 +17,7 @@ The Layout reads everything from your shop. Nothing about Digini is hard-coded. 
 - Each **top-level category is a department**: a tile in "Shop by department", a name in the blue bar, a slide or tile when it has a photo, its own page.
 - Give each one an **icon** (a product cut-out on transparent ground) and a short **description** (it shows on the hero card and the department page).
 - Order them in Selldone; the Layout keeps your order.
-- **Photos (optional):** put `wide-`, `portrait-` or `square-<slug>.webp` in `assets/besti/` (see [Customize](Customize)). Without a photo a department gets a collage of its own products.
+- **Photos (optional):** put `wide-`, `portrait-` or `square-<slug>.webp` in `assets/argon/` (see [Customize](Customize)). Without a photo a department gets a collage of its own products.
 
 ## Products
 

@@ -28,7 +28,7 @@
     <div class="k-signin__card">
       <!-- ▆▆▆▆▆▆▆▆ The shop ▆▆▆▆▆▆▆▆ -->
       <aside class="k-signin__brand">
-        <p class="k-signin__mark"><besti-logo :to="null" light /></p>
+        <p class="k-signin__mark"><argon-logo :to="null" light /></p>
         <p class="k-signin__pitch">Your orders, saved items and addresses, in one place.</p>
 
         <ul class="k-signin__perks">
@@ -77,7 +77,7 @@
 <script>
 import { throttle } from "lodash-es";
 import SShopLogin from "@selldone/components-vue/storefront/login/SShopLogin.vue";
-import BestiLogo from "../../besti/BestiLogo.vue";
+import ArgonLogo from "../../argon/ArgonLogo.vue";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
 import { aisleImage, aisles, tintFor, vendors } from "../kalio-catalog";
 
@@ -99,7 +99,7 @@ const WORDS = {
 
 export default {
   name: "KalioSignIn",
-  components: { SShopLogin, BestiLogo },
+  components: { SShopLogin, ArgonLogo },
   inject: ["$shop"],
 
   data() {

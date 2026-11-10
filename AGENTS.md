@@ -22,14 +22,14 @@ the owner's controlled clone, fork, or release branch.
 
 ## Theme (palette, brand colour, light or dark, the visitor switcher)
 
-When a merchant asks for a theme ("use the yellow theme", "my brand colour is #F5C400", "make it dark"), edit **one file only**: `components/besti/besti-theme.settings.ts`. Nothing else needs to change, and the colours are made readable automatically (buttons, links, the department bar, dark mode).
+When a merchant asks for a theme ("use the yellow theme", "my brand colour is #F5C400", "make it dark"), edit **one file only**: `components/argon/argon-theme.settings.ts`. Nothing else needs to change, and the colours are made readable automatically (buttons, links, the department bar, dark mode).
 
 | Setting | Allowed values |
 | --- | --- |
-| `palette` | `"blue"` (Besti blue, the default), `"violet"`, `"emerald"`, `"copper"`, `"magenta"` |
+| `palette` | `"blue"` (Argon blue, the default), `"violet"`, `"emerald"`, `"copper"`, `"magenta"` |
 | `brandColor` | any `"#RRGGBB"`; when set it replaces `palette` |
 | `mode` | `"light"` or `"dark"` |
-| `themeSwitcher` | `"showcase"` (the visitor switcher shows only on Besti's own showcase shop, Digini 15549; the default), `"on"` (the merchant's visitors get a Theme button in the header), `"off"` |
+| `themeSwitcher` | `"showcase"` (the visitor switcher shows only on Argon's own showcase shop, Digini 15549; the default), `"on"` (the merchant's visitors get a Theme button in the header), `"off"` |
 | `textOnBrand` | only with `brandColor`: `"auto"` (a light brand such as yellow keeps its colour, with dark words on it) or `"white"` (white words; a light colour is darkened) |
 
 Worked examples (change only these lines; leave the rest of the file as it is):
@@ -41,7 +41,7 @@ Worked examples (change only these lines; leave the rest of the file as it is):
 - **"Remove the switcher"**: `themeSwitcher: "off"`. On a merchant's own shop it is already hidden with `"showcase"`.
 - **"Go back to the original colours"**: remove `brandColor` and set `palette: "blue", mode: "light"`.
 
-The switcher itself is the shared package in `components/theme-switcher/` (the same code as every other Layout; see its PORTING.md in the kit). Besti's palettes and tokens are in `components/besti/besti-theme.ts`; do not edit them for a merchant's theme.
+The switcher itself is the shared package in `components/theme-switcher/` (the same code as every other Layout; see its PORTING.md in the kit). Argon's palettes and tokens are in `components/argon/argon-theme.ts`; do not edit them for a merchant's theme.
 
 Then release and check:
 
@@ -50,4 +50,4 @@ Then release and check:
    ```sh
    PAGES="home=/,category=/<a category>,product=/product/<id>" node components/theme-switcher/tools/contrast-audit.cjs https://<your shop> ".b-hero__main"
    ```
-3. If the visitor switcher is on, also run `components/theme-switcher/tools/header-check.cjs` (Besti's selectors: `WAIT=".b-hero__main" BRAND=".b-header__logo" CART=".b-cartpill" ACCOUNT=".b-act.-me" STORAGE_KEY=besti-theme`).
+3. If the visitor switcher is on, also run `components/theme-switcher/tools/header-check.cjs` (Argon's selectors: `WAIT=".b-hero__main" BRAND=".b-header__logo" CART=".b-cartpill" ACCOUNT=".b-act.-me" STORAGE_KEY=argon-theme`).

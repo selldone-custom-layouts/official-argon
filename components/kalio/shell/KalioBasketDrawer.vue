@@ -71,7 +71,7 @@
 import { ProductType } from "@selldone/core-js/enums/product/ProductType";
 import { settling, shownCount, stepTo } from "../kalio-basket";
 import { productImage } from "../kalio-catalog";
-import { colourName } from "../../besti/besti";
+import { colourName } from "../../argon/argon";
 import KalioOftenAdded from "../KalioOftenAdded.vue";
 
 /* The size of a variant in words: its volume, weight, pack, colour or style. */
@@ -121,7 +121,7 @@ export default {
       return productImage(product, true);
     },
 
-    /* Besti is one shop, not a marketplace: the line says its size or
+    /* Argon is one shop, not a marketplace: the line says its size or
        colour, never a seller. */
     meta(item) {
       return sizeOf(item.variant) || (item.variant?.color ? colourName(item.variant.color) : null);

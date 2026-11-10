@@ -1,11 +1,11 @@
 /*
- * Besti — shared reads and helpers for the department-store pages.
+ * Argon — shared reads and helpers for the department-store pages.
  *
  * Nothing here names a product, a price, a category or a tag. The only
  * shop-specific things in the Layout are the brand line (kalio-brand.ts)
  * and the lifestyle photos, which are matched to a category by its `name`
- * slug (assets/besti/<shape>-<slug>.webp). A category without a photo gets a
- * collage of its own products wherever a photo would go (BestiPhoto.vue).
+ * slug (assets/argon/<shape>-<slug>.webp). A category without a photo gets a
+ * collage of its own products wherever a photo would go (ArgonPhoto.vue).
  *
  *  - catalogue(): one read of the shop's product list (products/list), kept
  *    for the visit. It carries what the card and the home need and the
@@ -30,7 +30,7 @@ declare const window: any;
 /* ━━━━━━━━━━━━ Lifestyle photos ━━━━━━━━━━━━
    wide (16:9, a quiet left third for words), portrait (4:5) and square.
    import.meta.glob lists only the files that exist at build time. */
-const FILES = import.meta.glob("../../assets/besti/*.webp", {
+const FILES = import.meta.glob("../../assets/argon/*.webp", {
   eager: true,
   query: "?url",
   import: "default",
@@ -236,7 +236,7 @@ export function brandsOf(list: any[]): string[] {
 
 /* ━━━━━━━━━━━━ Recently viewed (this browser only) ━━━━━━━━━━━━ */
 
-const RECENT_KEY = "besti:recent";
+const RECENT_KEY = "argon:recent";
 
 export function rememberViewed(productId: number): void {
   try {
@@ -418,4 +418,48 @@ export function timeLeft(end: Date | null, now: number): TimeLeft | null {
 /** A brand's products: the catalogue with Selldone's own brand filter. */
 export function brandRoute(brand: string) {
   return { name: window.$storefront.routes.SHOP_PAGE, query: { filter: JSON.stringify({ brands: [brand] }) } };
+}
+
+/* ━━━━━━━━━━━━ A product's tags, for the card's badges ━━━━━━━━━━━━
+   The catalogue read carries no tags, so the cards learn them from the same
+   tag discovery as the home (tagged()): product id → its tags. Read once,
+   shared by every card. */
+export const tagIndex = reactive<{ ready: boolean; byId: Record<number, string[]> }>({ ready: false, byId: {} });
+let tagIndexAsked = false;
+export function readTagIndex(): void {
+  if (tagIndexAsked) return;
+  tagIndexAsked = true;
+  tagged().then((map) => {
+    const out: Record<number, string[]> = {};
+    for (const [tag, list] of map.entries()) for (const p of list) (out[p.id] ||= []).push(tag);
+    tagIndex.byId = out;
+    tagIndex.ready = true;
+  });
+}
+
+/** The badges a card shows, in order: "Deal", "New", "Best seller". */
+export function badgesOf(product: any, onDeal: boolean): { key: string; label: string }[] {
+  const tags = tagIndex.byId[product?.id] || [];
+  const out: { key: string; label: string }[] = [];
+  if (onDeal) out.push({ key: "deal", label: "Deal" });
+  if (tags.some(isNewTag)) out.push({ key: "new", label: "New" });
+  if (tags.some(isBestSellerTag)) out.push({ key: "best", label: "Best seller" });
+  return out;
+}
+
+/** The earliest end among the shop's running deals (for "Deal prices
+    locked until …"), or null when no deal has an end date. */
+export function dealsEndDate(shop: any, list: any[]): Date | null {
+  let first: Date | null = null;
+  for (const p of dealsOf(shop, list)) {
+    const end = dealEnd(p, null);
+    if (end && end.getTime() > Date.now() && (!first || end < first)) first = end;
+  }
+  return first;
+}
+
+/** "Nov 9, 2027". */
+export function shortDate(d: Date | null): string {
+  if (!d) return "";
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }

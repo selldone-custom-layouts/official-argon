@@ -17,7 +17,7 @@ $t-tablet: 1100px;
   &.-red {
     border: 0;
     background: var(--k-green);
-    color: var(--b-on-brand) !important;
+    color: var(--ar-on-brand) !important;
 
     &:hover {
       background: var(--k-green-deep);
@@ -761,7 +761,7 @@ $t-tablet: 1100px;
     padding: 0 6px;
     border-radius: 10px;
     background: var(--k-green);
-    color: var(--b-on-brand);
+    color: var(--ar-on-brand);
     font-size: 12px;
     font-weight: 800;
   }
@@ -1145,7 +1145,7 @@ $t-tablet: 1100px;
   border-radius: 16px;
   overflow: hidden;
   background: var(--k-green);
-  color: var(--b-on-brand) !important;
+  color: var(--ar-on-brand) !important;
   text-decoration: none;
 
   &__tx {
@@ -1515,7 +1515,7 @@ $t-tablet: 1100px;
       padding: 0 5px;
       border-radius: 10px;
       background: var(--k-green);
-      color: var(--b-on-brand);
+      color: var(--ar-on-brand);
       font-size: 12px;
       font-style: normal;
       font-weight: 800;
@@ -1616,7 +1616,7 @@ $t-tablet: 1100px;
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      background: var(--b-off-bg);
+      background: var(--ar-off-bg);
       color: var(--k-ink);
       font-style: normal;
       font-size: 14px;
@@ -1625,7 +1625,7 @@ $t-tablet: 1100px;
 
     &.-done > i {
       background: var(--k-green);
-      color: var(--b-on-brand);
+      color: var(--ar-on-brand);
     }
 
     &.-now {
@@ -1642,7 +1642,7 @@ $t-tablet: 1100px;
     flex: 1;
     height: 2px;
     margin: 0 8px 0 4px;
-    background: var(--b-line-2);
+    background: var(--ar-line-2);
   }
 
   .-done &__ln,
@@ -1706,14 +1706,14 @@ $t-tablet: 1100px;
     justify-content: center;
     padding: 48px 44px;
     background: var(--k-green);
-    color: var(--b-on-brand);
+    color: var(--ar-on-brand);
 
     h1 {
       margin: 14px 0 10px;
       font-family: var(--k-display);
       font-size: 32px;
       font-weight: 800;
-      color: var(--b-on-brand);
+      color: var(--ar-on-brand);
     }
 
     p {

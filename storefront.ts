@@ -42,17 +42,17 @@ import { PageHyper } from "@selldone/page-builder/PageHyperService.ts";
 import {SetupPageBuilder} from "@selldone/page-builder/page-builder.ts";
 import {SetupService} from "@selldone/core-js/server";
 import {Shop} from "@selldone/core-js/models";
-import { bootThemeSwitcher } from "./components/theme-switcher/theme-switcher"; // the shared theme switcher (Besti 1.0.11)
-import { BESTI_THEME } from "./components/besti/besti-theme";
+import { bootThemeSwitcher } from "./components/theme-switcher/theme-switcher"; // the shared theme switcher (Argon 1.0.11)
+import { ARGON_THEME } from "./components/argon/argon-theme";
 
 const vuetify = VuetifyInstance(i18n);
 // Vuetify's light error red reads 4.5:1 on white (its #ff5252 is 3.3:1); set
 // here, not in the switcher's config, so it stays when the switcher is hidden.
 try { vuetify.theme.themes.value.light.colors.error = "#c4122f"; } catch (e) {}
 // The shopper's palette and Light / Dark (the header's Theme action), painted
-// before the first paint so the default never flashes; only on Besti's own
-// showcase shop unless besti-theme.settings.ts says otherwise.
-bootThemeSwitcher(BESTI_THEME, vuetify);
+// before the first paint so the default never flashes; only on Argon's own
+// showcase shop unless argon-theme.settings.ts says otherwise.
+bootThemeSwitcher(ARGON_THEME, vuetify);
 
 //█████████████████████████████████████████████████████████████
 //―――――――――――――― Global Types ―――――――――――――――

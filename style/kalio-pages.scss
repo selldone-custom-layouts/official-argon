@@ -90,7 +90,7 @@
     height: 26px;
     border-radius: 50%;
     background: var(--k-green);
-    color: var(--b-on-brand);
+    color: var(--ar-on-brand);
     font-size: 11px;
     font-style: normal;
     font-weight: 700;
@@ -271,7 +271,7 @@
     padding: 40px 44px;
     border-radius: 32px;
     background: var(--k-green-deep);
-    color: var(--b-on-brand);
+    color: var(--ar-on-brand);
 
     h1 {
       margin: 8px 0 0;
@@ -280,7 +280,7 @@
       font-weight: 600;
       line-height: 1;
       letter-spacing: -0.02em;
-      color: var(--b-on-brand);
+      color: var(--ar-on-brand);
     }
 
     p {
@@ -688,7 +688,7 @@
 
     &:hover {
       background: var(--k-green-deep);
-      color: var(--b-on-brand) !important;
+      color: var(--ar-on-brand) !important;
     }
   }
 

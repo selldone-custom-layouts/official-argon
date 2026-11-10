@@ -14,19 +14,19 @@
   (walio-filters.ts); the page hands every change to the listing.
 -->
 <template>
-  <!-- Besti (digini-design/shop-b.html): Filters with Clear all, the
+  <!-- Argon (digini-design/shop-b.html): Filters with Clear all, the
        departments (ten, the rest behind "N more departments", the open one
        always shown), price with a slider and two short boxes, On sale only,
        brands, colours as swatches, the other variant values, then the
        category's own spec filters (the first open, the rest folded). -->
-  <aside v-if="!compact" aria-label="Filters" class="w-rail b-rail-f">
+  <aside v-if="!compact" aria-label="Filters" class="w-rail ar-rail-f">
     <header class="w-rail__hd">
       <b>Filters</b>
       <button v-if="on_count" class="w-rail__clear" type="button" @click="clearAll">Clear all</button>
     </header>
     <details v-if="cats.length" class="w-grp" open>
       <summary>Department<v-icon size="22">expand_more</v-icon></summary>
-      <nav class="b-deps" aria-label="Departments">
+      <nav class="ar-deps" aria-label="Departments">
         <router-link
           v-for="c in shownCats"
           :key="c.id"
@@ -35,7 +35,7 @@
           :to="catTo(c)"
           >{{ c.title || c.name }}</router-link
         >
-        <button v-if="cats.length > 10" class="b-deps__more" type="button" @click="all_cats = !all_cats">
+        <button v-if="cats.length > 10" class="ar-deps__more" type="button" @click="all_cats = !all_cats">
           <v-icon size="18">{{ all_cats ? "expand_less" : "expand_more" }}</v-icon
           >{{ all_cats ? "Fewer departments" : `${cats.length - 10} more departments` }}
         </button>
@@ -55,7 +55,7 @@
         track-size="3"
         @end="applyPrice(price_draft)"
       ></v-range-slider>
-      <div class="b-prange">
+      <div class="ar-prange">
         <label><span>$</span><input :value="Math.round(price_draft[0])" aria-label="Lowest price" inputmode="numeric" @change="typed(0, $event)" /></label>
         <em>to</em>
         <label><span>$</span><input :value="Math.round(price_draft[1])" aria-label="Highest price" inputmode="numeric" @change="typed(1, $event)" /></label>
@@ -74,7 +74,7 @@
         {{ group.label }}<b v-if="picked(group).length" class="w-rail__n">{{ picked(group).length }}</b>
         <v-icon size="22">expand_more</v-icon>
       </summary>
-      <div v-if="group.key === 'colors'" class="b-swfilter">
+      <div v-if="group.key === 'colors'" class="ar-swfilter">
         <button
           v-for="v in group.values"
           :key="v"
@@ -161,7 +161,7 @@
             </section>
             <section v-for="group in ordered" :key="'p' + group.kind + group.key" class="t-fgrp">
               <h5>{{ group.label }}</h5>
-              <div v-if="group.key === 'colors'" class="b-swfilter">
+              <div v-if="group.key === 'colors'" class="ar-swfilter">
                 <button
                   v-for="v in group.values"
                   :key="v"
@@ -204,7 +204,7 @@ import UPrice from "@selldone/components-vue/ui/price/UPrice.vue";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { PriceHelper } from "@selldone/core-js/helper";
 import { SORTS, clone, countOn, groupsOf, picked, sortName, valueLabel, withGroup } from "./walio-filters";
-import { colourName, swatchBg } from "../../besti/besti";
+import { colourName, swatchBg } from "../../argon/argon";
 import { aisleRoute } from "../../kalio/kalio-catalog";
 
 export default {
@@ -220,7 +220,7 @@ export default {
     sort: { type: String, default: null },
     sortFallback: { type: String, default: "Featured" },
     compact: Boolean,
-    /** The departments, and the one open (Besti). */
+    /** The departments, and the one open (Argon). */
     cats: { type: Array, default: () => [] },
     current: { type: String, default: null },
   },

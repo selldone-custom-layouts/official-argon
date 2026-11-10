@@ -1,0 +1,416 @@
+/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Argon — the department store (Home B) ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+
+   A big white electronics store, after Best Buy's sections but not a copy:
+   white page; products in bordered tiles (1px #e1e5eb, radius 10); blue
+   #0a4bd8 for every button with white words, flat, hover = colour only, no
+   line under anything; yellow #ffd91a as an accent only (deal flags, the
+   Deal of the Day, the logo's dot, "Deals"); sale red #c4122f for "Save $X";
+   navy #071634 for the deal strip and the footer. Archivo; Material Symbols
+   Rounded for Argon's own icons. Loaded last (storefront.scss). */
+
+$blue: var(--ar-blue);
+$blue-d: var(--ar-blue-d);
+$blue-l: var(--ar-blue-l);
+$blue-t: var(--ar-blue-t);
+$navy: var(--ar-navy);
+$navy-2: var(--ar-navy-2);
+$yellow: var(--ar-yellow);
+$yellow-l: var(--ar-yellow-l);
+$red: var(--ar-red);
+$red-t: var(--ar-red-t);
+$green: var(--ar-green);
+$green-t: var(--ar-green-t);
+$page: var(--ar-page);
+$line: var(--ar-line);
+$ink: var(--ar-ink);
+$muted: var(--ar-muted);
+$soft: var(--ar-soft);
+$bg: var(--ar-bg);
+$surface: var(--ar-surface);
+$photo: var(--ar-photo);
+
+/* ── Base ── */
+.v-application,
+.s--shop {
+  background: $bg !important;
+  color: $ink;
+  font-family: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  background: $bg !important;
+}
+
+.ar-wrap {
+  max-width: var(--ar-max);
+  margin-inline: auto;
+  padding-inline: var(--ar-pad);
+  box-sizing: border-box;
+}
+
+.ms {
+  font-family: "Material Symbols Rounded";
+  font-weight: 500;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24;
+  flex: none;
+  overflow: hidden;
+  width: 1em;
+  height: 1em;
+
+  &.fill {
+    font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24;
+  }
+}
+
+/* No line under any word or icon, at rest, hover, focus or press (the
+   owner's standing rule). Only a link inside an article's own text keeps
+   its line (.k-prose a, below). */
+.v-application a,
+.v-application a:hover,
+.v-application a:focus,
+.v-application a:active,
+.v-application button,
+.v-application button:hover,
+.ar-header a,
+.ar-footer a,
+.ar-home a,
+.ar-card,
+.ar-card *,
+.s--product-card,
+.s--product-card:hover,
+.s--product-card *,
+.s--product-card:hover * {
+  text-decoration: none !important;
+}
+
+.v-application .k-prose a:not(.k-btn, .ar-btn, .t-btn),
+.v-application .s--article a:not(.k-btn, .ar-btn, .t-btn),
+.v-application .k-note-body a:not(.k-btn, .ar-btn, .t-btn) {
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+}
+
+/* Struck prices keep their line. */
+.v-application s,
+.v-application s * {
+  text-decoration: line-through;
+}
+
+/* ── Buttons: one blue, white words, flat, hover = colour only ── */
+.ar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 6px;
+  background: $blue;
+  color: var(--ar-on-brand) !important;
+  font: 700 14px/1 "Barlow", system-ui, sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: none !important;
+  transition: background-color 0.15s;
+
+  &:hover {
+    background: $blue-d;
+  }
+
+  .ms {
+    font-size: 19px;
+  }
+
+  &.-block {
+    width: 100%;
+  }
+
+  &.-line {
+    background: $surface;
+    color: $blue-t !important;
+    box-shadow: inset 0 0 0 1.5px $blue-t !important;
+
+    &:hover {
+      background: $blue-l;
+    }
+  }
+
+  &.-navy {
+    background: $navy;
+    color: #fff !important; /* light words on the navy in every palette */
+
+    &:hover {
+      background: #000;
+    }
+  }
+
+  &.-off,
+  &:disabled {
+    background: var(--ar-off-bg);
+    color: var(--ar-off-ink) !important;
+    cursor: default;
+  }
+}
+
+.ar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: $blue-t !important;
+  font: 700 14px "Barlow", system-ui, sans-serif;
+  cursor: pointer;
+
+  &:hover {
+    color: $blue-d !important;
+  }
+}
+
+.ar-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  border: 0;
+  background: none;
+  padding: 4px 0;
+  color: $blue-t !important;
+  font: 700 14px "Barlow", system-ui, sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover {
+    color: $blue-d !important;
+  }
+}
+
+.ar-round,
+.ar-arrow,
+.ar-x {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: $surface;
+  box-shadow: inset 0 0 0 1px $line;
+  /* !important: Selldone's [type=button] { color: inherit } loads after and
+     left the chevrons a faint 87% black. Full ink, a heavier, bigger glyph. */
+  color: $ink !important;
+  cursor: pointer;
+  flex: none;
+
+  .ms {
+    color: inherit !important;
+    opacity: 1;
+    font-variation-settings: "FILL" 0, "GRAD" 0, "opsz" 24, "wght" 600;
+  }
+
+  &:hover {
+    color: $blue-t !important;
+    box-shadow: inset 0 0 0 1.5px $blue-t;
+  }
+}
+
+.ar-round .ms,
+.ar-arrow .ms {
+  font-size: 24px;
+}
+
+.ar-x {
+  background: $page;
+  box-shadow: none;
+
+  &:hover {
+    background: $blue-l;
+    box-shadow: none;
+  }
+}
+
+/* ── Section heads ── */
+.ar-sec {
+  margin-top: 44px;
+}
+
+.ar-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  min-width: 0;
+
+  h2 {
+    margin: 0;
+    font: 800 24px/1.15 "Barlow", system-ui, sans-serif !important;
+    letter-spacing: -0.02em !important;
+    color: $ink;
+    white-space: nowrap;
+  }
+}
+
+
+/* empty states */
+/* An empty state (the cart, the contact thanks…), in the same rhythm as
+   every empty state (Digito 1.0.13): a 56px tinted icon circle, 14px, the
+   heading, 8px, the words, 20px, the button; 36px of padding around it. */
+.ar-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 32px;
+  text-align: center;
+
+  &__ic {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    margin: 0 0 14px;
+    border-radius: 50%;
+    background: $blue-l;
+    color: $blue-t;
+
+    .ms {
+      font-size: 28px;
+    }
+  }
+
+  &__t {
+    margin: 0 0 8px;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  &__p {
+    max-width: 34ch;
+    margin: 0 0 20px;
+    color: $muted;
+    line-height: 1.5;
+  }
+
+  .ar-btn {
+    min-width: 220px;
+  }
+
+  /* a second action stands 10px under the first, never touching it */
+  .ar-btn + .ar-btn {
+    margin-top: 10px;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Drawers in Argon's dress ━━━━━━━━━━━━━━━━━━━━━ */
+.ar-drawer {
+  font-family: "Barlow", system-ui, sans-serif;
+
+  .k-drawer__head {
+    border-bottom: 1px solid $line;
+  }
+
+  .k-drawer__title {
+    font: 800 20px "Barlow", sans-serif !important;
+    color: $ink !important;
+
+    small {
+      color: $muted !important;
+      font-weight: 600 !important;
+    }
+  }
+}
+
+/* ── Tablet portrait (600–899): three cards to a row, flatter photo tiles ── */
+@media (min-width: 600px) and (max-width: 899px) {
+  .ar-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .ar-rail__track {
+    grid-auto-columns: calc((100% - 2 * 12px) / 3.3);
+  }
+
+  .ar-hero__side {
+    aspect-ratio: 16 / 10;
+  }
+
+  .ar-bento {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    > .ar-card:nth-child(n + 5) {
+      display: none;
+    }
+  }
+
+  .ar-mo {
+    aspect-ratio: 4 / 3;
+  }
+
+  .ar-mo.-m0 {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* Selldone's shop frame centres text; Argon's pieces start at the line's start. */
+.ar-header,
+.ar-mega,
+.ar-menu,
+.ar-suggest,
+.ar-footer,
+.ar-home,
+.ar-card {
+  text-align: start;
+}
+
+/* The owner's rule, once more and for every inherited page: nothing inside a
+   link or a button carries a line, at rest or on hover (titles in the guides
+   list underlined on hover). Struck prices (<s>) and links inside an
+   article's text keep theirs. */
+.v-application :is(a, button, a *, button *):not(s, s *, del, del *, .k-prose a:not(.k-btn, .ar-btn, .t-btn), .k-prose a:not(.k-btn, .ar-btn, .t-btn) *),
+.v-application :is(a, button, a *, button *):not(s, s *, del, del *, .k-prose a:not(.k-btn, .ar-btn, .t-btn), .k-prose a:not(.k-btn, .ar-btn, .t-btn) *):hover {
+  text-decoration-line: none !important;
+}
+
+/* The hero's slide: the photo and its card, changing together. */
+.ar-hero__slide {
+  position: absolute;
+  inset: 0;
+}
+
+.ar-fade-enter-active,
+.ar-fade-leave-active {
+  transition-duration: 0.22s !important;
+}
+
+@media (max-width: 899px) {
+  .ar-hero__slide {
+    position: static;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* The header's Theme action (the shared switcher's button, with Argon's own
+   action class): open = the same tint as a hover. */
+.ar-act.-theme.-open {
+  color: $blue-t !important;
+  background: $blue-l;
+}

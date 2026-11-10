@@ -1,27 +1,27 @@
 <!--
-  Besti — the Deal of the Day, wide.
+  Argon — the Deal of the Day, wide.
 
   A yellow block with the saving in percent and "Ends in" over the days,
   hours, minutes and seconds left on this deal (its own end date, the picked
   colour's when that colour has its own pricing; no end date, no clock), the
   product big, its colours, the price, Add to cart and Compare, and "More top
   deals" beside it. The deal is one of the shop's biggest savings, a
-  different one each day (besti.ts dealOfTheDay).
+  different one each day (argon.ts dealOfTheDay).
 -->
 <template>
-  <section aria-label="Deal of the Day" class="b-dotd">
-    <div class="b-dotd__badge">
+  <section aria-label="Deal of the Day" class="ar-dotd">
+    <div class="ar-dotd__badge">
       <small>Deal of the Day</small>
       <b v-if="off > 0">{{ off }}% off</b>
-      <besti-deal-clock :end="dealEndsAt" mode="blocks" />
+      <argon-deal-clock :end="dealEndsAt" mode="blocks" />
     </div>
-    <router-link :to="productTo" class="b-dotd__img">
+    <router-link :to="productTo" class="ar-dotd__img">
       <img :alt="product.title" :src="picture" :srcset="srcset" sizes="(max-width: 900px) 40vw, 320px" @error="dropSrcset" />
     </router-link>
-    <div class="b-dotd__info">
-      <span v-if="product.brand" class="b-brand">{{ product.brand }}</span>
-      <router-link :to="productTo" class="b-dotd__t">{{ product.title }}</router-link>
-      <div v-if="colours.length" :aria-label="`Colour of ${product.title}`" class="b-swrow -big" role="radiogroup">
+    <div class="ar-dotd__info">
+      <span v-if="product.brand" class="ar-brand">{{ product.brand }}</span>
+      <router-link :to="productTo" class="ar-dotd__t">{{ product.title }}</router-link>
+      <div v-if="colours.length" :aria-label="`Colour of ${product.title}`" class="ar-swrow -big" role="radiogroup">
         <button
           v-for="(v, i) in colours.slice(0, 6)"
           :key="i"
@@ -30,36 +30,36 @@
           :class="{ '-on': i === pick, '-out': v.quantity === 0 }"
           :style="{ '--sw': swatchBg(v.color) }"
           :title="colourName(v.color)"
-          class="b-sw"
+          class="ar-sw"
           role="radio"
           type="button"
           @click="pick = i"
         ></button>
       </div>
-      <div v-else-if="chips.length" class="b-caps"><span v-for="c in chips.slice(0, 4)" :key="c">{{ c }}</span></div>
-      <div class="b-price -lg">
-        <u-price :amount="money.now" :currency="currency" class="b-price__now" />
-        <span v-if="money.save > 0" class="b-save">Save {{ moneyWhole(money.save) }}</span>
+      <div v-else-if="chips.length" class="ar-caps"><span v-for="c in chips.slice(0, 4)" :key="c">{{ c }}</span></div>
+      <div class="ar-price -lg">
+        <u-price :amount="money.now" :currency="currency" class="ar-price__now" />
+        <span v-if="money.save > 0" class="ar-save">Save {{ moneyWhole(money.save) }}</span>
       </div>
-      <div class="b-was"><template v-if="money.was">Was <s><u-price :amount="money.was" :currency="currency" /></s></template></div>
-      <div class="b-dotd__buy">
-        <div v-if="shown > 0" :class="{ '-busy': busy }" aria-label="Quantity in cart" class="b-step" role="group">
+      <div class="ar-was"><template v-if="money.was">Was <s><u-price :amount="money.was" :currency="currency" /></s></template></div>
+      <div class="ar-dotd__buy">
+        <div v-if="shown > 0" :class="{ '-busy': busy }" aria-label="Quantity in cart" class="ar-step" role="group">
           <button :aria-label="shown > 1 ? 'One fewer' : 'Remove from cart'" type="button" @click="step(-1)"><span class="ms">{{ shown > 1 ? "remove" : "delete" }}</span></button>
           <output aria-live="polite"><b>{{ shown }}</b><small> in cart</small></output>
           <button aria-label="One more" type="button" @click="step(1)"><span class="ms">add</span></button>
         </div>
-        <button v-else-if="soldOut" class="b-btn -off" disabled type="button">Out of stock</button>
-        <button v-else-if="choose" class="b-btn" type="button" @click="$emit('quick-buy', product)"><span class="ms">tune</span>Choose {{ dimension.word }}</button>
-        <button v-else class="b-btn" type="button" @click="add"><span class="ms">add_shopping_cart</span>Add to cart</button>
-        <button :aria-pressed="comparing ? 'true' : 'false'" :class="{ '-on': comparing }" class="b-link" type="button" @click="toggleCompare">
+        <button v-else-if="soldOut" class="ar-btn -off" disabled type="button">Out of stock</button>
+        <button v-else-if="choose" class="ar-btn" type="button" @click="$emit('quick-buy', product)"><span class="ms">tune</span>Choose {{ dimension.word }}</button>
+        <button v-else class="ar-btn" type="button" @click="add"><span class="ms">add_shopping_cart</span>Add to cart</button>
+        <button :aria-pressed="comparing ? 'true' : 'false'" :class="{ '-on': comparing }" class="ar-link" type="button" @click="toggleCompare">
           <span class="ms">{{ comparing ? "check_box" : "compare_arrows" }}</span>{{ comparing ? "Comparing" : "Compare" }}
         </button>
       </div>
     </div>
-    <div v-if="more.length" class="b-dotd__more">
+    <div v-if="more.length" class="ar-dotd__more">
       <h3>More top deals</h3>
-      <router-link v-for="p in more" :key="p.id" :to="{ name: window.$storefront.routes.PRODUCT_PAGE, params: { product_id: p.id } }" class="b-mini">
-        <span class="b-mini__ph"><img :src="thumb(p)" alt="" loading="lazy" /></span>
+      <router-link v-for="p in more" :key="p.id" :to="{ name: window.$storefront.routes.PRODUCT_PAGE, params: { product_id: p.id } }" class="ar-mini">
+        <span class="ar-mini__ph"><img :src="thumb(p)" alt="" loading="lazy" /></span>
         <span><b>{{ p.title }}</b><em><u-price :amount="nowOf(p).now" :currency="currency" /><s v-if="nowOf(p).was"><u-price :amount="nowOf(p).was" :currency="currency" /></s></em></span>
       </router-link>
     </div>
@@ -67,14 +67,14 @@
 </template>
 
 <script>
-import BuyMixin from "./besti-buy";
+import BuyMixin from "./argon-buy";
 import { dropSrcset, productSrcset } from "../kalio/kalio-catalog";
-import BestiDealClock from "./BestiDealClock.vue";
-import { moneyOf } from "./besti";
+import ArgonDealClock from "./ArgonDealClock.vue";
+import { moneyOf } from "./argon";
 
 export default {
-  name: "BestiDealOfDay",
-  components: { BestiDealClock },
+  name: "ArgonDealOfDay",
+  components: { ArgonDealClock },
   mixins: [BuyMixin],
   props: {
     product: { type: Object, required: true },
