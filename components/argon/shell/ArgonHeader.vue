@@ -171,9 +171,32 @@
           <div class="ar-menu__body">
             <router-link :to="dealsTo" class="ar-menu__deal"><span class="ms">sell</span>Today’s deals</router-link>
             <p class="ar-menu__h">Shop by category</p>
-            <router-link v-for="c in cats" :key="c.id" :to="catTo(c)" class="ar-menu__cat">
+            <!-- The first 6 categories in the shop's order; the rest behind
+                 "Show N more" (8 or fewer: all, no button). The owner's
+                 option A, 10 November 2026. -->
+            <router-link v-for="c in menuFirst" :key="c.id" :to="catTo(c)" class="ar-menu__cat">
               <span class="ar-dd__ic"><img v-if="c.icon" :src="catIcon(c)" alt="" /></span>{{ c.title || c.name }}
             </router-link>
+            <transition name="ar-mm">
+              <div v-if="menuRest.length && menu_more" id="ar-menu-more" class="ar-menu__extra">
+                <div class="ar-menu__extra-in">
+                  <router-link v-for="(c, i) in menuRest" :key="c.id" :style="{ '--i': i }" :to="catTo(c)" class="ar-menu__cat">
+                    <span class="ar-dd__ic"><img v-if="c.icon" :src="catIcon(c)" alt="" /></span>{{ c.title || c.name }}
+                  </router-link>
+                </div>
+              </div>
+            </transition>
+            <button
+              v-if="menuRest.length"
+              :aria-expanded="menu_more ? 'true' : 'false'"
+              aria-controls="ar-menu-more"
+              class="ar-menu__cat ar-menu__more"
+              type="button"
+              @click="menu_more = !menu_more"
+            >
+              <span aria-hidden="true" class="ar-menu__more-ic"><span class="ms">{{ menu_more ? "expand_less" : "expand_more" }}</span></span>
+              {{ menu_more ? "Show fewer" : `Show ${menuRest.length} more` }}
+            </button>
             <template v-if="trendTags.length">
               <p class="ar-menu__h">Trending</p>
               <div class="ar-menu__tags">
@@ -248,6 +271,7 @@ export default {
     mega: false,
     trend: false,
     menu: false,
+    menu_more: false,
     cart: false,
     perk_at: 0,
     windowWidth: typeof window !== "undefined" ? window.innerWidth : 1440,
@@ -299,6 +323,14 @@ export default {
     allTo() {
       return catalogueRoute();
     },
+    /* The phone menu: 6 categories, the rest behind "Show N more"; 8 or
+       fewer show all. */
+    menuFirst() {
+      return this.cats.length <= 8 ? this.cats : this.cats.slice(0, 6);
+    },
+    menuRest() {
+      return this.cats.length <= 8 ? [] : this.cats.slice(6);
+    },
     /* The tags the shop uses, most used first. */
     trendTags() {
       return this.tags.slice(0, 8);
@@ -339,6 +371,7 @@ export default {
       this.listenOutside();
     },
     menu(open) {
+      if (open) this.menu_more = false; /* each time the menu opens it starts collapsed */
       document.documentElement.style.overflow = open ? "hidden" : "";
       if (open) this.$nextTick(() => this.$refs.menuClose?.focus());
     },
