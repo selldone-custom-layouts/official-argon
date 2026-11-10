@@ -3376,3 +3376,22 @@ $font: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
 .ar-contact__side > .k-sample {
   padding-left: 27px !important;
 }
+
+/* The footer's legal row: Selldone's "Shop setting & GDPR" (a plain button
+   at 62% opacity, #959595 on the grey footer: 2.68:1) and the credit read
+   at full strength in the muted ink. */
+.ar-footer .ar-footer__legal-in .v-btn,
+.ar-footer .ar-footer__legal-in .v-btn .v-btn__content,
+.ar-footer .ar-footer__legal-in .v-btn span {
+  opacity: 1 !important;
+  color: var(--ar-muted) !important;
+}
+
+.ar-footer .ar-footer__legal-in .v-btn .v-btn__overlay {
+  opacity: 0 !important;
+}
+
+/* The deals page's "verified" mark: the buy colour as words (lighter in dark). */
+.ar-ltop__d .ms {
+  color: var(--ar-buy-t) !important;
+}
