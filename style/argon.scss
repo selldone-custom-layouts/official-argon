@@ -3581,3 +3581,72 @@ $font: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
     animation: none;
   }
 }
+
+/* ━━━━━━━━━━━━━━━━━━━━━ Article (1.0.7) ━━━━━━━━━━━━━━━━━━━━━ */
+/* The owner, 10 November 2026: one wide reading column (760px), the hero a
+   little wider, the products in one row of four in a panel under the text,
+   the share row and comments in the same column. No side column. */
+.k-post {
+  .k-post__col {
+    width: min(760px, 100% - 2 * var(--ar-pad));
+  }
+
+  .k-post__hero {
+    max-width: min(960px, 100% - 2 * var(--ar-pad));
+    border-radius: var(--ar-r);
+  }
+
+  .k-post__body,
+  .k-post__body p,
+  .k-post__body li {
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  .k-post__shop {
+    padding: 20px;
+    border-radius: var(--ar-r);
+    background: var(--ar-page);
+
+    h2 {
+      font: 700 20px $font !important;
+      color: var(--ar-ink);
+    }
+  }
+
+  .k-post__shoprow {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .k-mini__name:hover {
+    text-decoration: none;
+    color: var(--ar-brand-t) !important;
+  }
+
+  .k-post__comments {
+    .k-post__login,
+    .s--shop-login {
+      max-width: 440px;
+      margin-inline: auto !important;
+    }
+  }
+}
+
+@media (max-width: 760px) {
+  .k-post .k-post__shoprow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .k-post .k-post__body,
+  .k-post .k-post__body p,
+  .k-post .k-post__body li {
+    font-size: 16.5px;
+  }
+
+  .k-post .k-post__shop {
+    padding: 16px;
+  }
+}
