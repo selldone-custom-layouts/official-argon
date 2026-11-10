@@ -36,7 +36,7 @@
 - near-black pills for quick links, sale red for "Save $X";
 - Barlow type and Material Symbols Rounded icons;
 - flat buttons, hover changes the colour only, no line under any word or icon, selection rings inside the box;
-- a **Theme** button at the top right of the header on Argon's own showcase shop: five palettes (Argon red, Cobalt, Plum, Teal, Tangerine), a **Custom colour** and Light / Dark. One click changes the whole site, Selldone's own parts too, and the choice stays in the browser.
+- a **Theme** button at the top right of the header on Argon's own showcase shop: five palettes (Argon, Cobalt, Plum, Teal, Tangerine), a **Custom colour** and Light / Dark. One click changes the whole site, Selldone's own parts too, and the choice stays in the browser.
 
 It runs on **[argon.selldone.shop](https://argon.selldone.shop)**, one address of the Selldone shop Digini. Selldone lets each domain of a shop carry its own Layout.
 

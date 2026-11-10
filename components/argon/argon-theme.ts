@@ -45,7 +45,7 @@ export const ARGON_THEME: ThemeSwitcherConfig = {
   palettes: [
     {
       id: "argon",
-      name: "Argon red",
+      name: "Argon",
       light: {
         primary: "#007a3d", deep: "#00602f", soft: "#e6f2eb", onPrimary: "#ffffff", text: "#007a3d",
         brand: "#c8102e", brandDeep: "#a50d25", brandSoft: "#fdecee", brandText: "#c8102e",

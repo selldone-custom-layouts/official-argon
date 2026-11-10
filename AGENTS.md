@@ -26,7 +26,7 @@ When a merchant asks for a theme ("use the yellow theme", "my brand colour is #F
 
 | Setting | Allowed values |
 | --- | --- |
-| `palette` | `"argon"` (Argon red: green buy buttons and a red brand; the default), `"cobalt"`, `"plum"`, `"teal"`, `"tangerine"` |
+| `palette` | `"argon"` (Argon: green buy buttons and a red brand; the default), `"cobalt"`, `"plum"`, `"teal"`, `"tangerine"` |
 | `brandColor` | any `"#RRGGBB"`; when set it replaces `palette` |
 | `mode` | `"light"` or `"dark"` |
 | `themeSwitcher` | `"showcase"` (the visitor switcher shows only on Argon's own showcase shop, Digini 15549; the default), `"on"` (the merchant's visitors get a Theme button in the header), `"off"` |

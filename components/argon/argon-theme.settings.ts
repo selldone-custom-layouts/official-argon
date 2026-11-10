@@ -6,7 +6,7 @@
  * (see themeSwitcher) they are the only theme. After a change: build and
  * upload (bash scripts/release.sh <new-version> desk), see AGENTS.md "Theme".
  *
- * palette        one of: "argon" (Argon red: green buttons, red brand; the
+ * palette        one of: "argon" (Argon: green buttons, red brand; the
  *                default), "cobalt", "plum", "teal", "tangerine"
  * brandColor     any colour, "#RRGGBB"; when set it replaces `palette` (the
  *                colour is made readable automatically: buttons, links, dark mode)

@@ -17,7 +17,7 @@ Only the `argon` palette has two colours. Every other palette, a custom colour a
 
 A **Theme** button sits at the top right of the header, between Wishlist and Cart (on a phone, one of the four icons). It opens a small panel:
 
-- **Colour:** Argon red (the default), Cobalt, Plum, Teal, Tangerine, and **Custom colour** (any colour from the browser's colour picker; it is made readable in light and dark, with a note "Adjusted for readability" when it had to change).
+- **Colour:** Argon (the default: green buttons, red brand), Cobalt, Plum, Teal, Tangerine, and **Custom colour** (any colour from the browser's colour picker; it is made readable in light and dark, with a note "Adjusted for readability" when it had to change).
 - **Mode:** Light or Dark.
 
 One click changes the whole site at once, with no reload: Argon's colours, the Kalio base, Vuetify's theme and Selldone's own parts (the buy button, prices, the cart drawer, the checkout sheets, dialogs). The choice is kept in the browser (key `argon-theme`) and painted before the first paint, so the default never flashes. The panel has no scrim, closes on a second click, Esc or a click outside, and works with the keyboard.
@@ -38,7 +38,7 @@ export const THEME_SETTINGS: ThemeSettings = {
 
 | Setting | Allowed values |
 | --- | --- |
-| `palette` | `"argon"` (Argon red: green buy buttons and a red brand; the default), `"cobalt"`, `"plum"`, `"teal"`, `"tangerine"` |
+| `palette` | `"argon"` (Argon: green buy buttons and a red brand; the default), `"cobalt"`, `"plum"`, `"teal"`, `"tangerine"` |
 | `brandColor` | any `"#RRGGBB"`; when set it replaces `palette` |
 | `mode` | `"light"` or `"dark"` |
 | `themeSwitcher` | `"showcase"` (the visitor switcher shows only on Argon's own showcase shop, Digini 15549; the default), `"on"` (your visitors get a Theme button in the header), `"off"` |
@@ -71,7 +71,7 @@ See [Build and Upload](Build-and-Upload) and [Go Live](Go-Live).
 
 | Palette | White words on the buy colour (light) |
 | --- | --- |
-| Argon red | green `#007a3d` 5.45:1; red `#c8102e` 5.88:1 |
+| Argon | green `#007a3d` 5.45:1; red `#c8102e` 5.88:1 |
 | Cobalt | 6.70:1 |
 | Plum | 6.98:1 |
 | Teal | 5.47:1 |

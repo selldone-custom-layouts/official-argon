@@ -3464,3 +3464,21 @@ $font: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
     transition: none;
   }
 }
+
+/* The Theme action while its panel is open, and the drawers' close button:
+   the quiet grey with ink, like every other header action. */
+.ar-header .ar-act.-theme[aria-expanded="true"],
+.ar-header .ar-act[aria-expanded="true"] {
+  background: var(--ar-page) !important;
+  color: var(--ar-ink) !important;
+}
+
+.ar-drawer .ar-x,
+.k-drawer .ar-x {
+  background: var(--ar-page) !important;
+  color: var(--ar-ink) !important;
+
+  &:hover {
+    background: var(--ar-line) !important;
+  }
+}
