@@ -5,7 +5,7 @@ Every release is a **new version** of your Layout on Selldone. `scripts/release.
 ## One-time setup
 
 ```bash
-npm i -g selldone-cli                                  # the official CLI
+npm i -g selldone-cli                                        # the official CLI
 git clone https://github.com/selldone/cli selldone-cli-src   # its packager lives in .agents/
 ```
 
@@ -19,23 +19,31 @@ Sign in to the CLI once:
 
 ## Release
 
+The first upload creates your Layout. Leave `LAYOUT_ID` out:
+
 ```bash
-SELLDONE_CLI_SRC=../selldone-cli-src LAYOUT_ID=<your layout id> \
-  bash scripts/release.sh 1.0.1 desk
+SELLDONE_CLI_SRC=../selldone-cli-src bash scripts/release.sh 1.0.0 desk
+```
+
+Note the Layout id printed after it (it is also in the Selldone developer panel). Every later release:
+
+```bash
+LAYOUT_ID=<your Layout id> SELLDONE_CLI_SRC=../selldone-cli-src \
+  bash scripts/release.sh <new version> desk
 ```
 
 The arguments:
 - the **new version**, never used before;
-- the **account design**: `desk` (side rail) or `home` (tabs).
+- the **account design**: `desk` (side rail, the one Argon ships) or `home` (tabs).
 
-Leave `LAYOUT_ID` out on the very first upload. Afterwards, read your Layout's id from the Selldone developer panel.
+With `LAYOUT_ID` set, the script also checks the upload on the server. Argon's own Layout id on the showcase shop: see `ARGON.md`.
 
 ## What the script does, and why
 
 | Step | Why |
 | --- | --- |
 | Bump `version` in `manifest.json` | A version number is used up even when an upload fails. Never reuse one. |
-| `npm run build-production` | Outputs `dist/app/shop.js`, `shop.css` and chunks with a **relative base**. Releases are served from `cdn.selldone.com/public/layouts/<id>/releases/<ULID>/app/`. |
+| `npm run build-production` | Outputs `dist/app/shop.js`, `shop.css` and chunks with a **relative base**. Releases are served from `cdn.selldone.com/public/layouts/<id>/releases/<ULID>/app/`. The photos in `assets/photos/` and `assets/argon/` are picked up here. |
 | `rm dist/index.html` | Every ZIP member must be under `app/`. In production the Layout runs inside Selldone's HTML, so `index.html` is never used. Fonts load from the app code. |
 | `scripts/kalio-svg-flatten.mjs` | Selldone accepts only passive SVG attributes. `style`, `<style>`, `xml:space`, `enable-background`, `display`, `fx/fy`, `data-*` and character references in values are refused. |
 | MIME check (`file --mime-type`) | Selldone stores the MIME type it sniffs. A chunk starting with `import{` is stored as `text/x-java`, which browsers refuse. Every chunk starts with `"use strict";` (`sniffAsJavaScript` in `vite.config.ts`). |

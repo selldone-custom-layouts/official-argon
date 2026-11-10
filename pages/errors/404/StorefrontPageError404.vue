@@ -5,9 +5,9 @@
   - Web: https://selldone.com
   -->
 <template>
-  <!-- Argon 404 (digini-design/404-b.html): a bordered panel with a large
-       404 (the 0 in blue), a search, quick ways out; then one row of
-       departments and today's deals. -->
+  <!-- Argon 404: a friendly panel with a large 404 (the 0 in the brand
+       colour), a search, quick ways out; then every category as a tile
+       (the home's tiles) and today's deals. -->
   <div class="ar-404">
     <section class="ar-404__panel ar-wrap">
       <div class="ar-404__in">
@@ -16,6 +16,7 @@
           <h1>We can't find that page</h1>
           <p>The link may be old, or the page has moved. Try a search or start from a department.</p>
           <form class="ar-search -big" role="search" @submit.prevent="go">
+            <span aria-hidden="true" class="ms ar-search__ic">search</span>
             <input v-model="q" aria-label="Search" enterkeyhint="search" placeholder="What can we help you find?" type="search" />
             <button aria-label="Search" class="ar-search__go" type="submit"><span class="ms">search</span></button>
           </form>
@@ -32,13 +33,18 @@
 
     <section v-if="cats.length" class="ar-sec ar-wrap">
       <header class="ar-head">
-        <h2>Popular departments</h2>
-        <router-link :to="catalogue" class="ar-more">All departments<span class="ms">chevron_right</span></router-link>
+        <h2>Shop by category</h2>
+        <router-link :to="catalogue" class="ar-more">All products<span class="ms">chevron_right</span></router-link>
       </header>
-      <div :style="{ '--cols': Math.min(8, cats.length) }" class="ar-depts -one">
-        <router-link v-for="c in cats.slice(0, 8)" :key="c.id" :to="catTo(c)" class="ar-dtile">
-          <span><img v-if="c.icon" :src="icon(c)" alt="" loading="lazy" /><span v-else class="ms">category</span></span>
-          <b>{{ c.title || c.name }}</b>
+      <div class="ar-404__cats">
+        <router-link v-for="c in cats.slice(0, 15)" :key="c.id" :to="catTo(c)" class="ar-cat">
+          <span class="ar-cat__tile"><img v-if="c.icon" :src="icon(c)" alt="" loading="lazy" /><span v-else class="ms">category</span></span>
+          <span class="ar-cat__t">{{ c.title || c.name }}</span>
+        </router-link>
+        <!-- Full rows only (the owner's rule): an "All products" tile evens them out. -->
+        <router-link v-if="cats.length % 2 === 1 || cats.length > 15" :to="catalogue" class="ar-cat -all">
+          <span class="ar-cat__tile"><span class="ms">grid_view</span></span>
+          <span class="ar-cat__t">All products</span>
         </router-link>
       </div>
     </section>

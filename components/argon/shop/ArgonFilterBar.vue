@@ -130,7 +130,9 @@
         <span class="ms">tune</span>All filters<b v-if="on_count" class="ar-fbtn__n">{{ on_count }}</b>
       </button>
     </div>
-    <p v-if="total !== null" class="ar-fbar__count">{{ total }} {{ total === 1 ? "result" : "results" }}</p>
+    <transition mode="out-in" name="lm-fade">
+      <p v-if="total !== null" :key="total" class="ar-fbar__count">{{ total }} {{ total === 1 ? "result" : "results" }}</p>
+    </transition>
   </div>
 
   <!-- ▆▆▆▆ All filters: a side sheet ▆▆▆▆ -->

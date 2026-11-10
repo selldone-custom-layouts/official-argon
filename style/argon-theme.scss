@@ -88,10 +88,11 @@
   --ar-off-bg: #e8e8e8;
   --ar-off-ink: #4f4f4f;
   --ar-photo: #ffffff; /* a packshot's tile: white in both modes */
-  --ar-ph-bg: #e9ecef; /* a photo slot waiting for its photo */
-  --ar-ph-line: #dde1e6;
-  --ar-ph-ink: #5c5c5c;
+  --ar-ph-c0: #e9ecef; /* a photo slot waiting for its photo */
+  --ar-ph-c1: #dde1e6;
+  --ar-ph-c2: #5c5c5c;
   --ar-sw-edge: rgba(15, 23, 41, 0.34); /* a swatch disc's edge */
+  --ar-shine: rgba(255, 255, 255, 0.7); /* a skeleton's shimmer */
   --ar-pop-shadow: rgba(0, 0, 0, 0.35);
 }
 

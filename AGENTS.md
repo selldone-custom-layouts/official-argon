@@ -22,11 +22,11 @@ the owner's controlled clone, fork, or release branch.
 
 ## Theme (palette, brand colour, light or dark, the visitor switcher)
 
-When a merchant asks for a theme ("use the yellow theme", "my brand colour is #F5C400", "make it dark"), edit **one file only**: `components/argon/argon-theme.settings.ts`. Nothing else needs to change, and the colours are made readable automatically (buttons, links, the department bar, dark mode).
+When a merchant asks for a theme ("use the yellow theme", "my brand colour is #F5C400", "make it dark"), edit **one file only**: `components/argon/argon-theme.settings.ts`. Nothing else needs to change, and the colours are made readable automatically (buttons, links, the logo tile, dark mode). Argon's own palette paints buy buttons green and the logo, links and accents red; a merchant's brand colour or any other palette uses one colour for both.
 
 | Setting | Allowed values |
 | --- | --- |
-| `palette` | `"blue"` (Argon blue, the default), `"violet"`, `"emerald"`, `"copper"`, `"magenta"` |
+| `palette` | `"argon"` (Argon red: green buy buttons and a red brand; the default), `"cobalt"`, `"plum"`, `"teal"`, `"tangerine"` |
 | `brandColor` | any `"#RRGGBB"`; when set it replaces `palette` |
 | `mode` | `"light"` or `"dark"` |
 | `themeSwitcher` | `"showcase"` (the visitor switcher shows only on Argon's own showcase shop, Digini 15549; the default), `"on"` (the merchant's visitors get a Theme button in the header), `"off"` |
@@ -39,7 +39,7 @@ Worked examples (change only these lines; leave the rest of the file as it is):
 - **"Make it dark"**: `mode: "dark"`.
 - **"Let visitors switch themes"**: `themeSwitcher: "on"`.
 - **"Remove the switcher"**: `themeSwitcher: "off"`. On a merchant's own shop it is already hidden with `"showcase"`.
-- **"Go back to the original colours"**: remove `brandColor` and set `palette: "blue", mode: "light"`.
+- **"Go back to the original colours"**: remove `brandColor` and set `palette: "argon", mode: "light"`.
 
 The switcher itself is the shared package in `components/theme-switcher/` (the same code as every other Layout; see its PORTING.md in the kit). Argon's palettes and tokens are in `components/argon/argon-theme.ts`; do not edit them for a merchant's theme.
 
@@ -48,6 +48,6 @@ Then release and check:
 1. Build and upload: `LAYOUT_ID=<your Layout id> SELLDONE_CLI_SRC=<cli clone> bash scripts/release.sh <new version> desk`. Put the version live.
 2. Check the contrast on the live shop. It must print `TOTAL 0`:
    ```sh
-   PAGES="home=/,category=/<a category>,product=/product/<id>" node components/theme-switcher/tools/contrast-audit.cjs https://<your shop> ".b-hero__main"
+   PAGES="home=/,category=/<a category>,product=/product/<id>" node components/theme-switcher/tools/contrast-audit.cjs https://<your shop> ".ar-cats"
    ```
-3. If the visitor switcher is on, also run `components/theme-switcher/tools/header-check.cjs` (Argon's selectors: `WAIT=".b-hero__main" BRAND=".b-header__logo" CART=".b-cartpill" ACCOUNT=".b-act.-me" STORAGE_KEY=argon-theme`).
+3. If the visitor switcher is on, also run `components/theme-switcher/tools/header-check.cjs` (Argon's selectors: `WAIT=".ar-cats" BRAND=".ar-header__logo" CART=".ar-act.-cart" ACCOUNT=".ar-act.-me" STORAGE_KEY=argon-theme`).

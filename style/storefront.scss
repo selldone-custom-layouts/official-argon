@@ -30,6 +30,7 @@
 @use "walio-home"; // Walio 1.1.0: the home (design B), with the shared rows and cards
 @use "walio-pages"; // Walio 1.1.0: every page after the home (the B mockups, product A)
 @use "kalio-compare"; // the compare page (design 1, 8 November 2026)
+@use "listing-motion"; // the results grid's loading motion (reusable; components/kalio/listing-motion.ts)
 @use "argon-base"; // Argon: base pieces (buttons, rounds, section heads, empty states, drawers)
 @use "argon-pages"; // Argon: every page after the home, in the same dress
 @use "argon"; // Argon: the catalogue store (header, footer, home, card, filter bar, product page), last

@@ -197,10 +197,20 @@
               ><template v-else-if="w.freeOver"> · Free over <u-price :amount="w.freeOver" :currency="w.currency" /></template>
             </span>
           </li>
-          <li v-if="!ways.length"><span class="ms">local_shipping</span>Delivery options at checkout</li>
+          <li v-if="!ways.length"><span class="ms">local_shipping</span><span>Delivery options at checkout</span></li>
+          <!-- Selldone's stock nudge ("Almost out of stock…"), as a row of the
+               same list: one left edge, one 24px icon box, wrapped words under
+               the words (its own row had an emoji, other padding and size). -->
+          <li v-if="incentHtml" class="-nudge"><span class="ms">{{ incentIcon }}</span><span v-html="incentHtml"></span></li>
         </ul>
 
-        <s-product-section-incentivise :variant="current_variant" :vendorProduct="selected_vendor_product"></s-product-section-incentivise>
+        <!-- Selldone's nudge is read from here (hidden) and drawn in the list above. -->
+        <s-product-section-incentivise
+          ref="incent"
+          :variant="current_variant"
+          :vendorProduct="selected_vendor_product"
+          class="ar-incent-src"
+        ></s-product-section-incentivise>
         <s-storefront-coupons-list :product-id="$product.id" :variant-id="current_variant ? current_variant.id : undefined"></s-storefront-coupons-list>
 
         <router-link v-if="quickBuyMode" :to="productTo" class="ar-link ar-pdp__full">See full details<span class="ms">chevron_right</span></router-link>
@@ -239,7 +249,7 @@ export default {
   components: { ArgonDealClock, ArgonComplete },
 
   data() {
-    return { compact: false, qty: 1, adding: false, galAt: 0, galN: 0 };
+    return { compact: false, qty: 1, adding: false, galAt: 0, galN: 0, incentRaw: "" };
   },
 
   computed: {
@@ -297,6 +307,21 @@ export default {
       if (this.current_variant) return this.current_variant.quantity || 0;
       return this.$product.quantity || 0;
     },
+    incentLead() {
+      const m = this.incentRaw.match(/^(\p{Extended_Pictographic}️?)\s*/u);
+      return m ? m[1] : "";
+    },
+    incentHtml() {
+      return this.incentRaw.replace(/^(\p{Extended_Pictographic}️?)\s*/u, "").trim();
+    },
+    incentIcon() {
+      const e = this.incentLead;
+      if (/[⌛⏳]/u.test(e)) return "hourglass_bottom";
+      if (/\u{1F6D2}/u.test(e)) return "shopping_cart";
+      if (/\u{1F525}/u.test(e)) return "local_fire_department";
+      if (/⚡/u.test(e)) return "bolt";
+      return "trending_up";
+    },
     /* A plain physical product gets Argon's quantity menu and Add to cart;
        anything Selldone's own button knows more about keeps that button. */
     simpleBuy() {
@@ -329,6 +354,13 @@ export default {
         this.galAt = at;
         this.galN = n;
       },
+      { immediate: true },
+    );
+    /* Selldone's stock nudge: its words, without the leading emoji (drawn
+       as an icon in the list instead). */
+    this.$watch(
+      () => (this.$refs.incent ? this.$refs.incent.message || "" : ""),
+      (m) => (this.incentRaw = String(m || "").trim()),
       { immediate: true },
     );
     this.onResize();

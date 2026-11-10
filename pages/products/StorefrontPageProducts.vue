@@ -90,6 +90,13 @@
           @update:model-value="setFilter"
           @update:sort="setSort"
         />
+        <!-- While the grid reloads: a small pill under the filter row (absolute,
+             so nothing moves); the cards stay, dimmed (listing-motion). -->
+        <div class="lm-anchor">
+          <transition name="lm-pill">
+            <div v-if="lm.updating" aria-live="polite" class="lm-pill" role="status"><i class="lm-spin" aria-hidden="true"></i>Updating results…</div>
+          </transition>
+        </div>
         <div v-if="on_chips.length" class="ar-chips ar-list__on">
           <button v-for="c in on_chips" :key="c.key" class="ar-chip -on" type="button" @click="c.off()">
             {{ c.label }}<span class="ms">close</span>
@@ -99,7 +106,7 @@
         <s-products-listing
           ref="listing"
           :key="$route.path"
-          :class="{ '-catalogue': catalogue }"
+          :class="[{ '-catalogue': catalogue }, lm.gridClass()]"
           :vendor-id="vendor_id"
           :has-breadcrumb="false"
           :has-filter="false"
@@ -108,7 +115,13 @@
           route-mode
           update-route
           @fetch-products="updateProductsSeo"
+          @lm-state="lm.onState"
         ></s-products-listing>
+        <!-- First load: skeleton cards in the grid's shape; load more: skeleton
+             cards at the end. -->
+        <div v-if="lm.first || lm.loadingMore" aria-hidden="true" class="lm-skels">
+          <div v-for="n in lm.first ? 8 : 4" :key="n" class="lm-skel"><i class="-img"></i><i class="-t1"></i><i class="-t2"></i><i class="-p"></i><i class="-b"></i></div>
+        </div>
 
         <!-- ▆▆▆▆▆▆▆▆ Under the grid ▆▆▆▆▆▆▆▆ -->
         <argon-row v-if="catalogue && search_query" :limit="12" lazy sort="bestselling" title="Popular right now" />
@@ -141,6 +154,7 @@ import KalioQuickBuy from "../../components/kalio/KalioQuickBuy.vue";
 import { hostQuickBuy } from "../../components/kalio/kalio-listing-quick-buy";
 import { quickAdd } from "../../components/kalio/kalio-basket";
 import "../../components/kalio/kalio-card-basket"; // a card in the basket shows − n +
+import { listingMotion } from "../../components/kalio/listing-motion";
 
 export default {
   name: "StorefrontPageProducts",
@@ -173,6 +187,7 @@ export default {
     sold_by: null,
     sold_by_list: [],
     aisle_list: [],
+    lm: listingMotion() /* the grid's loading motion */,
   }),
   /**
    * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓

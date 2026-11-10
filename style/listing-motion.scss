@@ -1,0 +1,229 @@
+/* ▆▆▆▆▆▆▆▆▆▆▆▆▆▆ Listing motion ▆▆▆▆▆▆▆▆▆▆▆▆▆▆
+
+   How a results grid shows that it is loading (with
+   components/kalio/listing-motion.ts). Reusable: a Layout sets the five
+   --lm-* colours on the page that holds the grid and copies this file and
+   the .ts as they are.
+
+     --lm-accent   the pill's words and spinner (the brand colour as words)
+     --lm-surface  the pill's and the skeleton card's ground
+     --lm-well     a skeleton's bars and image well
+     --lm-shine    the shimmer's light band
+     --lm-line     the skeleton card's edge
+
+   1. Selldone's thin progress line over the grid is not shown.
+   2. While a request runs on shown cards: they stay, dimmed to .45 (150ms),
+      not clickable; a pill "Updating results…" slides in 6px from the top
+      and fades in (absolute: nothing moves).
+   3. New cards fade up into place (opacity 0→1, 8px→0, 220ms), 25ms apart,
+      the stagger capped at the first 12. Cards already shown do not move.
+   4. First load: skeleton cards in the card's shape, with a shimmer.
+   5. Load more: skeleton cards at the end, not a spinner.
+   6. prefers-reduced-motion: only the dim and the pill. */
+
+/* 1. No progress line. */
+.lm-grid .loader-to-bar,
+.lm-grid .s--products-listing-row + .loader-to-bar,
+.lm-grid > .v-progress-linear {
+  display: none !important;
+}
+
+/* 2. Dim the shown cards while the new ones come. */
+.lm-grid .s--products-listing-row {
+  transition: opacity 150ms ease;
+}
+
+.lm-grid.-lm-busy .s--products-listing-row {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* Load more: the button steps aside for the skeletons. */
+.lm-grid.-lm-more .k-loadmore {
+  display: none !important;
+}
+
+.lm-anchor {
+  position: relative;
+  height: 0;
+  z-index: 5;
+}
+
+.lm-pill {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 16px 0 12px;
+  border-radius: 18px;
+  background: var(--lm-surface, #fff);
+  color: var(--lm-accent, #c8102e);
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+  box-shadow: inset 0 0 0 1px var(--lm-line, #dedede), 0 6px 18px -8px rgba(0, 0, 0, 0.35);
+  transform: translateX(-50%);
+}
+
+.lm-spin {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2.5px currentColor;
+  -webkit-mask-image: conic-gradient(transparent 0 25%, #000 25%);
+  mask-image: conic-gradient(transparent 0 25%, #000 25%);
+  animation: lm-spin 0.8s linear infinite;
+}
+
+@keyframes lm-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.lm-pill-enter-active,
+.lm-pill-leave-active {
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.lm-pill-enter-from,
+.lm-pill-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -6px);
+}
+
+/* 3. New cards fade up into place (a CSS animation runs once, when a card
+   is inserted; cards already shown keep still). */
+@keyframes lm-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.lm-grid .s--products-listing-row > .s--product-card {
+  animation: lm-in 220ms ease both;
+}
+
+@for $i from 1 through 12 {
+  .lm-grid .s--products-listing-row > .s--product-card:nth-child(#{$i}) {
+    animation-delay: #{($i - 1) * 25}ms;
+  }
+}
+
+/* The count changes with the same soft fade. */
+.lm-fade-enter-active,
+.lm-fade-leave-active {
+  transition: opacity 160ms ease;
+}
+
+.lm-fade-enter-from,
+.lm-fade-leave-to {
+  opacity: 0;
+}
+
+/* 4 and 5. Skeleton cards, in the card's shape: image well, two title
+   lines, a price line, a button bar. */
+.lm-skels {
+  display: grid;
+  grid-template-columns: repeat(var(--lm-cols, 4), minmax(0, 1fr));
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.lm-skel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 10px 12px;
+  border-radius: 10px;
+  background: var(--lm-surface, #fff);
+  box-shadow: inset 0 0 0 1px var(--lm-line, #dedede);
+
+  i {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 6px;
+    background: var(--lm-well, #efefef);
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(100deg, transparent 20%, var(--lm-shine, rgba(255, 255, 255, 0.65)) 50%, transparent 80%);
+      transform: translateX(-100%);
+      animation: lm-shimmer 1.3s ease-in-out infinite;
+    }
+  }
+
+  .-img {
+    aspect-ratio: 1;
+    border-radius: 8px;
+  }
+
+  .-t1 {
+    height: 13px;
+    width: 92%;
+  }
+
+  .-t2 {
+    height: 13px;
+    width: 64%;
+  }
+
+  .-p {
+    height: 20px;
+    width: 40%;
+    margin-top: 4px;
+  }
+
+  .-b {
+    height: 44px;
+    margin-top: 6px;
+    border-radius: 8px;
+  }
+}
+
+@keyframes lm-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (max-width: 1099px) {
+  .lm-skels {
+    --lm-cols: 3;
+  }
+}
+
+@media (max-width: 699px) {
+  .lm-skels {
+    --lm-cols: 2;
+    gap: 10px;
+  }
+}
+
+/* 6. No movement for those who ask for none. */
+@media (prefers-reduced-motion: reduce) {
+  .lm-grid .s--products-listing-row > .s--product-card,
+  .lm-skel i::after,
+  .lm-spin {
+    animation: none !important;
+  }
+
+  .lm-pill-enter-active,
+  .lm-pill-leave-active,
+  .lm-fade-enter-active,
+  .lm-fade-leave-active {
+    transition: none !important;
+  }
+
+  .lm-grid .s--products-listing-row {
+    transition: none;
+  }
+}
