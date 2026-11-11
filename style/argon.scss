@@ -3824,6 +3824,48 @@ html:is(:lang(ar), :lang(hi)) *:not(#ar-ls-reset) {
   word-spacing: normal !important;
 }
 
+/* ━━━━━━━━━━━━━━━━━━━━━ Active tabs: a filled pill, never a bar ━━━━━━━━━━━━━━━━━━━━━
+   The owner's no-underline rule covers tab indicators too (11 November
+   2026): the account tabs, the product tabs and Vuetify's v-tabs mark the
+   chosen tab with Argon's filled pill (colour and weight), with no bar under
+   the words and no slider. */
+.k-acct__tabs,
+.w-tabs {
+  gap: 4px;
+  padding-bottom: 8px;
+  border-bottom: 0 !important;
+
+  a,
+  button {
+    margin-bottom: 0 !important;
+    border-bottom: 0 !important;
+    border-radius: var(--ar-r-s);
+  }
+
+  a.-on,
+  button.-on {
+    background: var(--ar-pill) !important;
+    color: var(--ar-on-pill) !important;
+    font-weight: 700;
+
+    .v-icon,
+    em {
+      color: inherit !important;
+    }
+  }
+}
+
+.v-tab__slider {
+  display: none !important;
+}
+
+.v-tab.v-tab--selected {
+  border-radius: var(--ar-r-s);
+  background: var(--ar-page) !important;
+  color: var(--ar-ink) !important;
+  font-weight: 700;
+}
+
 /* ━━━━━━━━━━━━━━━━━━━━━ Language and currency (1.0.8) ━━━━━━━━━━━━━━━━━━━━━
    components/region-switcher (the shared package, copied unchanged): the
    owner's choice B. A small pill at the end of the utility row (Track order,
