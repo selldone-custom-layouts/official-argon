@@ -3814,7 +3814,9 @@ html[dir="rtl"] {
 /* Joined scripts (Arabic, Devanagari) take no letter-spacing: tracked
    eyebrows, buttons, labels, nav links and headings would break the joins
    between letters. */
-:is(:lang(ar), :lang(hi)) {
+/* :not(#…) lends the rule an id's weight, so it wins over every tracked
+   class rule (Argon's and Selldone's carry !important too). */
+html:is(:lang(ar), :lang(hi)) *:not(#ar-ls-reset) {
   letter-spacing: 0 !important;
   word-spacing: normal !important;
 }
