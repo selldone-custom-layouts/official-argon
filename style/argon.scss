@@ -3811,6 +3811,14 @@ html[dir="rtl"] {
   unicode-bidi: isolate;
 }
 
+/* Joined scripts (Arabic, Devanagari) take no letter-spacing: tracked
+   eyebrows, buttons, labels, nav links and headings would break the joins
+   between letters. */
+:is(:lang(ar), :lang(hi)) {
+  letter-spacing: 0 !important;
+  word-spacing: normal !important;
+}
+
 /* ━━━━━━━━━━━━━━━━━━━━━ Language and currency (1.0.8) ━━━━━━━━━━━━━━━━━━━━━
    components/region-switcher (the shared package, copied unchanged): the
    owner's choice B. A small pill at the end of the utility row (Track order,
