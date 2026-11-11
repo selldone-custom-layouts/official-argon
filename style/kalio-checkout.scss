@@ -2908,7 +2908,10 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     width: 42px;
     height: 42px;
     border: 3px solid #fff;
-    border-radius: 50% 50% 50% 4px;
+    border-start-start-radius: 50%;
+    border-start-end-radius: 50%;
+    border-end-end-radius: 50%;
+    border-end-start-radius: 4px;
     background: var(--k-green);
     box-shadow: 0 6px 16px -4px rgba(20, 20, 20, 0.45);
     transform: translate(-50%, -100%) rotate(-45deg);
@@ -3276,7 +3279,10 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
 
   &__bubble {
     padding: 10px 14px;
-    border-radius: 18px 18px 18px 6px;
+    border-start-start-radius: 18px;
+    border-start-end-radius: 18px;
+    border-end-end-radius: 18px;
+    border-end-start-radius: 6px;
     background: var(--k-wash);
     font-size: 15px;
     line-height: 1.45;
@@ -3285,7 +3291,10 @@ $k-ico-gift: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewB
     overflow-wrap: anywhere;
 
     .-mine & {
-      border-radius: 18px 18px 6px 18px;
+      border-start-start-radius: 18px;
+      border-start-end-radius: 18px;
+      border-end-end-radius: 6px;
+      border-end-start-radius: 18px;
       background: var(--k-green);
       color: var(--ar-on-brand);
     }

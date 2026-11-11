@@ -117,7 +117,10 @@
       width: 11px;
       height: 11px;
       margin-top: 1px;
-      border-radius: 11px 0 11px 0;
+      border-start-start-radius: 11px;
+      border-start-end-radius: 0;
+      border-end-end-radius: 11px;
+      border-end-start-radius: 0;
       background: var(--k-leaf);
     }
   }
@@ -208,7 +211,10 @@
 /* The basket drawer the header's basket opens. */
 .s--storefront-primary-header-basket-navigation {
   font-family: var(--k-body);
-  border-radius: var(--k-radius-lg) 0 0 var(--k-radius-lg);
+  border-start-start-radius: var(--k-radius-lg);
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+  border-end-start-radius: var(--k-radius-lg);
 
   .v-btn {
     text-transform: none !important;

@@ -46,7 +46,10 @@ $k-header-strip: 46px;
       width: 11px;
       height: 11px;
       margin-top: 1px;
-      border-radius: 11px 0 11px 0;
+      border-start-start-radius: 11px;
+      border-start-end-radius: 0;
+      border-end-end-radius: 11px;
+      border-end-start-radius: 0;
       background: var(--k-leaf);
     }
   }
@@ -972,7 +975,10 @@ $k-header-strip: 46px;
       width: 12px;
       height: 12px;
       margin-top: 1px;
-      border-radius: 12px 0 12px 0;
+      border-start-start-radius: 12px;
+      border-start-end-radius: 0;
+      border-end-end-radius: 12px;
+      border-end-start-radius: 0;
       background: #ffd91a;
     }
   }
@@ -1753,7 +1759,10 @@ $k-filter-gap: 36px;
       margin: 0 !important;
       height: 100% !important;
       max-width: 88vw;
-      border-radius: 0 28px 28px 0 !important;
+      border-start-start-radius: 0 !important;
+      border-start-end-radius: 28px !important;
+      border-end-end-radius: 28px !important;
+      border-end-start-radius: 0 !important;
       z-index: 2400 !important;
 
       &:not(.v-navigation-drawer--active) {
@@ -1861,7 +1870,10 @@ $k-filter-gap: 36px;
     width: 11px;
     height: 11px;
     margin-top: 1px;
-    border-radius: 11px 0 11px 0;
+    border-start-start-radius: 11px;
+    border-start-end-radius: 0;
+    border-end-end-radius: 11px;
+    border-end-start-radius: 0;
     background: #ffd91a;
   }
 }
