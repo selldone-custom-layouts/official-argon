@@ -3,7 +3,7 @@
   "deploy_path": "",
   "package": "argon-electronics",
   "name": "Argon Electronics",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "storefront": true,
   "backoffice": false,
   "description": "A bright catalogue electronics store: a category carousel, dark promo cards and offer pills, a deal strip with the deals' real end date, photo cards, a wide deal banner, product rails with Deal/New/Best seller badges, a compare band, trending tags and brands; a results page with a row of filter dropdowns and an All filters sheet; a two-column product page with stacked buy cards; a side-by-side compare page; a receipt-first cart."
