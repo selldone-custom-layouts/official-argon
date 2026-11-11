@@ -20,7 +20,7 @@
  *    own "<Tag> Items" section without a code change.
  */
 
-import { currentCurrency, formatMoney, isRtl } from "../region-switcher/region";
+import { currentCurrency, formatMoney } from "../region-switcher/region";
 import { t, formatDate } from "../kalio/i18n/kalio-i18n";
 import { reactive } from "vue";
 import { PriceHelper } from "@selldone/core-js";
@@ -392,10 +392,9 @@ export function colourName(color: string): string {
 /* An amount already in `currency` (the visitor's, by default), formatted by
    the region switcher's rules, so Argon's words match the pill's choice. */
 export function moneyText(amount: number, currency: string, whole = false): string {
-  const text = formatMoney(amount, currency || currentCurrency(), { short: whole });
-  /* Right to left (Arabic): the amount keeps its own left-to-right order
-     inside the sentence ("US$ 2,000", not "2,000 $US"). */
-  return isRtl() ? "\u2066" + text + "\u2069" : text;
+  /* formatMoney keeps an amount one left-to-right piece on a right-to-left
+     page ("US$ 2,000", not "$US 2,000"). */
+  return formatMoney(amount, currency || currentCurrency(), { short: whole });
 }
 
 /* ━━━━━━━━━━━━ Deal timers: the deal's own end ━━━━━━━━━━━━

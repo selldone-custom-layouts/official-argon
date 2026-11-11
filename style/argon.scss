@@ -1202,8 +1202,12 @@ html[dir="rtl"] .ar-slide-r-leave-to {
 
 .ar-was {
   display: flex;
+  /* When "Save …" and "Was …" do not fit side by side (longer words and
+     "US$" in Arabic), "Was …" moves to a hidden second line instead of
+     being cut at the card's edge. */
+  flex-wrap: wrap;
   align-items: baseline;
-  gap: 8px;
+  gap: 4px 8px;
   height: 18px;
   margin-top: 3px;
   color: $muted;
@@ -1307,8 +1311,11 @@ html[dir="rtl"] .ar-slide-r-leave-to {
 
 .ar-caps {
   display: flex;
+  /* Chips that do not fit move to a hidden second line, never cut at the
+     card's edge (either side: right to left too). */
+  flex-wrap: wrap;
   align-items: center;
-  gap: 5px;
+  gap: 8px 5px;
   height: 24px;
   margin-top: 6px;
   overflow: hidden;
@@ -3794,6 +3801,14 @@ html[dir="rtl"] {
     ) {
     unicode-bidi: plaintext;
   }
+}
+
+/* Signed numbers ("+3" more colours or sizes) keep their sign in front in
+   Arabic, not "3+". */
+.ar-swrow em,
+.ar-caps em {
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━ Language and currency (1.0.8) ━━━━━━━━━━━━━━━━━━━━━
