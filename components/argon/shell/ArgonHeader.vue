@@ -26,10 +26,10 @@
   <header v-if="!$store.getters.getIsNative" class="ar-header">
     <!-- ▆▆▆▆ 1. Utility row ▆▆▆▆ -->
     <div class="ar-util">
-      <nav aria-label="Help" class="ar-wrap ar-util__in">
-        <router-link :to="ordersTo"><span class="ms">local_shipping</span>{{ t("header.track") }}</router-link>
-        <router-link :to="returnsTo"><span class="ms">undo</span>{{ t("header.returns") }}</router-link>
-        <router-link :to="helpTo"><span class="ms">help</span>{{ t("header.help") }}</router-link>
+      <nav :aria-label="t('argon.header.help', 'Help')" class="ar-wrap ar-util__in">
+        <router-link :to="ordersTo"><span class="ms">local_shipping</span>{{ t("argon.header.track", "Track order") }}</router-link>
+        <router-link :to="returnsTo"><span class="ms">undo</span>{{ t("argon.header.returns", "Returns") }}</router-link>
+        <router-link :to="helpTo"><span class="ms">help</span>{{ t("argon.header.help", "Help") }}</router-link>
         <!-- Language and currency (the owner's choice B): a small pill at the
              end of the utility row; hidden when the shop has one of each. -->
         <region-switcher-button button-class="ar-util__region" />
@@ -38,19 +38,19 @@
 
     <!-- ▆▆▆▆ 2. The main row ▆▆▆▆ -->
     <div ref="main" class="ar-wrap ar-header__main">
-      <button :aria-expanded="menu ? 'true' : 'false'" aria-label="Menu" class="ar-burger" type="button" @click="menu = true">
+      <button :aria-expanded="menu ? 'true' : 'false'" :aria-label="t('argon.header.menu', 'Menu')" class="ar-burger" type="button" @click="menu = true">
         <span class="ms">menu</span>
       </button>
       <argon-logo class="ar-header__logo" />
 
-      <nav aria-label="Shop" class="ar-nav">
+      <nav :aria-label="t('argon.header.shop', 'Shop')" class="ar-nav">
         <button :aria-expanded="mega ? 'true' : 'false'" class="ar-nav__b" data-dd="shop" type="button" @click="toggle('mega')">
-          Shop<span :class="{ '-up': mega }" class="ms">expand_more</span>
+          {{ t("argon.header.shop", "Shop") }}<span :class="{ '-up': mega }" class="ms">expand_more</span>
         </button>
         <button v-if="trendTags.length" :aria-expanded="trend ? 'true' : 'false'" class="ar-nav__b" data-dd="trend" type="button" @click="toggle('trend')">
-          Trending<span :class="{ '-up': trend }" class="ms">expand_more</span>
+          {{ t("argon.header.trending", "Trending") }}<span :class="{ '-up': trend }" class="ms">expand_more</span>
         </button>
-        <router-link :to="dealsTo" class="ar-nav__b -deals">Deals</router-link>
+        <router-link :to="dealsTo" class="ar-nav__b -deals">{{ t("argon.header.deals", "Deals") }}</router-link>
       </nav>
 
       <form v-if="showSearch" class="ar-search" role="search" @submit.prevent="submit()">
@@ -59,10 +59,10 @@
           ref="q"
           :value="q"
           aria-autocomplete="list"
-          aria-label="Search products or brands"
+          :aria-label="t('argon.search.placeholder', 'Search products or brands')"
           autocomplete="off"
           enterkeyhint="search"
-          placeholder="Search products or brands"
+          :placeholder="t('argon.search.placeholder', 'Search products or brands')"
           type="search"
           @blur="blurSoon"
           @focus="open_suggest = true"
@@ -71,7 +71,7 @@
           @keydown.up.prevent="move(-1)"
           @keydown.esc="open_suggest = false"
         />
-        <button class="ar-search__go" type="submit"><span class="ar-search__w">Search</span><span aria-hidden="true" class="ms">search</span></button>
+        <button :aria-label="t('argon.search.go', 'Search')" class="ar-search__go" type="submit"><span class="ar-search__w">{{ t("argon.search.go", "Search") }}</span><span aria-hidden="true" class="ms">search</span></button>
 
         <div v-if="open_suggest && (hits.length || catHits.length)" class="ar-suggest" role="listbox">
           <router-link
@@ -83,7 +83,7 @@
             @mousedown.prevent
             @click="open_suggest = false"
           >
-            <span class="ms">category</span>{{ c.title || c.name }}<small>Category</small>
+            <span class="ms">category</span>{{ c.title || c.name }}<small>{{ t("argon.search.category", "Category") }}</small>
           </router-link>
           <router-link
             v-for="(p, i) in hits"
@@ -100,18 +100,18 @@
             <u-price :amount="price(p).now" :currency="currency" />
           </router-link>
           <button class="ar-suggest__all" type="button" @mousedown.prevent @click="submit()">
-            See all results for “{{ q }}”<span class="ms">arrow_forward</span>
+            {{ t("argon.search.all", "See all results for “{query}”", { query: q }) }}<span class="ms k-flip">arrow_forward</span>
           </button>
         </div>
       </form>
       <span v-else class="ar-header__sp"></span>
 
-      <nav aria-label="Your account" class="ar-acts">
+      <nav :aria-label="t('argon.header.yourAccount', 'Your account')" class="ar-acts">
         <router-link v-if="user" :to="accountTo" class="ar-act -me">
           <span class="ms">person</span><span class="ar-act__t">{{ firstName }}</span>
         </router-link>
-        <button v-else-if="!busyUser" class="ar-act -me" type="button" @click="signIn"><span class="ms">person</span><span class="ar-act__t">{{ t("header.account") }}</span></button>
-        <span v-else class="ar-act -me -wait"><span class="ms">person</span><span class="ar-act__t">{{ t("header.account") }}</span></span>
+        <button v-else-if="!busyUser" class="ar-act -me" type="button" @click="signIn"><span class="ms">person</span><span class="ar-act__t">{{ t("argon.header.account", "Account") }}</span></button>
+        <span v-else class="ar-act -me -wait"><span class="ms">person</span><span class="ar-act__t">{{ t("argon.header.account", "Account") }}</span></span>
 
         <component
           :is="user ? 'router-link' : 'button'"
@@ -120,11 +120,11 @@
           class="ar-act -saved"
           @click="!user && signIn()"
         >
-          <span class="ms">favorite</span><span class="ar-act__t">{{ t("header.wishlist") }}</span>
+          <span class="ms">favorite</span><span class="ar-act__t">{{ t("argon.header.wishlist", "Wishlist") }}</span>
         </component>
 
-        <button :aria-label="`Cart, ${units} ${units === 1 ? 'item' : 'items'}`" class="ar-act -cart" type="button" @click="cart = true">
-          <span class="ms">shopping_cart</span><i v-if="units" class="ar-act__n">{{ units > 99 ? "99+" : units }}</i><span class="ar-act__t">{{ t("header.cart") }}</span>
+        <button :aria-label="t('argon.header.cartCount', { one: 'Cart, {n} item', other: 'Cart, {n} items' }, { n: units })" class="ar-act -cart" type="button" @click="cart = true">
+          <span class="ms">shopping_cart</span><i v-if="units" class="ar-act__n">{{ units > 99 ? "99+" : units }}</i><span class="ar-act__t">{{ t("argon.header.cart", "Cart") }}</span>
         </button>
       </nav>
 
@@ -139,20 +139,20 @@
           </router-link>
         </div>
         <div class="ar-dd__side">
-          <router-link :to="dealsTo"><span class="ms">sell</span>{{ t("menu.todaysDeals") }}</router-link>
-          <router-link :to="newTo"><span class="ms">new_releases</span>New arrivals</router-link>
-          <router-link :to="allTo"><span class="ms">grid_view</span>All products</router-link>
-          <router-link :to="compareTo"><span class="ms">compare_arrows</span>Compare products</router-link>
+          <router-link :to="dealsTo"><span class="ms">sell</span>{{ t("argon.menu.todaysDeals", "Today’s deals") }}</router-link>
+          <router-link :to="newTo"><span class="ms">new_releases</span>{{ t("argon.menu.newArrivals", "New arrivals") }}</router-link>
+          <router-link :to="allTo"><span class="ms">grid_view</span>{{ t("argon.menu.allProducts", "All products") }}</router-link>
+          <router-link :to="compareTo"><span class="ms">compare_arrows</span>{{ t("argon.menu.compare", "Compare products") }}</router-link>
         </div>
       </div>
       <!-- Trending: the shop's live tags. -->
       <div v-if="trend" ref="trend" class="ar-dd -trend" @keydown.esc="trend = false">
-        <router-link v-for="t in trendTags" :key="t" :to="tagTo(t)" class="ar-dd__tag"><span class="ms">trending_up</span>{{ tagTitle(t) }}</router-link>
+        <router-link v-for="tag in trendTags" :key="tag" :to="tagTo(tag)" class="ar-dd__tag"><span class="ms">trending_up</span>{{ tagTitle(tag) }}</router-link>
       </div>
     </div>
 
     <!-- ▆▆▆▆ 3. Benefits ▆▆▆▆ -->
-    <nav aria-label="Why shop with us" class="ar-perks">
+    <nav :aria-label="t('argon.header.perks', 'Why shop with us')" class="ar-perks">
       <div class="ar-wrap ar-perks__in">
         <router-link v-for="(b, i) in perks" :key="b.key" :class="{ '-on': i === perk_at }" :to="b.to" class="ar-perk">
           <span class="ms">{{ b.icon }}</span>{{ b.text }}
@@ -166,14 +166,14 @@
         <div v-if="menu" aria-hidden="true" class="ar-menu-scrim" @click="menu = false"></div>
       </transition>
       <transition name="ar-slide">
-        <div v-if="menu" aria-label="Menu" aria-modal="true" class="ar-menu" role="dialog" @keydown.esc="menu = false">
+        <div v-if="menu" :aria-label="t('argon.header.menu', 'Menu')" aria-modal="true" class="ar-menu" role="dialog" @keydown.esc="menu = false">
           <div class="ar-menu__head">
             <argon-logo />
-            <button ref="menuClose" aria-label="Close menu" class="ar-x" type="button" @click="menu = false"><span class="ms">close</span></button>
+            <button ref="menuClose" :aria-label="t('argon.menu.close', 'Close menu')" class="ar-x" type="button" @click="menu = false"><span class="ms">close</span></button>
           </div>
           <div class="ar-menu__body">
-            <router-link :to="dealsTo" class="ar-menu__deal"><span class="ms">sell</span>{{ t("menu.todaysDeals") }}</router-link>
-            <p class="ar-menu__h">{{ t("menu.shopByCategory") }}</p>
+            <router-link :to="dealsTo" class="ar-menu__deal"><span class="ms">sell</span>{{ t("argon.menu.todaysDeals", "Today’s deals") }}</router-link>
+            <p class="ar-menu__h">{{ t("argon.menu.shopByCategory", "Shop by category") }}</p>
             <!-- The first 6 categories in the shop's order; the rest behind
                  "Show N more" (8 or fewer: all, no button). The owner's
                  option A, 10 November 2026. -->
@@ -198,19 +198,19 @@
               @click="menu_more = !menu_more"
             >
               <span aria-hidden="true" class="ar-menu__more-ic"><span class="ms">{{ menu_more ? "expand_less" : "expand_more" }}</span></span>
-              {{ menu_more ? t("menu.showFewer") : t("menu.showMore", { n: menuRest.length }) }}
+              {{ menu_more ? t("argon.menu.showFewer", "Show fewer") : t("argon.menu.showMore", "Show {n} more", { n: menuRest.length }) }}
             </button>
             <template v-if="trendTags.length">
-              <p class="ar-menu__h">{{ t("menu.trending") }}</p>
+              <p class="ar-menu__h">{{ t("argon.header.trending", "Trending") }}</p>
               <div class="ar-menu__tags">
-                <router-link v-for="t in trendTags" :key="t" :to="tagTo(t)" class="ar-pill -line">{{ tagTitle(t) }}</router-link>
+                <router-link v-for="tag in trendTags" :key="tag" :to="tagTo(tag)" class="ar-pill -line">{{ tagTitle(tag) }}</router-link>
               </div>
             </template>
-            <p class="ar-menu__h">{{ t("menu.help") }}</p>
-            <router-link :to="ordersTo" class="ar-menu__link"><span class="ms">local_shipping</span>{{ t("header.track") }}</router-link>
-            <router-link :to="returnsTo" class="ar-menu__link"><span class="ms">undo</span>{{ t("header.returns") }}</router-link>
-            <router-link :to="helpTo" class="ar-menu__link"><span class="ms">help</span>{{ t("menu.helpFaq") }}</router-link>
-            <router-link :to="compareTo" class="ar-menu__link"><span class="ms">compare_arrows</span>{{ t("menu.compare") }}</router-link>
+            <p class="ar-menu__h">{{ t("argon.header.help", "Help") }}</p>
+            <router-link :to="ordersTo" class="ar-menu__link"><span class="ms">local_shipping</span>{{ t("argon.header.track", "Track order") }}</router-link>
+            <router-link :to="returnsTo" class="ar-menu__link"><span class="ms">undo</span>{{ t("argon.header.returns", "Returns") }}</router-link>
+            <router-link :to="helpTo" class="ar-menu__link"><span class="ms">help</span>{{ t("argon.menu.helpFaq", "Help & FAQ") }}</router-link>
+            <router-link :to="compareTo" class="ar-menu__link"><span class="ms">compare_arrows</span>{{ t("argon.menu.compare", "Compare products") }}</router-link>
             <region-sheet row-class="ar-menu__link ar-menu__region" />
           </div>
         </div>
@@ -227,15 +227,15 @@
         temporary
       >
         <div class="k-drawer__head">
-          <p class="k-drawer__title">Your cart<small v-if="units">{{ units }} {{ units === 1 ? "item" : "items" }}</small></p>
-          <button aria-label="Close" class="ar-x" type="button" @click="cart = false"><span class="ms">close</span></button>
+          <p class="k-drawer__title">{{ t("argon.cart.title", "Your cart") }}<small v-if="units">{{ t("argon.cart.items", { one: "{n} item", other: "{n} items" }, { n: units }) }}</small></p>
+          <button :aria-label="t('argon.common.close', 'Close')" class="ar-x" type="button" @click="cart = false"><span class="ms">close</span></button>
         </div>
         <div v-if="!units" class="ar-empty -drawer">
           <span aria-hidden="true" class="ar-empty__ic"><span class="ms">shopping_cart</span></span>
-          <p class="ar-empty__t">Your cart is empty</p>
-          <p class="ar-empty__p">Find something you love and it will wait for you here.</p>
-          <router-link :to="dealsTo" class="ar-btn" @click="cart = false">Shop today’s deals</router-link>
-          <router-link :to="allTo" class="ar-btn -line" @click="cart = false">Continue shopping</router-link>
+          <p class="ar-empty__t">{{ t("argon.cart.empty.title", "Your cart is empty") }}</p>
+          <p class="ar-empty__p">{{ t("argon.cart.empty.text", "Find something you love and it will wait for you here.") }}</p>
+          <router-link :to="dealsTo" class="ar-btn" @click="cart = false">{{ t("argon.cart.empty.deals", "Shop today's deals") }}</router-link>
+          <router-link :to="allTo" class="ar-btn -line" @click="cart = false">{{ t("argon.cart.empty.continue", "Continue shopping") }}</router-link>
         </div>
         <kalio-basket-drawer v-else @close="cart = false" />
       </v-navigation-drawer>
@@ -253,7 +253,8 @@ import { basketView } from "../../kalio/kalio-basket";
 import { catalogue, dealsEndDate, moneyOf, shortDate, tagged, tagTitle } from "../argon";
 import RegionSwitcherButton from "../../region-switcher/RegionSwitcherButton.vue";
 import RegionSheet from "../../region-switcher/RegionSheet.vue";
-import { currentCurrency, t } from "../../region-switcher/region";
+import { currentCurrency } from "../../region-switcher/region";
+import { t } from "../../kalio/i18n/kalio-i18n";
 
 export default {
   name: "ArgonHeader",
@@ -292,7 +293,7 @@ export default {
       return this.$store.getters.getBusyUser;
     },
     firstName() {
-      return String(this.user?.name || "Account").split(/\s+/)[0].slice(0, 12);
+      return String(this.user?.name || t("argon.header.account", "Account")).split(/\s+/)[0].slice(0, 12);
     },
     currency() {
       return currentCurrency();
@@ -347,9 +348,9 @@ export default {
     perks() {
       const until = shortDate(dealsEndDate(this.$shop, this.products));
       return [
-        { key: "deals", icon: "sell", text: until ? `Deals running until ${until}` : "Today’s deals across the store", to: this.dealsTo },
-        { key: "compare", icon: "compare_arrows", text: "Compare up to 4 products", to: this.compareTo },
-        { key: "track", icon: "local_shipping", text: "Track any order", to: this.ordersTo },
+        { key: "deals", icon: "sell", text: until ? t("argon.perks.dealsUntil", "Deals running until {date}", { date: until }) : t("argon.perks.deals", "Today’s deals across the store"), to: this.dealsTo },
+        { key: "compare", icon: "compare_arrows", text: t("argon.perks.compare", "Compare up to 4 products"), to: this.compareTo },
+        { key: "track", icon: "local_shipping", text: t("argon.perks.track", "Track any order"), to: this.ordersTo },
       ];
     },
     catHits() {
@@ -420,7 +421,6 @@ export default {
   },
 
   methods: {
-    t,
     tagTitle,
     price(p) {
       return moneyOf(this.$shop, p, null, this.currency);

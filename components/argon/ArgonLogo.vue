@@ -6,7 +6,7 @@
   drawn the same way.
 -->
 <template>
-  <component :is="to ? 'router-link' : 'span'" :aria-label="`${word} home`" :to="to" class="ar-logo">
+  <component :is="to ? 'router-link' : 'span'" :aria-label="t('argon.logo.home', '{name} home', { name: word })" :to="to" class="ar-logo">
     <span class="ar-logo__w">{{ word }}</span>
   </component>
 </template>

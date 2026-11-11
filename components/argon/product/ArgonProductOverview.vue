@@ -26,18 +26,18 @@
   <div :class="{ '-quick': quickBuyMode }" class="ar-pdp">
     <div class="ar-pdp__left">
       <!-- ▆▆▆▆ Gallery ▆▆▆▆ -->
-      <section v-if="showCover" aria-label="Product images" class="ar-pcard ar-pdp__media">
+      <section v-if="showCover" :aria-label="t('argon.pdp.images', 'Product images')" class="ar-pcard ar-pdp__media">
         <!-- The thumbnails in one row under the picture, never a side column.
              Argon's own arrows, counter ("1/8") and zoom over the picture
              drive Selldone's slideshow. -->
         <div class="ar-gal">
           <s-shop-product-slide-show ref="gallery" :current-variant="current_variant" :vertical="false" />
           <template v-if="galN > 1">
-            <button aria-label="Previous picture" class="ar-arrow ar-gal__prev" type="button" @click="galGo(-1)"><span class="ms">chevron_left</span></button>
-            <button aria-label="Next picture" class="ar-arrow ar-gal__next" type="button" @click="galGo(1)"><span class="ms">chevron_right</span></button>
+            <button :aria-label="t('argon.pdp.prevPicture', 'Previous picture')" class="ar-arrow ar-gal__prev" type="button" @click="galGo(-1)"><span class="ms k-flip">chevron_left</span></button>
+            <button :aria-label="t('argon.pdp.nextPicture', 'Next picture')" class="ar-arrow ar-gal__next" type="button" @click="galGo(1)"><span class="ms k-flip">chevron_right</span></button>
             <span aria-live="polite" class="ar-gal__n">{{ galAt + 1 }}/{{ galN }}</span>
           </template>
-          <button aria-label="Zoom in" class="ar-round ar-gal__zoom" type="button" @click="galZoom"><span class="ms">zoom_in</span></button>
+          <button :aria-label="t('argon.pdp.zoom', 'Zoom in')" class="ar-round ar-gal__zoom" type="button" @click="galZoom"><span class="ms">zoom_in</span></button>
         </div>
       </section>
       <slot name="below"></slot>
@@ -49,11 +49,11 @@
         <router-link v-if="$product.brand && !quickBuyMode" :to="brandTo" class="ar-pdp__brand">{{ $product.brand }}</router-link>
         <h1 class="ar-pdp__title">{{ $product.title }}</h1>
         <div class="ar-pdp__meta">
-          <span>Product code {{ $product.sku || $product.id }}</span>
+          <span>{{ t("argon.pdp.code", "Product code {code}", { code: $product.sku || $product.id }) }}</span>
           <a v-if="$product.rate_count && $product.rate" class="ar-pdp__rate" href="#ar-reviews" @click.prevent="toReviews">
             <span :style="{ '--k-rate': $product.rate }" class="k-stars"></span>
             <b>{{ Number($product.rate).toFixed(1) }}</b>
-            ({{ $product.rate_count }} {{ $product.rate_count === 1 ? "review" : "reviews" }})
+            ({{ t("argon.pdp.reviews", { one: "{n} review", other: "{n} reviews" }, { n: $product.rate_count }) }})
           </a>
         </div>
 
@@ -75,22 +75,22 @@
             <u-price :amount="money.now" :currency="currency" class="ar-price__now" />
           </div>
           <div v-if="money.save > 0" class="ar-was">
-            <span class="ar-save">Save {{ moneyWhole(money.save) }}</span>
-            <span class="ar-was__t">Was <s><u-price :amount="money.was" :currency="currency" /></s></span>
+            <span class="ar-save">{{ t("argon.price.save", "Save {amount}", { amount: moneyWhole(money.save) }) }}</span>
+            <span class="ar-was__t">{{ t("argon.price.was", "Was") }} <s><u-price :amount="money.was" :currency="currency" /></s></span>
           </div>
           <!-- The deal's own end (the chosen variant's when it has its own
                pricing); no end date, no clock. -->
           <div v-if="dealEndsAt" class="ar-pdp__deal">
-            <span class="ar-pdp__dealt"><span class="ms">schedule</span>Deal ends in</span>
+            <span class="ar-pdp__dealt"><span class="ms">schedule</span>{{ t("argon.pdp.dealEndsIn", "Deal ends in") }}</span>
             <argon-deal-clock :end="dealEndsAt" mode="blocks" />
           </div>
         </template>
         <s-product-section-tax></s-product-section-tax>
         <p :class="stock > 0 ? '-ok' : '-no'" class="ar-pdp__stock">
           <span class="ms">{{ stock > 0 ? "check_circle" : "cancel" }}</span>
-          <template v-if="stock > 0 && stock <= 5">Only {{ stock }} left</template>
-          <template v-else-if="stock > 0">In stock</template>
-          <template v-else>Out of stock</template>
+          <template v-if="stock > 0 && stock <= 5">{{ t("argon.pdp.onlyLeft", "Only {n} left", { n: stock }) }}</template>
+          <template v-else-if="stock > 0">{{ t("argon.pdp.inStock", "In stock") }}</template>
+          <template v-else>{{ t("argon.buy.outOfStock", "Out of stock") }}</template>
         </p>
       </section>
 
@@ -101,21 +101,21 @@
         </p>
         <div :aria-label="dimWord" :class="{ '-text': !tilesHavePhotos }" class="ar-vtiles" role="radiogroup">
           <button
-            v-for="t in tiles"
-            :key="t.v.id"
-            :aria-checked="current_variant && current_variant.id === t.v.id ? 'true' : 'false'"
-            :class="{ '-on': current_variant && current_variant.id === t.v.id, '-out': !(t.v.quantity > 0) }"
+            v-for="tile in tiles"
+            :key="tile.v.id"
+            :aria-checked="current_variant && current_variant.id === tile.v.id ? 'true' : 'false'"
+            :class="{ '-on': current_variant && current_variant.id === tile.v.id, '-out': !(tile.v.quantity > 0) }"
             class="ar-vtile"
             role="radio"
             type="button"
-            @click="current_variant = t.v"
+            @click="current_variant = tile.v"
           >
-            <span v-if="tilesHavePhotos" class="ar-vtile__ph"><img :src="t.img" alt="" loading="lazy" /></span>
+            <span v-if="tilesHavePhotos" class="ar-vtile__ph"><img :src="tile.img" alt="" loading="lazy" /></span>
             <span class="ar-vtile__l">
-              <i v-if="t.swatch" :style="{ background: t.swatch }" aria-hidden="true"></i>{{ t.label }}
+              <i v-if="tile.swatch" :style="{ background: tile.swatch }" aria-hidden="true"></i>{{ tile.label }}
             </span>
-            <small v-if="t.price !== null"><u-price :amount="t.price" :currency="currency" /></small>
-            <small v-if="!(t.v.quantity > 0)" class="-out">Out of stock</small>
+            <small v-if="tile.price !== null"><u-price :amount="tile.price" :currency="currency" /></small>
+            <small v-if="!(tile.v.quantity > 0)" class="-out">{{ t("argon.buy.outOfStock", "Out of stock") }}</small>
           </button>
         </div>
       </section>
@@ -157,14 +157,14 @@
         <!-- A plain physical product: the quantity, then Add to cart. -->
         <div v-else-if="simpleBuy" class="ar-pdp__add">
           <label class="ar-qty">
-            <span class="k-sr">Quantity</span>
-            <select v-model.number="qty" :disabled="stock <= 0" aria-label="Quantity">
+            <span class="k-sr">{{ t("argon.pdp.qty", "Quantity") }}</span>
+            <select v-model.number="qty" :aria-label="t('argon.pdp.qty', 'Quantity')" :disabled="stock <= 0">
               <option v-for="n in qtyOptions" :key="n" :value="n">{{ n }}</option>
             </select>
             <span aria-hidden="true" class="ms">expand_more</span>
           </label>
           <button :disabled="stock <= 0 || adding" class="ar-btn -buy" type="button" @click="addToCart">
-            {{ stock > 0 ? "Add to cart" : "Out of stock" }}
+            {{ stock > 0 ? t("card.addToBasket", "Add to cart") : t("argon.buy.outOfStock", "Out of stock") }}
           </button>
         </div>
         <s-product-section-buy-button
@@ -182,10 +182,10 @@
 
         <div class="ar-pdp__acts">
           <button :aria-pressed="isSaved ? 'true' : 'false'" :class="{ '-on': isSaved }" class="ar-textbtn" type="button" @click="toggleSave">
-            <span :class="{ fill: isSaved }" class="ms">favorite</span>{{ isSaved ? "In your wishlist" : "Add to wishlist" }}
+            <span :class="{ fill: isSaved }" class="ms">favorite</span>{{ isSaved ? t("argon.pdp.inWishlist", "In your wishlist") : t("argon.pdp.addWishlist", "Add to wishlist") }}
           </button>
           <button :aria-pressed="comparing ? 'true' : 'false'" :class="{ '-on': comparing }" class="ar-textbtn" type="button" @click="toggleCompare">
-            <span class="ms">{{ comparing ? "check_box" : "check_box_outline_blank" }}</span>Compare
+            <span class="ms">{{ comparing ? "check_box" : "check_box_outline_blank" }}</span>{{ t("argon.footer.compare", "Compare") }}
           </button>
         </div>
 
@@ -193,11 +193,11 @@
           <li v-for="w in ways" :key="w.key">
             <span class="ms">{{ w.icon === "storefront" ? "storefront" : "local_shipping" }}</span>
             <span>
-              {{ w.word }}<template v-if="w.free"> · Free</template
-              ><template v-else-if="w.freeOver"> · Free over {{ moneyFrom(w.freeOver, w.currency, { short: "auto" }) }}</template>
+              {{ w.word }}<template v-if="w.free"> · {{ t("shipping.free", "Free") }}</template
+              ><template v-else-if="w.freeOver"> · {{ t("shipping.freeOver", "Free over {amount}", { amount: moneyFrom(w.freeOver, w.currency, { short: "auto" }) }) }}</template>
             </span>
           </li>
-          <li v-if="!ways.length"><span class="ms">local_shipping</span><span>Delivery options at checkout</span></li>
+          <li v-if="!ways.length"><span class="ms">local_shipping</span><span>{{ t("argon.pdp.waysAtCheckout", "Delivery options at checkout") }}</span></li>
           <!-- Selldone's stock nudge ("Almost out of stock…"), as a row of the
                same list: one left edge, one 24px icon box, wrapped words under
                the words (its own row had an emoji, other padding and size). -->
@@ -213,15 +213,15 @@
         ></s-product-section-incentivise>
         <s-storefront-coupons-list :product-id="$product.id" :variant-id="current_variant ? current_variant.id : undefined"></s-storefront-coupons-list>
 
-        <router-link v-if="quickBuyMode" :to="productTo" class="ar-link ar-pdp__full">See full details<span class="ms">chevron_right</span></router-link>
+        <router-link v-if="quickBuyMode" :to="productTo" class="ar-link ar-pdp__full">{{ t("argon.pdp.fullDetails", "See full details") }}<span class="ms k-flip">chevron_right</span></router-link>
       </section>
 
       <!-- ▆▆▆▆ 4. Complete your purchase ▆▆▆▆ -->
       <argon-complete v-if="!quickBuyMode" :product="$product" :variant="current_variant" />
 
       <p v-if="!quickBuyMode" class="ar-pdp__ask">
-        <span class="ms">support_agent</span>Questions about it?
-        <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }">Contact us</router-link>
+        <span class="ms">support_agent</span>{{ t("argon.pdp.questions", "Questions about it?") }}
+        <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }">{{ t("argon.footer.contact", "Contact us") }}</router-link>
       </p>
     </div>
 
@@ -230,18 +230,18 @@
          and Checkout). A plain panel teleported to the body. -->
     <teleport to="body">
       <transition name="ar-bar">
-        <div v-if="showBar" aria-label="Buy" class="ar-buybar" role="region">
+        <div v-if="showBar" :aria-label="t('argon.pdp.buy', 'Buy')" class="ar-buybar" role="region">
           <div class="ar-buybar__p">
             <u-price :amount="money.now" :currency="currency" class="ar-buybar__now" />
-            <small v-if="money.save > 0">Save {{ moneyWhole(money.save) }}</small>
+            <small v-if="money.save > 0">{{ t("argon.price.save", "Save {amount}", { amount: moneyWhole(money.save) }) }}</small>
           </div>
           <router-link v-if="corresponding_basket_item" :to="cartTo" class="ar-btn ar-buybar__go">
-            <span class="ms">shopping_cart</span>{{ corresponding_basket_item.count }} in cart · Checkout
+            <span class="ms">shopping_cart</span>{{ t("argon.pdp.inCartCheckout", "{n} in cart · Checkout", { n: corresponding_basket_item.count }) }}
           </router-link>
           <button v-else-if="simpleBuy" :disabled="stock <= 0 || adding" class="ar-btn ar-buybar__go" type="button" @click="addToCart">
-            {{ stock > 0 ? "Add to cart" : "Out of stock" }}
+            {{ stock > 0 ? t("card.addToBasket", "Add to cart") : t("argon.buy.outOfStock", "Out of stock") }}
           </button>
-          <button v-else class="ar-btn ar-buybar__go" type="button" @click="toBuy">Choose options</button>
+          <button v-else class="ar-btn ar-buybar__go" type="button" @click="toBuy">{{ t("card.seeOptions", "Choose options") }}</button>
         </div>
       </transition>
     </teleport>
@@ -258,6 +258,7 @@
 
 <script>
 import { currentCurrency, money as moneyFrom } from "../../region-switcher/region";
+import { t } from "../../kalio/i18n/kalio-i18n";
 import KalioProductOverview from "../../kalio/product/KalioProductOverview.vue";
 import ArgonDealClock from "../ArgonDealClock.vue";
 import ArgonComplete from "./ArgonComplete.vue";
@@ -294,8 +295,8 @@ export default {
       return variantDimension(this.enabledVariants);
     },
     dimWord() {
-      const w = this.dimension?.word || "Option";
-      return w[0].toUpperCase() + w.slice(1);
+      const w = this.dimension?.word || t("argon.variant.option", "option");
+      return w[0].toLocaleUpperCase() + w.slice(1);
     },
     /* One dimension: a tile per variant with its own photo and price. */
     tiles() {
@@ -307,7 +308,7 @@ export default {
           v,
           img: window.CDN.GET_SHOP_IMAGE_PATH(v.image || this.$product.icon, 128),
           swatch: d.key === "color" ? swatchBg(v.color) : null,
-          label: d.key === "color" ? colourName(v.color) || "Colour" : v[d.key],
+          label: d.key === "color" ? colourName(v.color) || t("argon.filter.colour", "Colour") : v[d.key],
           price: own ? moneyOf(this.shop, this.$product, v, this.currency).now : null,
         };
       });
@@ -316,8 +317,8 @@ export default {
       return this.dimension?.key === "color" || this.enabledVariants.some((v) => v.image);
     },
     currentLabel() {
-      const t = this.tiles.find((x) => this.current_variant && x.v.id === this.current_variant.id);
-      return t ? t.label : "";
+      const tile = this.tiles.find((x) => this.current_variant && x.v.id === this.current_variant.id);
+      return tile ? tile.label : "";
     },
     money() {
       return moneyOf(this.shop, this.$product, this.current_variant, this.currency);

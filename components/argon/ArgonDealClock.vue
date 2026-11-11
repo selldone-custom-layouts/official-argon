@@ -14,19 +14,20 @@
 -->
 <template>
   <span v-if="left && mode === 'line'" :title="title" class="ar-cd">
-    <span class="ms">schedule</span><span class="ar-cd__w">Ends in </span><b>{{ left.text }}</b>
+    <span class="ms">schedule</span><span class="ar-cd__w">{{ t("argon.clock.endsIn", "Ends in") }} </span><b>{{ left.text }}</b>
   </span>
-  <span v-else-if="left && mode === 'strip'" :title="title" class="ar-strip__clock">Ends in <b>{{ left.text }}</b></span>
+  <span v-else-if="left && mode === 'strip'" :title="title" class="ar-strip__clock">{{ t("argon.clock.endsIn", "Ends in") }} <b>{{ left.text }}</b></span>
   <div v-else-if="left && mode === 'blocks'" :title="title" class="ar-cd-blocks">
-    <em>Ends in</em>
+    <em>{{ t("argon.clock.endsIn", "Ends in") }}</em>
     <div aria-live="off" class="ar-count" :class="{ '-days': left.d > 0 }">
-      <span v-if="left.d"><b>{{ left.d }}</b>{{ left.d === 1 ? "day" : "days" }}</span><span><b>{{ left.h }}</b>hrs</span><span><b>{{ left.m }}</b>min</span><span><b>{{ left.s }}</b>sec</span>
+      <span v-if="left.d"><b>{{ left.d }}</b>{{ t("argon.clock.day", { one: "day", other: "days" }, { n: left.d }) }}</span><span><b>{{ left.h }}</b>{{ t("argon.clock.hrs", "hrs") }}</span><span><b>{{ left.m }}</b>{{ t("argon.clock.min", "min") }}</span><span><b>{{ left.s }}</b>{{ t("argon.clock.sec", "sec") }}</span>
     </div>
   </div>
 </template>
 
 <script>
 import { startClock, tick, timeLeft } from "./argon";
+import { t, formatDate } from "../kalio/i18n/kalio-i18n";
 
 export default {
   name: "ArgonDealClock",
@@ -40,7 +41,7 @@ export default {
       return timeLeft(this.end, tick.now);
     },
     title() {
-      return this.end ? `Deal ends ${this.end.toLocaleString()}` : null;
+      return this.end ? t("argon.clock.title", "Deal ends {date}", { date: formatDate(this.end, { dateStyle: "medium", timeStyle: "short" }) }) : null;
     },
   },
   mounted() {

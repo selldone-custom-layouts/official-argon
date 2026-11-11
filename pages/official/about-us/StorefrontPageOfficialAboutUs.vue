@@ -33,11 +33,11 @@
   <div class="w-mag k-wrap">
     <section class="w-mag__ed">
       <div>
-        <p class="w-mag__eyebrow">About {{ shopTitle }}</p>
-        <h1>{{ missing || busy ? sample.title : `About ${shopTitle}` }}</h1>
+        <p class="w-mag__eyebrow">{{ t("about.title", "About {shop}", { shop: shopTitle }) }}</p>
+        <h1>{{ missing || busy ? sample.title : t("about.title", "About {shop}", { shop: shopTitle }) }}</h1>
         <div v-if="busy" aria-hidden="true" class="k-legal__loading"><span></span><span></span><span></span></div>
         <template v-else-if="missing">
-          <kalio-sample-note>This text is general copy written to show the page. It is not {{ shopTitle }}'s real story.</kalio-sample-note>
+          <kalio-sample-note>{{ t("argon.about.sampleNote", "This text is general copy written to show the page. It is not {shop}'s real story.", { shop: shopTitle }) }}</kalio-sample-note>
           <p class="w-mag__lead">{{ sample.lead }}</p>
           <p>{{ sample.text[0] }}</p>
           <p class="w-mag__sign">{{ sample.sign }}</p>
@@ -50,7 +50,7 @@
     </section>
 
     <section class="t-sec">
-      <header class="t-sec__head"><h2 class="t-sec__title">How an order works</h2></header>
+      <header class="t-sec__head"><h2 class="t-sec__title">{{ t("argon.about.how", "How an order works") }}</h2></header>
       <ol class="w-mag__how">
         <li v-for="(st, i) in how" :key="st.t">
           <i>{{ i + 1 }}</i>
@@ -72,16 +72,15 @@
 
     <section id="contact" class="t-sec w-mag__contact">
       <div>
-        <p class="w-mag__eyebrow">Contact us</p>
-        <h2>Still need us?</h2>
+        <p class="w-mag__eyebrow">{{ t("argon.footer.contact", "Contact us") }}</p>
+        <h2>{{ t("argon.about.still", "Still need us?") }}</h2>
         <p>
-          For an order, the fastest way is the message thread on the order page: it comes straight to our team. For
-          anything else, write to us.
+          {{ t("argon.about.stillText", "For an order, the fastest way is the message thread on the order page: it comes straight to our team. For anything else, write to us.") }}
         </p>
       </div>
       <div class="w-mag__acts">
-        <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }" class="t-btn -main">Write to us</router-link>
-        <router-link :to="catalogueRoute" class="t-btn -line">Start shopping</router-link>
+        <router-link :to="{ name: window.$storefront.routes.SHOP_CONTACT_US }" class="t-btn -main">{{ t("argon.about.write", "Write to us") }}</router-link>
+        <router-link :to="catalogueRoute" class="t-btn -line">{{ t("pages.startShopping", "Start shopping") }}</router-link>
       </div>
     </section>
   </div>
@@ -89,6 +88,7 @@
 
 <script lang="ts">
 import KalioSampleNote from "@app-storefront/components/kalio/pages/KalioSampleNote.vue";
+import { t } from "@app-storefront/components/kalio/i18n/kalio-i18n";
 import { aboutSample, plainText } from "@app-storefront/components/kalio/pages/kalio-sample-pages";
 import { aisles, catalogueRoute, countProducts, productImage, vendors } from "@app-storefront/components/kalio/kalio-catalog";
 import { waysOf } from "@app-storefront/components/walio/walio-home";
@@ -112,7 +112,7 @@ export default {
 
   computed: {
     shopTitle() {
-      return this.$shop?.title || "This shop";
+      return this.$shop?.title || t("sample.thisShop", "This shop");
     },
     photos() {
       /* Argon: three of the owner's portrait photos, by department. */
@@ -122,14 +122,20 @@ export default {
     },
     /* The four steps, in the shop's own terms. */
     how() {
-      const ways = waysOf(this.$shop).map((w) => w.word.toLowerCase());
-      const many = this.sellers.length > 1;
+      const ways = waysOf(this.$shop).map((w) => w.word.toLocaleLowerCase());
+      const list =
+        ways.length > 1
+          ? t("argon.about.wayOr", "{list} or {last}", { list: ways.slice(0, -1).join(t("argon.list.comma", ", ")), last: ways[ways.length - 1] })
+          : ways[0] || "";
       return [
-        { t: "Pick and compare", p: "Every department, with full specs and Compare side by side." },
-        { t: "One checkout", p: "One cart and one payment." },
-        { t: "We pack it", p: "Your order is packed as soon as it is placed." },
-        { t: "Delivered your way", p: ways.length ? `${ways.join(", ").replace(/, ([^,]*)$/, " or $1")}, as you choose at checkout.` : "As you choose at checkout." },
-      ].map((st) => ({ ...st, p: st.p.charAt(0).toUpperCase() + st.p.slice(1) }));
+        { t: t("argon.about.how1", "Pick and compare"), p: t("argon.about.how1p", "Every department, with full specs and Compare side by side.") },
+        { t: t("argon.about.how2", "One checkout"), p: t("argon.about.how2p", "One cart and one payment.") },
+        { t: t("argon.about.how3", "We pack it"), p: t("argon.about.how3p", "Your order is packed as soon as it is placed.") },
+        {
+          t: t("argon.about.how4", "Delivered your way"),
+          p: list ? t("argon.about.how4p", "{ways}, as you choose at checkout.", { ways: list }) : t("argon.about.how4any", "As you choose at checkout."),
+        },
+      ].map((st) => ({ ...st, p: st.p.charAt(0).toLocaleUpperCase() + st.p.slice(1) }));
     },
     sample() {
       return aboutSample(this.shopTitle);
@@ -140,12 +146,12 @@ export default {
     aisleLine() {
       const names = this.aisleList.map((it) => it.title || it.name);
       if (names.length <= 3) return names.join(", ");
-      return `${names.length}: ${names.slice(0, 3).join(", ")} and ${names.length - 3} more`;
+      return t("argon.about.aisleMore", "{n}: {names} and {more} more", { n: names.length, names: names.slice(0, 3).join(t("argon.list.comma", ", ")), more: names.length - 3 });
     },
   },
 
   created() {
-    this.setPageTitle?.("About us");
+    this.setPageTitle?.(t("argon.footer.aboutUs", "About us"));
 
     window.axios
       .get(window.XAPI.GET_SHOP_PROFILE(this.$shop.name, "about-us"))

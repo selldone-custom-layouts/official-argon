@@ -29,11 +29,11 @@
 <template>
   <div class="ar-home">
     <!-- ▆▆▆▆ 1. Categories ▆▆▆▆ -->
-    <section aria-label="Shop by category" class="ar-wrap ar-cats">
+    <section :aria-label="t('argon.menu.shopByCategory', 'Shop by category')" class="ar-wrap ar-cats">
       <div ref="cats" class="ar-cats__track" @scroll.passive="measureCats">
         <router-link :to="dealsTo" class="ar-cat -deals">
-          <span class="ar-cat__tile"><b>Today’s<br />deals</b></span>
-          <span class="ar-cat__t">Deals</span>
+          <span class="ar-cat__tile"><b>{{ t("argon.home.dealsTile", "Today’s deals") }}</b></span>
+          <span class="ar-cat__t">{{ t("argon.header.deals", "Deals") }}</span>
         </router-link>
         <template v-if="cats.length">
           <router-link v-for="c in cats" :key="c.id" :to="catTo(c)" class="ar-cat">
@@ -45,12 +45,12 @@
           <span v-for="n in 9" :key="'s' + n" aria-hidden="true" class="ar-cat -skeleton"><span class="ar-cat__tile"></span><span class="ar-cat__t"></span></span>
         </template>
       </div>
-      <button v-show="!cats_start" aria-label="Scroll categories back" class="ar-arrow -l" type="button" @click="nudgeCats(-1)"><span class="ms">chevron_left</span></button>
-      <button v-show="!cats_end" aria-label="More categories" class="ar-arrow -r" type="button" @click="nudgeCats(1)"><span class="ms">chevron_right</span></button>
+      <button v-show="!cats_start" :aria-label="t('argon.home.catsBack', 'Scroll categories back')" class="ar-arrow -l" type="button" @click="nudgeCats(-1)"><span class="ms k-flip">chevron_left</span></button>
+      <button v-show="!cats_end" :aria-label="t('argon.home.catsMore', 'More categories')" class="ar-arrow -r" type="button" @click="nudgeCats(1)"><span class="ms k-flip">chevron_right</span></button>
     </section>
 
     <!-- ▆▆▆▆ 2. Promo cards and offer pills ▆▆▆▆ -->
-    <section aria-label="Shop the highlights" class="ar-wrap ar-promos">
+    <section :aria-label="t('argon.home.highlights', 'Shop the highlights')" class="ar-wrap ar-promos">
       <div class="ar-promos__row">
         <router-link v-for="pc in promoCards" :key="pc.key" :to="pc.to" class="ar-promo">
           <argon-slot :place="pc.slot" class="ar-promo__ph" eager />
@@ -60,8 +60,8 @@
           </span>
         </router-link>
       </div>
-      <nav v-if="offerCats.length" aria-label="Offers by category" class="ar-offers">
-        <router-link v-for="c in offerCats" :key="c.id" :to="offersTo(c)" class="ar-pill">{{ c.title || c.name }} offers</router-link>
+      <nav v-if="offerCats.length" :aria-label="t('argon.home.offersBy', 'Offers by category')" class="ar-offers">
+        <router-link v-for="c in offerCats" :key="c.id" :to="offersTo(c)" class="ar-pill">{{ t("argon.home.offers", "{category} offers", { category: c.title || c.name }) }}</router-link>
       </nav>
     </section>
 
@@ -69,15 +69,15 @@
     <div v-if="deals.length" class="ar-wrap">
       <router-link :to="dealsTo" class="ar-gstrip">
         <span class="ms">verified</span>
-        <b v-if="dealsUntil">Deal prices locked until {{ dealsUntil }}</b>
-        <b v-else>Today’s deals across the store</b>
-        <span class="ar-gstrip__go">See all deals<span class="ms">chevron_right</span></span>
+        <b v-if="dealsUntil">{{ t("argon.home.dealsLocked", "Deal prices locked until {date}", { date: dealsUntil }) }}</b>
+        <b v-else>{{ t("argon.perks.deals", "Today’s deals across the store") }}</b>
+        <span class="ar-gstrip__go">{{ t("argon.common.seeAllDeals", "See all deals") }}<span class="ms k-flip">chevron_right</span></span>
       </router-link>
     </div>
 
     <!-- ▆▆▆▆ 4. Shop the latest tech ▆▆▆▆ -->
     <section v-if="latest.length" aria-labelledby="ar-latest-h" class="ar-sec ar-wrap">
-      <header class="ar-head"><h2 id="ar-latest-h">Shop the latest tech</h2></header>
+      <header class="ar-head"><h2 id="ar-latest-h">{{ t("argon.home.latest", "Shop the latest tech") }}</h2></header>
       <div class="ar-tiles4">
         <router-link v-for="c in latest" :key="c.id" :to="catTo(c)" class="ar-ptile">
           <argon-photo
@@ -89,7 +89,7 @@
           />
           <b class="ar-ptile__t">{{ c.title || c.name }}</b>
           <span class="ar-ptile__l">{{ line(c) }}</span>
-          <span class="ar-ptile__go">Shop now<span class="ms">chevron_right</span></span>
+          <span class="ar-ptile__go">{{ t("argon.common.shopNow", "Shop now") }}<span class="ms k-flip">chevron_right</span></span>
         </router-link>
       </div>
     </section>
@@ -98,10 +98,10 @@
     <section v-if="banner" class="ar-sec ar-wrap">
       <router-link :to="catTo(banner.cat)" class="ar-banner">
         <span class="ar-banner__tx">
-          <small>{{ banner.cat.title || banner.cat.name }} deals</small>
-          <b>Up to {{ banner.off }}% off <span>{{ banner.cat.title || banner.cat.name }}</span></b>
+          <small>{{ t("argon.home.banner.eyebrow", "{category} deals", { category: banner.cat.title || banner.cat.name }) }}</small>
+          <b>{{ bannerWords[0] }}<span>{{ banner.cat.title || banner.cat.name }}</span>{{ bannerWords[1] }}</b>
           <span v-if="banner.cat.description" class="ar-banner__p">{{ banner.cat.description }}</span>
-          <span class="ar-btn">Shop now</span>
+          <span class="ar-btn">{{ t("argon.common.shopNow", "Shop now") }}</span>
         </span>
         <argon-photo
           :alt="banner.cat.title || banner.cat.name"
@@ -114,15 +114,15 @@
     </section>
 
     <!-- ▆▆▆▆ 6. Popular products ▆▆▆▆ -->
-    <argon-rail :more-to="dealsTo" :products="ready ? popular : null" class="ar-wrap" more-label="See all deals" :title="`Popular products on ${shopTitle}`" @quick-buy="quickBuy" />
+    <argon-rail :more-to="dealsTo" :products="ready ? popular : null" class="ar-wrap" :more-label="t('argon.common.seeAllDeals', 'See all deals')" :title="t('argon.home.popular', 'Popular products on {shop}', { shop: shopTitle })" @quick-buy="quickBuy" />
 
     <!-- ▆▆▆▆ 7. The compare banner ▆▆▆▆ -->
     <section class="ar-sec ar-wrap">
       <router-link :to="compareTo" class="ar-redband">
         <span class="ar-redband__tx">
-          <b>Compare up to 4 products, side by side</b>
-          <span>Line up prices, specs and colours in one table, then pick the one that fits.</span>
-          <span class="ar-btn -white">Start comparing</span>
+          <b>{{ t("argon.home.compare.title", "Compare up to 4 products, side by side") }}</b>
+          <span>{{ t("argon.home.compare.text", "Line up prices, specs and colours in one table, then pick the one that fits.") }}</span>
+          <span class="ar-btn -white">{{ t("argon.home.compare.go", "Start comparing") }}</span>
         </span>
         <argon-slot class="ar-redband__ph" place="banner-compare" />
       </router-link>
@@ -130,20 +130,20 @@
 
     <!-- ▆▆▆▆ 8. Trending now ▆▆▆▆ -->
     <section v-if="trending.length" aria-labelledby="ar-trend-h" class="ar-sec ar-wrap">
-      <header class="ar-head"><h2 id="ar-trend-h">Trending now</h2></header>
+      <header class="ar-head"><h2 id="ar-trend-h">{{ t("argon.home.trending", "Trending now") }}</h2></header>
       <div class="ar-tiles4">
-        <router-link v-for="t in trending" :key="t.tag" :to="tagTo(t.tag)" class="ar-ptile">
-          <argon-slot :alt="tagTitle(t.tag)" :place="trendSlot(t.tag)" class="ar-ptile__ph" />
-          <b class="ar-ptile__t">{{ tagTitle(t.tag) }}</b>
-          <span class="ar-ptile__l">{{ t.line }}</span>
-          <span class="ar-ptile__go">Shop now<span class="ms">chevron_right</span></span>
+        <router-link v-for="tr in trending" :key="tr.tag" :to="tagTo(tr.tag)" class="ar-ptile">
+          <argon-slot :alt="tagTitle(tr.tag)" :place="trendSlot(tr.tag)" class="ar-ptile__ph" />
+          <b class="ar-ptile__t">{{ tagTitle(tr.tag) }}</b>
+          <span class="ar-ptile__l">{{ tr.line }}</span>
+          <span class="ar-ptile__go">{{ t("argon.common.shopNow", "Shop now") }}<span class="ms k-flip">chevron_right</span></span>
         </router-link>
       </div>
     </section>
 
     <!-- ▆▆▆▆ 9. Brands ▆▆▆▆ -->
     <section v-if="brands.length >= 4" aria-labelledby="ar-brands-h" class="ar-sec ar-wrap">
-      <header class="ar-head"><h2 id="ar-brands-h">Explore our brands</h2></header>
+      <header class="ar-head"><h2 id="ar-brands-h">{{ t("argon.home.brands", "Explore our brands") }}</h2></header>
       <div class="ar-tiles4">
         <router-link v-for="b in brands.slice(0, 4)" :key="b" :to="brandTo(b)" class="ar-ptile -brand">
           <argon-slot :alt="b" :place="brandSlot(b)" class="ar-ptile__ph" />
@@ -155,7 +155,7 @@
 
     <!-- ▆▆▆▆ 10. There's even more ▆▆▆▆ -->
     <section aria-labelledby="ar-more-h" class="ar-sec ar-wrap">
-      <header class="ar-head"><h2 id="ar-more-h">There’s even more to {{ shopTitle }}</h2></header>
+      <header class="ar-head"><h2 id="ar-more-h">{{ t("argon.home.more", "There’s even more to {shop}", { shop: shopTitle }) }}</h2></header>
       <div class="ar-tiles4">
         <router-link v-for="s in services" :key="s.key" :to="s.to" class="ar-ptile -service">
           <argon-slot :alt="s.title" :place="s.slot" class="ar-ptile__ph" />
@@ -171,8 +171,8 @@
       :more-to="dealsTo"
       :products="ready ? moreDeals : null"
       class="ar-wrap"
-      more-label="See all deals"
-      title="More deals"
+      :more-label="t('argon.common.seeAllDeals', 'See all deals')"
+      :title="t('argon.home.moreDeals', 'More deals')"
       @quick-buy="quickBuy"
     />
 
@@ -180,11 +180,11 @@
     <section class="ar-sec ar-wrap">
       <div class="ar-help">
         <div class="ar-help__tx">
-          <h2>Need a hand?</h2>
-          <p>Questions about an order, a return or which one to choose? Our answers are a click away, and so are we.</p>
+          <h2>{{ t("argon.home.help.title", "Need a hand?") }}</h2>
+          <p>{{ t("argon.home.help.text", "Questions about an order, a return or which one to choose? Our answers are a click away, and so are we.") }}</p>
           <div class="ar-help__acts">
-            <router-link :to="faqTo" class="ar-pill">Help &amp; FAQ</router-link>
-            <router-link :to="contactTo" class="ar-pill -line">Contact us</router-link>
+            <router-link :to="faqTo" class="ar-pill">{{ t("argon.menu.helpFaq", "Help & FAQ") }}</router-link>
+            <router-link :to="contactTo" class="ar-pill -line">{{ t("argon.footer.contact", "Contact us") }}</router-link>
           </div>
         </div>
         <argon-slot class="ar-help__ph" place="help-desk" />
@@ -194,8 +194,8 @@
     <!-- ▆▆▆▆ 13. Tips and guides (the owner's rule: articles last) ▆▆▆▆ -->
     <section v-if="posts.length" aria-labelledby="ar-blog-h" class="ar-sec ar-wrap">
       <header class="ar-head">
-        <h2 id="ar-blog-h">Tips and guides</h2>
-        <router-link :to="blogTo" class="ar-more">All guides<span class="ms">chevron_right</span></router-link>
+        <h2 id="ar-blog-h">{{ t("blog.journal", "Tips and guides") }}</h2>
+        <router-link :to="blogTo" class="ar-more">{{ t("blog.allNotes", "All guides") }}<span class="ms k-flip">chevron_right</span></router-link>
       </header>
       <div class="ar-tiles4">
         <router-link v-for="a in posts" :key="a.id" :to="postTo(a)" class="ar-ptile -post">
@@ -217,24 +217,23 @@
     </section>
 
     <!-- ▆▆▆▆ About the shop ▆▆▆▆ -->
-    <section :aria-label="`About ${shopTitle}`" class="ar-sec ar-wrap ar-seo">
-      <h2>About {{ shopTitle }}</h2>
+    <section :aria-label="t('argon.footer.about', 'About {shop}', { shop: shopTitle })" class="ar-sec ar-wrap ar-seo">
+      <h2>{{ t("argon.footer.about", "About {shop}", { shop: shopTitle }) }}</h2>
       <div :class="{ '-open': seo_open }" class="ar-seo__body">
         <p>{{ seoLede }}</p>
         <p v-if="cats.length">
-          Shop
+          {{ seoWords[0] }}
           <template v-for="(c, i) in cats" :key="c.id"
-            ><router-link :to="catTo(c)">{{ (c.title || c.name).toLowerCase() }}</router-link
-            >{{ i < cats.length - 2 ? ", " : i === cats.length - 2 ? " and " : "" }}</template
-          >, with every deal showing the day it ends and every price checked at the cart.
+            ><router-link :to="catTo(c)">{{ (c.title || c.name).toLocaleLowerCase() }}</router-link
+            >{{ i < cats.length - 2 ? t("argon.list.comma", ", ") : i === cats.length - 2 ? t("argon.list.and", " and ") : "" }}</template
+          >{{ seoWords[1] }}
         </p>
         <p>
-          Compare up to four products side by side, save the ones you like to your wishlist, and track any order from your account. Need help choosing?
-          Our guides and our team are here.
+          {{ t("argon.home.seo.p3", "Compare up to four products side by side, save the ones you like to your wishlist, and track any order from your account. Need help choosing? Our guides and our team are here.") }}
         </p>
       </div>
       <button :aria-expanded="seo_open ? 'true' : 'false'" class="ar-seo__more" type="button" @click="seo_open = !seo_open">
-        {{ seo_open ? "Read less" : "Read more" }}<span class="ms">{{ seo_open ? "expand_less" : "expand_more" }}</span>
+        {{ seo_open ? t("argon.home.seo.less", "Read less") : t("argon.home.seo.more", "Read more") }}<span class="ms">{{ seo_open ? "expand_less" : "expand_more" }}</span>
       </button>
     </section>
 
@@ -244,6 +243,7 @@
 
 <script>
 import { currentCurrency } from "../region-switcher/region";
+import { t } from "../kalio/i18n/kalio-i18n";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import ArgonRail from "./ArgonRail.vue";
 import ArgonPhoto from "./ArgonPhoto.vue";
@@ -336,12 +336,12 @@ export default {
         {
           key: "deals",
           slot: "promo-deals",
-          title: "Today’s deals",
-          line: save > 0 ? `Up to ${this.money(Math.round(save), true)} off today` : "Fresh prices across the store",
+          title: t("argon.menu.todaysDeals", "Today’s deals"),
+          line: save > 0 ? t("argon.home.promo.dealsLine", "Up to {amount} off today", { amount: this.money(Math.round(save), true) }) : t("argon.home.promo.dealsFresh", "Fresh prices across the store"),
           to: this.dealsTo,
         },
-        { key: "new", slot: "promo-new", title: "New arrivals", line: `Just landed at ${this.shopTitle}`, to: this.newTag ? this.tagTo(this.newTag) : catalogueRoute({ sort: "newest" }) },
-        { key: "best", slot: "promo-best", title: "Best sellers", line: "What everyone’s buying", to: this.bestTag ? this.tagTo(this.bestTag) : catalogueRoute({ sort: "bestselling" }) },
+        { key: "new", slot: "promo-new", title: t("argon.menu.newArrivals", "New arrivals"), line: t("argon.home.promo.newLine", "Just landed at {shop}", { shop: this.shopTitle }), to: this.newTag ? this.tagTo(this.newTag) : catalogueRoute({ sort: "newest" }) },
+        { key: "best", slot: "promo-best", title: t("argon.home.promo.best", "Best sellers"), line: t("argon.home.promo.bestLine", "What everyone’s buying"), to: this.bestTag ? this.tagTo(this.bestTag) : catalogueRoute({ sort: "bestselling" }) },
       ];
     },
     /* The four categories with the most deals. */
@@ -398,7 +398,12 @@ export default {
             .map((id) => this.cats.find((c) => c.id === id))
             .filter(Boolean)
             .map((c) => c.title || c.name);
-          const line = names.length > 2 ? `${names.slice(0, 2).join(", ")} and more` : names.join(" and ");
+          const line =
+            names.length > 2
+              ? t("argon.home.trend.andMore", "{a}, {b} and more", { a: names[0], b: names[1] })
+              : names.length === 2
+                ? t("argon.home.trend.two", "{a} and {b}", { a: names[0], b: names[1] })
+                : names.join("");
           return { tag, line };
         });
     },
@@ -412,10 +417,10 @@ export default {
     services() {
       const r = window.$storefront.routes;
       return [
-        { key: "track", slot: "service-track", title: "Track an order", line: "See where your parcel is, from our door to yours.", to: { name: r.HISTORY_ORDERS_PHYSICAL } },
-        { key: "compare", slot: "service-compare", title: "Compare products", line: "Put up to four side by side.", to: this.compareTo },
-        { key: "help", slot: "service-help", title: "Help & FAQ", line: "Quick answers on orders, returns and payment.", to: this.faqTo },
-        { key: "contact", slot: "service-contact", title: "Contact us", line: "Talk to our team about anything.", to: this.contactTo },
+        { key: "track", slot: "service-track", title: t("argon.footer.trackOrder", "Track an order"), line: t("argon.home.svc.track", "See where your parcel is, from our door to yours."), to: { name: r.HISTORY_ORDERS_PHYSICAL } },
+        { key: "compare", slot: "service-compare", title: t("argon.menu.compare", "Compare products"), line: t("argon.home.svc.compare", "Put up to four side by side."), to: this.compareTo },
+        { key: "help", slot: "service-help", title: t("argon.menu.helpFaq", "Help & FAQ"), line: t("argon.home.svc.help", "Quick answers on orders, returns and payment."), to: this.faqTo },
+        { key: "contact", slot: "service-contact", title: t("argon.footer.contact", "Contact us"), line: t("argon.home.svc.contact", "Talk to our team about anything."), to: this.contactTo },
       ];
     },
 
@@ -428,10 +433,24 @@ export default {
       );
     },
 
+    /* "Up to 40% off Laptops": the words around the category's name, which
+       the template sets apart, so a language can put the name where it reads. */
+    bannerWords() {
+      if (!this.banner) return ["", ""];
+      const text = t("argon.home.banner.title", "Up to {off}% off {category}", { off: this.banner.off });
+      const at = text.indexOf("{category}");
+      return at < 0 ? [text + " ", ""] : [text.slice(0, at), text.slice(at + 10)];
+    },
+    /* "Shop <the categories>, with every deal…": the words around the list. */
+    seoWords() {
+      const text = t("argon.home.seo.cats", "Shop {categories}, with every deal showing the day it ends and every price checked at the cart.");
+      const at = text.indexOf("{categories}");
+      return at < 0 ? [text, ""] : [text.slice(0, at), text.slice(at + 12)];
+    },
     seoLede() {
       const d = (this.$shop?.description || "").trim();
       if (d && !/^it['’]s my awesome .* website\.?$/i.test(d)) return d;
-      return `${this.shopTitle} is an online electronics store: the latest tech, honest deals with real end dates, and help when you need it.`;
+      return t("argon.home.seo.lede", "{shop} is an online electronics store: the latest tech, honest deals with real end dates, and help when you need it.", { shop: this.shopTitle });
     },
   },
 
@@ -515,13 +534,16 @@ export default {
     measureCats() {
       const el = this.$refs.cats;
       if (!el) return;
-      this.cats_start = el.scrollLeft <= 2;
-      this.cats_end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 2;
+      /* scrollLeft runs negative right to left (Arabic): measure its size. */
+      const left = Math.abs(el.scrollLeft);
+      this.cats_start = left <= 2;
+      this.cats_end = left + el.clientWidth >= el.scrollWidth - 2;
     },
     nudgeCats(d) {
       const el = this.$refs.cats;
       if (!el) return;
-      el.scrollBy({ left: d * el.clientWidth * 0.8, behavior: "smooth" });
+      const sign = getComputedStyle(el).direction === "rtl" ? -1 : 1;
+      el.scrollBy({ left: sign * d * el.clientWidth * 0.8, behavior: "smooth" });
     },
   },
 };

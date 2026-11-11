@@ -85,7 +85,7 @@
           :filters="filters_def"
           :model-value="t_filter"
           :sort="t_sort"
-          :sort-fallback="search_query ? 'Relevance' : 'Featured'"
+          :sort-fallback="search_query ? t('argon.sort.relevance', 'Relevance') : t('argon.sort.featured', 'Featured')"
           :total="catalogue_total"
           @update:model-value="setFilter"
           @update:sort="setSort"
@@ -94,14 +94,14 @@
              so nothing moves); the cards stay, dimmed (listing-motion). -->
         <div class="lm-anchor">
           <transition name="lm-pill">
-            <div v-if="lm.updating" aria-live="polite" class="lm-pill" role="status"><i class="lm-spin" aria-hidden="true"></i>Updating results…</div>
+            <div v-if="lm.updating" aria-live="polite" class="lm-pill" role="status"><i class="lm-spin" aria-hidden="true"></i>{{ t("argon.list.updating", "Updating results…") }}</div>
           </transition>
         </div>
         <div v-if="on_chips.length" class="ar-chips ar-list__on">
           <button v-for="c in on_chips" :key="c.key" class="ar-chip -on" type="button" @click="c.off()">
             {{ c.label }}<span class="ms">close</span>
           </button>
-          <button v-if="on_chips.length > 1" class="ar-link" type="button" @click="setFilter(null)">Clear all</button>
+          <button v-if="on_chips.length > 1" class="ar-link" type="button" @click="setFilter(null)">{{ t("argon.filter.clearAll", "Clear all") }}</button>
         </div>
         <s-products-listing
           ref="listing"
@@ -124,9 +124,9 @@
         </div>
 
         <!-- ▆▆▆▆▆▆▆▆ Under the grid ▆▆▆▆▆▆▆▆ -->
-        <argon-row v-if="catalogue && search_query" :limit="12" lazy sort="bestselling" title="Popular right now" />
+        <argon-row v-if="catalogue && search_query" :limit="12" lazy sort="bestselling" :title="t('argon.list.popular', 'Popular right now')" />
         <section v-if="more_aisles.length" class="ar-keep">
-          <h2 class="ar-keep__h">Keep shopping</h2>
+          <h2 class="ar-keep__h">{{ t("argon.list.keepShopping", "Keep shopping") }}</h2>
           <div class="ar-keep__list">
             <router-link v-for="a in more_aisles" :key="a.id" :to="aisleTo(a)" class="ar-pill -line">{{ a.title || a.name }}</router-link>
           </div>
@@ -141,6 +141,7 @@
 
 <script lang="ts">
 import SProductsListing from "@selldone/components-vue/storefront/products/listing/SProductsListing.vue";
+import { t } from "../../components/kalio/i18n/kalio-i18n";
 import TemplateMixin from "@selldone/components-vue/mixin/template/TemplateMixin.ts";
 import ArgonHome from "../../components/argon/ArgonHome.vue";
 import ArgonListTop from "../../components/argon/shop/ArgonListTop.vue";
@@ -224,9 +225,9 @@ export default {
 
     /* "in Dairy & Eggs", "for “milk”", "from Mason". */
     where_line() {
-      if (this.vendor_id) return "from this seller";
-      if (this.category_name) return `in ${this.listing_parent?.title || this.category_name}`;
-      if (this.search_query) return `for “${this.search_query}”`;
+      if (this.vendor_id) return t("argon.list.fromSeller", "from this seller");
+      if (this.category_name) return t("argon.list.inCategory", "in {category}", { category: this.listing_parent?.title || this.category_name });
+      if (this.search_query) return t("argon.list.forQuery", "for “{query}”", { query: this.search_query });
       return "";
     },
 
@@ -236,8 +237,8 @@ export default {
       if (!f) return [];
       const out = [];
       const next = () => JSON.parse(JSON.stringify(f));
-      if (f.only_has_discount) out.push({ key: "sale", label: "On sale", off: () => this.setFilter({ ...next(), only_has_discount: false }) });
-      if (f.prices && Object.keys(f.prices).length) out.push({ key: "price", label: "Price", off: () => this.setFilter({ ...next(), prices: null }) });
+      if (f.only_has_discount) out.push({ key: "sale", label: t("argon.filter.onSale", "On sale"), off: () => this.setFilter({ ...next(), only_has_discount: false }) });
+      if (f.prices && Object.keys(f.prices).length) out.push({ key: "price", label: t("argon.filter.price", "Price"), off: () => this.setFilter({ ...next(), prices: null }) });
       for (const b of f.brands || []) out.push({ key: "b" + b, label: b, off: () => this.setFilter({ ...next(), brands: (f.brands || []).filter((x) => x !== b) }) });
       for (const [k, vals] of Object.entries(f.selected_spec || {}))
         for (const v of vals || [])
@@ -254,7 +255,7 @@ export default {
         for (const v of vals || [])
           out.push({
             key: "v" + k + v,
-            label: k === "colors" ? colourName(v) || "Colour" : String(v).split("|")[0],
+            label: k === "colors" ? colourName(v) || t("argon.filter.colour", "Colour") : String(v).split("|")[0],
             off: () => {
               const n = next();
               n.selected_variants[k] = (n.selected_variants[k] || []).filter((x) => x !== v);
@@ -442,7 +443,12 @@ export default {
           .filter((v) => (shelfOf.get(v.id) || []).some((p) => p.category_id === aisle.id))
           .map((v) => v.name);
         if (!names.length) return;
-        this.sold_by = "Sold by " + (names.length > 2 ? `${names.length} sellers` : names.join(" and "));
+        this.sold_by =
+          names.length > 2
+            ? t("argon.list.soldByMany", "Sold by {n} sellers", { n: names.length })
+            : names.length === 2
+              ? t("argon.list.soldByTwo", "Sold by {a} and {b}", { a: names[0], b: names[1] })
+              : t("argon.list.soldBy", "Sold by {name}", { name: names[0] });
         this.sold_by_list = names;
       });
     },

@@ -9,19 +9,19 @@
 -->
 <template>
   <div class="ar-ltop">
-    <nav aria-label="Breadcrumb" class="ar-crumbs">
-      <router-link :to="{ path: '/' }">Home</router-link>
-      <span aria-hidden="true" class="ms">chevron_right</span>
+    <nav :aria-label="t('pages.breadcrumb', 'Breadcrumb')" class="ar-crumbs">
+      <router-link :to="{ path: '/' }">{{ t("pages.home", "Home") }}</router-link>
+      <span aria-hidden="true" class="ms k-flip">chevron_right</span>
       <span aria-current="page">{{ crumb }}</span>
     </nav>
 
-    <p v-if="search" class="ar-ltop__for">Results for ‘{{ search }}’ in…</p>
+    <p v-if="search" class="ar-ltop__for">{{ t("argon.list.resultsFor", "Results for ‘{query}’ in…", { query: search }) }}</p>
     <h1 class="ar-ltop__t">{{ heading }}</h1>
     <p v-if="mode === 'aisle' && aisle && aisle.description" class="ar-ltop__d">{{ aisle.description }}</p>
-    <p v-else-if="deals_page && dealsUntil" class="ar-ltop__d"><span class="ms">verified</span>Deal prices locked until {{ dealsUntil }}</p>
+    <p v-else-if="deals_page && dealsUntil" class="ar-ltop__d"><span class="ms">verified</span>{{ t("argon.home.dealsLocked", "Deal prices locked until {date}", { date: dealsUntil }) }}</p>
 
     <div v-if="mode !== 'aisle' && hits.length > 1" class="ar-inaisles">
-      <span>Found in</span>
+      <span>{{ t("argon.list.foundIn", "Found in") }}</span>
       <router-link v-for="h in hits" :key="h.aisle.id" :to="h.to" class="ar-chip">{{ h.aisle.title || h.aisle.name }}</router-link>
     </div>
   </div>
@@ -29,6 +29,7 @@
 
 <script>
 import { catalogue, dealsEndDate, shortDate } from "../argon";
+import { t } from "../../kalio/i18n/kalio-i18n";
 import { aisleIndex } from "../../kalio/kalio-catalog";
 
 export default {
@@ -63,15 +64,15 @@ export default {
     },
     heading() {
       if (this.mode === "aisle") return this.aisleName;
-      if (this.search) return "All categories";
-      if (this.deals) return "Today’s deals";
+      if (this.search) return t("argon.list.allCategories", "All categories");
+      if (this.deals) return t("argon.menu.todaysDeals", "Today’s deals");
       /* A brand's page (the home's brand cards). */
       if (this.filter?.brands?.length === 1) return this.filter.brands[0];
-      return "All products";
+      return t("argon.menu.allProducts", "All products");
     },
     crumb() {
       if (this.mode === "aisle") return this.aisleName;
-      return this.search ? "Search" : this.heading;
+      return this.search ? t("argon.search.go", "Search") : this.heading;
     },
     /* A search across the shop: the categories its results are in. */
     hits() {

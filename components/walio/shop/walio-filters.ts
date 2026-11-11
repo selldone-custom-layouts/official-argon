@@ -12,6 +12,8 @@
        brands: [], selected_spec: { Key: [v] }, selected_variants: { volumes: [v] } }
    Pills in one group are OR, groups are AND (Selldone's own rule). */
 
+import { t } from "../../kalio/i18n/kalio-i18n";
+
 export interface WalioGroup {
   /** "spec" groups live in selected_spec, "variant" ones in selected_variants. */
   kind: "spec" | "variant" | "brand";
@@ -29,13 +31,13 @@ export interface WalioFilter {
   selected_variants?: Record<string, string[]>;
 }
 
-const VARIANT_LABEL: Record<string, string> = {
-  volumes: "Capacity",
-  weights: "Weight",
-  packs: "Pack",
-  colors: "Colour",
-  styles: "Style",
-  types: "Type",
+const VARIANT_LABEL: Record<string, () => string> = {
+  volumes: () => t("argon.filter.capacity", "Capacity"),
+  weights: () => t("argon.filter.weight", "Weight"),
+  packs: () => t("argon.filter.pack", "Pack"),
+  colors: () => t("argon.filter.colour", "Colour"),
+  styles: () => t("argon.filter.style", "Style"),
+  types: () => t("argon.filter.type", "Type"),
 };
 const RESERVED = ["prices", "brands", "ignore"];
 
@@ -53,7 +55,7 @@ export function groupsOf(filters: any): WalioGroup[] {
   const out: WalioGroup[] = [];
   for (const key of Object.keys(VARIANT_LABEL)) {
     const values = list(filters[key]);
-    if (values.length) out.push({ kind: "variant", key, label: VARIANT_LABEL[key], values });
+    if (values.length) out.push({ kind: "variant", key, label: VARIANT_LABEL[key] ? VARIANT_LABEL[key]() : key, values });
   }
   for (const key of Object.keys(filters)) {
     if (RESERVED.includes(key) || VARIANT_LABEL[key]) continue;
@@ -61,7 +63,7 @@ export function groupsOf(filters: any): WalioGroup[] {
     if (values.length) out.push({ kind: "spec", key, label: key, values });
   }
   const brands = list(filters.brands);
-  if (brands.length) out.push({ kind: "brand", key: "brands", label: "Brand", values: brands });
+  if (brands.length) out.push({ kind: "brand", key: "brands", label: t("argon.filter.brand", "Brand"), values: brands });
   return out;
 }
 
@@ -124,15 +126,16 @@ export function valueLabel(value: string): string {
 /* Argon: Selldone sorts by sales, date, price, likes and visits; it has no
    sort by rating, so "Customer reviews" is not offered (it would not do
    what it says). */
+/* Each name is a getter, so it is read in the visitor's language when drawn. */
 export const SORTS = [
-  { val: "bestselling", name: "Best sellers" },
-  { val: "newest", name: "Newest" },
-  { val: "cheapest", name: "Price: low to high" },
-  { val: "most_expensive", name: "Price: high to low" },
-  { val: "most_popular", name: "Most liked" },
-  { val: "most_visited", name: "Most viewed" },
+  { val: "bestselling", get name() { return t("argon.sort.best", "Best sellers"); } },
+  { val: "newest", get name() { return t("argon.sort.newest", "Newest"); } },
+  { val: "cheapest", get name() { return t("argon.sort.low", "Price: low to high"); } },
+  { val: "most_expensive", get name() { return t("argon.sort.high", "Price: high to low"); } },
+  { val: "most_popular", get name() { return t("argon.sort.liked", "Most liked"); } },
+  { val: "most_visited", get name() { return t("argon.sort.viewed", "Most viewed"); } },
 ];
 
-export function sortName(val: string | null | undefined, fallback = "Featured"): string {
-  return SORTS.find((s) => s.val === val)?.name || fallback;
+export function sortName(val: string | null | undefined, fallback?: string): string {
+  return SORTS.find((s) => s.val === val)?.name || fallback || t("argon.sort.featured", "Featured");
 }

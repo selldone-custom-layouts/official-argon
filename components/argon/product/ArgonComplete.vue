@@ -8,7 +8,7 @@
 -->
 <template>
   <section v-if="partner" aria-labelledby="ar-complete-h" class="ar-pcard ar-complete">
-    <h2 id="ar-complete-h" class="ar-pcard__h">Complete your purchase with…</h2>
+    <h2 id="ar-complete-h" class="ar-pcard__h">{{ t("argon.complete.title", "Complete your purchase with…") }}</h2>
     <div class="ar-complete__row">
       <div class="ar-complete__item">
         <span class="ar-complete__im"><img :src="image(product, variant)" alt="" loading="lazy" /></span>
@@ -23,10 +23,10 @@
       </router-link>
     </div>
     <div class="ar-complete__foot">
-      <span class="ar-complete__total">Both for <u-price :amount="total" :currency="currency" /></span>
+      <span class="ar-complete__total">{{ t("argon.complete.both", "Both for") }} <u-price :amount="total" :currency="currency" /></span>
       <button :disabled="adding || soldOut" class="ar-btn" type="button" @click="addBoth">
-        <template v-if="done"><span class="ms">check</span>Both in your cart</template>
-        <template v-else>Add both to cart</template>
+        <template v-if="done"><span class="ms">check</span>{{ t("argon.complete.done", "Both in your cart") }}</template>
+        <template v-else>{{ t("argon.complete.add", "Add both to cart") }}</template>
       </button>
     </div>
   </section>

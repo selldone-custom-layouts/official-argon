@@ -44,8 +44,9 @@ import {SetupService} from "@selldone/core-js/server";
 import {Shop} from "@selldone/core-js/models";
 import { bootThemeSwitcher } from "./components/theme-switcher/theme-switcher"; // the shared theme switcher (Argon 1.0.11)
 import { ARGON_THEME } from "./components/argon/argon-theme";
-import { bootRegion, defineMessages } from "./components/region-switcher/region"; // language + currency (the owner's choice B)
-import { ARGON_MESSAGES } from "./components/argon/i18n";
+import { bootRegion } from "./components/region-switcher/region"; // language + currency (the owner's choice B)
+import { EN as KALIO_EN, LOADERS as KALIO_LANGUAGES } from "./components/kalio/i18n";
+import { bootI18n, i18nGlobals } from "./components/kalio/i18n/kalio-i18n";
 
 const vuetify = VuetifyInstance(i18n);
 // Vuetify's light error red reads 4.5:1 on white (its #ff5252 is 3.3:1); set
@@ -83,6 +84,7 @@ window.OverrideShopLanguagePacks = {};
 //█████████████████████████████████████████████████████████████
 // @ts-ignore
 const app = createApp(StorefrontApp);
+Object.assign(app.config.globalProperties, i18nGlobals); // t(), formatNumber(), formatDate() in every template
 
 const components = createComponents({});
 app.use(components);
@@ -93,8 +95,8 @@ app.use(components);
 
 // ━━━ Storefront SDK (xapi) ━━━
 StorefrontSDK.Setup(); // Set up the Shop SDK.
-defineMessages(ARGON_MESSAGES); // Argon's own words, per language
 bootRegion(store); // the visitor's currency and language, mirrored for money() and t()
+bootI18n(KALIO_EN, KALIO_LANGUAGES); // the Layout's own words in the visitor's language; <html lang dir>
 
 // ━━━ Community SDK (capi) ━━━
 CapiCommunity.Setup(); // Setup community.

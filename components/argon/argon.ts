@@ -20,7 +20,8 @@
  *    own "<Tag> Items" section without a code change.
  */
 
-import { currentCurrency, formatMoney } from "../region-switcher/region";
+import { currentCurrency, formatMoney, isRtl } from "../region-switcher/region";
+import { t, formatDate } from "../kalio/i18n/kalio-i18n";
 import { reactive } from "vue";
 import { PriceHelper } from "@selldone/core-js";
 import { EventBus } from "@selldone/components-vue/utils/events/EventBus.ts";
@@ -224,8 +225,8 @@ export function categoryLine(shop: any, list: any[], categoryId: number, currenc
   const ps = list.filter((p) => p.category_id === categoryId);
   if (!ps.length) return "";
   const best = Math.max(0, ...ps.map((p) => moneyOf(shop, p, null, currency).save));
-  if (best > 0) return `Up to ${money(Math.round(best))} off`;
-  return `From ${money(Math.min(...ps.map((p) => moneyOf(shop, p, null, currency).now)))}`;
+  if (best > 0) return t("argon.line.upTo", "Up to {amount} off", { amount: money(Math.round(best)) });
+  return t("argon.line.from", "From {amount}", { amount: money(Math.min(...ps.map((p) => moneyOf(shop, p, null, currency).now))) });
 }
 
 /** Brands by how many products carry them. */
@@ -312,8 +313,15 @@ export function swatchBg(color: string): string {
 export function variantDimension(variants: any[]): { key: string; word: string } | null {
   if (!variants || !variants.length) return null;
   const keys = ["color", "volume", "weight", "pack", "type", "style"].filter((k) => variants.some((v) => v && v[k]));
-  if (keys.length !== 1) return keys.length ? { key: "mixed", word: "options" } : null;
-  const word: Record<string, string> = { color: "colour", volume: "capacity", weight: "weight", pack: "pack", type: "type", style: "style" };
+  if (keys.length !== 1) return keys.length ? { key: "mixed", word: t("argon.variant.options", "options") } : null;
+  const word: Record<string, string> = {
+    color: t("argon.variant.colour", "colour"),
+    volume: t("argon.variant.capacity", "capacity"),
+    weight: t("argon.variant.weight", "weight"),
+    pack: t("argon.variant.pack", "pack"),
+    type: t("argon.variant.type", "type"),
+    style: t("argon.variant.style", "style"),
+  };
   return { key: keys[0], word: word[keys[0]] };
 }
 
@@ -334,6 +342,32 @@ const NAMES: [string, number, number, number][] = [
   ["Indigo", 48, 63, 159], ["Purple", 128, 40, 160], ["Brown", 120, 72, 40], ["Gold", 212, 175, 55],
   ["Beige", 225, 205, 170], ["Sky blue", 100, 180, 240], ["Magenta", 194, 24, 91], ["Cyan", 0, 220, 230],
 ];
+/* The colour names in the visitor's language. */
+function colourWord(name: string): string {
+  const words: Record<string, () => string> = {
+    Black: () => t("argon.colour.black", "Black"),
+    White: () => t("argon.colour.white", "White"),
+    Gray: () => t("argon.colour.gray", "Gray"),
+    Silver: () => t("argon.colour.silver", "Silver"),
+    Red: () => t("argon.colour.red", "Red"),
+    Pink: () => t("argon.colour.pink", "Pink"),
+    Orange: () => t("argon.colour.orange", "Orange"),
+    Yellow: () => t("argon.colour.yellow", "Yellow"),
+    Green: () => t("argon.colour.green", "Green"),
+    Teal: () => t("argon.colour.teal", "Teal"),
+    Blue: () => t("argon.colour.blue", "Blue"),
+    Navy: () => t("argon.colour.navy", "Navy"),
+    Indigo: () => t("argon.colour.indigo", "Indigo"),
+    Purple: () => t("argon.colour.purple", "Purple"),
+    Brown: () => t("argon.colour.brown", "Brown"),
+    Gold: () => t("argon.colour.gold", "Gold"),
+    Beige: () => t("argon.colour.beige", "Beige"),
+    "Sky blue": () => t("argon.colour.skyBlue", "Sky blue"),
+    Magenta: () => t("argon.colour.magenta", "Magenta"),
+    Cyan: () => t("argon.colour.cyan", "Cyan"),
+  };
+  return words[name] ? words[name]() : name;
+}
 export function colourName(color: string): string {
   const names = String(color || "")
     .split("/")
@@ -347,7 +381,7 @@ export function colourName(color: string): string {
         const d = (n[1] - r) ** 2 + (n[2] - g) ** 2 + (n[3] - b) ** 2;
         if (d < dist) [best, dist] = [n, d];
       }
-      return best[0];
+      return colourWord(best[0]);
     })
     .filter(Boolean);
   return [...new Set(names)].join(" / ");
@@ -358,7 +392,10 @@ export function colourName(color: string): string {
 /* An amount already in `currency` (the visitor's, by default), formatted by
    the region switcher's rules, so Argon's words match the pill's choice. */
 export function moneyText(amount: number, currency: string, whole = false): string {
-  return formatMoney(amount, currency || currentCurrency(), { short: whole });
+  const text = formatMoney(amount, currency || currentCurrency(), { short: whole });
+  /* Right to left (Arabic): the amount keeps its own left-to-right order
+     inside the sentence ("US$ 2,000", not "2,000 $US"). */
+  return isRtl() ? "\u2066" + text + "\u2069" : text;
 }
 
 /* ━━━━━━━━━━━━ Deal timers: the deal's own end ━━━━━━━━━━━━
@@ -406,7 +443,7 @@ export function timeLeft(end: Date | null, now: number): TimeLeft | null {
   const h = String(Math.floor((left % 86400) / 3600)).padStart(2, "0");
   const m = String(Math.floor((left % 3600) / 60)).padStart(2, "0");
   const sec = String(left % 60).padStart(2, "0");
-  return { d, h, m, s: sec, text: `${d ? d + "d " : ""}${h}:${m}:${sec}` };
+  return { d, h, m, s: sec, text: d ? t("argon.clock.days", "{d}d {hms}", { d, hms: `${h}:${m}:${sec}` }) : `${h}:${m}:${sec}` };
 }
 
 /** A brand's products: the catalogue with Selldone's own brand filter. */
@@ -435,9 +472,9 @@ export function readTagIndex(): void {
 export function badgesOf(product: any, onDeal: boolean): { key: string; label: string }[] {
   const tags = tagIndex.byId[product?.id] || [];
   const out: { key: string; label: string }[] = [];
-  if (onDeal) out.push({ key: "deal", label: "Deal" });
-  if (tags.some(isNewTag)) out.push({ key: "new", label: "New" });
-  if (tags.some(isBestSellerTag)) out.push({ key: "best", label: "Best seller" });
+  if (onDeal) out.push({ key: "deal", label: t("argon.badge.deal", "Deal") });
+  if (tags.some(isNewTag)) out.push({ key: "new", label: t("argon.badge.new", "New") });
+  if (tags.some(isBestSellerTag)) out.push({ key: "best", label: t("argon.badge.best", "Best seller") });
   return out;
 }
 
@@ -455,5 +492,5 @@ export function dealsEndDate(shop: any, list: any[]): Date | null {
 /** "Nov 9, 2027". */
 export function shortDate(d: Date | null): string {
   if (!d) return "";
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return formatDate(d, { month: "short", day: "numeric", year: "numeric" });
 }

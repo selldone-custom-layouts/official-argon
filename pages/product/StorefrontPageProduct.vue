@@ -25,17 +25,17 @@
     <div style="order: 0">
       <div class="s--product-section-info ar-wrap">
         <slot name="header" :center="true"></slot>
-        <nav aria-label="Breadcrumb" class="ar-crumbs">
-          <router-link :to="{ path: '/' }">Home</router-link>
+        <nav :aria-label="t('pdp.breadcrumb', 'Breadcrumb')" class="ar-crumbs">
+          <router-link :to="{ path: '/' }">{{ t("pages.home", "Home") }}</router-link>
           <template v-if="product && product.category">
-            <span aria-hidden="true" class="ms">chevron_right</span>
+            <span aria-hidden="true" class="ms k-flip">chevron_right</span>
             <router-link
               :to="{ name: window.$storefront.routes.SHOP_CATEGORY_PAGE, params: { category_name: product.category.name } }"
               >{{ product.category.title || product.category.name }}</router-link
             >
           </template>
           <template v-if="product">
-            <span aria-hidden="true" class="ms">chevron_right</span>
+            <span aria-hidden="true" class="ms k-flip">chevron_right</span>
             <span aria-current="page" class="ar-crumbs__here">{{ product.title }}</span>
           </template>
           <span class="ar-crumbs__tools">
@@ -47,7 +47,7 @@
           <template #below>
             <!-- About this product -->
             <section id="ar-about" aria-labelledby="ar-about-h" class="ar-pcard ar-about">
-              <h2 id="ar-about-h" class="ar-pcard__h -big">About this product</h2>
+              <h2 id="ar-about-h" class="ar-pcard__h -big">{{ t("pdp.about", "About this product") }}</h2>
               <ul v-if="features.length" class="ar-about__bullets">
                 <li v-for="f in features" :key="f.key"><b>{{ f.key }}:</b> {{ f.value }}</li>
               </ul>
@@ -58,7 +58,7 @@
 
             <!-- Specifications, in the shop's own groups -->
             <section v-if="spec_groups.length" id="ar-specs" aria-labelledby="ar-specs-h" class="ar-pcard ar-specs">
-              <h2 id="ar-specs-h" class="ar-pcard__h -big">Specifications</h2>
+              <h2 id="ar-specs-h" class="ar-pcard__h -big">{{ t("argon.pdp.specs", "Specifications") }}</h2>
               <table v-for="g in spec_groups" :key="g.title" class="ar-spec">
                 <caption v-if="spec_groups.length > 1 || g.title">{{ g.title }}</caption>
                 <tbody>
@@ -72,27 +72,27 @@
 
             <!-- Delivery and returns -->
             <section class="ar-pcard ar-ship">
-              <h2 class="ar-pcard__h -big">Delivery and returns</h2>
+              <h2 class="ar-pcard__h -big">{{ t("argon.pdp.delivery", "Delivery and returns") }}</h2>
               <ul v-if="ways.length" class="ar-ship__ways">
                 <li v-for="w in ways" :key="w.key">
                   <span class="ms">{{ w.icon === "storefront" ? "storefront" : "local_shipping" }}</span>
                   <span
                     ><b>{{ w.word }}</b> {{ w.line }}.
-                    <template v-if="w.free">Free.</template>
-                    <template v-else-if="w.freeOver">Free on orders over {{ moneyFrom(w.freeOver, w.currency, { short: "auto" }) }}.</template>
+                    <template v-if="w.free">{{ t("argon.pdp.freeDot", "Free.") }}</template>
+                    <template v-else-if="w.freeOver">{{ t("argon.pdp.freeOver", "Free on orders over {amount}.", { amount: moneyFrom(w.freeOver, w.currency, { short: "auto" }) }) }}</template>
                   </span>
                 </li>
               </ul>
-              <p v-else class="ar-about__p">Delivery options and their prices show at checkout, for your address.</p>
+              <p v-else class="ar-about__p">{{ t("argon.pdp.waysLater", "Delivery options and their prices show at checkout, for your address.") }}</p>
               <s-product-shipping class="ar-block"></s-product-shipping>
               <s-product-warranty class="ar-block"></s-product-warranty>
               <s-product-guide class="ar-block"></s-product-guide>
-              <router-link :to="{ name: window.$storefront.routes.SHOP_PROFILE_PAGE_TERMS }" class="ar-link">Returns and terms<span class="ms">chevron_right</span></router-link>
+              <router-link :to="{ name: window.$storefront.routes.SHOP_PROFILE_PAGE_TERMS }" class="ar-link">{{ t("argon.pdp.returnsTerms", "Returns and terms") }}<span class="ms k-flip">chevron_right</span></router-link>
             </section>
 
             <!-- Reviews -->
             <section id="ar-reviews" aria-labelledby="ar-reviews-h" class="ar-pcard ar-reviews k-reviews">
-              <h2 id="ar-reviews-h" class="ar-pcard__h -big">Reviews</h2>
+              <h2 id="ar-reviews-h" class="ar-pcard__h -big">{{ t("reviews.title", "Reviews") }}</h2>
               <kalio-reviews></kalio-reviews>
             </section>
           </template>
@@ -122,7 +122,7 @@
       <!-- Customers also viewed, more in the category -->
       <div :style="{ order: getOrder('related-products') }">
         <div id="ar-related">
-          <argon-rail v-if="related === null || related.length" :products="related" class="ar-wrap" title="Customers also viewed" @quick-buy="quickBuy" />
+          <argon-rail v-if="related === null || related.length" :products="related" class="ar-wrap" :title="t('argon.pdp.alsoViewed', 'Customers also viewed')" @quick-buy="quickBuy" />
         </div>
         <argon-row
           v-if="product.category"
@@ -130,7 +130,7 @@
           :dir="product.category.name"
           :exclude="product.id"
           :more-to="{ name: window.$storefront.routes.SHOP_CATEGORY_PAGE, params: { category_name: product.category.name } }"
-          :title="'More in ' + (product.category.title || product.category.name)"
+          :title="t('argon.pdp.moreIn', 'More in {category}', { category: product.category.title || product.category.name })"
           class="ar-wrap"
           lazy
           sort="bestselling"
@@ -143,6 +143,7 @@
 
 <script lang="ts">
 import { money as moneyFrom } from "../../components/region-switcher/region";
+import { t } from "../../components/kalio/i18n/kalio-i18n";
 import NotificationService from "@selldone/components-vue/plugins/notification/NotificationService.ts";
 
 import ArgonProductOverview from "../../components/argon/product/ArgonProductOverview.vue";
@@ -278,9 +279,9 @@ export default {
     },
     tabs() {
       return [
-        { key: "details", label: "Details" },
-        { key: "spec", label: "Specifications" },
-        { key: "ship", label: "Shipping & returns" },
+        { key: "details", label: t("argon.pdp.details", "Details") },
+        { key: "spec", label: t("argon.pdp.specs", "Specifications") },
+        { key: "ship", label: t("argon.pdp.shipping", "Shipping & returns") },
       ];
     },
     /* Highlights: the merchant's pros, else the spec's first group. */

@@ -25,6 +25,7 @@
  * each dark "text" colour on that card 7.4 or more.
  */
 import type { ThemeSwitcherConfig } from "../theme-switcher/theme-switcher";
+import { t } from "../kalio/i18n/kalio-i18n";
 import { THEME_SETTINGS } from "./argon-theme.settings";
 
 export const ARGON_THEME: ThemeSwitcherConfig = {
@@ -45,7 +46,9 @@ export const ARGON_THEME: ThemeSwitcherConfig = {
   palettes: [
     {
       id: "argon",
-      name: "Argon",
+      get name() {
+        return t("argon.palette.argon", "Argon");
+      },
       light: {
         primary: "#007a3d", deep: "#00602f", soft: "#e6f2eb", onPrimary: "#ffffff", text: "#007a3d",
         brand: "#c8102e", brandDeep: "#a50d25", brandSoft: "#fdecee", brandText: "#c8102e",
@@ -57,7 +60,9 @@ export const ARGON_THEME: ThemeSwitcherConfig = {
     },
     {
       id: "cobalt",
-      name: "Cobalt",
+      get name() {
+        return t("argon.palette.cobalt", "Cobalt");
+      },
       light: {
         primary: "#1d4ed8", deep: "#1e40af", soft: "#e8efff", onPrimary: "#ffffff", text: "#1d4ed8",
         brand: "#1d4ed8", brandDeep: "#1e40af", brandSoft: "#e8efff", brandText: "#1d4ed8",
@@ -69,7 +74,9 @@ export const ARGON_THEME: ThemeSwitcherConfig = {
     },
     {
       id: "plum",
-      name: "Plum",
+      get name() {
+        return t("argon.palette.plum", "Plum");
+      },
       light: {
         primary: "#7e22ce", deep: "#6b21a8", soft: "#f3e8ff", onPrimary: "#ffffff", text: "#7e22ce",
         brand: "#7e22ce", brandDeep: "#6b21a8", brandSoft: "#f3e8ff", brandText: "#7e22ce",
@@ -81,7 +88,9 @@ export const ARGON_THEME: ThemeSwitcherConfig = {
     },
     {
       id: "teal",
-      name: "Teal",
+      get name() {
+        return t("argon.palette.teal", "Teal");
+      },
       light: {
         primary: "#0f766e", deep: "#115e59", soft: "#e2f5f2", onPrimary: "#ffffff", text: "#0f766e",
         brand: "#0f766e", brandDeep: "#115e59", brandSoft: "#e2f5f2", brandText: "#0f766e",
@@ -93,7 +102,9 @@ export const ARGON_THEME: ThemeSwitcherConfig = {
     },
     {
       id: "tangerine",
-      name: "Tangerine",
+      get name() {
+        return t("argon.palette.tangerine", "Tangerine");
+      },
       light: {
         primary: "#b4450a", deep: "#923808", soft: "#fdf0e3", onPrimary: "#ffffff", text: "#b4450a",
         brand: "#b4450a", brandDeep: "#923808", brandSoft: "#fdf0e3", brandText: "#b4450a",
@@ -192,7 +203,35 @@ export const ARGON_THEME: ThemeSwitcherConfig = {
 
   metaThemeColor: "light.brand",
   ui: { ink: "var(--ar-ink)", muted: "var(--ar-muted)", line: "var(--ar-line)", surface: "var(--ar-surface)", font: '"Barlow", system-ui, sans-serif' },
-  labels: { theme: "Theme", palettes: "Colour", mode: "Light or dark", modeTitle: "Mode", light: "Light", dark: "Dark", custom: "Custom colour", adjusted: "Adjusted for readability", brand: "Brand colour" },
+  labels: {
+    get theme() {
+      return t("theme.title", "Theme");
+    },
+    get palettes() {
+      return t("theme.palettes", "Colour");
+    },
+    get mode() {
+      return t("theme.mode", "Light or dark");
+    },
+    get modeTitle() {
+      return t("theme.modeTitle", "Mode");
+    },
+    get light() {
+      return t("theme.light", "Light");
+    },
+    get dark() {
+      return t("theme.dark", "Dark");
+    },
+    get custom() {
+      return t("theme.custom", "Custom colour");
+    },
+    get adjusted() {
+      return t("theme.adjusted", "Adjusted for readability");
+    },
+    get brand() {
+      return t("theme.brand", "Brand colour");
+    },
+  },
 
   /* "Custom colour" (the owner, 9 November 2026): any colour, made readable by
      paletteFromColor(), and used for both the buy colour and the brand. The

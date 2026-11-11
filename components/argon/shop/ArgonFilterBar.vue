@@ -19,7 +19,7 @@
       <v-menu :close-on-content-click="true" location="bottom start" offset="6">
         <template v-slot:activator="{ props, isActive }">
           <button :class="{ '-open': isActive }" class="ar-fbtn -sort" type="button" v-bind="props">
-            <span class="ar-fbtn__k">Sort by</span><b>{{ sortName(sort, sortFallback) }}</b><span class="ms">expand_more</span>
+            <span class="ar-fbtn__k">{{ t("argon.filter.sortBy", "Sort by") }}</span><b>{{ sortName(sort, sortFallback) }}</b><span class="ms">expand_more</span>
           </button>
         </template>
         <div class="ar-fdd" role="listbox">
@@ -42,11 +42,11 @@
       <v-menu v-if="cats.length" location="bottom start" offset="6">
         <template v-slot:activator="{ props, isActive }">
           <button :class="{ '-open': isActive, '-set': !!current }" class="ar-fbtn" type="button" v-bind="props">
-            {{ currentCat ? currentCat.title || currentCat.name : "Category" }}<span class="ms">expand_more</span>
+            {{ currentCat ? currentCat.title || currentCat.name : t("argon.search.category", "Category") }}<span class="ms">expand_more</span>
           </button>
         </template>
         <div class="ar-fdd -cats">
-          <router-link :class="{ '-on': !current }" :to="allTo" class="ar-fdd__opt">All categories</router-link>
+          <router-link :class="{ '-on': !current }" :to="allTo" class="ar-fdd__opt">{{ t("argon.list.allCategories", "All categories") }}</router-link>
           <router-link v-for="c in cats" :key="c.id" :class="{ '-on': c.name === current }" :to="catTo(c)" class="ar-fdd__opt">
             {{ c.title || c.name }}<span v-if="c.name === current" class="ms">check</span>
           </router-link>
@@ -57,7 +57,7 @@
       <v-menu v-if="has_price" :close-on-content-click="false" location="bottom start" offset="6">
         <template v-slot:activator="{ props, isActive }">
           <button :class="{ '-open': isActive, '-set': priceSet }" class="ar-fbtn" type="button" v-bind="props">
-            Price<span class="ms">expand_more</span>
+            {{ t("argon.filter.price", "Price") }}<span class="ms">expand_more</span>
           </button>
         </template>
         <div class="ar-fdd -price">
@@ -74,11 +74,11 @@
             @end="applyPrice(price_draft)"
           ></v-range-slider>
           <div class="ar-prange">
-            <label><span>{{ sign }}</span><input :value="Math.round(price_draft[0])" aria-label="Lowest price" inputmode="numeric" @change="typed(0, $event)" /></label>
+            <label><span>{{ sign }}</span><input :value="Math.round(price_draft[0])" :aria-label="t('argon.filter.lowest', 'Lowest price')" inputmode="numeric" @change="typed(0, $event)" /></label>
             <em>to</em>
-            <label><span>{{ sign }}</span><input :value="Math.round(price_draft[1])" aria-label="Highest price" inputmode="numeric" @change="typed(1, $event)" /></label>
+            <label><span>{{ sign }}</span><input :value="Math.round(price_draft[1])" :aria-label="t('argon.filter.highest', 'Highest price')" inputmode="numeric" @change="typed(1, $event)" /></label>
           </div>
-          <button v-if="priceSet" class="ar-fdd__clear" type="button" @click="applyPrice([price_min, price_max])">Any price</button>
+          <button v-if="priceSet" class="ar-fdd__clear" type="button" @click="applyPrice([price_min, price_max])">{{ t("argon.filter.anyPrice", "Any price") }}</button>
         </div>
       </v-menu>
 
@@ -110,7 +110,7 @@
               <span class="t-check__t">{{ valueLabel(v) }}</span>
             </label>
           </template>
-          <button v-if="picked(group).length" class="ar-fdd__clear" type="button" @click="emit(withGroup(modelValue, group, []))">Clear</button>
+          <button v-if="picked(group).length" class="ar-fdd__clear" type="button" @click="emit(withGroup(modelValue, group, []))">{{ t("argon.filter.clear", "Clear") }}</button>
         </div>
       </v-menu>
 
@@ -123,15 +123,15 @@
         type="button"
         @click="toggleDeals"
       >
-        <span class="ms">sell</span>On sale
+        <span class="ms">sell</span>{{ t("argon.filter.onSale", "On sale") }}
       </button>
 
       <button class="ar-fbtn -all" type="button" @click="panel = true">
-        <span class="ms">tune</span>All filters<b v-if="on_count" class="ar-fbtn__n">{{ on_count }}</b>
+        <span class="ms">tune</span>{{ t("argon.filter.all", "All filters") }}<b v-if="on_count" class="ar-fbtn__n">{{ on_count }}</b>
       </button>
     </div>
     <transition mode="out-in" name="lm-fade">
-      <p v-if="total !== null" :key="total" class="ar-fbar__count">{{ total }} {{ total === 1 ? "result" : "results" }}</p>
+      <p v-if="total !== null" :key="total" class="ar-fbar__count">{{ t("argon.filter.results", { one: "{n} result", other: "{n} results" }, { n: total }) }}</p>
     </transition>
   </div>
 
@@ -141,14 +141,14 @@
       <div v-if="panel" aria-hidden="true" class="ar-sheet-scrim" @click="panel = false"></div>
     </transition>
     <transition name="ar-slide-r">
-      <div v-if="panel" aria-label="All filters" aria-modal="true" class="ar-sheet" role="dialog" @keydown.esc="panel = false">
+      <div v-if="panel" :aria-label="t('argon.filter.all', 'All filters')" aria-modal="true" class="ar-sheet" role="dialog" @keydown.esc="panel = false">
         <header class="ar-sheet__h">
-          <b>All filters</b>
-          <button ref="sheetX" aria-label="Close" class="ar-x" type="button" @click="panel = false"><span class="ms">close</span></button>
+          <b>{{ t("argon.filter.all", "All filters") }}</b>
+          <button ref="sheetX" :aria-label="t('argon.common.close', 'Close')" class="ar-x" type="button" @click="panel = false"><span class="ms">close</span></button>
         </header>
         <div class="ar-sheet__b">
           <section class="ar-sgrp">
-            <h5>Sort by</h5>
+            <h5>{{ t("argon.filter.sortBy", "Sort by") }}</h5>
             <div class="ar-sgrp__opts">
               <button v-for="s in SORTS" :key="s.val" :aria-pressed="draft_sort === s.val" :class="{ '-on': draft_sort === s.val }" class="ar-opt" type="button" @click="draft_sort = s.val">
                 {{ s.name }}
@@ -157,16 +157,16 @@
           </section>
           <section v-if="!ignore.includes('discount')" class="ar-sgrp">
             <label class="t-switch">
-              <span>On sale only</span>
+              <span>{{ t("argon.filter.onSaleOnly", "On sale only") }}</span>
               <input v-model="draft.only_has_discount" type="checkbox" />
               <i></i>
             </label>
           </section>
           <section v-if="has_price" class="ar-sgrp">
-            <h5>Price</h5>
+            <h5>{{ t("argon.filter.price", "Price") }}</h5>
             <v-range-slider v-model="draft_price" :max="price_max" :min="price_min" :step="price_step" color="primary" hide-details thumb-size="18" track-size="3" />
             <div class="ar-prange -static">
-              <span>{{ money(draft_price[0]) }}</span><em>to</em><span>{{ money(draft_price[1]) }}</span>
+              <span>{{ money(draft_price[0]) }}</span><em>{{ t("argon.filter.to", "to") }}</em><span>{{ money(draft_price[1]) }}</span>
             </div>
           </section>
           <section v-for="group in ordered" :key="'p' + group.kind + group.key" class="ar-sgrp">
@@ -200,8 +200,8 @@
           </section>
         </div>
         <footer class="ar-sheet__f">
-          <button class="ar-btn -line" type="button" @click="draftClear">Clear all</button>
-          <button class="ar-btn" type="button" @click="draftApply">Show results</button>
+          <button class="ar-btn -line" type="button" @click="draftClear">{{ t("argon.filter.clearAll", "Clear all") }}</button>
+          <button class="ar-btn" type="button" @click="draftApply">{{ t("argon.filter.show", "Show results") }}</button>
         </footer>
       </div>
     </transition>
@@ -210,6 +210,7 @@
 
 <script>
 import { currentCurrency, signOf } from "../../region-switcher/region";
+import { t } from "../../kalio/i18n/kalio-i18n";
 import CurrencyMixin from "@selldone/components-vue/mixin/currency/CurrencyMixin.ts";
 import { PriceHelper } from "@selldone/core-js/helper";
 import { SORTS, clone, countOn, groupsOf, picked, sortName, valueLabel, withGroup } from "../../walio/shop/walio-filters";
@@ -226,7 +227,7 @@ export default {
     filters: { type: Object, default: null },
     modelValue: { type: Object, default: null },
     sort: { type: String, default: null },
-    sortFallback: { type: String, default: "Relevance" },
+    sortFallback: { type: String, default: "" },
     cats: { type: Array, default: () => [] },
     current: { type: String, default: null },
     total: { type: Number, default: null },
@@ -342,7 +343,7 @@ export default {
       return moneyText(n, this.currency, true);
     },
     groupLabel(group) {
-      if (group.kind === "brand") return "Brands";
+      if (group.kind === "brand") return t("argon.filter.brands", "Brands");
       return group.label;
     },
     catTo(c) {

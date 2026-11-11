@@ -18,6 +18,7 @@
  *
  * Nothing here names a product, a price or a seller.
  */
+import { t } from "../kalio/i18n/kalio-i18n";
 
 declare const window: any;
 
@@ -100,12 +101,13 @@ export const DEALS_FILTER = JSON.stringify({ only_has_discount: true });
 /* ━━━━━━━━━━━━ Ways to get it ━━━━━━━━━━━━
    Selldone's transportation types, grouped as a shopper says them. A type
    not listed here is shown under its own title, as "Delivery". */
-const WAYS: { types: string[]; word: string; icon: string; line: string }[] = [
-  { types: ["Pickup"], word: "Pickup", icon: "storefront", line: "Order online, collect at the shop" },
-  { types: ["Motorbike", "Bicycle"], word: "Delivery", icon: "two_wheeler", line: "A courier brings it to your door" },
-  { types: ["CargoSmall", "Cargo", "Truck"], word: "Shipping", icon: "local_shipping", line: "Shipped to your address" },
-  { types: ["Post", "PostFast"], word: "By post", icon: "local_post_office", line: "Sent to your address by post" },
-  { types: ["Airplane", "Global"], word: "Worldwide", icon: "public", line: "Shipped wherever you are" },
+/* `id` is the stable key; the words are getters, read in the visitor's language. */
+const WAYS: { id: string; types: string[]; word: string; icon: string; line: string }[] = [
+  { id: "Pickup", types: ["Pickup"], get word() { return t("argon.way.pickup", "Pickup"); }, icon: "storefront", get line() { return t("argon.way.pickupLine", "Order online, collect at the shop"); } },
+  { id: "Delivery", types: ["Motorbike", "Bicycle"], get word() { return t("argon.way.delivery", "Delivery"); }, icon: "two_wheeler", get line() { return t("argon.way.deliveryLine", "A courier brings it to your door"); } },
+  { id: "Shipping", types: ["CargoSmall", "Cargo", "Truck"], get word() { return t("argon.way.shipping", "Shipping"); }, icon: "local_shipping", get line() { return t("argon.way.shippingLine", "Shipped to your address"); } },
+  { id: "Post", types: ["Post", "PostFast"], get word() { return t("argon.way.post", "By post"); }, icon: "local_post_office", get line() { return t("argon.way.postLine", "Sent to your address by post"); } },
+  { id: "Worldwide", types: ["Airplane", "Global"], get word() { return t("argon.way.worldwide", "Worldwide"); }, icon: "public", get line() { return t("argon.way.worldwideLine", "Shipped wherever you are"); } },
 ];
 
 export interface Way {
@@ -123,11 +125,11 @@ export interface Way {
 /** The shop's enabled delivery methods, one card per kind. */
 export function waysOf(shop: any): Way[] {
   const out: Way[] = [];
-  for (const t of (shop?.transportations || []).filter((t: any) => t && t.enable)) {
-    const kind = WAYS.find((w) => w.types.includes(t.type));
-    const key = kind ? kind.word : t.type;
-    const free = !!t.free_shipping && !(Number(t.free_shipping_limit) > 0);
-    const freeOver = t.free_shipping && Number(t.free_shipping_limit) > 0 ? Number(t.free_shipping_limit) : null;
+  for (const tr of (shop?.transportations || []).filter((x: any) => x && x.enable)) {
+    const kind = WAYS.find((w) => w.types.includes(tr.type));
+    const key = kind ? kind.id : tr.type;
+    const free = !!tr.free_shipping && !(Number(tr.free_shipping_limit) > 0);
+    const freeOver = tr.free_shipping && Number(tr.free_shipping_limit) > 0 ? Number(tr.free_shipping_limit) : null;
     const known = out.find((w) => w.key === key);
     if (known) {
       /* Two methods of one kind: the more generous free rule wins. */
@@ -137,17 +139,17 @@ export function waysOf(shop: any): Way[] {
     }
     out.push({
       key,
-      word: t.title || (kind ? kind.word : "Delivery"),
+      word: tr.title || (kind ? kind.word : t("argon.way.delivery", "Delivery")),
       icon: kind ? kind.icon : "local_shipping",
-      line: kind ? kind.line : "Brought to your address",
+      line: kind ? kind.line : t("argon.way.otherLine", "Brought to your address"),
       free,
       freeOver,
-      currency: t.currency || shop?.currency || null,
+      currency: tr.currency || shop?.currency || null,
     });
   }
   /* In the order shoppers expect: pickup, delivery, shipping, post. */
   const rank = (way: Way) => {
-    const at = WAYS.findIndex((w) => w.word === way.key);
+    const at = WAYS.findIndex((w) => w.id === way.key);
     return at === -1 ? WAYS.length : at;
   };
   return out.sort((a, b) => rank(a) - rank(b));

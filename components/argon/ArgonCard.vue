@@ -34,7 +34,7 @@
       </div>
       <button
         v-if="!inside"
-        :aria-label="isSaved ? `Remove ${product.title} from your wishlist` : `Add ${product.title} to your wishlist`"
+        :aria-label="isSaved ? t('argon.card.unsave', 'Remove {name} from your wishlist', { name: product.title }) : t('argon.card.save', 'Add {name} to your wishlist', { name: product.title })"
         :aria-pressed="isSaved ? 'true' : 'false'"
         :class="{ '-on': isSaved }"
         class="ar-card__heart"
@@ -53,20 +53,20 @@
       </div>
 
       <div class="ar-price">
-        <small v-if="choose && fromPrice !== null" class="ar-price__from">From</small>
+        <small v-if="choose && fromPrice !== null" class="ar-price__from">{{ t("argon.price.from", "From") }}</small>
         <u-price :amount="choose && fromPrice !== null ? fromPrice : money.now" :currency="currency" class="ar-price__now" />
       </div>
       <div class="ar-was">
         <template v-if="money.save > 0 && !choose">
-          <span class="ar-save">Save {{ moneyWhole(money.save) }}</span>
-          <span class="ar-was__t">Was <s><u-price :amount="money.was" :currency="currency" /></s></span>
+          <span class="ar-save">{{ t("argon.price.save", "Save {amount}", { amount: moneyWhole(money.save) }) }}</span>
+          <span class="ar-was__t">{{ t("argon.price.was", "Was") }} <s><u-price :amount="money.was" :currency="currency" /></s></span>
         </template>
-        <span v-else-if="choose && off > 0" class="ar-save">Up to {{ off }}% off</span>
+        <span v-else-if="choose && off > 0" class="ar-save">{{ t("argon.price.upToPercent", "Up to {off}% off", { off }) }}</span>
       </div>
       <!-- The deal's clock; its line is kept on every card so a row stays level. -->
       <div class="ar-card__cd"><argon-deal-clock :end="dealEndsAt" mode="line" /></div>
 
-      <div v-if="colours.length" :aria-label="`Colour of ${product.title}`" class="ar-swrow" role="radiogroup">
+      <div v-if="colours.length" :aria-label="t('argon.card.colourOf', 'Colour of {name}', { name: product.title })" class="ar-swrow" role="radiogroup">
         <button
           v-for="(v, i) in colours.slice(0, maxSwatches)"
           :key="i"
@@ -89,23 +89,23 @@
       <div v-else class="ar-swrow -none"></div>
 
       <div class="ar-card__buy" @click.prevent.stop>
-        <div v-if="shown > 0" :class="{ '-busy': busy }" aria-label="Quantity in cart" class="ar-step" role="group">
-          <button :aria-label="shown > 1 ? 'One fewer' : 'Remove from cart'" type="button" @click.prevent.stop="step(-1)">
+        <div v-if="shown > 0" :class="{ '-busy': busy }" :aria-label="t('card.qtyInBasket', 'Quantity in cart')" class="ar-step" role="group">
+          <button :aria-label="shown > 1 ? t('cart.qty.fewer', 'One fewer') : t('cart.qty.remove', 'Remove from cart')" type="button" @click.prevent.stop="step(-1)">
             <span class="ms">{{ shown > 1 ? "remove" : "delete" }}</span>
           </button>
-          <output aria-live="polite"><b>{{ shown }}</b><small> in cart</small></output>
-          <button aria-label="One more" type="button" @click.prevent.stop="step(1)"><span class="ms">add</span></button>
+          <output aria-live="polite"><b>{{ shown }}</b><small> {{ t("card.inBasket", "in cart") }}</small></output>
+          <button :aria-label="t('cart.qty.more', 'One more')" type="button" @click.prevent.stop="step(1)"><span class="ms">add</span></button>
         </div>
-        <button v-else-if="soldOut" class="ar-btn -block -off" disabled type="button">Out of stock</button>
+        <button v-else-if="soldOut" class="ar-btn -block -off" disabled type="button">{{ t("argon.buy.outOfStock", "Out of stock") }}</button>
         <button v-else-if="choose" class="ar-btn -block" type="button" @click.prevent.stop="$emit('quick-buy', product)">
-          <span class="ar-long">Choose options</span><span class="ar-short">Options</span>
+          <span class="ar-long">{{ t("card.seeOptions", "Choose options") }}</span><span class="ar-short">{{ t("card.options", "Options") }}</span>
         </button>
         <button v-else class="ar-btn -block" type="button" @click.prevent.stop="add">
-          <span class="ar-long">Add to cart</span><span class="ar-short">Add</span>
+          <span class="ar-long">{{ t("card.addToBasket", "Add to cart") }}</span><span class="ar-short">{{ t("card.add", "Add") }}</span>
         </button>
         <button
           v-if="inside"
-          :aria-label="isSaved ? `Remove ${product.title} from your wishlist` : `Add ${product.title} to your wishlist`"
+          :aria-label="isSaved ? t('argon.card.unsave', 'Remove {name} from your wishlist', { name: product.title }) : t('argon.card.save', 'Add {name} to your wishlist', { name: product.title })"
           :aria-pressed="isSaved ? 'true' : 'false'"
           :class="{ '-on': isSaved }"
           class="ar-card__sq"
@@ -118,7 +118,7 @@
 
       <div class="ar-card__foot" @click.prevent.stop>
         <button :aria-pressed="comparing ? 'true' : 'false'" :class="{ '-on': comparing }" class="ar-cmp" type="button" @click.prevent.stop="toggleCompare">
-          <i><span class="ms">check</span></i>Compare
+          <i><span class="ms">check</span></i>{{ t("argon.footer.compare", "Compare") }}
         </button>
       </div>
     </div>

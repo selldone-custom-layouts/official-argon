@@ -64,8 +64,12 @@
   --k-star-off: #d9d9d9;
 
   /* Type */
-  --k-display: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --k-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* The script faces (Arabic, Devanagari) come after Barlow: a glyph Barlow
+     lacks falls through to them. kalio-i18n loads each only when its
+     language is picked; until then the system face shows. */
+  --k-scripts: "Noto Sans Arabic", "Noto Sans Devanagari";
+  --k-display: "Barlow", var(--k-scripts), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --k-body: "Barlow", var(--k-scripts), system-ui, -apple-system, "Segoe UI", sans-serif;
 
   /* Geometry */
   --k-radius: 10px;
@@ -129,8 +133,8 @@ s:has(> .u--price) {
     content: "";
     position: absolute;
     top: 55%;
-    right: -1px;
-    left: -1px;
+    inset-inline-end: -1px;
+    inset-inline-start: -1px;
     height: 1.5px;
     border-radius: 1px;
     background: currentColor;

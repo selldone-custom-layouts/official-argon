@@ -11,7 +11,7 @@
 -->
 <template>
   <section v-if="items.length > 1" id="ar-together" aria-labelledby="ar-together-h" class="ar-sec ar-together">
-    <header class="ar-head"><h2 id="ar-together-h">{{ curated ? "Frequently bought together" : "Goes well together" }}</h2></header>
+    <header class="ar-head"><h2 id="ar-together-h">{{ curated ? t("argon.together.title", "Frequently bought together") : t("argon.together.goes", "Goes well together") }}</h2></header>
     <div class="ar-together__box">
       <div class="ar-together__row">
         <template v-for="(it, i) in items" :key="it.p.id">
@@ -22,7 +22,7 @@
               <input v-model="it.on" type="checkbox" />
               <i aria-hidden="true"><span class="ms">check</span></i>
               <span>
-                <template v-if="!i"><b>This item:</b> </template>{{ it.p.title }}
+                <template v-if="!i"><b>{{ t("argon.together.this", "This item:") }}</b> </template>{{ it.p.title }}
               </span>
             </label>
             <b class="ar-together__price"><u-price :amount="priceOf(it)" :currency="currency" /></b>
@@ -30,11 +30,11 @@
         </template>
       </div>
       <div class="ar-together__sum">
-        <small>Total for {{ count === items.length ? (count === 3 ? "all three" : "both") : count === 1 ? "one item" : `${count} items` }}</small>
+        <small>{{ count === items.length && count > 1 ? (count === 3 ? t("argon.together.totalAll3", "Total for all three") : t("argon.together.totalBoth", "Total for both")) : t("argon.together.total", { one: "Total for one item", other: "Total for {n} items" }, { n: count }) }}</small>
         <u-price :amount="total" :currency="currency" class="ar-together__total" />
         <button :disabled="!count || adding" class="ar-btn" type="button" @click="addAll">
-          <template v-if="done"><span class="ms">check</span>Added to cart</template>
-          <template v-else><span class="ms">add_shopping_cart</span>Add {{ count === items.length && count > 1 ? `all ${count}` : count }} to cart</template>
+          <template v-if="done"><span class="ms">check</span>{{ t("argon.together.added", "Added to cart") }}</template>
+          <template v-else><span class="ms">add_shopping_cart</span>{{ count === items.length && count > 1 ? t("argon.together.addAll", "Add all {n} to cart", { n: count }) : t("argon.together.add", "Add {n} to cart", { n: count }) }}</template>
         </button>
       </div>
     </div>

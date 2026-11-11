@@ -10,7 +10,7 @@
     <header class="ar-head">
       <h2>{{ title }}</h2>
       <slot name="head"></slot>
-      <router-link v-if="moreTo" :to="moreTo" class="ar-more">{{ moreLabel }}<span class="ms">chevron_right</span></router-link>
+      <router-link v-if="moreTo" :to="moreTo" class="ar-more">{{ moreLabel || t("common.seeAll", "See all") }}<span class="ms k-flip">chevron_right</span></router-link>
       <button v-else-if="moreAction" class="ar-more" type="button" @click="$emit('more')">{{ moreLabel }}</button>
     </header>
     <div class="ar-rail">
@@ -24,8 +24,8 @@
           </slot>
         </template>
       </div>
-      <button v-show="!at_start" aria-label="Scroll back" class="ar-arrow -l" type="button" @click="nudge(-1)"><span class="ms">chevron_left</span></button>
-      <button v-show="!at_end" aria-label="Scroll forward" class="ar-arrow -r" type="button" @click="nudge(1)"><span class="ms">chevron_right</span></button>
+      <button v-show="!at_start" :aria-label="t('argon.rail.back', 'Scroll back')" class="ar-arrow -l" type="button" @click="nudge(-1)"><span class="ms k-flip">chevron_left</span></button>
+      <button v-show="!at_end" :aria-label="t('argon.rail.forward', 'Scroll forward')" class="ar-arrow -r" type="button" @click="nudge(1)"><span class="ms k-flip">chevron_right</span></button>
     </div>
   </section>
 </template>
@@ -41,7 +41,7 @@ export default {
     /** null while loading. */
     products: { type: Array, default: null },
     moreTo: { type: Object, default: null },
-    moreLabel: { type: String, default: "See all" },
+    moreLabel: { type: String, default: "" },
     moreAction: Boolean,
   },
   emits: ["quick-buy", "more"],
@@ -70,7 +70,8 @@ export default {
     nudge(dir) {
       const t = this.$refs.track;
       if (!t) return;
-      t.scrollBy({ left: dir * Math.round(t.clientWidth * 0.8), behavior: "smooth" });
+      const sign = getComputedStyle(t).direction === "rtl" ? -1 : 1;
+      t.scrollBy({ left: sign * dir * Math.round(t.clientWidth * 0.8), behavior: "smooth" });
     },
   },
 };
