@@ -202,7 +202,7 @@ const da: Record<string, string> = {
   "argon.home.promo.dealsFresh": "Nye priser i hele butikken",
   "argon.home.promo.dealsLine": "Spar op til {amount} i dag",
   "argon.home.promo.newLine": "Lige kommet hos {shop}",
-  "argon.home.seo.cats": "Shop {categories}, hvor hvert tilbud viser, hvornår det slutter, og hver pris bliver tjekket i kurven.",
+  "argon.home.seo.cats": "Køb {categories}, hvor hvert tilbud viser, hvornår det slutter, og hver pris bliver tjekket i kurven.",
   "argon.home.seo.lede": "{shop} er en webshop med elektronik: det nyeste inden for teknik, ærlige tilbud med rigtige slutdatoer og hjælp, når du har brug for den.",
   "argon.home.seo.less": "Læs mindre",
   "argon.home.seo.more": "Læs mere",

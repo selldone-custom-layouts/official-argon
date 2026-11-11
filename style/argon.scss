@@ -3732,6 +3732,70 @@ html[dir="rtl"] .ar-slide-r-leave-to {
   }
 }
 
+/* ━━━━━━━━━━━━━━━━━━━━━ Merchant text keeps its own direction ━━━━━━━━━━━━━━━━━━━━━
+   On an Arabic page, names, descriptions, brands, banner lines and spec values
+   the merchant wrote in English would take the page's direction and show
+   their full stop at the wrong end (".TVs"). Each element that draws
+   merchant data takes its direction from its own first letter (plaintext);
+   blocks stay aligned with the page (right), so only the letters' order
+   changes. Argon's own Arabic words are untouched. */
+html[dir="rtl"] {
+  :is(
+      .ar-card__t,
+      .ar-pdp__title,
+      .ar-dotd__t,
+      .ar-ptile__t,
+      .ar-ptile__l,
+      .ar-ltop__t,
+      .ar-ltop__d,
+      .ar-banner__p,
+      .ar-about__p,
+      .ar-about__en,
+      .ar-about__bullets li,
+      .ar-spec caption,
+      .ar-spec th,
+      .ar-spec td,
+      .ar-promo__tx b,
+      .ar-promo__tx small,
+      .ar-mini b,
+      .k-mini__name,
+      .k-bdrawer__name span
+    ) {
+    unicode-bidi: plaintext;
+    text-align: right;
+  }
+
+  /* The product's article: each paragraph reads in its own direction. */
+  .ar-about .k-prose :is(p, li, h1, h2, h3, h4, td, th) {
+    unicode-bidi: plaintext;
+    text-align: start;
+  }
+
+  :is(
+      .ar-cat__t,
+      .ar-dd__cat span,
+      .ar-suggest__cat,
+      .ar-suggest__p span,
+      .ar-banner__tx b span,
+      .ar-brand,
+      .ar-pdp__brand,
+      .ar-caps span,
+      .ar-vtile__l,
+      .ar-lbl b,
+      .ar-crumbs a,
+      .ar-crumbs span,
+      .ar-chip,
+      .ar-dd__tag,
+      .ar-seo__body a,
+      .k-official__crumbs a,
+      .k-official__crumbs span,
+      .k-crumbs a,
+      .k-crumbs span
+    ) {
+    unicode-bidi: plaintext;
+  }
+}
+
 /* ━━━━━━━━━━━━━━━━━━━━━ Language and currency (1.0.8) ━━━━━━━━━━━━━━━━━━━━━
    components/region-switcher (the shared package, copied unchanged): the
    owner's choice B. A small pill at the end of the utility row (Track order,

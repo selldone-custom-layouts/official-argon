@@ -32,7 +32,7 @@
         <router-link :to="helpTo"><span class="ms">help</span>{{ t("argon.header.help", "Help") }}</router-link>
         <!-- Language and currency (the owner's choice B): a small pill at the
              end of the utility row; hidden when the shop has one of each. -->
-        <region-switcher-button button-class="ar-util__region" />
+        <region-switcher-button :key="regionKey" button-class="ar-util__region" />
       </nav>
     </div>
 
@@ -211,7 +211,7 @@
             <router-link :to="returnsTo" class="ar-menu__link"><span class="ms">undo</span>{{ t("argon.header.returns", "Returns") }}</router-link>
             <router-link :to="helpTo" class="ar-menu__link"><span class="ms">help</span>{{ t("argon.menu.helpFaq", "Help & FAQ") }}</router-link>
             <router-link :to="compareTo" class="ar-menu__link"><span class="ms">compare_arrows</span>{{ t("argon.menu.compare", "Compare products") }}</router-link>
-            <region-sheet row-class="ar-menu__link ar-menu__region" />
+            <region-sheet :key="regionKey" row-class="ar-menu__link ar-menu__region" />
           </div>
         </div>
       </transition>
@@ -297,6 +297,12 @@ export default {
     },
     currency() {
       return currentCurrency();
+    },
+    /* The region package reads its words when it draws: redraw the pill and
+       the menu's row once the language file has arrived (the title changes
+       then), or "Language & currency" stays English after a pick. */
+    regionKey() {
+      return "rs-" + t("region.title", "Language & currency");
     },
     units() {
       return this.getBaskets().reduce((sum, b) => sum + (b?.items || []).reduce((n, it) => n + (it.count || 0), 0), 0);
